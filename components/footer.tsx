@@ -1,92 +1,127 @@
-import React from "react";
-import { Twitter, Instagram, Facebook } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { Facebook, Instagram } from "lucide-react";
 
-const Footer: React.FC = () => {
-  const footerLinks = {
-    Collections: [
-      "Collection 1",
-      "Collection 2",
-      "Collection 3",
-      "Collection 4",
-      "Collection 5",
-      "Collection 6",
-    ],
-    Shop: [
-      "Shop",
-      "My Account",
-      "Orders",
-      "Cart",
-      "Track Your Order",
-      "Wishlist",
-    ],
-    Resources: ["Blogs", "About Us", "Family Portraits", "Painting Categories"],
-    Support: [
-      "Contact Us",
-      "Return Policy",
-      "Cancellation Policy",
-      "Privacy Policy",
-      "Term of Use",
-    ],
-  };
+type FooterSection = {
+  title: string;
+  links: Array<{
+    label: string;
+    href: string;
+  }>;
+};
 
+const footerSections: FooterSection[] = [
+  {
+    title: "Collections",
+    links: [
+      { label: "Radha Krishna", href: "#" },
+      { label: "Buddha", href: "#" },
+      { label: "Ganesha", href: "#" },
+      { label: "Landscapes", href: "#" },
+      { label: "Modern/ Contemporary", href: "#" },
+      { label: "Portraits", href: "#" },
+    ],
+  },
+  {
+    title: "Shop",
+    links: [
+      { label: "Shop", href: "#" },
+      { label: "My Account", href: "#" },
+      { label: "Orders", href: "#" },
+      { label: "Cart", href: "#" },
+      { label: "Track Your Order", href: "#" },
+      { label: "Wishlist", href: "#" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "Blogs", href: "/blogs" },
+      { label: "About Us", href: "/about-us" },
+      { label: "Family Portraits", href: "#" },
+      { label: "Painting Categories", href: "#" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { label: "Contact Us", href: "/contact-us" },
+      { label: "Return Policy", href: "#" },
+      { label: "Cancellation Policy", href: "#" },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Term of Use", href: "#" },
+    ],
+  },
+];
+
+export default function Footer() {
   return (
-    <footer className="bg-[#0A0A0A] text-white pt-20 pb-10 px-8 lg:px-16 overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        {/* Top Section: Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 mb-20">
-          {/* Brand Info */}
-          <div className="col-span-2">
-            <div className="text-3xl font-bold text-[#C5A059] tracking-tighter mb-6">
-              AFS
-            </div>
-            <p className="text-[14px] text-gray-400 max-w-[240px] leading-relaxed">
+    <footer className="relative overflow-hidden bg-[#050608] text-white">
+      <div className="relative z-10 mx-auto max-w-[1440px] px-6 pb-32 pt-16 md:px-12 md:pt-20 lg:pb-36">
+        <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.55fr_1fr_1fr_1fr_1fr]">
+          <div className="lg:pr-8">
+            <Link href="/" aria-label="Artace Studio home" className="inline-block">
+              <Image
+                src="/Artace-logo.svg"
+                alt="Artace Studio logo"
+                width={120}
+                height={82}
+                className="h-auto w-[88px]"
+              />
+            </Link>
+            <p className="mt-16 max-w-[320px] text-[19px] leading-[1.35] text-white/90">
               We empower independent artists to share their stories with the
               world.
             </p>
           </div>
 
-          {/* Map through Link Categories */}
-          {Object.entries(footerLinks).map(([title, links]) => (
-            <div key={title} className="space-y-4">
-              <h4 className="text-[14px] font-semibold text-white">{title}</h4>
-              <ul className="space-y-3 text-[13px] text-gray-400">
-                {links.map((link) => (
-                  <li key={link}>
+          {footerSections.map((section) => (
+            <nav key={section.title} aria-label={section.title}>
+              <h2 className="mb-5 text-[19px] font-medium leading-tight text-white">
+                {section.title}
+              </h2>
+              <ul className="space-y-4 text-[18px] leading-tight text-[#95979f]">
+                {section.links.map((link) => (
+                  <li key={link.label}>
                     <Link
-                      href="#"
-                      className="hover:text-white transition-colors"
+                      href={link.href}
+                      className="transition-colors duration-200 hover:text-white"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
+            </nav>
           ))}
         </div>
 
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 gap-6">
-          <p className="text-[12px] text-gray-500">
-            © 2023 Artace Studio. All rights reserved
+        <div className="mt-20 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between md:mt-24">
+          <p className="text-[19px] text-[#d4d5d8]">
+            © 2025 Artace Studio. All rights reserved
           </p>
-          <div className="flex gap-8">
-            <Twitter className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white transition-colors" />
-            <Instagram className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white transition-colors" />
-            <Facebook className="w-4 h-4 text-gray-500 cursor-pointer hover:text-white transition-colors" />
+
+          <div className="flex items-center gap-5 text-[#f2f3f5]">
+            <Link
+              href="#"
+              aria-label="X"
+              className="text-[15px] font-medium leading-none transition-opacity hover:opacity-70"
+            >
+              X
+            </Link>
+            <Link href="#" aria-label="Instagram" className="hover:opacity-70">
+              <Instagram className="h-4 w-4" strokeWidth={1.8} />
+            </Link>
+            <Link href="#" aria-label="Facebook" className="hover:opacity-70">
+              <Facebook className="h-4 w-4" strokeWidth={1.8} />
+            </Link>
           </div>
         </div>
-
-        {/* Huge Background Text */}
-        <div className="mt-16 select-none pointer-events-none">
-          <h1 className="text-[14vw] font-bold text-[#141414] leading-none text-center tracking-tight">
-            ARTACE STUDIO
-          </h1>
-        </div>
       </div>
+
+      <p className="pointer-events-none absolute inset-x-0 -bottom-[34px] z-0 text-center whitespace-nowrap text-[20vw] font-semibold leading-none tracking-[0.02em] text-[#0d1014] md:-bottom-[44px] md:text-[13vw] lg:-bottom-[52px] lg:text-[12vw]">
+        ARTACE STUDIO
+      </p>
     </footer>
   );
-};
-
-export default Footer;
+}
