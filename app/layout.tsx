@@ -41,7 +41,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${sentient.variable} antialiased`}>
+      <body
+        suppressHydrationWarning
+        className={`${inter.variable} ${sentient.variable} antialiased`}
+      >
         <CartProvider>
           <Navbar />
           {children}

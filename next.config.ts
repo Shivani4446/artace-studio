@@ -7,6 +7,26 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "artacestudio.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.artacestudio.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i0.wp.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i1.wp.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i2.wp.com",
+      },
     ],
   },
 };
