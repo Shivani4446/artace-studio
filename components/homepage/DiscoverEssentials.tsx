@@ -29,7 +29,9 @@ const DiscoverEssentials = () => {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const [cardWidth, setCardWidth] = useState(0);
+  const [headingPanelWidth, setHeadingPanelWidth] = useState(0);
   const [scrollableWidth, setScrollableWidth] = useState(0);
+  const [stickyOffset, setStickyOffset] = useState(80);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -37,8 +39,16 @@ const DiscoverEssentials = () => {
         const vw = trackWrapperRef.current.clientWidth;
         // Specifically requesting 1 fully visible and 2nd one 80% visible means 1.8 cards fit in the viewport
         const cw = vw / 1.8;
+        const hpw =
+          window.innerWidth >= 1024
+            ? 360
+            : window.innerWidth >= 768
+              ? 300
+              : Math.min(320, vw * 0.9);
         setCardWidth(cw);
-        setScrollableWidth(Math.max(0, cw * essentials.length - vw));
+        setHeadingPanelWidth(hpw);
+        setScrollableWidth(Math.max(0, hpw + cw * essentials.length - vw));
+        setStickyOffset(window.innerWidth >= 768 ? 96 : 80);
       }
     };
 
@@ -55,7 +65,7 @@ const DiscoverEssentials = () => {
       if (!containerRef.current || !trackRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
-      const scrolled = -rect.top;
+      const scrolled = stickyOffset - rect.top;
 
       // Calculate progress and clamp between 0 and scrollableWidth
       let progress = scrolled;
@@ -77,46 +87,46 @@ const DiscoverEssentials = () => {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafId);
     };
-  }, [scrollableWidth]);
+  }, [scrollableWidth, stickyOffset]);
+
+  const sectionScrollHeight = Math.max(scrollableWidth - stickyOffset, 0);
 
   return (
     <section
       ref={containerRef}
-      style={{ height: `calc(100vh + ${scrollableWidth}px)` }}
+      style={{ height: `calc(100vh + ${sectionScrollHeight}px)` }}
       className="relative w-full border-y border-black/5 bg-[#f1f0ed]"
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
-        <div className="mx-auto flex h-full w-full max-w-[1440px] flex-col md:flex-row pl-4 md:pl-8 lg:pl-12 py-10 md:py-16 lg:py-24">
-          {/* Left Column (Fixed visually on all devices) */}
-          <div className="flex w-full shrink-0 flex-col justify-between pr-6 md:w-[300px] lg:w-[360px] md:pr-10 border-r border-[#1a1a1a]/10 pb-6 md:pb-0 z-10 relative bg-[#f1f0ed] md:bg-transparent">
-            <div>
-              <h2 className="font-display text-[36px] uppercase leading-[1.1] tracking-tight text-[#1A1A1A] md:text-[44px] lg:text-[50px]">
-                DISCOVER
-                <br className="hidden md:block" />
-                <span className="md:hidden"> </span>
-                ESSENTIALS
-              </h2>
-            </div>
-            <div className="mt-8 md:mt-14 block">
-              <Link
-                href="#"
-                className="inline-block border-b border-[#1A1A1A] pb-0.5 text-[11px] md:text-[12px] font-semibold uppercase tracking-[0.05em] text-[#1A1A1A] transition-colors hover:border-black/50 hover:text-[#1A1A1A]/70"
-              >
-                EXPLORE ALL
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Scroll Column */}
-          <div
-            ref={trackWrapperRef}
-            className="flex-1 overflow-hidden relative border-t md:border-t-0 border-[#1a1a1a]/10 pt-6 md:pt-0"
-          >
+      <div className="sticky top-20 h-[calc(100vh-5rem)] w-full overflow-hidden md:top-24 md:h-[calc(100vh-6rem)]">
+        <div className="mx-auto h-full w-full max-w-[1440px] px-4 py-10 md:px-8 md:py-16 lg:px-12 lg:py-24">
+          <div ref={trackWrapperRef} className="relative h-full overflow-hidden">
             <div
               ref={trackRef}
               className="flex h-full w-max will-change-transform"
-              style={{ width: `${cardWidth * essentials.length}px` }}
+              style={{ width: `${headingPanelWidth + cardWidth * essentials.length}px` }}
             >
+              <div
+                style={{ width: headingPanelWidth ? `${headingPanelWidth}px` : "85vw" }}
+                className="relative flex h-full shrink-0 flex-col justify-between border-r border-[#1a1a1a]/10 pr-6 md:pr-10"
+              >
+                <div>
+                  <h2 className="font-display text-[36px] uppercase leading-[1.1] tracking-tight text-[#1A1A1A] md:text-[44px] lg:text-[50px]">
+                    DISCOVER
+                    <br className="hidden md:block" />
+                    <span className="md:hidden"> </span>
+                    ESSENTIALS
+                  </h2>
+                </div>
+                <div className="mt-8 md:mt-14 block">
+                  <Link
+                    href="#"
+                    className="inline-block border-b border-[#1A1A1A] pb-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-[#1A1A1A] transition-colors hover:border-black/50 hover:text-[#1A1A1A]/70 md:text-[12px]"
+                  >
+                    EXPLORE ALL
+                  </Link>
+                </div>
+              </div>
+
               {essentials.map((item, index) => (
                 <div
                   key={index}

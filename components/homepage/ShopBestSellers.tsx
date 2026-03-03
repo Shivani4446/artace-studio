@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Playfair_Display, Inter } from 'next/font/google';
 import { Heart, ArrowRight } from 'lucide-react';
+import AddToCartButton from '@/components/cart/AddToCartButton';
 
 // Font Configuration
 const playfair = Playfair_Display({ 
@@ -72,7 +73,7 @@ const ShopBestsellers = () => {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
           {products.map((product) => (
-            <div key={product.id} className="group flex flex-col cursor-pointer">
+            <div key={product.id} className="group flex flex-col">
               
               {/* Image Container */}
               <div className="relative w-full aspect-square overflow-hidden mb-4 bg-gray-200">
@@ -101,6 +102,14 @@ const ShopBestsellers = () => {
                   <Heart className="w-5 h-5" strokeWidth={1.5} />
                 </button>
               </div>
+
+              <AddToCartButton
+                id={product.id}
+                title={product.title}
+                image={product.image}
+                subtitle={product.sizes}
+                className="mt-4 self-start"
+              />
 
             </div>
           ))}
