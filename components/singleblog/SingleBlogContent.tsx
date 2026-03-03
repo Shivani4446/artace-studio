@@ -1,18 +1,21 @@
 import React from "react";
+import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 type Props = {
   content: string;
 };
 
 const SingleBlogContent = ({ content }: Props) => {
+  const decodedContent = decodeHtmlEntities(content);
+
   // Extract only H2 headings
   const h2Regex = /<h2[^>]*>(.*?)<\/h2>/g;
 
   const h2Headings: string[] = [];
   let match;
 
-  while ((match = h2Regex.exec(content)) !== null) {
-    const cleanText = match[1].replace(/<[^>]+>/g, "");
+  while ((match = h2Regex.exec(decodedContent)) !== null) {
+    const cleanText = stripHtmlAndDecode(match[1]);
     h2Headings.push(cleanText);
   }
 
@@ -35,7 +38,7 @@ const SingleBlogContent = ({ content }: Props) => {
       {/* RIGHT SIDE - Content */}
       <div
         className="md:col-span-3 prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: decodedContent }}
       />
     </div>
   );

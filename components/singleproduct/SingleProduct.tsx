@@ -17,6 +17,7 @@ import {
   Truck,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 
@@ -252,7 +253,7 @@ const DEFAULT_ADVISOR: AdvisorBlock = {
   ctaHref: "/contact-us",
 };
 
-const stripHtml = (value: string) => value.replace(/<[^>]+>/g, "").trim();
+const stripHtml = (value: string) => stripHtmlAndDecode(value);
 
 const parseMinorUnitPrice = (
   rawValue: string | undefined,
@@ -279,18 +280,18 @@ const normalizeWooCommerceStoreProduct = (
     id: image.id,
     src: image.src || FALLBACK_PRODUCT_IMAGE,
     thumbnail: image.thumbnail || image.src || FALLBACK_PRODUCT_IMAGE,
-    alt: image.alt || image.name || stripHtml(product.name),
-    name: image.name || stripHtml(product.name),
+    alt: decodeHtmlEntities(image.alt || image.name || stripHtml(product.name)),
+    name: decodeHtmlEntities(image.name || stripHtml(product.name)),
   }));
 
   return {
     id: product.id,
     slug: product.slug,
     permalink: product.permalink,
-    name: product.name,
-    shortDescription: product.short_description || "",
-    description: product.description || "",
-    sku: product.sku || "",
+    name: decodeHtmlEntities(product.name),
+    shortDescription: decodeHtmlEntities(product.short_description || ""),
+    description: decodeHtmlEntities(product.description || ""),
+    sku: decodeHtmlEntities(product.sku || ""),
     price: parseMinorUnitPrice(product.prices?.price, minorUnit),
     regularPrice: parseMinorUnitPrice(product.prices?.regular_price, minorUnit),
     salePrice: parseMinorUnitPrice(product.prices?.sale_price, minorUnit),
@@ -315,14 +316,17 @@ const normalizeWooCommerceStoreProduct = (
               name: stripHtml(product.name),
             },
           ],
-    categories: product.categories ?? [],
+    categories: (product.categories ?? []).map((category) => ({
+      ...category,
+      name: decodeHtmlEntities(category.name),
+    })),
     attributes: (product.attributes ?? []).map((attribute) => ({
       id: attribute.id,
-      name: attribute.name,
+      name: decodeHtmlEntities(attribute.name),
       options:
         attribute.options && attribute.options.length > 0
-          ? attribute.options
-          : (attribute.terms ?? []).map((term) => term.name),
+          ? attribute.options.map((option) => decodeHtmlEntities(option))
+          : (attribute.terms ?? []).map((term) => decodeHtmlEntities(term.name)),
     })),
   };
 };
@@ -472,7 +476,7 @@ const SingleProduct = ({
                       key={image.id}
                       type="button"
                       onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-12 w-12 shrink-0 overflow-hidden border ${
+                      className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-[12px] border ${
                         index === activeImageIndex
                           ? "border-[#1f1f1f]"
                           : "border-[#1f1f1f]/20"
@@ -490,7 +494,7 @@ const SingleProduct = ({
                   ))}
                 </div>
 
-                <div className="order-1 relative aspect-square overflow-hidden rounded-[6px] bg-[#e8e5df] md:order-2">
+                <div className="order-1 relative aspect-square overflow-hidden rounded-[12px] bg-[#e8e5df] md:order-2">
                   <Image
                     src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
                     alt={selectedImage?.alt || stripHtml(product.name)}
@@ -533,11 +537,11 @@ const SingleProduct = ({
 
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 {product.onSale && formattedRegularPrice && (
-                  <span className="font-display text-[44px] leading-none text-[#6c655a] line-through">
+                  <span className="font-display text-[24px] leading-none text-[#6c655a] line-through">
                     {formattedRegularPrice}
                   </span>
                 )}
-                <span className="font-display text-[48px] leading-none text-[#1f1f1f]">
+                <span className="font-display text-[24px] leading-none text-[#1f1f1f]">
                   {formattedPrice ?? "Price on request"}
                 </span>
               </div>
@@ -680,7 +684,7 @@ const SingleProduct = ({
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
             {relatedProducts.map((item) => (
               <Link key={item.id} href={item.href || "#"} className="group block">
-                <div className="relative aspect-[4/5] overflow-hidden bg-[#e7e3dc]">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#e7e3dc]">
                   <Image
                     src={item.image}
                     alt={item.title}
@@ -689,10 +693,13 @@ const SingleProduct = ({
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
-                <h3 className="mt-3 font-display text-[19px] leading-6 text-[#1f1f1f]">
+                <p className="mt-3 text-[14px] text-[#7a7368]">Handmade Painting</p>
+                <h3 className="mt-1 font-display text-[18px] leading-[1.32] text-[#1f1f1f]">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-[12px] text-[#6d6962]">{item.sizes}</p>
+                <p className="mt-1 text-[14px] text-[#6f685f]">
+                  Handmade Painting | {item.sizes} | Acrylic Colors on Canvas
+                </p>
               </Link>
             ))}
           </div>

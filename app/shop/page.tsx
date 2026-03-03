@@ -1,10 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import AddToCartButton from "@/components/cart/AddToCartButton";
+import ShopCatalog from "@/components/shop/ShopCatalog";
+import type { ShopProduct, SizeBucket } from "@/components/shop/types";
+import { decodeHtmlEntities } from "@/utils/text";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
+const MEDIUM_FILTER_OPTIONS = ["Acrylic", "Oil", "Watercolor"] as const;
+const MATERIAL_FILTER_OPTIONS = ["Canvas", "Paper"] as const;
 
 type WooStorePrices = {
   currency_code: string;
@@ -28,6 +29,19 @@ type WooStoreCategory = {
   slug: string;
 };
 
+type WooStoreAttributeTerm = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
+type WooStoreAttribute = {
+  id: number;
+  name: string;
+  terms?: WooStoreAttributeTerm[];
+  options?: string[];
+};
+
 type WooStoreProduct = {
   id: number;
   slug: string;
@@ -35,6 +49,12 @@ type WooStoreProduct = {
   images: WooStoreImage[];
   categories: WooStoreCategory[];
   prices: WooStorePrices;
+  attributes?: WooStoreAttribute[];
+  average_rating?: string;
+  review_count?: number;
+  total_sales?: number;
+  date_created?: string;
+  date_created_gmt?: string;
 };
 
 const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
@@ -44,21 +64,232 @@ const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
   return numericValue / 10 ** minorUnit;
 };
 
-const formatPrice = (
-  value: number | null,
-  currencyCode: string,
-  currencySymbol: string
-) => {
-  if (value === null) return "Price on request";
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
+const getAttributeOptions = (attribute: WooStoreAttribute) => {
+  const optionsFromList = attribute.options ?? [];
+  const optionsFromTerms = (attribute.terms ?? []).map((term) => term.name);
+  return Array.from(
+    new Set(
+      [...optionsFromList, ...optionsFromTerms]
+        .map((value) => decodeHtmlEntities(value).trim())
+        .filter(Boolean)
+    )
+  );
+};
+
+const detectSizeBucket = (rawSizeValue: string): SizeBucket | null => {
+  const value = rawSizeValue.toLowerCase().trim();
+
+  if (value.includes("xl") || value.includes("extra large")) return "XL";
+  if (value.includes("large")) return "Large";
+  if (value.includes("medium")) return "Medium";
+  if (value.includes("small")) return "Small";
+
+  const dimensions = value.match(/(\d+(?:\.\d+)?)\s*[xX\u00D7]\s*(\d+(?:\.\d+)?)/i);
+  if (!dimensions) return null;
+
+  const width = Number(dimensions[1]);
+  const height = Number(dimensions[2]);
+  if (Number.isNaN(width) || Number.isNaN(height)) return null;
+
+  const area = width * height;
+  if (area <= 400) return "Small";
+  if (area <= 900) return "Medium";
+  if (area <= 1600) return "Large";
+  return "XL";
+};
+
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const toTitleCase = (value: string) =>
+  value
+    .trim()
+    .replace(/[_-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const uniqueValues = (values: string[]) =>
+  Array.from(new Set(values.map((value) => value.trim()).filter(Boolean)));
+
+const getProductContextText = (product: WooStoreProduct) => {
+  const attributeTokens = (product.attributes ?? []).flatMap((attribute) => [
+    attribute.name,
+    ...getAttributeOptions(attribute),
+  ]);
+
+  return normalizeText(
+    [
+      decodeHtmlEntities(product.name),
+      ...product.categories.map((category) => decodeHtmlEntities(category.name)),
+      ...attributeTokens.map((token) => decodeHtmlEntities(token)),
+    ]
+      .filter(Boolean)
+      .join(" ")
+  );
+};
+
+const inferMoodTags = (product: WooStoreProduct): string[] => {
+  const text = getProductContextText(product);
+
+  const moodRules: Array<{ mood: string; keywords: string[] }> = [
+    {
+      mood: "Spiritual",
+      keywords: [
+        "radha",
+        "krishna",
+        "ganesha",
+        "buddha",
+        "shiva",
+        "deity",
+        "devotional",
+        "sacred",
+        "temple",
+      ],
+    },
+    {
+      mood: "Serene",
+      keywords: [
+        "landscape",
+        "nature",
+        "forest",
+        "river",
+        "mountain",
+        "sunrise",
+        "sunset",
+        "calm",
+        "peaceful",
+      ],
+    },
+    {
+      mood: "Contemporary",
+      keywords: ["modern", "abstract", "geometric", "minimal", "contemporary"],
+    },
+    {
+      mood: "Vibrant",
+      keywords: ["vibrant", "bold", "energetic", "bright", "colorful"],
+    },
+    {
+      mood: "Romantic",
+      keywords: ["romantic", "love", "couple", "floral", "flower", "rose"],
+    },
+    {
+      mood: "Classic",
+      keywords: ["portrait", "traditional", "heritage", "vintage", "timeless"],
+    },
+  ];
+
+  const inferred = moodRules
+    .filter((rule) => rule.keywords.some((keyword) => text.includes(keyword)))
+    .map((rule) => rule.mood);
+
+  if (inferred.length > 0) return uniqueValues(inferred);
+  return ["Serene"];
+};
+
+const inferMaterialTags = (product: WooStoreProduct): string[] => {
+  const text = getProductContextText(product);
+  const materials: string[] = [];
+
+  if (/\bpaper\b|handmade paper|cold press|hot press/.test(text)) {
+    materials.push("Paper");
   }
+
+  if (/\bcanvas\b|stretched canvas|rolled canvas/.test(text)) {
+    materials.push("Canvas");
+  }
+
+  if (materials.length > 0) return uniqueValues(materials);
+  return ["Canvas"];
+};
+
+const inferMediumTags = (product: WooStoreProduct): string[] => {
+  const text = getProductContextText(product);
+  const detected: string[] = [];
+
+  if (/\bacrylic\b/.test(text)) {
+    detected.push("Acrylic");
+  }
+
+  if (/\boil\b/.test(text)) {
+    detected.push("Oil");
+  }
+
+  if (/water\s*colou?r|watercolor|water colour/.test(text)) {
+    detected.push("Watercolor");
+  }
+
+  const validDetected = uniqueValues(detected).filter((medium) =>
+    MEDIUM_FILTER_OPTIONS.includes(medium as (typeof MEDIUM_FILTER_OPTIONS)[number])
+  );
+
+  if (validDetected.length > 0) return validDetected;
+  return ["Acrylic"];
+};
+
+const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
+  return products.map((product) => {
+    const minorUnit = product.prices?.currency_minor_unit ?? 2;
+    const price = parsePrice(product.prices?.price, minorUnit);
+    const regularPrice = parsePrice(product.prices?.regular_price, minorUnit);
+    const primaryImage = product.images[0];
+    const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
+
+    const explicitMoodOptions = (product.attributes ?? [])
+      .filter((attribute) => /mood/i.test(attribute.name))
+      .flatMap(getAttributeOptions)
+      .map(toTitleCase);
+
+    const moodOptions = uniqueValues([...explicitMoodOptions, ...inferMoodTags(product)]);
+
+    // "By Colors" is intentionally limited to paint mediums.
+    const colorOptions = inferMediumTags(product);
+
+    const materialOptions = inferMaterialTags(product).filter((material) =>
+      MATERIAL_FILTER_OPTIONS.includes(material as (typeof MATERIAL_FILTER_OPTIONS)[number])
+    );
+
+    const sizeOptions = (product.attributes ?? [])
+      .filter((attribute) => /size|dimension/i.test(attribute.name))
+      .flatMap(getAttributeOptions);
+
+    const sizeBuckets = Array.from(
+      new Set(
+        sizeOptions
+          .map(detectSizeBucket)
+          .filter((bucket): bucket is SizeBucket => bucket !== null)
+      )
+    );
+
+    return {
+      id: product.id,
+      slug: product.slug,
+      name: decodeHtmlEntities(product.name),
+      image: imageUrl,
+      imageAlt: decodeHtmlEntities(primaryImage?.alt || product.name),
+      categories: product.categories.map((category) => decodeHtmlEntities(category.name)),
+      price,
+      regularPrice,
+      currencyCode: product.prices?.currency_code || "INR",
+      currencySymbol: product.prices?.currency_symbol || "Rs. ",
+      reviewCount: product.review_count ?? 0,
+      averageRating: Number(product.average_rating || 0),
+      totalSales: product.total_sales ?? 0,
+      dateCreated: product.date_created_gmt || product.date_created || null,
+      attributes: {
+        moods: moodOptions,
+        materials: materialOptions,
+        colors: colorOptions,
+        sizes: sizeOptions,
+      },
+      sizeBuckets,
+    };
+  });
 };
 
 const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
@@ -67,7 +298,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
 
   const response = await fetch(
-    `${normalizedBaseUrl}/wp-json/wc/store/v1/products?per_page=24`,
+    `${normalizedBaseUrl}/wp-json/wc/store/v1/products?per_page=48`,
     {
       next: { revalidate: 120 },
     }
@@ -82,129 +313,17 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
 };
 
 const ShopPage = async () => {
-  let products: WooStoreProduct[] = [];
+  let products: ShopProduct[] = [];
   let loadError: string | null = null;
 
   try {
-    products = await getStoreProducts();
+    const storeProducts = await getStoreProducts();
+    products = normalizeProducts(storeProducts);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Unable to load products.";
   }
 
-  return (
-    <main className="bg-[#f4f2ee] px-6 py-10 md:px-12 md:py-14 lg:px-24">
-      <section className="mx-auto max-w-[1440px]">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.08em] text-[#67625a]">
-              Artace Studio
-            </p>
-            <h1 className="mt-2 font-display text-[56px] leading-none text-[#1f1f1f] md:text-[68px]">
-              Shop
-            </h1>
-          </div>
-          <p className="max-w-xl text-sm text-[#5f5a52]">
-            Discover original artworks and handcrafted canvas paintings from our
-            WooCommerce collection.
-          </p>
-        </div>
-
-        {loadError ? (
-          <div className="border border-[#1f1f1f]/10 bg-white px-6 py-8 text-[#5f5a52]">
-            <p className="font-semibold text-[#222]">Could not load products</p>
-            <p className="mt-2 text-sm">{loadError}</p>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="border border-[#1f1f1f]/10 bg-white px-6 py-8 text-[#5f5a52]">
-            <p className="font-semibold text-[#222]">No products found</p>
-            <p className="mt-2 text-sm">
-              Your WooCommerce store returned an empty product list.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-            {products.map((product) => {
-              const minorUnit = product.prices?.currency_minor_unit ?? 2;
-              const price = parsePrice(product.prices?.price, minorUnit);
-              const regularPrice = parsePrice(product.prices?.regular_price, minorUnit);
-              const primaryImage = product.images[0];
-              const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
-              const categoryLabel =
-                product.categories.length > 0 ? product.categories[0].name : "Artwork";
-
-              return (
-                <article key={product.id} className="group flex flex-col">
-                  <Link href={`/shop/${product.slug}`} className="block">
-                    <div className="relative aspect-square overflow-hidden bg-[#e7e3dc]">
-                      <Image
-                        src={imageUrl}
-                        alt={primaryImage?.alt || product.name}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    </div>
-                  </Link>
-
-                  <div className="mt-4">
-                    <p className="text-[11px] uppercase tracking-[0.08em] text-[#7a7368]">
-                      {categoryLabel}
-                    </p>
-
-                    <Link
-                      href={`/shop/${product.slug}`}
-                      className="mt-1 block font-display text-[28px] leading-[1.2] text-[#1f1f1f] transition-colors hover:text-black"
-                    >
-                      {product.name}
-                    </Link>
-
-                    <div className="mt-2 flex items-center gap-2">
-                      {regularPrice && regularPrice > (price ?? 0) && (
-                        <span className="text-[14px] text-[#7a7368] line-through">
-                          {formatPrice(
-                            regularPrice,
-                            product.prices.currency_code,
-                            product.prices.currency_symbol
-                          )}
-                        </span>
-                      )}
-                      <span className="font-semibold text-[#27231f]">
-                        {formatPrice(
-                          price,
-                          product.prices.currency_code,
-                          product.prices.currency_symbol
-                        )}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <AddToCartButton
-                      id={product.id}
-                      title={product.name}
-                      image={imageUrl}
-                      subtitle={categoryLabel}
-                      price={price ?? undefined}
-                      className="!px-4 !py-2 !text-[11px]"
-                    />
-
-                    <Link
-                      href={`/shop/${product.slug}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#4f4b45] hover:text-black"
-                    >
-                      View
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </section>
-    </main>
-  );
+  return <ShopCatalog products={products} loadError={loadError} />;
 };
 
 export default ShopPage;
-

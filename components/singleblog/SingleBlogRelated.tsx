@@ -1,18 +1,32 @@
 import Link from "next/link";
+import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 type Props = {
   currentPostId: number;
 };
 
+type RelatedPost = {
+  id: number;
+  slug: string;
+  title?: {
+    rendered?: string;
+  };
+  _embedded?: {
+    "wp:featuredmedia"?: Array<{
+      source_url?: string;
+    }>;
+  };
+};
+
 async function getRelatedPosts(currentPostId: number) {
   const res = await fetch(
-    `https://artacestudio.com/wp-json/wp/v2/posts?per_page=3&_embed`,
-    { next: { revalidate: 60 } },
+    "https://artacestudio.com/wp-json/wp/v2/posts?per_page=3&_embed",
+    { next: { revalidate: 60 } }
   );
 
-  const posts = await res.json();
+  const posts = (await res.json()) as RelatedPost[];
 
-  return posts.filter((post: any) => post.id !== currentPostId);
+  return posts.filter((post) => post.id !== currentPostId);
 }
 
 const SingleBlogRelated = async ({ currentPostId }: Props) => {
@@ -21,36 +35,35 @@ const SingleBlogRelated = async ({ currentPostId }: Props) => {
   if (!posts.length) return null;
 
   return (
-    <section className="mt-24 max-w-6xl mx-auto">
-      <h3 className="text-2xl font-semibold mb-8">Related Articles</h3>
+    <section className="mt-24 mx-auto max-w-6xl">
+      <h3 className="mb-8 text-2xl font-semibold">Related Articles</h3>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {posts.map((post: any) => {
+      <div className="grid gap-8 md:grid-cols-3">
+        {posts.map((post) => {
           const featuredImage =
             post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+          const decodedTitleHtml = decodeHtmlEntities(post.title?.rendered ?? "");
+          const imageAlt = stripHtmlAndDecode(post.title?.rendered ?? "");
 
           return (
-            <div key={post.id} className="border rounded-lg overflow-hidden">
+            <div key={post.id} className="overflow-hidden rounded-lg border">
               {featuredImage && (
                 <img
                   src={featuredImage}
-                  alt={post.title.rendered}
+                  alt={imageAlt}
                   className="h-48 w-full object-cover"
                 />
               )}
 
               <div className="p-4">
                 <h4
-                  className="font-medium mb-2"
+                  className="mb-2 font-medium"
                   dangerouslySetInnerHTML={{
-                    __html: post.title.rendered,
+                    __html: decodedTitleHtml,
                   }}
                 />
 
-                <Link
-                  href={`/blogs/${post.slug}`}
-                  className="text-sm text-blue-600"
-                >
+                <Link href={`/blogs/${post.slug}`} className="text-sm text-blue-600">
                   Read More →
                 </Link>
               </div>

@@ -3,6 +3,7 @@ import SingleBlogHero from "@/components/singleblog/SingleBlogHero";
 import SingleBlogContent from "@/components/singleblog/SingleBlogContent";
 import SingleBlogAuthor from "@/components/singleblog/SingleBlogAuthor";
 import SingleBlogRelated from "@/components/singleblog/SingleBlogRelated";
+import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,12 +22,12 @@ async function getPost(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
+  const plainTitle = stripHtmlAndDecode(post?.title?.rendered ?? "");
+  const plainDescription = stripHtmlAndDecode(post?.excerpt?.rendered ?? "");
 
   return {
-    title: post?.title?.rendered
-      ? `${post.title.rendered.replace(/<[^>]+>/g, "")} | Artace Studio`
-      : "Blog | Artace Studio",
-    description: post?.excerpt?.rendered?.replace(/<[^>]+>/g, ""),
+    title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
+    description: plainDescription,
   };
 }
 
@@ -39,7 +40,7 @@ const SingleBlogPage = async ({ params }: Props) => {
   return (
     <main className="px-6 py-16 md:px-12 lg:px-24">
       <SingleBlogHero post={post} />
-      <SingleBlogContent content={post.content.rendered} />{" "}
+      <SingleBlogContent content={decodeHtmlEntities(post.content.rendered)} />
       <SingleBlogAuthor post={post} />
       <SingleBlogRelated currentPostId={post.id} />
     </main>
