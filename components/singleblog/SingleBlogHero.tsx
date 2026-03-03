@@ -42,7 +42,7 @@ const SingleBlogHero = (_props: SingleBlogHeroProps) => {
           {/* Meta Information (Date & Read Time) */}
           <div className="flex items-center gap-3 font-inter text-[#888888] text-sm md:text-[15px]">
             <span>Last Updated: 15 May 2025</span>
-            <span className="text-[10px] opacity-60">•</span>
+            <span className="text-[10px] opacity-60">|</span>
             <span>4 min read</span>
           </div>
         </div>
