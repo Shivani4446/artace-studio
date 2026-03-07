@@ -470,17 +470,17 @@ const SingleProduct = ({
 
           <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,0.46fr)_minmax(0,0.54fr)]">
             <div>
-              <div className="grid gap-4 md:grid-cols-[48px_minmax(0,1fr)]">
+              <div className="grid gap-4 md:grid-cols-[62px_minmax(0,1fr)]">
                 <div className="order-2 flex gap-3 overflow-x-auto md:order-1 md:flex-col md:overflow-visible">
                   {product.images.map((image, index) => (
                     <button
                       key={image.id}
                       type="button"
                       onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-12 w-12 shrink-0 overflow-hidden rounded-[12px] border ${
+                      className={`relative h-[62px] w-[62px] shrink-0 overflow-hidden rounded-[12px] ${
                         index === activeImageIndex
-                          ? "border-[#1f1f1f]"
-                          : "border-[#1f1f1f]/20"
+                          ? "ring-4 ring-white/50"
+                          : ""
                       }`}
                       aria-label={`Select image ${index + 1}`}
                     >
@@ -488,45 +488,46 @@ const SingleProduct = ({
                         src={image.thumbnail || image.src}
                         alt={image.alt}
                         fill
-                        sizes="48px"
+                        sizes="62px"
                         className="object-cover"
                       />
                     </button>
                   ))}
                 </div>
 
-                <div className="order-1 relative aspect-square overflow-hidden rounded-[12px] bg-[#e8e5df] md:order-2">
-                  <Image
-                    src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
-                    alt={selectedImage?.alt || stripHtml(product.name)}
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 620px"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
+                <div className="order-1 md:order-2 max-w-[500px]">
+                  <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
+                    <Image
+                      src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                      alt={selectedImage?.alt || stripHtml(product.name)}
+                      width={500}
+                      height={500}
+                      sizes="(max-width: 768px) 100vw, 500px"
+                      className="object-cover w-full h-auto"
+                    />
+                  </div>
 
-              <div className="mt-4 flex flex-wrap gap-6 text-[12px] text-[#4e4a44]">
-                <button type="button" className="inline-flex items-center gap-1.5 hover:text-black">
-                  <Heart className="h-3.5 w-3.5" /> Add to Wish List
-                </button>
-                <button type="button" className="inline-flex items-center gap-1.5 hover:text-black">
-                  <Share2 className="h-3.5 w-3.5" /> Share
-                </button>
-                <Link href="/contact-us" className="inline-flex items-center gap-1.5 hover:text-black">
-                  <HandHelping className="h-3.5 w-3.5" /> Need Help?
-                </Link>
+                  <div className="mt-[30px] flex flex-wrap justify-between text-[16px] text-[#4e4a44]">
+                    <button type="button" className="inline-flex items-center gap-2 hover:text-black">
+                      <Heart className="h-5 w-5" /> Add to Wish List
+                    </button>
+                    <button type="button" className="inline-flex items-center gap-2 hover:text-black mx-auto">
+                      <Share2 className="h-5 w-5" /> Share
+                    </button>
+                    <Link href="/contact-us" className="inline-flex items-center gap-2 hover:text-black ml-auto">
+                      <HandHelping className="h-5 w-5" /> Need Help?
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div>
-              <h1 className="font-display text-[38px] leading-[1.16] text-[#24211d] md:text-[46px]">
+              <h1 className="font-display text-[32px] leading-[1.16] text-[#24211d]">
                 {product.name}
               </h1>
-              <p className="mt-2 text-[13px] text-[#6d6962]">By {artistName}</p>
-
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px]">
+              <div className="mt-[30px] flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-[#6d6962]">
+                <span>By {artistName}</span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-[#f0e3bc] px-2 py-1 text-[#5f4a18]">
                   <Star className="h-3 w-3 fill-[#be8f2b] text-[#be8f2b]" />
                   {displayRating.toFixed(1)}
@@ -536,25 +537,25 @@ const SingleProduct = ({
                 </span>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div className="mt-[30px] flex flex-wrap items-center gap-3">
                 {product.onSale && formattedRegularPrice && (
-                  <span className="font-display text-[24px] leading-none text-[#6c655a] line-through">
+                  <span className="font-display text-[40px] leading-none text-[#6c655a] line-through">
                     {formattedRegularPrice}
                   </span>
                 )}
-                <span className="font-display text-[24px] leading-none text-[#1f1f1f]">
+                <span className="font-display text-[40px] leading-none text-[#1f1f1f]">
                   {formattedPrice ?? "Price on request"}
                 </span>
               </div>
 
               {product.shortDescription && (
-                <p className="mt-4 max-w-2xl text-[14px] leading-6 text-[#4f4b45]">
+                <p className="mt-[30px] max-w-2xl text-[18px] leading-6 text-[#4f4b45]">
                   {stripHtml(product.shortDescription)}
                 </p>
               )}
 
-              <div className="mt-6">
-                <p className="text-[12px] text-[#4f4b45]">Choose a Size</p>
+              <div className="mt-[30px]">
+                <p className="text-[16px] text-[#4f4b45]">Choose a Size</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {sizeOptions.map((size) => (
                     <button
@@ -574,26 +575,26 @@ const SingleProduct = ({
               </div>
 
               {product.sku && (
-                <p className="mt-4 text-[11px] uppercase tracking-[0.08em] text-[#6d6962]">
+                <p className="mt-[30px] text-[16px] uppercase tracking-[0.08em] text-[#6d6962]">
                   SKU: {product.sku}
                 </p>
               )}
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                <div className="flex items-center border border-[#1f1f1f]/20 bg-white">
+              <div className="mt-[30px] flex flex-wrap items-center gap-3">
+                <div className="flex h-[50px] items-center rounded-[12px] border border-[#dcdad8] bg-white">
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                    className="px-3 py-2 hover:bg-[#f0ede8]"
+                    className="rounded-l-[11px] px-4 hover:bg-[#f0ede8]"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
-                  <span className="w-9 text-center text-sm">{quantity}</span>
+                  <span className="w-10 text-center text-sm">{quantity}</span>
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => current + 1)}
-                    className="px-3 py-2 hover:bg-[#f0ede8]"
+                    className="rounded-r-[11px] px-4 hover:bg-[#f0ede8]"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />
@@ -604,20 +605,20 @@ const SingleProduct = ({
                   type="button"
                   disabled={!product.inStock}
                   onClick={handleAddToCart}
-                  className="inline-flex items-center gap-2 rounded-[4px] bg-[#1f1f1f] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
+                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-semibold text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
                 >
                   Add to Cart <Plus className="h-3.5 w-3.5" />
                 </button>
 
                 <Link
                   href="/contact-us"
-                  className="inline-flex items-center gap-2 rounded-[4px] bg-[#dfc765] px-6 py-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#2c250f] transition-colors hover:bg-[#d2b952]"
+                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#dfc765] px-6 py-3 text-[18px] font-semibold text-[#2c250f] transition-colors hover:bg-[#d2b952]"
                 >
                   Order a Custom Size
                 </Link>
               </div>
 
-              <div className="mt-6 overflow-hidden rounded-[6px] border border-[#1f1f1f]/10 bg-white">
+              <div className="mt-[30px] overflow-hidden rounded-[6px] border border-[#1f1f1f]/10 bg-white">
                 <div className="flex items-start gap-3 border-b border-[#1f1f1f]/10 px-4 py-3">
                   <Truck className="mt-0.5 h-4 w-4 text-[#c1432f]" />
                   <div>
