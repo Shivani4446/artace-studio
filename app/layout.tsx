@@ -41,6 +41,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="text/javascript"
+          src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+          async
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${sentient.variable} antialiased`}

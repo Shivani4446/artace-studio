@@ -28,13 +28,13 @@ const JournalSection = () => {
             
             {/* Top Heading */}
             <div>
-              <h2 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-[#2C2C2C] text-center lg:text-right leading-tight">
+              <h2 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-[#2C2C2C] text-left leading-tight">
                 Artace Studio Journal
               </h2>
             </div>
 
-            {/* Bottom Description & Link (Right Aligned) */}
-            <div className="flex flex-col items-center lg:items-end text-center lg:text-right">
+            {/* Bottom Description & Link (Left Aligned) */}
+            <div className="flex flex-col items-start text-left">
               <p className="font-inter text-[#555555] text-base md:text-lg leading-[1.7] max-w-lg mb-8 md:mb-10">
                 Get inspired with our latest stories, design tips, and expert advice. From styling your space to learning about the latest trends, our blog has everything you need to elevate your home. Dive in and explore our curated ideas for every space!
               </p>

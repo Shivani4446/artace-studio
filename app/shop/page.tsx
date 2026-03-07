@@ -312,18 +312,60 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   return Array.isArray(payload) ? payload : [];
 };
 
-const ShopPage = async () => {
+type ShopPageProps = {
+  searchParams?: Promise<{ category?: string | string[] }>;
+};
+
+const resolveInitialCategoryName = (
+  products: WooStoreProduct[],
+  rawCategorySlug: string | null
+) => {
+  if (!rawCategorySlug) return null;
+
+  const normalizedSlug = rawCategorySlug.trim().toLowerCase();
+  if (!normalizedSlug) return null;
+
+  for (const product of products) {
+    for (const category of product.categories) {
+      if (category.slug.trim().toLowerCase() === normalizedSlug) {
+        return decodeHtmlEntities(category.name);
+      }
+    }
+  }
+
+  return null;
+};
+
+const ShopPage = async ({ searchParams }: ShopPageProps) => {
   let products: ShopProduct[] = [];
   let loadError: string | null = null;
+  let initialSelectedCategory: string | null = null;
+
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const rawCategoryParam = resolvedSearchParams?.category;
+  const categorySlug =
+    typeof rawCategoryParam === "string"
+      ? rawCategoryParam
+      : Array.isArray(rawCategoryParam)
+        ? rawCategoryParam[0] || null
+        : null;
 
   try {
     const storeProducts = await getStoreProducts();
     products = normalizeProducts(storeProducts);
+    initialSelectedCategory = resolveInitialCategoryName(storeProducts, categorySlug);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Unable to load products.";
   }
 
-  return <ShopCatalog products={products} loadError={loadError} />;
+  return (
+    <ShopCatalog
+      key={initialSelectedCategory || "all-products"}
+      products={products}
+      loadError={loadError}
+      initialSelectedCategory={initialSelectedCategory}
+    />
+  );
 };
 
 export default ShopPage;

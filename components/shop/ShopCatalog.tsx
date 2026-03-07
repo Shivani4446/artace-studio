@@ -10,6 +10,7 @@ import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 type ShopCatalogProps = {
   products: ShopProduct[];
   loadError?: string | null;
+  initialSelectedCategory?: string | null;
 };
 
 type SortById =
@@ -210,8 +211,14 @@ const FilterChipGroup = ({
   );
 };
 
-const ShopCatalog = ({ products, loadError = null }: ShopCatalogProps) => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+const ShopCatalog = ({
+  products,
+  loadError = null,
+  initialSelectedCategory = null,
+}: ShopCatalogProps) => {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
+    initialSelectedCategory ? [initialSelectedCategory] : []
+  );
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<SizeBucket[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);

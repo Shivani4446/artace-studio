@@ -42,9 +42,9 @@ const SingleBlogHero = ({ post }: Props) => {
     <section
       className={`bg-[#FAF9F6] py-24 ${playfair.variable} ${inter.variable}`}
     >
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <h1
-          className="font-playfair text-4xl md:text-5xl mb-6"
+          className="font-playfair text-[52px] mb-6"
           dangerouslySetInnerHTML={{ __html: decodedTitleHtml }}
         />
 

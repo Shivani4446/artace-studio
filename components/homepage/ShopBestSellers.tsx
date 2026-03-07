@@ -1,72 +1,187 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Playfair_Display, Inter } from 'next/font/google';
-import { ArrowRight } from 'lucide-react';
-import AddToCartButton from '@/components/cart/AddToCartButton';
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Playfair_Display, Inter } from "next/font/google";
+import { ArrowRight } from "lucide-react";
+import AddToCartButton from "@/components/cart/AddToCartButton";
+import { decodeHtmlEntities } from "@/utils/text";
 
 // Font Configuration
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-playfair'
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-playfair",
 });
 
 const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500'], 
-  variable: '--font-inter'
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-inter",
 });
 
-// Product Data
-const products = [
-  {
-    id: 1,
-    title: "Moments of Inner Peace",
-    sizes: "4 Sizes",
-    image: "/product-1.webp",
-    alt: "Classic oil painting of sheep in a pastoral landscape",
-    href: "/shop"
-  },
-  {
-    id: 2,
-    title: "Land, Light & Life",
-    sizes: "5 Sizes",
-    image: "/product-2.webp",
-    alt: "Watercolor painting of a classic English cottage",
-    href: "/shop"
-  },
-  {
-    id: 3,
-    title: "Energies of Color & Space",
-    sizes: "2 Sizes",
-    image: "/product-3.webp",
-    alt: "Impressionist coastal painting with flowers",
-    href: "/shop"
-  },
-  {
-    id: 4,
-    title: "Sacred Art of Ganesh",
-    sizes: "1 Sizes",
-    image: "/product-4.webp",
-    alt: "Sunlit autumn forest painting",
-    href: "/shop"
-  }
-];
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
+const FEATURED_PRODUCTS_LIMIT = 4;
 
-const ShopBestsellers = () => {
+type WooStorePrices = {
+  currency_code: string;
+  currency_symbol: string;
+  currency_minor_unit: number;
+  price: string;
+  regular_price: string;
+  sale_price: string;
+};
+
+type WooStoreImage = {
+  id: number;
+  src: string;
+  alt?: string;
+  thumbnail?: string;
+};
+
+type WooStoreCategory = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
+type WooStoreAttributeTerm = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
+type WooStoreAttribute = {
+  id: number;
+  name: string;
+  terms?: WooStoreAttributeTerm[];
+  options?: string[];
+};
+
+type WooStoreProduct = {
+  id: number;
+  slug: string;
+  name: string;
+  images: WooStoreImage[];
+  categories: WooStoreCategory[];
+  attributes?: WooStoreAttribute[];
+  prices: WooStorePrices;
+};
+
+type FeaturedProductCard = {
+  id: number;
+  slug: string;
+  title: string;
+  sizesLabel: string;
+  image: string;
+  alt: string;
+  categoryLabel: string;
+  subtitle: string;
+  price: number | null;
+};
+
+const parseMinorUnitPrice = (
+  rawValue: string | undefined,
+  minorUnit: number
+): number | null => {
+  if (!rawValue) return null;
+  const numericValue = Number(rawValue);
+  if (Number.isNaN(numericValue)) return null;
+  return numericValue / 10 ** minorUnit;
+};
+
+const getAttributeOptions = (attribute: WooStoreAttribute) => {
+  const optionsFromList = attribute.options ?? [];
+  const optionsFromTerms = (attribute.terms ?? []).map((term) => term.name);
+  return Array.from(
+    new Set(
+      [...optionsFromList, ...optionsFromTerms]
+        .map((value) => decodeHtmlEntities(value).trim())
+        .filter(Boolean)
+    )
+  );
+};
+
+const getSizesLabel = (attributes: WooStoreAttribute[] | undefined) => {
+  const sizeOptions = (attributes ?? [])
+    .filter((attribute) => /size|dimension/i.test(attribute.name))
+    .flatMap(getAttributeOptions);
+
+  const uniqueSizeOptions = Array.from(new Set(sizeOptions));
+  if (uniqueSizeOptions.length === 0) return "Custom Sizes";
+  return `${uniqueSizeOptions.length} Size${uniqueSizeOptions.length === 1 ? "" : "s"}`;
+};
+
+const normalizeFeaturedProducts = (
+  products: WooStoreProduct[]
+): FeaturedProductCard[] => {
+  return products.slice(0, FEATURED_PRODUCTS_LIMIT).map((product) => {
+    const minorUnit = product.prices?.currency_minor_unit ?? 2;
+    const primaryImage = product.images?.[0];
+    const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
+    const title = decodeHtmlEntities(product.name);
+    const categoryLabel = decodeHtmlEntities(
+      product.categories?.[0]?.name || "Handmade Painting"
+    );
+    const sizesLabel = getSizesLabel(product.attributes);
+    const subtitle = `Handmade Painting | ${sizesLabel} | Acrylic Colors on Canvas`;
+
+    return {
+      id: product.id,
+      slug: product.slug,
+      title,
+      sizesLabel,
+      image: imageUrl,
+      alt: decodeHtmlEntities(primaryImage?.alt || title),
+      categoryLabel,
+      subtitle,
+      price: parseMinorUnitPrice(product.prices?.price, minorUnit),
+    };
+  });
+};
+
+const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
+  try {
+    const apiBaseUrl =
+      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
+    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+
+    const response = await fetch(
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}`,
+      {
+        next: { revalidate: 120 },
+      }
+    );
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const payload = (await response.json()) as WooStoreProduct[];
+    if (!Array.isArray(payload)) return [];
+
+    return normalizeFeaturedProducts(payload);
+  } catch {
+    return [];
+  }
+};
+
+const ShopBestsellers = async () => {
+  const products = await getFeaturedProducts();
+
   return (
-    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}>
+    <section
+      className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}
+    >
       <div className="max-w-[1440px] mx-auto">
-        
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 md:mb-14 gap-4">
           <h2 className="font-playfair text-3xl md:text-5xl text-[#2C2C2C] uppercase tracking-wide">
             Shop Bestsellers
           </h2>
-          
-          <Link 
-            href="/shop" 
+
+          <Link
+            href="/shop"
             className="group flex items-center gap-2 font-inter text-[#4A4846] text-sm font-medium border-b border-[#4A4846] pb-0.5 hover:text-black hover:border-black transition-colors"
           >
             SHOP ALL
@@ -76,39 +191,44 @@ const ShopBestsellers = () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {products.map((product) => (
-            <article key={product.id} className="group relative flex flex-col">
-              <Link
-                href={product.href}
-                aria-label={`Open ${product.title}`}
-                className="absolute inset-0 z-10"
-              />
+          {products.length === 0 ? (
+            <p className="font-inter col-span-full text-sm text-[#666666]">
+              No featured products available right now.
+            </p>
+          ) : (
+            products.map((product) => (
+              <article key={product.id} className="group relative flex flex-col">
+                <Link
+                  href={`/shop/${product.slug}`}
+                  aria-label={`Open ${product.title}`}
+                  className="absolute inset-0 z-10"
+                />
 
-              <div className="relative z-0">
-                {/* Image Container */}
-                <div className="relative mb-4 w-full aspect-square overflow-hidden rounded-[12px] bg-gray-200">
-                  <Image
-                    src={product.image}
-                    alt={product.alt}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                </div>
+                <div className="relative z-0">
+                  {/* Image Container */}
+                  <div className="relative mb-4 w-full aspect-square overflow-hidden rounded-[12px] bg-gray-200">
+                    <Image
+                      src={product.image}
+                      alt={product.alt}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  </div>
 
-                {/* Product Info */}
-                <div className="flex flex-col gap-1">
-                  <p className="font-inter text-[14px] text-[#666666]">
-                    Handmade Painting
-                  </p>
-                  <h3 className="font-playfair text-[18px] text-[#2C2C2C] leading-snug">
-                    {product.title}
-                  </h3>
-                  <p className="font-inter text-[14px] text-[#666666]">
-                    Handmade Painting | {product.sizes} | Acrylic Colors on Canvas
-                  </p>
+                  {/* Product Info */}
+                  <div className="flex flex-col gap-1">
+                    <p className="font-inter text-[14px] text-[#666666]">
+                      {product.categoryLabel}
+                    </p>
+                    <h3 className="font-playfair text-[18px] text-[#2C2C2C] leading-snug">
+                      {product.title}
+                    </h3>
+                    <p className="font-inter text-[14px] text-[#666666]">
+                      {product.subtitle}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
               <div className="relative z-20 mt-4 translate-y-1 opacity-0 transition-all duration-300 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto">
                 <AddToCartButton
@@ -123,7 +243,6 @@ const ShopBestsellers = () => {
             </article>
           ))}
         </div>
-
       </div>
     </section>
   );

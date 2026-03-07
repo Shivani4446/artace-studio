@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import SingleBlogHero from "@/components/singleblog/SingleBlogHero";
-import SingleBlogContent from "@/components/singleblog/SingleBlogContent";
-import SingleBlogAuthor from "@/components/singleblog/SingleBlogAuthor";
-import SingleBlogRelated from "@/components/singleblog/SingleBlogRelated";
+import ArticleLayout from "@/components/article/ArticleLayout";
+import {
+  estimateReadTimeMinutes,
+  formatArticleDate,
+  htmlToArticleContent,
+} from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 type Props = {
@@ -17,6 +19,15 @@ async function getPost(slug: string) {
 
   const data = await res.json();
   return data[0];
+}
+
+async function getAuthor(authorId: number) {
+  const res = await fetch(
+    `https://artacestudio.com/wp-json/wp/v2/users/${authorId}`,
+    { next: { revalidate: 60 } },
+  );
+
+  return res.json();
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -36,13 +47,33 @@ const SingleBlogPage = async ({ params }: Props) => {
   const post = await getPost(slug);
 
   if (!post) return <div>Post not found</div>;
+  const titleHtml = decodeHtmlEntities(post.title?.rendered ?? "");
+  const introHtml = decodeHtmlEntities(post.excerpt?.rendered ?? "");
+  const decodedContent = decodeHtmlEntities(post.content?.rendered ?? "");
+  const { html: contentHtml, toc } = htmlToArticleContent(decodedContent);
+  const readTimeMinutes = estimateReadTimeMinutes(decodedContent);
+  const formattedDate = formatArticleDate(post.modified);
+
+  // Fetch author data if available
+  let author = null;
+  if (post._embedded?.author?.[0]) {
+    author = post._embedded.author[0];
+  } else if (post.author) {
+    author = await getAuthor(post.author);
+  }
 
   return (
-    <main className="px-6 py-16 md:px-12 lg:px-24">
-      <SingleBlogHero post={post} />
-      <SingleBlogContent content={decodeHtmlEntities(post.content.rendered)} />
-      <SingleBlogAuthor post={post} />
-      <SingleBlogRelated currentPostId={post.id} />
+    <main>
+      <ArticleLayout
+        eyebrow="Our Philosophy: A Commitment to Creation"
+        titleHtml={titleHtml}
+        introHtml={introHtml}
+        lastUpdated={formattedDate}
+        readTimeMinutes={readTimeMinutes}
+        toc={toc}
+        contentHtml={contentHtml}
+        author={author}
+      />
     </main>
   );
 };

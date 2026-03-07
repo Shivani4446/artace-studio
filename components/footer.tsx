@@ -25,10 +25,10 @@ const footerSections: FooterSection[] = [
   {
     title: "Shop",
     links: [
-      { label: "Shop", href: "#" },
+      { label: "Shop", href: "/shop" },
       { label: "My Account", href: "#" },
       { label: "Orders", href: "#" },
-      { label: "Cart", href: "#" },
+      { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "#" },
       { label: "Wishlist", href: "#" },
     ],
@@ -46,10 +46,10 @@ const footerSections: FooterSection[] = [
     title: "Support",
     links: [
       { label: "Contact Us", href: "/contact-us" },
-      { label: "Return Policy", href: "#" },
-      { label: "Cancellation Policy", href: "#" },
-      { label: "Privacy Policy", href: "#" },
-      { label: "Term of Use", href: "#" },
+      { label: "Return Policy", href: "/return-policy" },
+      { label: "Cancellation Policy", href: "/cancellation-policy" },
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Use", href: "/terms-of-use" },
     ],
   },
 ];

@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 
 type CheckoutFormState = {
@@ -159,14 +159,16 @@ const CartPage = () => {
   if (items.length === 0) {
     return (
       <main className="mx-auto flex min-h-[70vh] w-full max-w-[1440px] flex-col items-center justify-center px-6 py-20 text-center md:px-12">
-        <h1 className="font-display text-5xl text-[#222]">Your Cart Is Empty</h1>
-        <p className="mt-4 max-w-xl text-[#666]">
-          You have not added anything yet. Browse our collections and add your
-          favorites.
+        <div className="mb-6 rounded-full bg-[#F5F5F5] p-6">
+          <ShoppingBag className="h-12 w-12 text-[#666]" />
+        </div>
+        <h1 className="font-display text-4xl md:text-5xl text-[#222]">Your Cart Is Empty</h1>
+        <p className="mt-4 max-w-xl text-lg text-[#666]">
+          You have not added anything yet. Browse our collections and add your favorites.
         </p>
         <Link
-          href="/"
-          className="mt-8 inline-flex items-center gap-2 border border-[#222] px-6 py-3 text-sm font-medium uppercase tracking-[0.05em] text-[#222] transition-colors hover:bg-[#222] hover:text-white"
+          href="/shop"
+          className="mt-8 inline-flex items-center gap-2 bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Continue Shopping
@@ -175,27 +177,39 @@ const CartPage = () => {
     );
   }
 
+  // Calculate prices
+  const shipping = subtotal > 500 ? 0 : 50;
+  const sgst = subtotal * 0.025; // 2.5% SGST
+  const cgst = subtotal * 0.025; // 2.5% CGST
+  const tax = sgst + cgst; // Total 5%
+  const total = subtotal + shipping + tax;
+
   return (
-    <main className="mx-auto w-full max-w-[1440px] px-6 py-14 md:px-12 md:py-20">
+    <main className="mx-auto w-full max-w-[1440px] px-6 py-12 md:px-12 md:py-16">
+      {/* Header */}
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-[#666]">Cart</p>
-          <h1 className="mt-2 font-display text-5xl text-[#222]">Your Items</h1>
+          <h1 className="mt-2 font-display text-4xl md:text-5xl text-[#222]">Shopping Cart</h1>
+          <p className="mt-2 text-[#666]">{itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart</p>
         </div>
         <button
           type="button"
           onClick={clearCart}
-          className="text-xs font-semibold uppercase tracking-[0.06em] text-[#555] underline underline-offset-4 hover:text-[#111]"
+          className="text-sm font-medium text-[#666] underline underline-offset-4 hover:text-[#111]"
         >
           Clear Cart
         </button>
       </div>
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_340px]">
-        <ul className="divide-y divide-[#1f1f1f]/10 border-y border-[#1f1f1f]/10">
+      {/* Main Content */}
+      <div className="grid gap-10 lg:grid-cols-[1fr_400px]">
+        {/* Left Column - Products */}
+        <div className="space-y-6">
           {items.map((item) => (
-            <li key={item.id} className="flex flex-col gap-5 py-6 sm:flex-row">
-              <div className="relative h-36 w-28 shrink-0 overflow-hidden bg-[#f3f3f3]">
+            <div key={item.id} className="flex gap-6 border-b border-[#E5E5E5] pb-6">
+              {/* Product Image */}
+              <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-lg bg-[#F5F5F5]">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -205,68 +219,117 @@ const CartPage = () => {
                 />
               </div>
 
+              {/* Product Details */}
               <div className="flex flex-1 flex-col justify-between">
                 <div>
-                  <h2 className="font-display text-[28px] leading-tight text-[#222]">
+                  <h2 className="font-display text-xl text-[#222]">
                     {item.title}
                   </h2>
                   {item.subtitle && (
-                    <p className="mt-2 text-sm uppercase tracking-[0.06em] text-[#666]">
+                    <p className="mt-1 text-sm text-[#666]">
                       {item.subtitle}
                     </p>
                   )}
+                  <p className="mt-2 font-medium text-[#222]">
+                    ₹{item.price?.toLocaleString("en-IN")}
+                  </p>
                 </div>
 
-                <div className="mt-5 flex flex-wrap items-center gap-4">
-                  <div className="flex items-center border border-[#222]/20">
+                <div className="mt-4 flex items-center justify-between">
+                  {/* Quantity Selector */}
+                  <div className="flex items-center border border-[#E5E5E5]">
                     <button
                       type="button"
                       onClick={() => decrementItem(item.id)}
-                      className="px-3 py-2 hover:bg-[#f3f3f3]"
+                      className="px-3 py-2 hover:bg-[#F5F5F5] transition-colors"
                       aria-label={`Decrease quantity of ${item.title}`}
                     >
                       <Minus className="h-4 w-4" />
                     </button>
-                    <span className="w-10 text-center text-sm font-semibold">
+                    <span className="w-12 text-center text-sm font-medium">
                       {item.quantity}
                     </span>
                     <button
                       type="button"
                       onClick={() => incrementItem(item.id)}
-                      className="px-3 py-2 hover:bg-[#f3f3f3]"
+                      className="px-3 py-2 hover:bg-[#F5F5F5] transition-colors"
                       aria-label={`Increase quantity of ${item.title}`}
                     >
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
 
+                  {/* Remove Button */}
                   <button
                     type="button"
                     onClick={() => removeItem(item.id)}
-                    className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.06em] text-[#666] hover:text-[#111]"
+                    className="flex items-center gap-1 text-sm text-[#666] hover:text-[#222] transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                     Remove
                   </button>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
 
-        <aside className="h-fit border border-[#1f1f1f]/10 bg-white p-6">
-          <h3 className="font-display text-3xl text-[#222]">Summary</h3>
-          <div className="mt-6 space-y-3 text-sm text-[#555]">
-            <div className="flex items-center justify-between">
-              <span>Total Items</span>
-              <span className="font-semibold text-[#222]">{itemCount}</span>
+              {/* Item Total */}
+              <div className="text-right">
+                <p className="font-display text-xl text-[#222]">
+                  ₹{((item.price || 0) * item.quantity).toLocaleString("en-IN")}
+                </p>
+              </div>
             </div>
-            {subtotal > 0 && (
+          ))}
+
+          {/* Continue Shopping Link */}
+          <Link
+            href="/shop"
+            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#666] hover:text-[#222] transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Continue Shopping
+          </Link>
+        </div>
+
+        {/* Right Column - Order Summary */}
+        <aside className="h-fit rounded-2xl bg-[#FAF9F6] p-8">
+          <h3 className="font-display text-2xl text-[#222]">Order Summary</h3>
+          
+          <div className="mt-6 space-y-4">
+            {/* Subtotal */}
+            <div className="flex items-center justify-between">
+              <span className="text-[#666]">Subtotal</span>
+              <span className="font-medium text-[#222]">₹{subtotal.toLocaleString("en-IN")}</span>
+            </div>
+            
+            {/* Shipping */}
+            <div className="flex items-center justify-between">
+              <span className="text-[#666]">Shipping</span>
+              <span className="font-medium text-[#222]">
+                {shipping === 0 ? (
+                  <span className="text-green-600">Free</span>
+                ) : (
+                  `₹${shipping}`
+                )}
+              </span>
+            </div>
+            
+            {/* SGST */}
+            <div className="flex items-center justify-between">
+              <span className="text-[#666]">SGST (2.5%)</span>
+              <span className="font-medium text-[#222]">₹{sgst.toLocaleString("en-IN")}</span>
+            </div>
+
+            {/* CGST */}
+            <div className="flex items-center justify-between">
+              <span className="text-[#666]">CGST (2.5%)</span>
+              <span className="font-medium text-[#222]">₹{cgst.toLocaleString("en-IN")}</span>
+            </div>
+            
+            {/* Divider */}
+            <div className="border-t border-[#E5E5E5] pt-4">
               <div className="flex items-center justify-between">
-                <span>Subtotal</span>
-                <span className="font-semibold text-[#222]">
-                  ${subtotal.toFixed(2)}
-                </span>
+                <span className="font-display text-lg text-[#222]">Total</span>
+                <span className="font-display text-xl text-[#222]">₹{total.toLocaleString("en-IN")}</span>
               </div>
             )}
           </div>
@@ -371,6 +434,13 @@ const CartPage = () => {
           >
             {isSubmitting ? "Placing Order..." : "Place Order"}
           </button>
+
+          {/* Free Shipping Notice */}
+          {subtotal < 500 && (
+            <p className="mt-4 text-center text-sm text-[#666]">
+              Add ₹{(500 - subtotal).toLocaleString("en-IN")} more for free shipping
+            </p>
+          )}
         </aside>
       </div>
     </main>
@@ -378,4 +448,3 @@ const CartPage = () => {
 };
 
 export default CartPage;
-
