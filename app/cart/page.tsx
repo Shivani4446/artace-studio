@@ -86,11 +86,18 @@ const CartPage = () => {
             item.woocommerceProductId
           );
           if (!productId) return null;
-          return {
+          const checkoutLineItem: {
+            productId: number;
+            variationId?: number;
+            quantity: number;
+          } = {
             productId,
-            variationId: item.woocommerceVariationId,
             quantity: item.quantity,
           };
+          if (typeof item.woocommerceVariationId === "number") {
+            checkoutLineItem.variationId = item.woocommerceVariationId;
+          }
+          return checkoutLineItem;
         })
         .filter(
           (
@@ -99,7 +106,7 @@ const CartPage = () => {
             productId: number;
             variationId?: number;
             quantity: number;
-          } => Boolean(lineItem)
+          } => lineItem !== null
         );
 
       if (lineItems.length === 0) {
@@ -331,7 +338,7 @@ const CartPage = () => {
                 <span className="font-display text-lg text-[#222]">Total</span>
                 <span className="font-display text-xl text-[#222]">₹{total.toLocaleString("en-IN")}</span>
               </div>
-            )}
+            </div>
           </div>
 
           <div className="mt-8 space-y-3">

@@ -98,6 +98,7 @@ const renderStars = (rating: number, keyPrefix: string) => {
 };
 
 const Testimonials = () => {
+  const [isMounted, setIsMounted] = useState(false);
   const [cardsPerSlide, setCardsPerSlide] = useState(1);
   const [activeSlide, setActiveSlide] = useState(0);
   const trustpilotWidgetRef = useRef<HTMLDivElement>(null);
@@ -129,6 +130,18 @@ const Testimonials = () => {
   }, []);
 
   useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const trustpilotApi = (
       window as Window & {
         Trustpilot?: { loadFromElement?: (element: HTMLElement, forceReload: boolean) => void };
@@ -138,7 +151,7 @@ const Testimonials = () => {
     if (trustpilotApi?.loadFromElement && trustpilotWidgetRef.current) {
       trustpilotApi.loadFromElement(trustpilotWidgetRef.current, true);
     }
-  }, []);
+  }, [isMounted]);
 
   const goToPrevious = () => {
     if (!isSliderActive) return;
@@ -168,24 +181,28 @@ const Testimonials = () => {
 
           <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
             <div className="min-w-[250px] max-w-[300px]">
-              <div
-                ref={trustpilotWidgetRef}
-                className="trustpilot-widget"
-                data-locale="en-US"
-                data-template-id="56278e9abfbbba0bdcd568bc"
-                data-businessunit-id="66093cb3c75da0cae6905fa5"
-                data-style-height="52px"
-                data-style-width="100%"
-                data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
-              >
-                <a
-                  href="https://www.trustpilot.com/review/artacestudio.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {isMounted ? (
+                <div
+                  ref={trustpilotWidgetRef}
+                  className="trustpilot-widget"
+                  data-locale="en-US"
+                  data-template-id="56278e9abfbbba0bdcd568bc"
+                  data-businessunit-id="66093cb3c75da0cae6905fa5"
+                  data-style-height="52px"
+                  data-style-width="100%"
+                  data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
                 >
-                  Trustpilot
-                </a>
-              </div>
+                  <a
+                    href="https://www.trustpilot.com/review/artacestudio.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Trustpilot
+                  </a>
+                </div>
+              ) : (
+                <div className="h-[52px] w-full" aria-hidden="true" />
+              )}
             </div>
 
             <Link

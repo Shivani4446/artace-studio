@@ -26,8 +26,8 @@ const footerSections: FooterSection[] = [
     title: "Shop",
     links: [
       { label: "Shop", href: "/shop" },
-      { label: "My Account", href: "#" },
-      { label: "Orders", href: "#" },
+      { label: "My Account", href: "/dashboard/login" },
+      { label: "Orders", href: "/dashboard/orders" },
       { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "#" },
       { label: "Wishlist", href: "#" },
@@ -60,7 +60,11 @@ export default function Footer() {
       <div className="relative z-10 mx-auto max-w-[1440px] px-6 pb-32 pt-16 md:px-12 md:pt-20 lg:pb-36">
         <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.55fr_1fr_1fr_1fr_1fr]">
           <div className="lg:pr-8">
-            <Link href="/" aria-label="Artace Studio home" className="inline-block">
+            <Link
+              href="/"
+              aria-label="Artace Studio home"
+              className="inline-block"
+            >
               <Image
                 src="/Artace-logo.svg"
                 alt="Artace Studio logo"

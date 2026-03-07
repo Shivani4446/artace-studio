@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
 
@@ -148,6 +150,11 @@ export async function POST(request: Request) {
 
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
+  const cookieStore = await cookies();
+  const customerToken = cookieStore.get("wp_jwt")?.value || "";
+  const authenticatedCustomer = customerToken
+    ? await getWordPressUserFromToken(customerToken)
+    : null;
 
   const payload = {
     payment_method: paymentMethod,
@@ -177,6 +184,7 @@ export async function POST(request: Request) {
     },
     line_items: normalizedLineItems,
     customer_note: sanitizeText(body.customerNote),
+    ...(authenticatedCustomer?.id ? { customer_id: authenticatedCustomer.id } : {}),
   };
 
   const basicToken = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
