@@ -11,19 +11,40 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-async function getPost(slug: string) {
-  const res = await fetch(
-    `https://artacestudio.com/wp-json/wp/v2/posts?slug=${slug}&_embed`,
-    { next: { revalidate: 60 } },
-  );
+type WordPressPost = {
+  slug: string;
+  title?: { rendered?: string };
+  excerpt?: { rendered?: string };
+  content?: { rendered?: string };
+  modified?: string;
+  author?: number;
+  _embedded?: {
+    author?: Array<Record<string, unknown>>;
+  };
+};
 
-  const data = await res.json();
-  return data[0];
+const getSiteUrl = () =>
+  (process.env.WOOCOMMERCE_SITE_URL || "https://artacestudio.com").replace(/\/+$/, "");
+
+async function getPost(slug: string): Promise<WordPressPost | null> {
+  const siteUrl = getSiteUrl();
+  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
+  const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
+
+  try {
+    const res = await fetch(endpoint, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = (await res.json()) as WordPressPost[];
+    return data[0] || null;
+  } catch {
+    return null;
+  }
 }
 
 async function getAuthor(authorId: number) {
+  const siteUrl = getSiteUrl();
   const res = await fetch(
-    `https://artacestudio.com/wp-json/wp/v2/users/${authorId}`,
+    `${siteUrl}/wp-json/wp/v2/users/${authorId}`,
     { next: { revalidate: 60 } },
   );
 

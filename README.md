@@ -36,18 +36,6 @@ Notes:
 - `WOOCOMMERCE_CONSUMER_KEY` and `WOOCOMMERCE_CONSUMER_SECRET` must be server-side only.
 - `WOOCOMMERCE_PAYMENT_METHOD` should match an enabled WooCommerce gateway ID (`cod`, `bacs`, etc.).
 
-## Customer Login + Order History
-
-To allow users to login in Next.js with their WordPress account and view order history at `/dashboard/orders`, set:
-
-```bash
-WORDPRESS_JWT_AUTH_URL=https://artacestudio.com/wp-json/jwt-auth/v1/token
-```
-
-Notes:
-- This requires a WordPress JWT auth plugin endpoint at `/wp-json/jwt-auth/v1/token`.
-- Orders shown in Next.js are fetched from WooCommerce for the logged-in WordPress customer.
-
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

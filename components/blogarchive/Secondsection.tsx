@@ -67,6 +67,7 @@ const Favorites2026 = () => {
                 src="https://images.unsplash.com/photo-1448375240586-dfd8f3793371?q=80&w=2670&auto=format&fit=crop"
                 alt="Sunlit forest in autumn"
                 fill
+                unoptimized
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
@@ -95,6 +96,7 @@ const Favorites2026 = () => {
                     src={item.image}
                     alt={item.alt}
                     fill
+                    unoptimized
                     className="object-cover"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   />

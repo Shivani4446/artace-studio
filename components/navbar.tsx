@@ -219,21 +219,6 @@ const Navbar = () => {
               )}
             </button>
 
-            <div className="hidden lg:flex items-center gap-2">
-              <Link
-                href="/dashboard/login"
-                className="border border-[#222] px-3 py-2 text-xs font-semibold uppercase tracking-[0.05em] text-[#222] transition-colors hover:bg-[#222] hover:text-white"
-              >
-                Login
-              </Link>
-              <Link
-                href="/dashboard/signup"
-                className="bg-[#222] px-3 py-2 text-xs font-semibold uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
-              >
-                Sign Up
-              </Link>
-            </div>
-
             {/* Mobile Menu Button */}
             <button
               className="lg:hidden p-2 text-[#333333]"
@@ -321,22 +306,6 @@ const Navbar = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <Link
-                href="/dashboard/login"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="border border-[#222] px-4 py-3 text-center text-sm font-medium text-[#222] transition-colors hover:bg-[#222] hover:text-white"
-              >
-                Login
-              </Link>
-              <Link
-                href="/dashboard/signup"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="bg-[#222] px-4 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-black"
-              >
-                Sign Up
-              </Link>
-            </div>
           </div>
         )}
       </nav>

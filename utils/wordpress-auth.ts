@@ -34,16 +34,19 @@ const extractUserFromJwt = (token: string): Partial<WordPressAuthUser> => {
     if (parts.length < 2) return {};
     const payloadRaw = decodeBase64Url(parts[1]);
     const payload = JSON.parse(payloadRaw) as Record<string, unknown>;
+    const data =
+      payload.data && typeof payload.data === "object"
+        ? (payload.data as Record<string, unknown>)
+        : null;
+    const user =
+      data?.user && typeof data.user === "object"
+        ? (data.user as Record<string, unknown>)
+        : null;
+
     return {
-      id: safeId(payload?.data ? (payload.data as Record<string, unknown>).user?.id : 0),
-      email: safeText(
-        payload?.data ? (payload.data as Record<string, unknown>).user?.email : ""
-      ),
-      username: safeText(
-        payload?.data
-          ? (payload.data as Record<string, unknown>).user?.user_login
-          : ""
-      ),
+      id: safeId(user?.id),
+      email: safeText(user?.email),
+      username: safeText(user?.user_login),
     };
   } catch {
     return {};
