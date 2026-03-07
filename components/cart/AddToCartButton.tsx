@@ -6,6 +6,8 @@ import { useCart } from "@/components/cart/CartProvider";
 
 type AddToCartButtonProps = {
   id: number | string;
+  woocommerceProductId?: number;
+  woocommerceVariationId?: number;
   title: string;
   image: string;
   subtitle?: string;
@@ -15,6 +17,8 @@ type AddToCartButtonProps = {
 
 const AddToCartButton = ({
   id,
+  woocommerceProductId,
+  woocommerceVariationId,
   title,
   image,
   subtitle,
@@ -29,6 +33,8 @@ const AddToCartButton = ({
       onClick={() =>
         addItem({
           id,
+          woocommerceProductId,
+          woocommerceVariationId,
           title,
           image,
           subtitle,

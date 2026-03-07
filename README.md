@@ -20,6 +20,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## WooCommerce Checkout Env
+
+To create WooCommerce orders from Next.js (`POST /api/checkout`), set:
+
+```bash
+WOOCOMMERCE_SITE_URL=https://artacestudio.com
+WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+WOOCOMMERCE_PAYMENT_METHOD=bacs
+WOOCOMMERCE_PAYMENT_METHOD_TITLE=Direct Bank Transfer
+```
+
+Notes:
+- `WOOCOMMERCE_CONSUMER_KEY` and `WOOCOMMERCE_CONSUMER_SECRET` must be server-side only.
+- `WOOCOMMERCE_PAYMENT_METHOD` should match an enabled WooCommerce gateway ID (`cod`, `bacs`, etc.).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

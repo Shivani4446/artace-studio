@@ -113,6 +113,7 @@ const ShopBestsellers = () => {
               <div className="relative z-20 mt-4 translate-y-1 opacity-0 transition-all duration-300 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto">
                 <AddToCartButton
                   id={product.id}
+                  woocommerceProductId={product.id}
                   title={product.title}
                   image={product.image}
                   subtitle={`Handmade Painting | ${product.sizes} | Acrylic Colors on Canvas`}

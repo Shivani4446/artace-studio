@@ -433,6 +433,7 @@ const SingleProduct = ({
     addItem(
       {
         id: `${product.id}-${selectedSizeValue || "default"}`,
+        woocommerceProductId: product.id,
         title: stripHtml(product.name),
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,

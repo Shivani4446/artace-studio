@@ -1,14 +1,160 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 
+type CheckoutFormState = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
+  customerNote: string;
+};
+
+const INITIAL_FORM: CheckoutFormState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  address1: "",
+  address2: "",
+  city: "",
+  state: "",
+  postcode: "",
+  country: "IN",
+  customerNote: "",
+};
+
+const getCheckoutProductId = (
+  id: number | string,
+  woocommerceProductId?: number
+) => {
+  if (typeof woocommerceProductId === "number" && woocommerceProductId > 0) {
+    return woocommerceProductId;
+  }
+
+  if (typeof id === "number" && id > 0) return id;
+  const parsedFromPrefix = Number(String(id).split("-")[0]);
+  return Number.isFinite(parsedFromPrefix) && parsedFromPrefix > 0
+    ? parsedFromPrefix
+    : null;
+};
+
 const CartPage = () => {
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem, clearCart } =
     useCart();
+  const [form, setForm] = useState<CheckoutFormState>(INITIAL_FORM);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [checkoutSuccess, setCheckoutSuccess] = useState<string | null>(null);
+
+  const hasCheckoutReadyItems = useMemo(
+    () =>
+      items.some((item) =>
+        getCheckoutProductId(item.id, item.woocommerceProductId)
+      ),
+    [items]
+  );
+
+  const handleFieldChange =
+    (field: keyof CheckoutFormState) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((current) => ({ ...current, [field]: event.target.value }));
+    };
+
+  const handleCheckout = async () => {
+    if (isSubmitting) return;
+
+    setCheckoutError(null);
+    setCheckoutSuccess(null);
+    setIsSubmitting(true);
+
+    try {
+      const lineItems = items
+        .map((item) => {
+          const productId = getCheckoutProductId(
+            item.id,
+            item.woocommerceProductId
+          );
+          if (!productId) return null;
+          return {
+            productId,
+            variationId: item.woocommerceVariationId,
+            quantity: item.quantity,
+          };
+        })
+        .filter(
+          (
+            lineItem
+          ): lineItem is {
+            productId: number;
+            variationId?: number;
+            quantity: number;
+          } => Boolean(lineItem)
+        );
+
+      if (lineItems.length === 0) {
+        throw new Error(
+          "No valid WooCommerce products found in your cart. Please re-add items from the Shop page."
+        );
+      }
+
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lineItems,
+          billing: {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            email: form.email,
+            phone: form.phone,
+            address1: form.address1,
+            address2: form.address2,
+            city: form.city,
+            state: form.state,
+            postcode: form.postcode,
+            country: form.country,
+          },
+          customerNote: form.customerNote,
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        success?: boolean;
+        error?: string;
+        orderNumber?: string;
+        paymentUrl?: string | null;
+      };
+
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || "Could not place your order.");
+      }
+
+      const orderLabel = payload.orderNumber ? `#${payload.orderNumber}` : "";
+      setCheckoutSuccess(`Order ${orderLabel} created successfully.`);
+      clearCart();
+
+      if (payload.paymentUrl) {
+        window.location.href = payload.paymentUrl;
+      }
+    } catch (error) {
+      setCheckoutError(
+        error instanceof Error ? error.message : "Checkout failed. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -125,11 +271,105 @@ const CartPage = () => {
             )}
           </div>
 
+          <div className="mt-8 space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="First Name"
+                value={form.firstName}
+                onChange={handleFieldChange("firstName")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+              />
+              <input
+                type="text"
+                placeholder="Last Name"
+                value={form.lastName}
+                onChange={handleFieldChange("lastName")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+              />
+            </div>
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleFieldChange("email")}
+              className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+            />
+            <input
+              type="tel"
+              placeholder="Phone"
+              value={form.phone}
+              onChange={handleFieldChange("phone")}
+              className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+            />
+            <input
+              type="text"
+              placeholder="Address Line 1"
+              value={form.address1}
+              onChange={handleFieldChange("address1")}
+              className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+            />
+            <input
+              type="text"
+              placeholder="Address Line 2 (Optional)"
+              value={form.address2}
+              onChange={handleFieldChange("address2")}
+              className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="City"
+                value={form.city}
+                onChange={handleFieldChange("city")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+              />
+              <input
+                type="text"
+                placeholder="State"
+                value={form.state}
+                onChange={handleFieldChange("state")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="PIN / ZIP"
+                value={form.postcode}
+                onChange={handleFieldChange("postcode")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+              />
+              <input
+                type="text"
+                placeholder="Country Code (IN)"
+                value={form.country}
+                onChange={handleFieldChange("country")}
+                className="w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm uppercase outline-none focus:border-[#1f1f1f]/40"
+              />
+            </div>
+            <textarea
+              placeholder="Order Note (Optional)"
+              value={form.customerNote}
+              onChange={handleFieldChange("customerNote")}
+              className="min-h-[84px] w-full border border-[#1f1f1f]/15 px-3 py-2 text-sm outline-none focus:border-[#1f1f1f]/40"
+            />
+          </div>
+
+          {checkoutError && (
+            <p className="mt-4 text-sm text-[#b42318]">{checkoutError}</p>
+          )}
+          {checkoutSuccess && (
+            <p className="mt-4 text-sm text-[#116329]">{checkoutSuccess}</p>
+          )}
+
           <button
             type="button"
-            className="mt-8 w-full bg-[#222] px-5 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-white transition-colors hover:bg-black"
+            onClick={handleCheckout}
+            disabled={isSubmitting || !hasCheckoutReadyItems}
+            className="mt-8 w-full bg-[#222] px-5 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Proceed to Checkout
+            {isSubmitting ? "Placing Order..." : "Place Order"}
           </button>
         </aside>
       </div>

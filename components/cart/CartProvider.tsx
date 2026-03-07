@@ -11,6 +11,8 @@ import React, {
 
 export type CartProduct = {
   id: number | string;
+  woocommerceProductId?: number;
+  woocommerceVariationId?: number;
   title: string;
   image: string;
   subtitle?: string;
@@ -48,6 +50,10 @@ const parseStoredCart = (value: string | null): CartItem[] => {
         (item) =>
           item &&
           (typeof item.id === "string" || typeof item.id === "number") &&
+          (item.woocommerceProductId === undefined ||
+            typeof item.woocommerceProductId === "number") &&
+          (item.woocommerceVariationId === undefined ||
+            typeof item.woocommerceVariationId === "number") &&
           typeof item.title === "string" &&
           typeof item.image === "string" &&
           typeof item.quantity === "number"

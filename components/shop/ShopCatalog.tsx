@@ -916,6 +916,7 @@ const ShopCatalog = ({ products, loadError = null }: ShopCatalogProps) => {
                             <div className="relative z-20 mt-3 translate-y-1 opacity-0 transition-all duration-300 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto">
                               <AddToCartButton
                                 id={product.id}
+                                woocommerceProductId={product.id}
                                 title={product.name}
                                 image={product.image}
                                 subtitle={paintingMetaLine}
