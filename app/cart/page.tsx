@@ -3,6 +3,7 @@
 import React, { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 
@@ -50,6 +51,7 @@ const getCheckoutProductId = (
 };
 
 const CartPage = () => {
+  const router = useRouter();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem, clearCart } =
     useCart();
   const [form, setForm] = useState<CheckoutFormState>(INITIAL_FORM);
@@ -148,12 +150,11 @@ const CartPage = () => {
       }
 
       const orderLabel = payload.orderNumber ? `#${payload.orderNumber}` : "";
-      setCheckoutSuccess(`Order ${orderLabel} created successfully.`);
+      setCheckoutSuccess(
+        `Order ${orderLabel} created successfully. Your order has been placed in this storefront.`
+      );
       clearCart();
-
-      if (payload.paymentUrl) {
-        window.location.href = payload.paymentUrl;
-      }
+      router.push("/checkout/success");
     } catch (error) {
       setCheckoutError(
         error instanceof Error ? error.message : "Checkout failed. Please try again."
