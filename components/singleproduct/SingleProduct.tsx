@@ -459,6 +459,58 @@ const SingleProduct = ({
     [productInformationItems]
   );
 
+  const aboutPaintingHtml = useMemo(() => {
+    if (!product?.description) return "";
+
+    return product.description
+      .replace(
+        /<div[^>]*class="[^"]*tinv-wraper[^"]*"[^>]*>[\s\S]*?<\/div>/gi,
+        ""
+      )
+      .replace(
+        /<a[^>]*class="[^"]*tinvwl_add_to_wishlist_button[^"]*"[^>]*>[\s\S]*?<\/a>/gi,
+        ""
+      )
+      .replace(
+        /<div[^>]*class="[^"]*tinv-wishlist-clear[^"]*"[^>]*>[\s\S]*?<\/div>/gi,
+        ""
+      )
+      .replace(
+        /<div[^>]*class="[^"]*tinvwl-tooltip[^"]*"[^>]*>[\s\S]*?<\/div>/gi,
+        ""
+      )
+      .replace(/<script[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[\s\S]*?<\/style>/gi, "")
+      .trim();
+  }, [product]);
+
+  const aboutPaintingHighlights = useMemo(() => {
+    if (!product) return [];
+
+    const highlights: string[] = [];
+
+    if (artistName) {
+      highlights.push(`Artist: ${artistName}`);
+    }
+
+    if (product.categories[0]?.name) {
+      highlights.push(`Category: ${product.categories[0].name}`);
+    }
+
+    const mediumAttribute = product.attributes.find((attribute) =>
+      /medium|material|color base|colors?/i.test(attribute.name)
+    );
+    if (mediumAttribute?.options?.[0]) {
+      highlights.push(`${mediumAttribute.name}: ${mediumAttribute.options[0]}`);
+    }
+
+    if (sizeOptions[0]) {
+      highlights.push(`Size: ${sizeOptions[0]}`);
+    }
+
+    return highlights.slice(0, 4);
+  }, [artistName, product, sizeOptions]);
+
   const selectedSizeValue =
     selectedSize && sizeOptions.includes(selectedSize)
       ? selectedSize
@@ -581,7 +633,7 @@ const SingleProduct = ({
     if (!product) return null;
 
     if (activeInfoTab === "About the Painting") {
-      if (!product.description) {
+      if (!aboutPaintingHtml) {
         return (
           <p className="text-[18px] leading-8 text-[#595959]">
             About the painting is currently unavailable.
@@ -590,10 +642,47 @@ const SingleProduct = ({
       }
 
       return (
-        <div
-          className="prose prose-sm max-w-none text-[#4f4b45]"
-          dangerouslySetInnerHTML={{ __html: product.description }}
-        />
+        <div className="space-y-6">
+          <div className="rounded-[12px] border border-[#e4ded4] bg-[#faf8f4] p-5 md:p-6">
+            <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+              About The Painting
+            </p>
+            <h3 className="mt-2 font-display text-[32px] leading-[1.2] text-[#313131]">
+              {stripHtml(product.name)}
+            </h3>
+            <p className="mt-2 text-[17px] leading-7 text-[#595959]">
+              Discover the inspiration, process, and visual story behind this
+              artwork.
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <article className="rounded-[12px] border border-[#e4ded4] bg-white p-5 md:p-6">
+              <div
+                className="prose max-w-none text-[#4f4b45] prose-p:text-[18px] prose-p:leading-8 prose-p:text-[#595959] prose-p:my-0 prose-p:mb-5 prose-headings:font-display prose-headings:text-[#313131] prose-h2:text-[30px] prose-h3:text-[24px] prose-strong:text-[#313131] prose-ul:my-4 prose-li:text-[18px] prose-li:leading-8 prose-li:text-[#595959]"
+                dangerouslySetInnerHTML={{ __html: aboutPaintingHtml }}
+              />
+            </article>
+
+            <aside className="rounded-[12px] border border-[#e4ded4] bg-[#fcfbf8] p-5">
+              <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+                Quick Highlights
+              </p>
+              <ul className="mt-4 space-y-3">
+                {aboutPaintingHighlights.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#313131]" />
+                    <span className="text-[16px] leading-7 text-[#595959]">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 text-[15px] leading-7 text-[#6a655d]">
+                Every piece is handcrafted and carefully quality-checked before
+                dispatch.
+              </p>
+            </aside>
+          </div>
+        </div>
       );
     }
 
