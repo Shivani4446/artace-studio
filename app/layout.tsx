@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
+import Image from "next/image";
+import Link from "next/link";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -53,9 +56,27 @@ export default function RootLayout({
         className={`${inter.variable} ${sentient.variable} antialiased`}
       >
         <CartProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <WishlistProvider>
+            <Navbar />
+            {children}
+            <Footer />
+            <Link
+              href="https://wa.me/9657609102"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat on WhatsApp"
+              className="fixed bottom-5 right-5 z-40 inline-flex transition-transform hover:scale-[1.03] md:bottom-6 md:right-6"
+            >
+              <Image
+                src="/whatsapp-icon.svg"
+                alt=""
+                aria-hidden="true"
+                width={62}
+                height={62}
+                className="h-[62px] w-[62px] object-contain"
+              />
+            </Link>
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

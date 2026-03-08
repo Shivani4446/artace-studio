@@ -14,8 +14,10 @@ import {
   ShieldCheck,
   Star,
   Truck,
+  X,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -258,7 +260,7 @@ const DEFAULT_ADVISOR: AdvisorBlock = {
     "Our free art advisory service pairs you with a knowledgeable curator who will guide you through a seamless, stress-free process to find artwork that fits your style and needs.",
   description: "Complimentary Art Advisory",
   ctaLabel: "Book a Free Call Now",
-  ctaHref: "/contact-us",
+  ctaHref: "https://cal.com/artace-studio",
 };
 
 const stripHtml = (value: string) => stripHtmlAndDecode(value);
@@ -395,6 +397,41 @@ const getDeliveryRangeLabel = (baseDate: Date, fromDays: number, toDays: number)
   return `${formatDeliveryDate(fromDate)} - ${formatDeliveryDate(toDate)}`;
 };
 
+const parseSizeDimensions = (value: string) => {
+  const numericValues = value.match(/\d+(?:\.\d+)?/g);
+  if (!numericValues || numericValues.length < 2) return null;
+
+  const width = Number(numericValues[0]);
+  const height = Number(numericValues[1]);
+  if (!Number.isFinite(width) || !Number.isFinite(height) || height <= 0) {
+    return null;
+  }
+
+  return { width, height };
+};
+
+const inferSizeUnit = (value: string) => {
+  if (/cm|centimeter|centimetre/i.test(value)) return "cm";
+  return "in";
+};
+
+const formatDimensionValue = (value: number) => {
+  if (!Number.isFinite(value) || value <= 0) return "";
+  const rounded = Number(value.toFixed(3));
+  return Number.isInteger(rounded) ? `${rounded}` : `${rounded}`;
+};
+
+const normalizeDimensionInput = (value: string) => {
+  const cleaned = value.replace(/[^0-9.]/g, "");
+  const firstDotIndex = cleaned.indexOf(".");
+  if (firstDotIndex === -1) return cleaned;
+
+  return (
+    cleaned.slice(0, firstDotIndex + 1) +
+    cleaned.slice(firstDotIndex + 1).replace(/\./g, "")
+  );
+};
+
 const SingleProduct = ({
   initialProduct = null,
   relatedProducts = DEFAULT_RELATED_PRODUCTS,
@@ -404,6 +441,7 @@ const SingleProduct = ({
   className = "",
 }: SingleProductProps) => {
   const { addItem } = useCart();
+  const { addItem: addWishlistItem, isInWishlist } = useWishlist();
   const product = useMemo(
     () => normalizeSingleProductData(initialProduct),
     [initialProduct]
@@ -411,8 +449,15 @@ const SingleProduct = ({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
-  const [showWishlistToast, setShowWishlistToast] = useState(false);
+  const [toastState, setToastState] = useState<{
+    message: string;
+    linkHref?: string;
+    linkLabel?: string;
+  } | null>(null);
   const [activeInfoTab, setActiveInfoTab] = useState(TAB_LABELS[0]);
+  const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
+  const [customWidth, setCustomWidth] = useState("");
+  const [customHeight, setCustomHeight] = useState("");
 
   const sizeOptions = useMemo(() => {
     if (!product) return ["16x20", "20x30", "30x40"];
@@ -516,6 +561,80 @@ const SingleProduct = ({
       ? selectedSize
       : (sizeOptions[0] ?? "");
 
+  const wishlistItemId = product
+    ? `${product.id}-${selectedSizeValue || "default"}`
+    : "";
+  const isCurrentSelectionWishlisted = wishlistItemId
+    ? isInWishlist(wishlistItemId)
+    : false;
+
+  const baseSizeDimensions = useMemo(() => {
+    const parsedFromSelected = parseSizeDimensions(selectedSizeValue);
+    if (parsedFromSelected) return parsedFromSelected;
+
+    const parsedFromFirstOption = parseSizeDimensions(sizeOptions[0] ?? "");
+    if (parsedFromFirstOption) return parsedFromFirstOption;
+
+    return { width: 24, height: 36 };
+  }, [selectedSizeValue, sizeOptions]);
+
+  const customSizeUnit = useMemo(
+    () => inferSizeUnit(selectedSizeValue || sizeOptions[0] || ""),
+    [selectedSizeValue, sizeOptions]
+  );
+
+  const baseSizeRatio = useMemo(() => {
+    if (!baseSizeDimensions) return 1;
+    return baseSizeDimensions.width / baseSizeDimensions.height;
+  }, [baseSizeDimensions]);
+
+  const baseSizeArea = useMemo(() => {
+    return baseSizeDimensions.width * baseSizeDimensions.height;
+  }, [baseSizeDimensions]);
+
+  const customWidthNumber = useMemo(() => Number(customWidth), [customWidth]);
+  const customHeightNumber = useMemo(() => Number(customHeight), [customHeight]);
+  const minimumCustomDimension = useMemo(
+    () => (customSizeUnit === "cm" ? 30.48 : 12),
+    [customSizeUnit]
+  );
+  const customSizeInputIsValid = useMemo(() => {
+    if (!Number.isFinite(customWidthNumber) || !Number.isFinite(customHeightNumber)) {
+      return false;
+    }
+
+    return (
+      customWidthNumber >= minimumCustomDimension &&
+      customHeightNumber >= minimumCustomDimension
+    );
+  }, [customHeightNumber, customWidthNumber, minimumCustomDimension]);
+  const customWidthDisplay =
+    customWidth || formatDimensionValue(baseSizeDimensions.width);
+  const customHeightDisplay =
+    customHeight || formatDimensionValue(baseSizeDimensions.height);
+
+  const customCalculatedPrice = useMemo(() => {
+    if (!product || product.price === null || !baseSizeArea || baseSizeArea <= 0) {
+      return null;
+    }
+    if (!Number.isFinite(customWidthNumber) || !Number.isFinite(customHeightNumber)) {
+      return null;
+    }
+    if (customWidthNumber <= 0 || customHeightNumber <= 0) return null;
+
+    const customArea = customWidthNumber * customHeightNumber;
+    return product.price * (customArea / baseSizeArea);
+  }, [baseSizeArea, customHeightNumber, customWidthNumber, product]);
+
+  const formattedCustomCalculatedPrice = useMemo(() => {
+    if (!product) return null;
+    return formatPrice(
+      customCalculatedPrice,
+      product.currencyCode,
+      product.currencySymbol
+    );
+  }, [customCalculatedPrice, product]);
+
   const selectedImage = useMemo(() => {
     if (!product) return null;
     return (
@@ -598,10 +717,19 @@ const SingleProduct = ({
   );
 
   useEffect(() => {
-    if (!showWishlistToast) return;
-    const timer = window.setTimeout(() => setShowWishlistToast(false), 3000);
+    if (!toastState) return;
+    const timer = window.setTimeout(() => setToastState(null), 3000);
     return () => window.clearTimeout(timer);
-  }, [showWishlistToast]);
+  }, [toastState]);
+
+  useEffect(() => {
+    if (!isCustomSizeModalOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isCustomSizeModalOpen]);
 
   const handleAddToCart = () => {
     if (!product || !selectedImage || !product.inStock) return;
@@ -623,10 +751,149 @@ const SingleProduct = ({
       },
       quantity
     );
+
+    setToastState({
+      message: "Added to bag",
+      linkHref: "/cart",
+      linkLabel: "View bag",
+    });
   };
 
   const handleAddToWishlist = () => {
-    setShowWishlistToast(true);
+    if (!product || !selectedImage) return;
+
+    const itemId = `${product.id}-${selectedSizeValue || "default"}`;
+    const alreadyInWishlist = isInWishlist(itemId);
+
+    if (!alreadyInWishlist) {
+      const subtitleParts: string[] = [];
+      if (selectedSizeValue) subtitleParts.push(selectedSizeValue);
+      if (product.categories.length > 0) {
+        subtitleParts.push(product.categories[0].name);
+      }
+
+      addWishlistItem({
+        id: itemId,
+        woocommerceProductId: product.id,
+        title: stripHtml(product.name),
+        image: selectedImage.src,
+        subtitle: subtitleParts.join(" | ") || undefined,
+        price: product.price ?? undefined,
+        href: `/shop/${product.slug}`,
+      });
+    }
+
+    setToastState({
+      message: alreadyInWishlist ? "Already in wishlist" : "Added to wishlist",
+      linkHref: "/wishlist",
+      linkLabel: "Check now",
+    });
+  };
+
+  const openCustomSizeModal = () => {
+    const scaleFactor = Math.max(
+      1,
+      minimumCustomDimension / baseSizeDimensions.width,
+      minimumCustomDimension / baseSizeDimensions.height
+    );
+    const initialWidth = baseSizeDimensions.width * scaleFactor;
+    const initialHeight = baseSizeDimensions.height * scaleFactor;
+
+    setCustomWidth(formatDimensionValue(initialWidth));
+    setCustomHeight(formatDimensionValue(initialHeight));
+    setIsCustomSizeModalOpen(true);
+  };
+
+  const handleCustomWidthChange = (rawValue: string) => {
+    const sanitizedValue = normalizeDimensionInput(rawValue);
+    setCustomWidth(sanitizedValue);
+
+    const numericWidth = Number(sanitizedValue);
+    if (!sanitizedValue || !Number.isFinite(numericWidth) || numericWidth <= 0) return;
+
+    const computedHeight = numericWidth / baseSizeRatio;
+    setCustomHeight(formatDimensionValue(computedHeight));
+  };
+
+  const handleCustomHeightChange = (rawValue: string) => {
+    const sanitizedValue = normalizeDimensionInput(rawValue);
+    setCustomHeight(sanitizedValue);
+
+    const numericHeight = Number(sanitizedValue);
+    if (!sanitizedValue || !Number.isFinite(numericHeight) || numericHeight <= 0) return;
+
+    const computedWidth = numericHeight * baseSizeRatio;
+    setCustomWidth(formatDimensionValue(computedWidth));
+  };
+
+  const enforceMinimumCustomDimension = (source: "width" | "height") => {
+    const widthValue = Number(customWidth);
+    const heightValue = Number(customHeight);
+    if (!Number.isFinite(widthValue) || !Number.isFinite(heightValue)) return;
+
+    let nextWidth = widthValue;
+    let nextHeight = heightValue;
+
+    if (source === "width") {
+      nextWidth = Math.max(widthValue, minimumCustomDimension);
+      nextHeight = nextWidth / baseSizeRatio;
+      if (nextHeight < minimumCustomDimension) {
+        nextHeight = minimumCustomDimension;
+        nextWidth = nextHeight * baseSizeRatio;
+      }
+    } else {
+      nextHeight = Math.max(heightValue, minimumCustomDimension);
+      nextWidth = nextHeight * baseSizeRatio;
+      if (nextWidth < minimumCustomDimension) {
+        nextWidth = minimumCustomDimension;
+        nextHeight = nextWidth / baseSizeRatio;
+      }
+    }
+
+    setCustomWidth(formatDimensionValue(nextWidth));
+    setCustomHeight(formatDimensionValue(nextHeight));
+  };
+
+  const handleAddCustomSizeToCart = () => {
+    if (!product || !selectedImage || !product.inStock) return;
+
+    const widthValue = Number(customWidth);
+    const heightValue = Number(customHeight);
+    if (!Number.isFinite(widthValue) || !Number.isFinite(heightValue)) return;
+    if (widthValue <= 0 || heightValue <= 0) return;
+    if (
+      widthValue < minimumCustomDimension ||
+      heightValue < minimumCustomDimension
+    ) {
+      return;
+    }
+
+    const subtitleParts: string[] = [];
+    subtitleParts.push(
+      `Custom: ${formatDimensionValue(widthValue)} x ${formatDimensionValue(heightValue)} ${customSizeUnit}`
+    );
+    if (product.categories.length > 0) {
+      subtitleParts.push(product.categories[0].name);
+    }
+
+    addItem(
+      {
+        id: `${product.id}-custom-${formatDimensionValue(widthValue)}x${formatDimensionValue(heightValue)}-${customSizeUnit}`,
+        woocommerceProductId: product.id,
+        title: `${stripHtml(product.name)} (Custom Size)`,
+        image: selectedImage.src,
+        subtitle: subtitleParts.join(" | ") || undefined,
+        price: customCalculatedPrice ?? product.price ?? undefined,
+      },
+      1
+    );
+
+    setToastState({
+      message: "Added to bag",
+      linkHref: "/cart",
+      linkLabel: "View bag",
+    });
+    setIsCustomSizeModalOpen(false);
   };
 
   const renderActiveTabContent = () => {
@@ -1012,8 +1279,9 @@ const SingleProduct = ({
                   />
                 </button>
 
-                <Link
-                  href="/contact-us"
+                <button
+                  type="button"
+                  onClick={openCustomSizeModal}
                   className="inline-flex items-center gap-2 rounded-[6px] bg-[#FFDB4B] px-6 py-3 text-[18px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f]"
                 >
                   Order a Custom Size
@@ -1025,15 +1293,23 @@ const SingleProduct = ({
                     height={16}
                     className="h-4 w-4"
                   />
-                </Link>
+                </button>
 
                 <button
                   type="button"
                   onClick={handleAddToWishlist}
                   aria-label="Add to wishlist"
-                  className="inline-flex h-[50px] w-[50px] items-center justify-center rounded-[6px] bg-[#F3F3F3] text-[#5b5b5b] transition-colors hover:bg-[#e8e8e8]"
+                  className={`inline-flex h-[50px] w-[50px] items-center justify-center rounded-[6px] transition-colors ${
+                    isCurrentSelectionWishlisted
+                      ? "bg-[#EDF0F8] text-[#3A4980] hover:bg-[#e1e6f4]"
+                      : "bg-[#F3F3F3] text-[#5b5b5b] hover:bg-[#e8e8e8]"
+                  }`}
                 >
-                  <Heart className="h-5 w-5" />
+                  <Heart
+                    className={`h-5 w-5 ${
+                      isCurrentSelectionWishlisted ? "fill-current" : ""
+                    }`}
+                  />
                 </button>
               </div>
 
@@ -1120,35 +1396,173 @@ const SingleProduct = ({
         </div>
       </section>
 
-      {showWishlistToast ? (
-        <div className="fixed bottom-24 right-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+      {toastState ? (
+        <div className="fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
           <BadgeCheck className="h-5 w-5 text-[#14AE5C]" />
-          <p className="font-inter text-[14px] text-[#313131]">Added to wishlist</p>
-          <Link
-            href="/wishlist"
-            className="font-inter text-[14px] text-[#313131] underline underline-offset-2"
-          >
-            Check now
-          </Link>
+          <p className="font-inter text-[14px] text-[#313131]">{toastState.message}</p>
+          {toastState.linkHref && toastState.linkLabel ? (
+            <Link
+              href={toastState.linkHref}
+              className="font-inter text-[14px] text-[#313131] underline underline-offset-2"
+            >
+              {toastState.linkLabel}
+            </Link>
+          ) : null}
         </div>
       ) : null}
 
-      <Link
-        href="https://wa.me/9657609102"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        className="fixed bottom-6 right-6 z-50 inline-flex transition-transform hover:scale-[1.03]"
-      >
-        <Image
-          src="/whatsapp-icon.svg"
-          alt=""
-          aria-hidden="true"
-          width={62}
-          height={62}
-          className="h-[62px] w-[62px] object-contain"
-        />
-      </Link>
+      {isCustomSizeModalOpen ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 md:p-6">
+          <button
+            type="button"
+            aria-label="Close custom size modal"
+            onClick={() => setIsCustomSizeModalOpen(false)}
+            className="absolute inset-0 bg-black/55"
+          />
+
+          <div className="relative z-[71] w-full max-w-[1080px] overflow-hidden rounded-[14px] bg-white shadow-[0_22px_48px_rgba(0,0,0,0.28)]">
+            <div className="grid max-h-[88vh] overflow-y-auto lg:grid-cols-[minmax(0,0.54fr)_minmax(0,0.46fr)]">
+              <div className="p-6 md:p-8">
+                <button
+                  type="button"
+                  onClick={() => setIsCustomSizeModalOpen(false)}
+                  className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f3f3] text-[#313131] hover:bg-[#e7e7e7]"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+                  Custom Size Calculator
+                </p>
+                <h3 className="mt-2 font-display text-[34px] leading-[1.18] text-[#24211d]">
+                  Order a Custom Size
+                </h3>
+                <p className="mt-3 text-[17px] leading-7 text-[#595959]">
+                  Enter either width or height. The other dimension is
+                  automatically calculated using the original artwork ratio.
+                </p>
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <label className="block">
+                    <span className="mb-2 block text-[14px] font-medium text-[#313131]">
+                      Width ({customSizeUnit})
+                    </span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={customWidth}
+                      onChange={(event) => handleCustomWidthChange(event.target.value)}
+                      onBlur={() => enforceMinimumCustomDimension("width")}
+                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[18px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980]"
+                      placeholder="Enter width"
+                    />
+                  </label>
+
+                  <label className="block">
+                    <span className="mb-2 block text-[14px] font-medium text-[#313131]">
+                      Height ({customSizeUnit})
+                    </span>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={customHeight}
+                      onChange={(event) => handleCustomHeightChange(event.target.value)}
+                      onBlur={() => enforceMinimumCustomDimension("height")}
+                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[18px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980]"
+                      placeholder="Enter height"
+                    />
+                  </label>
+                </div>
+
+                <p className="mt-3 text-[14px] text-[#6a655d]">
+                  Base ratio: {baseSizeDimensions ? `${formatDimensionValue(baseSizeDimensions.width)}:${formatDimensionValue(baseSizeDimensions.height)}` : "Original ratio"}
+                </p>
+                <p className="mt-1 text-[14px] text-[#6a655d]">
+                  Minimum allowed dimension is 1 foot ({formatDimensionValue(minimumCustomDimension)} {customSizeUnit}).
+                </p>
+                {!customSizeInputIsValid && customWidth && customHeight ? (
+                  <p className="mt-2 text-[14px] text-[#b24534]">
+                    Both width and height must be at least 1 foot.
+                  </p>
+                ) : null}
+
+                <div className="mt-6 rounded-[12px] border border-[#e3ddd3] bg-[#faf8f4] p-4">
+                  <p className="text-[14px] text-[#6a655d]">Estimated Price</p>
+                  <p className="mt-1 font-display text-[34px] leading-none text-[#292929]">
+                    {formattedCustomCalculatedPrice ?? "Price on request"}
+                  </p>
+                  <p className="mt-2 text-[14px] text-[#595959]">
+                    Price updates instantly from your custom dimensions.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddCustomSizeToCart}
+                  disabled={
+                    !product.inStock ||
+                    !customWidth ||
+                    !customHeight ||
+                    !customSizeInputIsValid
+                  }
+                  className="mt-6 inline-flex items-center gap-2 rounded-[8px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
+                >
+                  Add to Bag
+                  <Image
+                    src="/add-icon.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
+                </button>
+              </div>
+
+              <div className="relative min-h-[360px] bg-[#f3f0ea] p-6 md:p-8">
+                <div className="relative flex h-full min-h-[320px] items-center justify-center rounded-[12px] border border-[#ddd7cc] bg-[#ece7de] p-8">
+                  <div className="relative w-[68%] rounded-[4px] border-[8px] border-[#f8f4ec] bg-white shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden">
+                      <Image
+                        src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                        alt={selectedImage?.alt || stripHtml(product.name)}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 1024px) 70vw, 30vw"
+                      />
+                    </div>
+
+                    <div className="pointer-events-none absolute -bottom-11 left-0 right-0 mx-auto w-[92%]">
+                      <div className="relative border-t-2 border-[#2c2c2c]">
+                        <span className="absolute -left-1 -top-[6px] h-3 w-[2px] bg-[#2c2c2c]" />
+                        <span className="absolute -right-1 -top-[6px] h-3 w-[2px] bg-[#2c2c2c]" />
+                        <span className="block pt-2 text-center font-inter text-[14px] font-medium text-[#2c2c2c]">
+                          Width: {customWidthDisplay} {customSizeUnit}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pointer-events-none absolute -left-12 top-0 bottom-0 my-auto h-[92%]">
+                      <div className="relative h-full border-l-2 border-[#2c2c2c]">
+                        <span className="absolute -left-[6px] -top-1 w-3 h-[2px] bg-[#2c2c2c]" />
+                        <span className="absolute -left-[6px] -bottom-1 w-3 h-[2px] bg-[#2c2c2c]" />
+                        <span className="absolute left-[-34px] top-1/2 -translate-y-1/2 -rotate-90 whitespace-nowrap font-inter text-[14px] font-medium text-[#2c2c2c]">
+                          Height: {customHeightDisplay} {customSizeUnit}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-12 text-center text-[14px] text-[#4f4b45]">
+                  Dimension markings update live with your custom inputs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <section className="px-6 py-10 md:px-12 md:py-12 lg:px-24">
         <div className="mx-auto max-w-[1440px]">

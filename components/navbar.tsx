@@ -6,6 +6,7 @@ import Image from "next/image";
 import {
   Search,
   ShoppingCart,
+  Heart,
   Menu,
   X,
   Plus,
@@ -14,6 +15,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useWishlist } from "@/components/wishlist/WishlistProvider";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -53,6 +55,7 @@ const Navbar = () => {
   const [mobileSearchValue, setMobileSearchValue] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isPlaceholderSliding, setIsPlaceholderSliding] = useState(false);
+  const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
 
@@ -218,6 +221,19 @@ const Navbar = () => {
                 </span>
               )}
             </button>
+
+            <Link
+              href="/wishlist"
+              aria-label="Open wishlist"
+              className="relative flex items-center justify-center p-2 text-[#333333] transition-colors hover:text-black"
+            >
+              <Heart className="h-5 w-5" strokeWidth={1.8} />
+              {wishlistCount > 0 && (
+                <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-[#1f1f1f] px-1.5 text-center text-[11px] font-semibold leading-[18px] text-white">
+                  {wishlistCount > 99 ? "99+" : wishlistCount}
+                </span>
+              )}
+            </Link>
 
             {/* Mobile Menu Button */}
             <button

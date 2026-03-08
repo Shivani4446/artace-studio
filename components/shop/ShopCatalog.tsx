@@ -484,13 +484,17 @@ const ShopCatalog = ({
   return (
     <main className="bg-[#f4f2ee] px-6 py-10 md:px-12 md:py-14 lg:px-24">
       <section className="mx-auto max-w-[1440px]">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
-          <h1 className="font-display text-[42px] leading-none text-[#1f1f1f] md:text-[60px]">
+        <div className="mb-10 flex flex-col items-start gap-4">
+          <h1 className="font-display text-[52px] leading-none text-[#1f1f1f]">
             Handmade Canvas Paintings
           </h1>
-          <p className="max-w-xl text-sm text-[#5f5a52]">
-            Discover Original Artworks And Handcrafted Canvas Paintings From Our
-            Curated WooCommerce Collection.
+          <p className="max-w-[1200px] text-[18px] leading-8 text-[#5f5a52]">
+            <span className="block md:whitespace-nowrap">
+              Explore our collection of handmade canvas paintings and unique wall art crafted.
+            </span>
+            <span className="block md:whitespace-nowrap">
+              At Artace Studio, you'll find modern, abstract, contemporary, and custom canvas paintings designed to elevate any home or office space.
+            </span>
           </p>
         </div>
 

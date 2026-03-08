@@ -28,7 +28,7 @@ const footerSections: FooterSection[] = [
       { label: "Shop", href: "/shop" },
       { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "#" },
-      { label: "Wishlist", href: "#" },
+      { label: "Wishlist", href: "/wishlist" },
     ],
   },
   {
