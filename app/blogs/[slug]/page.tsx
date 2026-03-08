@@ -73,7 +73,9 @@ const SingleBlogPage = async ({ params }: Props) => {
   const decodedContent = decodeHtmlEntities(post.content?.rendered ?? "");
   const { html: contentHtml, toc } = htmlToArticleContent(decodedContent);
   const readTimeMinutes = estimateReadTimeMinutes(decodedContent);
-  const formattedDate = formatArticleDate(post.modified);
+  const formattedDate = post.modified
+    ? formatArticleDate(post.modified)
+    : undefined;
 
   // Fetch author data if available
   let author = null;
