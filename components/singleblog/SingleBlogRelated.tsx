@@ -20,7 +20,7 @@ type RelatedPost = {
 
 async function getRelatedPosts(currentPostId: number) {
   const res = await fetch(
-    "https://artacestudio.com/wp-json/wp/v2/posts?per_page=3&_embed",
+    "https://api.artacestudio.com/wp-json/wp/v2/posts?per_page=3&_embed",
     { next: { revalidate: 60 } }
   );
 

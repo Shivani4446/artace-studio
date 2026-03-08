@@ -15,7 +15,7 @@ type WpAuthor = {
 
 async function getAuthor(authorId: number) {
   const res = await fetch(
-    `https://artacestudio.com/wp-json/wp/v2/users/${authorId}`,
+    `https://api.artacestudio.com/wp-json/wp/v2/users/${authorId}`,
     { next: { revalidate: 60 } },
   );
 

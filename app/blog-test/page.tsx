@@ -17,7 +17,7 @@ type PostsResult = {
 
 async function getPosts(): Promise<PostsResult> {
   // Use the direct URL to be absolutely sure
-  const siteUrl = "https://artacestudio.com";
+  const siteUrl = "https://api.artacestudio.com/";
   const endpoint = `${siteUrl}/wp-json/wp/v2/posts?_embed`;
 
   try {

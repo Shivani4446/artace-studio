@@ -19,7 +19,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const FEATURED_PRODUCTS_LIMIT = 4;
 

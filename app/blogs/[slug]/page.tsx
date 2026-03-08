@@ -26,7 +26,10 @@ type WordPressPost = {
 };
 
 const getSiteUrl = () =>
-  (process.env.WOOCOMMERCE_SITE_URL || "https://artacestudio.com").replace(/\/+$/, "");
+  (process.env.WOOCOMMERCE_SITE_URL || "https://api.artacestudio.com/").replace(
+    /\/+$/,
+    ""
+  );
 
 async function getPost(slug: string): Promise<WordPressPost | null> {
   const siteUrl = getSiteUrl();
