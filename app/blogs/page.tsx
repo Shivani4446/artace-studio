@@ -5,7 +5,7 @@ import { stripHtmlAndDecode } from "@/utils/text";
 
 export const revalidate = 120;
 
-const DEFAULT_WORDPRESS_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_BLOG_IMAGE = "/journal-img.webp";
 
 type WordPressRendered = {

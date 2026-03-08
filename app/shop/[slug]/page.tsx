@@ -8,7 +8,7 @@ type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const RELATED_PRODUCTS_LIMIT = 4;
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const PRODUCT_INFORMATION_ATTRIBUTE_NAME = "Product Information";

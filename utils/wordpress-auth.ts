@@ -5,7 +5,7 @@ export type WordPressAuthUser = {
   username: string;
 };
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
 const safeText = (value: unknown) => {
   if (typeof value !== "string") return "";

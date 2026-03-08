@@ -24,7 +24,7 @@ type Props = {
   } | null;
 };
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FEATURED_PRODUCTS_LIMIT = 4;
 
 type WooStorePrices = {

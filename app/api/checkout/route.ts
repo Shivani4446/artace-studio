@@ -4,7 +4,7 @@ import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
 type CheckoutLineItemInput = {
   productId: number;

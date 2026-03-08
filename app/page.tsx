@@ -9,7 +9,7 @@ import JournalSection from "@/components/homepage/JournalSection";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
 import { decodeHtmlEntities } from "@/utils/text";
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
+const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
 const EXCLUDED_DISCOVER_CATEGORY_SLUGS = new Set([
   "all-canvas-paintings",
