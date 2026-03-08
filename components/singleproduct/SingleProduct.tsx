@@ -578,6 +578,8 @@ const SingleProduct = ({
   };
 
   const renderActiveTabContent = () => {
+    if (!product) return null;
+
     if (activeInfoTab === "About the Painting") {
       if (!product.description) {
         return (
