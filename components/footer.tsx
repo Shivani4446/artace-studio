@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Facebook, Instagram } from "lucide-react";
 
 type FooterSection = {
   title: string;
@@ -50,6 +49,34 @@ const footerSections: FooterSection[] = [
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms of Use", href: "/terms-of-use" },
     ],
+  },
+];
+
+const socialLinks = [
+  {
+    label: "Pinterest",
+    href: "https://in.pinterest.com/artacestudio/",
+    icon: "/pinterest-3.svg",
+  },
+  {
+    label: "Facebook",
+    href: "https://facebook.com/artacestudio",
+    icon: "/facebook-3-2.svg",
+  },
+  {
+    label: "X",
+    href: "https://x.com/ArtaceStudio",
+    icon: "/x-2.svg",
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/artace_studio",
+    icon: "/instagram-2016-5.svg",
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/artace-studio/",
+    icon: "/linkedin-icon-1.svg",
   },
 ];
 
@@ -104,20 +131,27 @@ export default function Footer() {
             © 2025 Artace Studio. All rights reserved
           </p>
 
-          <div className="flex items-center gap-5 text-[#f2f3f5]">
-            <Link
-              href="#"
-              aria-label="X"
-              className="text-[15px] font-medium leading-none transition-opacity hover:opacity-70"
-            >
-              X
-            </Link>
-            <Link href="#" aria-label="Instagram" className="hover:opacity-70">
-              <Instagram className="h-4 w-4" strokeWidth={1.8} />
-            </Link>
-            <Link href="#" aria-label="Facebook" className="hover:opacity-70">
-              <Facebook className="h-4 w-4" strokeWidth={1.8} />
-            </Link>
+          <div className="flex items-center gap-5">
+            {socialLinks.map((social) => (
+              <Link
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                className="inline-flex h-5 w-5 items-center justify-center transition-opacity hover:opacity-70"
+              >
+                <Image
+                  src={social.icon}
+                  alt=""
+                  aria-hidden="true"
+                  width={20}
+                  height={20}
+                  className="h-5 w-5 object-contain"
+                  style={{ filter: "brightness(0) invert(1)" }}
+                />
+              </Link>
+            ))}
           </div>
         </div>
       </div>

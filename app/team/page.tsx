@@ -17,7 +17,7 @@ const TEAM_MEMBERS: TeamMember[] = [
     image: "/sampadaa-mahalley-profile.webp",
     imageAlt: "Sampadaa Mahalley",
     bio: "Sampadaa leads Artace Studio with a clear vision to make meaningful art accessible to modern homes. She shapes the brand's creative direction, builds artist partnerships, and ensures every customer experience feels personal, premium, and trustworthy.",
-    linkedin: "https://www.linkedin.com/",
+    linkedin: "https://www.linkedin.com/in/sampadaa-mahalley-6b6329244",
   },
   {
     name: "Sahil Mahalley",
@@ -25,7 +25,15 @@ const TEAM_MEMBERS: TeamMember[] = [
     image: "/Sahil-mahalley.webp",
     imageAlt: "Sahil Mahalley",
     bio: "Sahil drives product, growth, and digital experience at Artace Studio. From curation systems to customer journeys, he focuses on combining technology and design so discovering and buying handmade art feels seamless, transparent, and inspiring.",
-    linkedin: "https://www.linkedin.com/",
+    linkedin: "https://www.linkedin.com/in/sahil-mahalley",
+  },
+  {
+    name: "Shivani Sank",
+    role: "Tech Head, Artace Studio",
+    image: "/shivani-sank-profile.webp",
+    imageAlt: "Shivani Sank",
+    bio: "Shivani leads technology at Artace Studio, building reliable systems that power browsing, discovery, and checkout across the platform. She focuses on performance, product quality, and scalable engineering so every customer interaction stays smooth and dependable.",
+    linkedin: "https://www.linkedin.com/in/shivani-sank-a6bb311a9/",
   },
 ];
 
@@ -77,7 +85,11 @@ const TeamPage = () => {
                     alt={member.imageAlt}
                     fill
                     sizes="260px"
-                    className="object-cover"
+                    className={
+                      member.name === "Sampadaa Mahalley"
+                        ? "object-cover scale-[1.25] object-[center_22%]"
+                        : "object-cover"
+                    }
                   />
                 </div>
                 <Link
