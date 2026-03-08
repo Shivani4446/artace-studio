@@ -1,0 +1,100 @@
+import Image from "next/image";
+import Link from "next/link";
+
+type TeamMember = {
+  name: string;
+  role: string;
+  image: string;
+  imageAlt: string;
+  bio: string;
+  linkedin: string;
+};
+
+const TEAM_MEMBERS: TeamMember[] = [
+  {
+    name: "Sampadaa Mahalley",
+    role: "Founder and CEO, Artace Studio",
+    image: "/sampadaa-mahalley-profile.webp",
+    imageAlt: "Sampadaa Mahalley",
+    bio: "Sampadaa leads Artace Studio with a clear vision to make meaningful art accessible to modern homes. She shapes the brand's creative direction, builds artist partnerships, and ensures every customer experience feels personal, premium, and trustworthy.",
+    linkedin: "https://www.linkedin.com/",
+  },
+  {
+    name: "Sahil Mahalley",
+    role: "Co-founder, Artace Studio",
+    image: "/Sahil-mahalley.webp",
+    imageAlt: "Sahil Mahalley",
+    bio: "Sahil drives product, growth, and digital experience at Artace Studio. From curation systems to customer journeys, he focuses on combining technology and design so discovering and buying handmade art feels seamless, transparent, and inspiring.",
+    linkedin: "https://www.linkedin.com/",
+  },
+];
+
+const TeamPage = () => {
+  return (
+    <main className="bg-[#f4f2ee] px-6 py-10 md:px-12 md:py-14 lg:px-24">
+      <section className="mx-auto max-w-[1440px]">
+        <div>
+          <h1 className="font-display text-[52px] leading-[0.98] text-[#1f1f1f]">
+            Meet the Team
+          </h1>
+          <p className="mt-5 max-w-[980px] font-inter text-[18px] leading-8 text-[#595959]">
+            Artace Studio is built by people who care deeply about art, artists, and
+            experience. Our leadership blends creative vision with operational rigor
+            so each piece you collect feels thoughtful and lasting.
+          </p>
+        </div>
+
+        <div className="mt-12 space-y-24">
+          {TEAM_MEMBERS.map((member, index) => (
+            <article
+              key={member.name}
+              className={`grid items-center gap-8 md:gap-14 ${
+                index % 2 === 1
+                  ? "md:grid-cols-[minmax(0,0.4fr)_minmax(0,0.6fr)]"
+                  : "md:grid-cols-[minmax(0,0.6fr)_minmax(0,0.4fr)]"
+              }`}
+            >
+              <div className={index % 2 === 1 ? "md:order-2" : ""}>
+                <h2 className="font-display text-[42px] leading-[1.02] text-[#1f1f1f]">
+                  {member.name}
+                </h2>
+                <p className="mt-2 font-inter text-[15px] font-medium uppercase tracking-[0.07em] text-[#6f685f]">
+                  {member.role}
+                </p>
+                <p className="mt-5 font-inter text-[18px] leading-8 text-[#595959]">
+                  {member.bio}
+                </p>
+              </div>
+
+              <div
+                className={`flex flex-col items-center ${
+                  index % 2 === 1 ? "md:order-1" : ""
+                }`}
+              >
+                <div className="relative h-[220px] w-[220px] overflow-hidden rounded-full border border-[#ded8ce] bg-[#ece8df] md:h-[260px] md:w-[260px]">
+                  <Image
+                    src={member.image}
+                    alt={member.imageAlt}
+                    fill
+                    sizes="260px"
+                    className="object-cover"
+                  />
+                </div>
+                <Link
+                  href={member.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center font-inter text-[14px] font-medium text-[#313131] underline underline-offset-4 transition-colors hover:text-black"
+                >
+                  LinkedIn
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default TeamPage;

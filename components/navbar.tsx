@@ -21,13 +21,12 @@ const navLinks = [
   { name: "Home", href: "/" },
   { name: "Shop", href: "/shop" },
   { name: "Collections", href: "/collections" },
-  { name: "Shop by Artists", href: "/artists" },
-  { name: "Sale", href: "/sale" },
   { name: "Contact", href: "/contact-us" },
 ];
 
 const resourceLinks = [
   { name: "About us", href: "/about-us" },
+  { name: "Team", href: "/team" },
   { name: "Blogs", href: "/blogs" },
 ];
 
