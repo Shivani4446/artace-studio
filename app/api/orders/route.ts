@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getWordPressSiteUrl, getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
+export const runtime = "edge";
+
 type WooOrder = {
   id: number;
   number: string;
@@ -32,6 +34,16 @@ const getWooCommerceConfig = () => {
   };
 };
 
+const toBasicAuthToken = (username: string, password: string) => {
+  const raw = `${username}:${password}`;
+  if (typeof btoa === "function") return btoa(raw);
+
+  const maybeBuffer = (globalThis as { Buffer?: { from: (v: string) => { toString: (enc: string) => string } } }).Buffer;
+  if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
+
+  throw new Error("No base64 encoder available.");
+};
+
 export async function GET() {
   const { siteUrl, consumerKey, consumerSecret } = getWooCommerceConfig();
   const cookieStore = await cookies();
@@ -56,9 +68,7 @@ export async function GET() {
     );
   }
 
-  const basicToken = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
-    "base64"
-  );
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   const response = await fetch(
     `${siteUrl}/wp-json/wc/v3/orders?per_page=50&orderby=date&order=desc&customer=${customer.id}`,

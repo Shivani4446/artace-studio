@@ -1,5 +1,7 @@
 import React from "react";
 
+export const runtime = "edge";
+
 type BlogPost = {
   id: number;
   slug: string;

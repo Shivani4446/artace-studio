@@ -19,13 +19,26 @@ const safeId = (value: unknown) => {
   return integer > 0 ? integer : 0;
 };
 
+const decodeBase64 = (value: string) => {
+  if (typeof atob === "function") {
+    return atob(value);
+  }
+
+  const maybeBuffer = (globalThis as { Buffer?: { from: (v: string, enc: string) => { toString: (enc: string) => string } } }).Buffer;
+  if (maybeBuffer) {
+    return maybeBuffer.from(value, "base64").toString("utf-8");
+  }
+
+  throw new Error("No base64 decoder available.");
+};
+
 const decodeBase64Url = (value: string) => {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized.padEnd(
     normalized.length + ((4 - (normalized.length % 4)) % 4),
     "="
   );
-  return Buffer.from(padded, "base64").toString("utf-8");
+  return decodeBase64(padded);
 };
 
 const extractUserFromJwt = (token: string): Partial<WordPressAuthUser> => {

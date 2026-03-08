@@ -2,6 +2,8 @@ import React from "react";
 import SingleProduct from "@/components/singleproduct/SingleProduct";
 import { decodeHtmlEntities } from "@/utils/text";
 
+export const runtime = "edge";
+
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -135,6 +137,16 @@ const getWooServerConfig = () => {
     consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY,
     consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET,
   };
+};
+
+const toBasicAuthToken = (username: string, password: string) => {
+  const raw = `${username}:${password}`;
+  if (typeof btoa === "function") return btoa(raw);
+
+  const maybeBuffer = (globalThis as { Buffer?: { from: (v: string) => { toString: (enc: string) => string } } }).Buffer;
+  if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
+
+  throw new Error("No base64 encoder available.");
 };
 
 const fetchStoreProducts = async (
@@ -364,7 +376,7 @@ const fetchProductInformationFromWooApi = async (productId: number) => {
 
   if (!consumerKey || !consumerSecret) return [];
 
-  const basicToken = Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64");
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
     const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
@@ -472,8 +484,8 @@ const getProductWithProductInformation = async (product: WooStoreProduct) => {
   const [acfApiInformationItems, wooApiInformationItems, wordPressApiInformationItems] =
     await Promise.all([
       fetchProductInformationFromAcfApi(product.id),
-    fetchProductInformationFromWooApi(product.id),
-    fetchProductInformationFromWordPressApi(product.id),
+      fetchProductInformationFromWooApi(product.id),
+      fetchProductInformationFromWordPressApi(product.id),
     ]);
 
   const mergedInformationItems = normalizeProductInformationItems([

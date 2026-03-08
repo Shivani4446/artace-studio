@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
+export const runtime = "edge";
+
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://artacestudio.com";
 
 type CheckoutLineItemInput = {
@@ -46,6 +48,16 @@ const ensurePositiveInt = (value: unknown) => {
   if (!Number.isFinite(parsed)) return null;
   const integer = Math.floor(parsed);
   return integer > 0 ? integer : null;
+};
+
+const toBasicAuthToken = (username: string, password: string) => {
+  const raw = `${username}:${password}`;
+  if (typeof btoa === "function") return btoa(raw);
+
+  const maybeBuffer = (globalThis as { Buffer?: { from: (v: string) => { toString: (enc: string) => string } } }).Buffer;
+  if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
+
+  throw new Error("No base64 encoder available.");
 };
 
 const getWooCommerceConfig = () => {
@@ -187,9 +199,7 @@ export async function POST(request: Request) {
     ...(authenticatedCustomer?.id ? { customer_id: authenticatedCustomer.id } : {}),
   };
 
-  const basicToken = Buffer.from(`${consumerKey}:${consumerSecret}`).toString(
-    "base64"
-  );
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   const response = await fetch(`${siteUrl}/wp-json/wc/v3/orders`, {
     method: "POST",

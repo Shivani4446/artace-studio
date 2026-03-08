@@ -7,6 +7,8 @@ import {
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
+export const runtime = "edge";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
