@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowUpRight,
   BadgeCheck,
   ChevronDown,
-  HandHelping,
   Heart,
   Minus,
   Plus,
@@ -29,26 +29,35 @@ const TAB_LABELS = [
   "Returns",
 ];
 
+const TAB_HELPER_TEXT: Record<string, string> = {
+  "About the Painting": "Story, inspiration and artistic intent",
+  Specifications: "Material and technical details",
+  "Care Instructions": "Keep your artwork vibrant for years",
+  Delivery: "Estimated timelines by region",
+  Packaging: "How we protect artwork in transit",
+  Returns: "Return and exchange eligibility",
+};
+
 const WHY_ARTACE_POINTS = [
   {
     title: "Authenticity",
     text: "We stand behind the authenticity and quality of our artwork, ensuring lasting beauty and value.",
-    Icon: BadgeCheck,
+    iconSrc: "/Authenticity.svg",
   },
   {
     title: "Satisfaction Guarantee",
     text: "Enjoy peace of mind with our 15-day satisfaction guarantee and shop with confidence.",
-    Icon: ShieldCheck,
+    iconSrc: "/Satisfaction Guarantee.svg",
   },
   {
     title: "Personal Support",
     text: "We offer dedicated support to ensure a smooth and exceptional experience from start to finish.",
-    Icon: HandHelping,
+    iconSrc: "/Personal Support.svg",
   },
   {
     title: "Curated with Confidence",
     text: "We curate exceptional, authentic art so you can create with confidence.",
-    Icon: Star,
+    iconSrc: "/Curated with Confidence.svg",
   },
 ];
 
@@ -242,9 +251,9 @@ const DEFAULT_READ_MORE_POSTS: ReadMoreCard[] = [
 ];
 
 const DEFAULT_ADVISOR: AdvisorBlock = {
-  name: "Soni Mahato",
+  name: "Sahil Mahalley",
   role: "Art Advisor",
-  image: "/Artist-1.webp",
+  image: "/Sahil-mahalley.webp",
   headline:
     "Our free art advisory service pairs you with a knowledgeable curator who will guide you through a seamless, stress-free process to find artwork that fits your style and needs.",
   description: "Complimentary Art Advisory",
@@ -253,6 +262,10 @@ const DEFAULT_ADVISOR: AdvisorBlock = {
 };
 
 const stripHtml = (value: string) => stripHtmlAndDecode(value);
+const toTitleCase = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\b\w/g, (character) => character.toUpperCase());
 
 const parseMinorUnitPrice = (
   rawValue: string | undefined,
@@ -357,6 +370,31 @@ const formatPrice = (
   }
 };
 
+const getOrdinalSuffix = (day: number) => {
+  const mod10 = day % 10;
+  const mod100 = day % 100;
+  if (mod10 === 1 && mod100 !== 11) return "st";
+  if (mod10 === 2 && mod100 !== 12) return "nd";
+  if (mod10 === 3 && mod100 !== 13) return "rd";
+  return "th";
+};
+
+const formatDeliveryDate = (date: Date) => {
+  const day = date.getDate();
+  const month = date.toLocaleString("en-IN", { month: "short" });
+  return `${day}${getOrdinalSuffix(day)} ${month}`;
+};
+
+const getDeliveryRangeLabel = (baseDate: Date, fromDays: number, toDays: number) => {
+  const fromDate = new Date(baseDate);
+  fromDate.setDate(baseDate.getDate() + fromDays);
+
+  const toDate = new Date(baseDate);
+  toDate.setDate(baseDate.getDate() + toDays);
+
+  return `${formatDeliveryDate(fromDate)} - ${formatDeliveryDate(toDate)}`;
+};
+
 const SingleProduct = ({
   initialProduct = null,
   relatedProducts = DEFAULT_RELATED_PRODUCTS,
@@ -374,6 +412,7 @@ const SingleProduct = ({
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [showWishlistToast, setShowWishlistToast] = useState(false);
+  const [activeInfoTab, setActiveInfoTab] = useState(TAB_LABELS[0]);
 
   const sizeOptions = useMemo(() => {
     if (!product) return ["16x20", "20x30", "30x40"];
@@ -385,6 +424,40 @@ const SingleProduct = ({
     }
     return ["16x20", "20x30", "30x40"];
   }, [product]);
+
+  const productInformationItems = useMemo(() => {
+    if (!product) return [];
+    const productInformationAttribute = product.attributes.find((attribute) =>
+      /product information/i.test(attribute.name)
+    );
+    if (!productInformationAttribute || productInformationAttribute.options.length === 0) {
+      return [];
+    }
+
+    return productInformationAttribute.options.flatMap((option) =>
+      option
+        .split(/\r?\n|\|/g)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    );
+  }, [product]);
+
+  const specificationRows = useMemo(
+    () =>
+      productInformationItems.map((item, index) => {
+        const separatorIndex = item.indexOf(":");
+        if (separatorIndex > 0) {
+          const label = item.slice(0, separatorIndex).trim();
+          const value = item.slice(separatorIndex + 1).trim();
+          if (label && value) {
+            return { label, value };
+          }
+        }
+
+        return { label: `Detail ${index + 1}`, value: item };
+      }),
+    [productInformationItems]
+  );
 
   const selectedSizeValue =
     selectedSize && sizeOptions.includes(selectedSize)
@@ -432,6 +505,45 @@ const SingleProduct = ({
 
   const displayRating = product?.averageRating && product.averageRating > 0 ? product.averageRating : 4.8;
   const displayReviewCount = product?.reviewCount && product.reviewCount > 0 ? product.reviewCount : 86;
+  const deliveryDate = useMemo(() => new Date(), []);
+  const framedDeliveryRows = useMemo(
+    () => [
+      {
+        title: "Indian Metros",
+        copy: `Delivered within 9 to 15 days (${getDeliveryRangeLabel(deliveryDate, 9, 15)})`,
+      },
+      {
+        title: "Indian Cities and Towns",
+        copy: `Delivered within 10 to 15 days (${getDeliveryRangeLabel(deliveryDate, 10, 15)})`,
+      },
+      {
+        title: "International (outside India)",
+        copy: "Framed paintings are not deliverable outside India. Please buy art without frame.",
+      },
+    ],
+    [deliveryDate]
+  );
+  const rolledDeliveryRows = useMemo(
+    () => [
+      {
+        title: "Indian Metros",
+        copy: `Delivered within 7 to 10 days (${getDeliveryRangeLabel(deliveryDate, 7, 10)})`,
+      },
+      {
+        title: "Indian Cities and Towns",
+        copy: `Delivered within 8 to 12 days (${getDeliveryRangeLabel(deliveryDate, 8, 12)})`,
+      },
+      {
+        title: "USA/UAE/UK/Europe/Asia",
+        copy: `Delivered within 9 to 12 days (${getDeliveryRangeLabel(deliveryDate, 9, 12)})`,
+      },
+      {
+        title: "Rest of the world",
+        copy: `Delivered within 12 to 15 days (${getDeliveryRangeLabel(deliveryDate, 12, 15)})`,
+      },
+    ],
+    [deliveryDate]
+  );
 
   useEffect(() => {
     if (!showWishlistToast) return;
@@ -463,6 +575,166 @@ const SingleProduct = ({
 
   const handleAddToWishlist = () => {
     setShowWishlistToast(true);
+  };
+
+  const renderActiveTabContent = () => {
+    if (activeInfoTab === "About the Painting") {
+      if (!product.description) {
+        return (
+          <p className="text-[18px] leading-8 text-[#595959]">
+            About the painting is currently unavailable.
+          </p>
+        );
+      }
+
+      return (
+        <div
+          className="prose prose-sm max-w-none text-[#4f4b45]"
+          dangerouslySetInnerHTML={{ __html: product.description }}
+        />
+      );
+    }
+
+    if (activeInfoTab === "Specifications") {
+      return (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+              Product Information
+            </h3>
+            <span className="rounded-full bg-[#f4f2ee] px-3 py-1 text-[14px] text-[#595959]">
+              Made for mindful buying
+            </span>
+          </div>
+          {specificationRows.length > 0 ? (
+            <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e4ded4]">
+              <div className="grid grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] bg-[#f8f6f2] px-4 py-3 text-[15px] font-medium text-[#313131]">
+                <p>Attribute</p>
+                <p>Details</p>
+              </div>
+              <div className="divide-y divide-[#ece7de]">
+                {specificationRows.map((row, index) => (
+                  <div
+                    key={`${row.label}-${index}`}
+                    className="grid grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] gap-4 px-4 py-3"
+                  >
+                    <p className="text-[17px] font-medium leading-7 text-[#313131]">
+                      {row.label}
+                    </p>
+                    <p className="text-[17px] leading-7 text-[#595959]">{row.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-3 text-[18px] text-[#595959]">
+              Product information is currently unavailable.
+            </p>
+          )}
+        </>
+      );
+    }
+
+    if (activeInfoTab === "Care Instructions") {
+      return (
+        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+          <p>
+            Your artwork is made to be enjoyed and requires very little maintenance. Since paintings are displayed vertically, dust rarely settles on the surface. Simply dust the artwork gently with a dry, soft cloth once a month to keep it looking fresh.
+          </p>
+          <p>
+            If needed, you may lightly dab the surface with a slightly damp cloth every 6 months to remove any fine dust particles.
+          </p>
+          <p>
+            Please avoid using soap, detergents, disinfectants, or any chemicals, as they may damage the colors. Paper and fabric artworks are typically framed with protective glass, so you only need to clean the glass surface.
+          </p>
+          <p>
+            To preserve the beauty of your artwork for years to come, keep it away from direct sunlight and avoid placing it on walls with moisture or water leakage. With just a little care, your artwork will remain vibrant and beautiful for a long time. ✨
+          </p>
+        </div>
+      );
+    }
+
+    if (activeInfoTab === "Delivery") {
+      return (
+        <>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-5">
+              <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+                Rolled Paintings
+              </h3>
+              <div className="mt-4 space-y-4">
+                {rolledDeliveryRows.map((row) => (
+                  <div key={row.title}>
+                    <p className="text-[18px] font-medium leading-7 text-[#313131]">{row.title}</p>
+                    <p className="text-[18px] leading-7 text-[#595959]">{row.copy}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-5">
+              <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+                Framed Paintings
+              </h3>
+              <div className="mt-4 space-y-4">
+                {framedDeliveryRows.map((row) => (
+                  <div key={row.title}>
+                    <p className="text-[18px] font-medium leading-7 text-[#313131]">{row.title}</p>
+                    <p className="text-[18px] leading-7 text-[#595959]">{row.copy}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-[10px] border border-[#e6e1d8] bg-white p-5 text-[18px] leading-8 text-[#595959]">
+            <p>
+              Note: Delivery times are estimated based on our past shipments and may vary depending on the courier partner, customs procedures (for international orders), or other factors beyond our control.
+            </p>
+            <p className="mt-4">
+              For orders shipped outside India, any applicable import duties or taxes must be paid directly to the courier partner upon delivery. These charges are not included in our prices.
+            </p>
+          </div>
+        </>
+      );
+    }
+
+    if (activeInfoTab === "Packaging") {
+      return (
+        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+          <p>
+            Unframed artworks are shipped in rolled format in a protective tube. Framed artworks are shipped in thermocol boxes, secured with multiple layers of bubble wraps. We ensure paintings are packed with utmost care to avoid any damage during transit and delivered to you in perfect condition.
+          </p>
+          <p>
+            International shipping: Paintings shipped internationally are rolled and shipped in a tube. The painting is not stretched and is not ready to hang. It is meant to be framed by the customer at their local frame shop.
+          </p>
+          <p>
+            If paintings are damaged during transit, please contact our customer care within 24 hours of receiving the package. We will provide you with a solution as soon as possible.
+          </p>
+        </div>
+      );
+    }
+
+    if (activeInfoTab === "Returns") {
+      return (
+        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+          <p>
+            We want you to feel confident in your purchase. If needed, you may return your painting within 15 days of delivery.
+          </p>
+          <p>
+            Please note that returns are only accepted for default-size paintings without a frame that are delivered within India. The artwork must be returned in its original packaging and in the same condition as it was received.
+          </p>
+          <p>
+            If your painting arrives damaged, kindly contact our customer support within 24 hours of delivery, and we will assist you with a quick resolution.
+          </p>
+          <p>
+            Returns are not applicable for custom-size artworks, framed paintings, or international orders. If you have any questions, our customer support team will be happy to help.
+          </p>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   if (!product) {
@@ -694,14 +966,49 @@ const SingleProduct = ({
             </div>
           </div>
 
-          <div className="mt-9 border-y border-[#1f1f1f]/10 py-3">
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-[12px] text-[#4f4b45]">
+          <div className="mt-9 rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-4 md:p-6">
+            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {TAB_LABELS.map((tab) => (
-                <button key={tab} type="button" className="hover:text-black">
-                  {tab}
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveInfoTab(tab)}
+                  className={`rounded-[10px] border px-4 py-3 text-left transition-all ${
+                    activeInfoTab === tab
+                      ? "border-[#1f1f1f] bg-[#1f1f1f] text-white"
+                      : "border-[#d7d2c9] bg-white text-[#4f4b45] hover:border-[#1f1f1f]/30 hover:bg-[#faf9f6]"
+                  }`}
+                >
+                  <span className="block text-[18px] font-medium leading-tight">{tab}</span>
+                  <span
+                    className={`mt-2 block text-[13px] leading-5 ${
+                      activeInfoTab === tab ? "text-white/80" : "text-[#6a655d]"
+                    }`}
+                  >
+                    {TAB_HELPER_TEXT[tab] ?? ""}
+                  </span>
                 </button>
               ))}
             </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#dcd7cf] bg-white px-3 py-1 text-[13px] text-[#57534b]">
+                <BadgeCheck className="h-3.5 w-3.5 text-[#3a6b96]" />
+                Authentic Handmade Art
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#dcd7cf] bg-white px-3 py-1 text-[13px] text-[#57534b]">
+                <Truck className="h-3.5 w-3.5 text-[#3a6b96]" />
+                Safe Delivery Promise
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#dcd7cf] bg-white px-3 py-1 text-[13px] text-[#57534b]">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#3a6b96]" />
+                Assured Support
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-[16px] border border-[#e1ddd5] bg-white p-5 md:p-7">
+            {renderActiveTabContent()}
           </div>
         </div>
       </section>
@@ -722,7 +1029,7 @@ const SingleProduct = ({
       <section className="px-6 py-10 md:px-12 md:py-12 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
           <div className="mb-8 flex items-end justify-between gap-4">
-            <h2 className="font-display text-[50px] leading-none text-[#1f1f1f] md:text-[60px]">
+            <h2 className="font-display text-[52px] leading-none text-[#1f1f1f]">
               Shop More Like This
             </h2>
             <Link
@@ -759,25 +1066,32 @@ const SingleProduct = ({
         </div>
       </section>
 
-      <section className="px-6 py-14 text-center md:px-12 md:py-16 lg:px-24">
-        <div className="mx-auto max-w-[1080px]">
-          <h2 className="font-display text-[52px] leading-none text-[#1f1f1f] md:text-[62px]">
+      <section className="px-6 py-14 md:px-12 md:py-16 lg:px-24">
+        <div className="mx-auto max-w-[1440px]">
+          <h2 className="text-center font-display text-[52px] leading-none text-[#1f1f1f]">
             Why Artace Studio
           </h2>
-          <p className="mx-auto mt-4 max-w-4xl text-[14px] leading-6 text-[#58544d]">
+          <p className="mx-auto mt-4 max-w-[980px] text-center text-[18px] leading-8 text-[#595959]">
             Bringing a new piece of art into your life is a significant moment, one filled with excitement and personal expression. We believe the experience of acquiring it should be just as inspiring and effortless.
           </p>
 
-          <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {WHY_ARTACE_POINTS.map(({ title, text, Icon }) => (
-              <div key={title}>
-                <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full border border-[#1f1f1f]/15 bg-white">
-                  <Icon className="h-4 w-4 text-[#2e2a25]" />
-                </span>
-                <h3 className="mt-4 font-display text-[30px] leading-8 text-[#1f1f1f] md:text-[34px]">
+          <div className="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
+            {WHY_ARTACE_POINTS.map(({ title, text, iconSrc }) => (
+              <div
+                key={title}
+                className="mx-auto flex h-full w-full max-w-[320px] flex-col items-center text-center lg:max-w-none"
+              >
+                <Image
+                  src={iconSrc}
+                  alt={title}
+                  width={64}
+                  height={64}
+                  className="h-14 w-auto object-contain"
+                />
+                <h3 className="mt-5 font-display text-[25px] leading-[1.2] text-[#313131]">
                   {title}
                 </h3>
-                <p className="mt-2 text-[13px] leading-6 text-[#5f5a52]">{text}</p>
+                <p className="mt-2 text-[18px] leading-8 text-[#595959]">{text}</p>
               </div>
             ))}
           </div>
@@ -785,33 +1099,34 @@ const SingleProduct = ({
       </section>
 
       <section className="bg-[#080909] px-6 py-12 text-white md:px-12 md:py-16 lg:px-24">
-        <div className="mx-auto grid max-w-[1440px] items-center gap-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">
           <div>
-            <p className="text-[12px] uppercase tracking-[0.08em] text-white/65">
-              {advisor.description}
+            <p className="font-inter text-[18px] font-normal text-white/65">
+              {toTitleCase(advisor.description)}
             </p>
-            <h2 className="mt-4 max-w-3xl font-display text-[44px] leading-[1.12] text-white md:text-[54px]">
+            <h2 className="mt-4 max-w-3xl font-display text-[36px] leading-[1.12] text-white">
               {advisor.headline}
             </h2>
             <Link
               href={advisor.ctaHref}
-              className="mt-8 inline-flex items-center rounded-[4px] bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#141414] transition-colors hover:bg-[#f3f3f3]"
+              className="mt-8 inline-flex items-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[18px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3]"
             >
               {advisor.ctaLabel}
+              <ArrowUpRight className="h-5 w-5" />
             </Link>
           </div>
 
           <div className="justify-self-center text-center md:justify-self-end">
-            <div className="relative mx-auto h-56 w-56 overflow-hidden rounded-full md:h-64 md:w-64">
+            <div className="relative mx-auto h-64 w-64 overflow-hidden rounded-full md:h-72 md:w-72">
               <Image
                 src={advisor.image}
                 alt={advisor.name}
                 fill
-                sizes="256px"
+                sizes="(max-width: 768px) 256px, 288px"
                 className="object-cover"
               />
             </div>
-            <p className="mt-4 text-[13px] text-white/70">
+            <p className="mt-5 text-[15px] text-white/70">
               {advisor.name}, {advisor.role}
             </p>
           </div>
@@ -857,19 +1172,6 @@ const SingleProduct = ({
         </div>
       </section>
 
-      {product.description && (
-        <section className="px-6 pb-16 md:px-12 lg:px-24">
-          <div className="mx-auto max-w-[1440px] border-t border-[#1f1f1f]/10 pt-10">
-            <h2 className="font-display text-[48px] leading-none text-[#1f1f1f] md:text-[58px]">
-              Product Details
-            </h2>
-            <div
-              className="prose prose-sm mt-6 max-w-none text-[#4f4b45]"
-              dangerouslySetInnerHTML={{ __html: product.description }}
-            />
-          </div>
-        </section>
-      )}
     </main>
   );
 };
