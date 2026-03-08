@@ -1001,7 +1001,15 @@ const SingleProduct = ({
                   onClick={handleAddToCart}
                   className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-normal text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
                 >
-                  Add to Bag <Plus className="h-3.5 w-3.5" />
+                  Add to Bag
+                  <Image
+                    src="/add-icon.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
                 </button>
 
                 <Link
@@ -1009,6 +1017,14 @@ const SingleProduct = ({
                   className="inline-flex items-center gap-2 rounded-[6px] bg-[#FFDB4B] px-6 py-3 text-[18px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f]"
                 >
                   Order a Custom Size
+                  <Image
+                    src="/custom-order-icon.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
                 </Link>
 
                 <button
