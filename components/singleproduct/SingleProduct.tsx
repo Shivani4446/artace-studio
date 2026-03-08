@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
   BadgeCheck,
+  ChevronDown,
   HandHelping,
   Heart,
   Minus,
   Plus,
-  RotateCcw,
-  Share2,
   ShieldCheck,
   Star,
   Truck,
@@ -374,6 +373,7 @@ const SingleProduct = ({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
+  const [showWishlistToast, setShowWishlistToast] = useState(false);
 
   const sizeOptions = useMemo(() => {
     if (!product) return ["16x20", "20x30", "30x40"];
@@ -418,8 +418,26 @@ const SingleProduct = ({
     );
   }, [product]);
 
+  const discountPercentage = useMemo(() => {
+    if (!product || product.regularPrice === null || product.price === null) {
+      return null;
+    }
+    if (product.regularPrice <= product.price || product.regularPrice <= 0) {
+      return null;
+    }
+    return Math.round(
+      ((product.regularPrice - product.price) / product.regularPrice) * 100
+    );
+  }, [product]);
+
   const displayRating = product?.averageRating && product.averageRating > 0 ? product.averageRating : 4.8;
   const displayReviewCount = product?.reviewCount && product.reviewCount > 0 ? product.reviewCount : 86;
+
+  useEffect(() => {
+    if (!showWishlistToast) return;
+    const timer = window.setTimeout(() => setShowWishlistToast(false), 3000);
+    return () => window.clearTimeout(timer);
+  }, [showWishlistToast]);
 
   const handleAddToCart = () => {
     if (!product || !selectedImage || !product.inStock) return;
@@ -443,6 +461,10 @@ const SingleProduct = ({
     );
   };
 
+  const handleAddToWishlist = () => {
+    setShowWishlistToast(true);
+  };
+
   if (!product) {
     return (
       <section className={`bg-[#f4f2ee] px-6 py-16 md:px-12 lg:px-24 ${className}`}>
@@ -464,22 +486,33 @@ const SingleProduct = ({
     <main className={`bg-[#f4f2ee] text-[#1f1f1f] ${className}`}>
       <section className="px-6 py-8 md:px-12 md:py-10 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
-          <p className="text-[11px] text-[#6d6962]">
+          <p className="text-[16px] text-[#6d6962]">
             Shop / Canvas Collection / {product.categories[0]?.name ?? "Bestseller"} / {stripHtml(product.name)}
           </p>
 
-          <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,0.46fr)_minmax(0,0.54fr)]">
+          <div className="mt-[50px] grid gap-y-10 lg:grid-cols-[500px_minmax(0,1fr)] lg:gap-x-[60px]">
             <div>
-              <div className="grid gap-4 md:grid-cols-[62px_minmax(0,1fr)]">
-                <div className="order-2 flex gap-3 overflow-x-auto md:order-1 md:flex-col md:overflow-visible">
+              <div className="max-w-[500px]">
+                <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
+                  <Image
+                    src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                    alt={selectedImage?.alt || stripHtml(product.name)}
+                    width={500}
+                    height={500}
+                    sizes="(max-width: 768px) 100vw, 500px"
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+
+                <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
                   {product.images.map((image, index) => (
                     <button
                       key={image.id}
                       type="button"
                       onClick={() => setActiveImageIndex(index)}
-                      className={`relative h-[62px] w-[62px] shrink-0 overflow-hidden rounded-[12px] ${
+                      className={`relative h-[62px] w-[62px] shrink-0 overflow-hidden rounded-[8px] ${
                         index === activeImageIndex
-                          ? "ring-4 ring-white/50"
+                          ? "ring-2 ring-[#3A4980]/40"
                           : ""
                       }`}
                       aria-label={`Select image ${index + 1}`}
@@ -494,80 +527,76 @@ const SingleProduct = ({
                     </button>
                   ))}
                 </div>
-
-                <div className="order-1 md:order-2 max-w-[500px]">
-                  <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
-                    <Image
-                      src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
-                      alt={selectedImage?.alt || stripHtml(product.name)}
-                      width={500}
-                      height={500}
-                      sizes="(max-width: 768px) 100vw, 500px"
-                      className="object-cover w-full h-auto"
-                    />
-                  </div>
-
-                  <div className="mt-[30px] flex flex-wrap justify-between text-[16px] text-[#4e4a44]">
-                    <button type="button" className="inline-flex items-center gap-2 hover:text-black">
-                      <Heart className="h-5 w-5" /> Add to Wish List
-                    </button>
-                    <button type="button" className="inline-flex items-center gap-2 hover:text-black mx-auto">
-                      <Share2 className="h-5 w-5" /> Share
-                    </button>
-                    <Link href="/contact-us" className="inline-flex items-center gap-2 hover:text-black ml-auto">
-                      <HandHelping className="h-5 w-5" /> Need Help?
-                    </Link>
-                  </div>
-                </div>
               </div>
             </div>
 
             <div>
-              <h1 className="font-display text-[32px] leading-[1.16] text-[#24211d]">
+              <h1 className="font-display text-[28px] leading-[1.2] text-[#24211d]">
                 {product.name}
               </h1>
-              <div className="mt-[30px] flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-[#6d6962]">
-                <span>By {artistName}</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#f0e3bc] px-2 py-1 text-[#5f4a18]">
+              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <span className="text-[18px] text-[#313131] underline underline-offset-2">
+                  {artistName}
+                </span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#f0e3bc] px-2 py-1 text-[14px] font-medium text-[#5f4a18]">
                   <Star className="h-3 w-3 fill-[#be8f2b] text-[#be8f2b]" />
                   {displayRating.toFixed(1)}
                 </span>
-                <span className="rounded-full bg-[#e6edf8] px-2 py-1 text-[#365683]">
+                <span className="rounded-full bg-[#e6edf8] px-2 py-1 text-[14px] font-medium text-[#365683]">
                   {displayReviewCount} Reviews
                 </span>
               </div>
 
-              <div className="mt-[30px] flex flex-wrap items-center gap-3">
-                {product.onSale && formattedRegularPrice && (
-                  <span className="font-display text-[40px] leading-none text-[#6c655a] line-through">
-                    {formattedRegularPrice}
+              <div className="mt-6 font-inter">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <span className="text-[28px] font-semibold leading-none text-[#292929]">
+                    {formattedPrice ?? "Price on request"}
                   </span>
-                )}
-                <span className="font-display text-[40px] leading-none text-[#1f1f1f]">
-                  {formattedPrice ?? "Price on request"}
-                </span>
+                  {discountPercentage !== null && formattedRegularPrice && (
+                    <span className="text-[16px] leading-none text-[#494949] line-through">
+                      {formattedRegularPrice}
+                    </span>
+                  )}
+                  {discountPercentage !== null && (
+                    <span className="text-[16px] font-semibold leading-none text-[#14AE5C]">
+                      {discountPercentage}% off
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 text-[16px] text-[#595959]">Inclusive of all taxes</p>
               </div>
 
               {product.shortDescription && (
-                <p className="mt-[30px] max-w-2xl text-[18px] leading-6 text-[#4f4b45]">
+                <p className="mt-[30px] max-w-2xl text-[18px] leading-8 text-[#313131]">
                   {stripHtml(product.shortDescription)}
                 </p>
               )}
 
               <div className="mt-[30px]">
-                <p className="text-[16px] text-[#4f4b45]">Choose a Size</p>
-                <div className="mt-2 flex flex-wrap gap-2">
+                <p className="text-[16px] text-[#595959]">Choose a Size</p>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
                       type="button"
                       onClick={() => setSelectedSize(size)}
-                      className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.04em] ${
+                      className={`inline-flex items-center gap-2 rounded-[8px] border px-3 py-2 font-inter text-[14px] font-medium transition-colors ${
                         selectedSizeValue === size
-                          ? "border-[#1f1f1f] bg-[#1f1f1f] text-white"
-                          : "border-[#1f1f1f]/20 bg-white text-[#4f4b45]"
+                          ? "border-[#3A4980]/20 bg-[#EDF0F8] text-[#3A4980]"
+                          : "border-[#d5d5d5] bg-white text-[#595959]"
                       }`}
                     >
+                      <span
+                        className={`flex h-4 w-4 items-center justify-center rounded-full border ${
+                          selectedSizeValue === size
+                            ? "border-[#3A4980]"
+                            : "border-[#a4a4a4]"
+                        }`}
+                      >
+                        {selectedSizeValue === size ? (
+                          <span className="h-2 w-2 rounded-full bg-[#3A4980]" />
+                        ) : null}
+                      </span>
                       {size}
                     </button>
                   ))}
@@ -575,26 +604,28 @@ const SingleProduct = ({
               </div>
 
               {product.sku && (
-                <p className="mt-[30px] text-[16px] uppercase tracking-[0.08em] text-[#6d6962]">
+                <p className="mt-[30px] text-[16px] text-[#595959]">
                   SKU: {product.sku}
                 </p>
               )}
 
               <div className="mt-[30px] flex flex-wrap items-center gap-3">
-                <div className="flex h-[50px] items-center rounded-[12px] border border-[#dcdad8] bg-white">
+                <div className="flex h-[50px] items-center overflow-hidden rounded-[10px] border border-[#dcdad8] bg-white">
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                    className="rounded-l-[11px] px-4 hover:bg-[#f0ede8]"
+                    className="flex h-full w-[44px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7]"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
-                  <span className="w-10 text-center text-sm">{quantity}</span>
+                  <span className="w-[46px] text-center font-inter text-[16px] font-medium text-[#313131]">
+                    {quantity}
+                  </span>
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => current + 1)}
-                    className="rounded-r-[11px] px-4 hover:bg-[#f0ede8]"
+                    className="flex h-full w-[44px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7]"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />
@@ -605,35 +636,42 @@ const SingleProduct = ({
                   type="button"
                   disabled={!product.inStock}
                   onClick={handleAddToCart}
-                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-semibold text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
+                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-normal text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
                 >
-                  Add to Cart <Plus className="h-3.5 w-3.5" />
+                  Add to Bag <Plus className="h-3.5 w-3.5" />
                 </button>
 
                 <Link
                   href="/contact-us"
-                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#dfc765] px-6 py-3 text-[18px] font-semibold text-[#2c250f] transition-colors hover:bg-[#d2b952]"
+                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#FFDB4B] px-6 py-3 text-[18px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f]"
                 >
                   Order a Custom Size
                 </Link>
+
+                <button
+                  type="button"
+                  onClick={handleAddToWishlist}
+                  aria-label="Add to wishlist"
+                  className="inline-flex h-[50px] w-[50px] items-center justify-center rounded-[6px] bg-[#F3F3F3] text-[#5b5b5b] transition-colors hover:bg-[#e8e8e8]"
+                >
+                  <Heart className="h-5 w-5" />
+                </button>
               </div>
 
-              <div className="mt-[30px] overflow-hidden rounded-[6px] border border-[#1f1f1f]/10 bg-white">
-                <div className="flex items-start gap-3 border-b border-[#1f1f1f]/10 px-4 py-3">
-                  <Truck className="mt-0.5 h-4 w-4 text-[#c1432f]" />
-                  <div>
-                    <p className="text-[13px] font-semibold text-[#2f2b25]">Free Delivery</p>
-                    <p className="text-[11px] text-[#6d6962]">Enjoy our Pan-India door-step delivery with safety.</p>
-                  </div>
+              <details className="group mt-[24px] overflow-hidden rounded-[6px] bg-transparent">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-inter text-[18px] leading-tight text-[#3a3a3a] [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex items-center gap-3">
+                    <Truck className="h-5 w-5 shrink-0 text-[#3a3a3a]" />
+                    <span>Ships rolled. Frame it locally in your city to hang it</span>
+                  </span>
+                  <ChevronDown className="h-5 w-5 text-[#4f4f4f] transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-in-out group-open:grid-rows-[1fr]">
+                  <p className="overflow-hidden border-t border-[#ededed] px-4 py-3 text-[15px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100">
+                    This reduces shipping costs and prevents damage during transit. You also get to choose the frame as per your decor and taste. Visit any local frame shop for multiple framing options. We ship the artwork carefully rolled in a protective tube. A booklet with framing tips is also included.
+                  </p>
                 </div>
-                <div className="flex items-start gap-3 px-4 py-3">
-                  <RotateCcw className="mt-0.5 h-4 w-4 text-[#c1432f]" />
-                  <div>
-                    <p className="text-[13px] font-semibold text-[#2f2b25]">Return Delivery</p>
-                    <p className="text-[11px] text-[#6d6962]">Free 15-day Money Back + Returns.</p>
-                  </div>
-                </div>
-              </div>
+              </details>
 
               <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#1f1f1f]/10 pt-6 sm:grid-cols-4">
                 <div className="text-center">
@@ -667,6 +705,19 @@ const SingleProduct = ({
           </div>
         </div>
       </section>
+
+      {showWishlistToast ? (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+          <BadgeCheck className="h-5 w-5 text-[#14AE5C]" />
+          <p className="font-inter text-[14px] text-[#313131]">Added to wishlist</p>
+          <Link
+            href="/wishlist"
+            className="font-inter text-[14px] text-[#313131] underline underline-offset-2"
+          >
+            Check now
+          </Link>
+        </div>
+      ) : null}
 
       <section className="px-6 py-10 md:px-12 md:py-12 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
