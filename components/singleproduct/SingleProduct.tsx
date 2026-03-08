@@ -1121,7 +1121,7 @@ const SingleProduct = ({
       </section>
 
       {showWishlistToast ? (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+        <div className="fixed bottom-24 right-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
           <BadgeCheck className="h-5 w-5 text-[#14AE5C]" />
           <p className="font-inter text-[14px] text-[#313131]">Added to wishlist</p>
           <Link
@@ -1132,6 +1132,23 @@ const SingleProduct = ({
           </Link>
         </div>
       ) : null}
+
+      <Link
+        href="https://wa.me/9657609102"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat on WhatsApp"
+        className="fixed bottom-6 right-6 z-50 inline-flex transition-transform hover:scale-[1.03]"
+      >
+        <Image
+          src="/whatsapp-icon.svg"
+          alt=""
+          aria-hidden="true"
+          width={62}
+          height={62}
+          className="h-[62px] w-[62px] object-contain"
+        />
+      </Link>
 
       <section className="px-6 py-10 md:px-12 md:py-12 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
