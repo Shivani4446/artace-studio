@@ -39,37 +39,37 @@ const TEAM_MEMBERS: TeamMember[] = [
 
 const TeamPage = () => {
   return (
-    <main className="bg-[#f4f2ee] px-6 py-10 md:px-12 md:py-14 lg:px-24">
+    <main className="bg-[#f4f2ee] px-4 py-8 sm:px-6 md:px-12 md:py-14 lg:px-24">
       <section className="mx-auto max-w-[1440px]">
         <div>
-          <h1 className="font-display text-[52px] leading-[0.98] text-[#1f1f1f]">
+          <h1 className="font-display text-[34px] leading-[1.04] text-[#1f1f1f] md:text-[52px] md:leading-[0.98]">
             Meet the Team
           </h1>
-          <p className="mt-5 max-w-[980px] font-inter text-[18px] leading-8 text-[#595959]">
+          <p className="mt-4 max-w-[980px] font-inter text-[15px] leading-7 text-[#595959] md:mt-5 md:text-[18px] md:leading-8">
             Artace Studio is built by people who care deeply about art, artists, and
             experience. Our leadership blends creative vision with operational rigor
             so each piece you collect feels thoughtful and lasting.
           </p>
         </div>
 
-        <div className="mt-12 space-y-24">
+        <div className="mt-8 space-y-12 md:mt-12 md:space-y-24">
           {TEAM_MEMBERS.map((member, index) => (
             <article
               key={member.name}
-              className={`grid items-center gap-8 md:gap-14 ${
+              className={`grid items-center gap-6 rounded-[12px] border border-[#ddd8cf] bg-white/60 p-4 md:gap-14 md:rounded-none md:border-0 md:bg-transparent md:p-0 ${
                 index % 2 === 1
                   ? "md:grid-cols-[minmax(0,0.4fr)_minmax(0,0.6fr)]"
                   : "md:grid-cols-[minmax(0,0.6fr)_minmax(0,0.4fr)]"
               }`}
             >
               <div className={index % 2 === 1 ? "md:order-2" : ""}>
-                <h2 className="font-display text-[42px] leading-[1.02] text-[#1f1f1f]">
+                <h2 className="font-display text-[30px] leading-[1.06] text-[#1f1f1f] md:text-[42px] md:leading-[1.02]">
                   {member.name}
                 </h2>
-                <p className="mt-2 font-inter text-[15px] font-medium uppercase tracking-[0.07em] text-[#6f685f]">
+                <p className="mt-2 font-inter text-[12px] font-medium uppercase tracking-[0.07em] text-[#6f685f] md:text-[15px]">
                   {member.role}
                 </p>
-                <p className="mt-5 font-inter text-[18px] leading-8 text-[#595959]">
+                <p className="mt-4 font-inter text-[15px] leading-7 text-[#595959] md:mt-5 md:text-[18px] md:leading-8">
                   {member.bio}
                 </p>
               </div>
@@ -79,12 +79,12 @@ const TeamPage = () => {
                   index % 2 === 1 ? "md:order-1" : ""
                 }`}
               >
-                <div className="relative h-[220px] w-[220px] overflow-hidden rounded-full border border-[#ded8ce] bg-[#ece8df] md:h-[260px] md:w-[260px]">
+                <div className="relative h-[180px] w-[180px] overflow-hidden rounded-full border border-[#ded8ce] bg-[#ece8df] md:h-[260px] md:w-[260px]">
                   <Image
                     src={member.image}
                     alt={member.imageAlt}
                     fill
-                    sizes="260px"
+                    sizes="(max-width: 768px) 180px, 260px"
                     className={
                       member.name === "Sampadaa Mahalley"
                         ? "object-cover scale-[1.25] object-[center_22%]"
@@ -96,7 +96,7 @@ const TeamPage = () => {
                   href={member.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center font-inter text-[14px] font-medium text-[#313131] underline underline-offset-4 transition-colors hover:text-black"
+                  className="mt-4 inline-flex items-center font-inter text-[13px] font-medium text-[#313131] underline underline-offset-4 transition-colors hover:text-black md:text-[14px]"
                 >
                   LinkedIn
                 </Link>

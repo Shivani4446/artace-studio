@@ -10,14 +10,14 @@ const lora = Lora({
 
 export default function GallerySection() {
   return (
-    <section className="w-full bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24"> 
+    <section className="w-full bg-[#FAF9F6] px-4 py-12 sm:px-6 sm:py-16 md:px-12 md:py-20 lg:px-24"> 
       {/* Container - bg-[#FAF9F6] is a cream/off-white color */}
       
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 md:grid-cols-2 md:gap-12 lg:gap-24">
         
         {/* Left Column: Vertical Image */}
         {/* We add 'md:pt-32' to push this image down, creating the staggered layout */}
-        <div className="flex flex-col justify-end md:pt-32 order-2 md:order-1">
+        <div className="order-2 flex flex-col justify-end md:order-1 md:pt-32">
           <div className="relative w-full aspect-[3/4] shadow-sm">
             <Image
               src="/about-us-img-1.webp"
@@ -30,11 +30,13 @@ export default function GallerySection() {
         </div>
 
         {/* Right Column: Text + Horizontal Image */}
-        <div className="flex flex-col justify-between order-1 md:order-2">
+        <div className="order-1 flex flex-col justify-between md:order-2">
           
           {/* Text Block */}
-          <div className="mb-12 md:mb-20">
-            <p className={`${lora.className} text-[#2D2D2D] text-lg md:text-xl leading-relaxed max-w-md`}>
+          <div className="mb-8 md:mb-20">
+            <p
+              className={`${lora.className} max-w-md text-[16px] leading-7 text-[#2D2D2D] md:text-xl md:leading-relaxed`}
+            >
               Artace Studio has stood as a beacon of artistic excellence, specializing in
               premium canvas paintings that transform spaces into galleries of distinction and
               aim for all thing everything about paintings.

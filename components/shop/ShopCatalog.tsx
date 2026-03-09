@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 
@@ -98,24 +98,24 @@ const getProductGridClassName = (productsPerRow: ProductsPerRow) => {
     case 1:
       return "grid-cols-1";
     case 2:
-      return "grid-cols-1 sm:grid-cols-2";
+      return "grid-cols-2";
     case 3:
-      return "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3";
+      return "grid-cols-2 lg:grid-cols-3";
     case 4:
-      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4";
+      return "grid-cols-2 md:grid-cols-3 xl:grid-cols-4";
     case 5:
-      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5";
+      return "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5";
     case 6:
-      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6";
+      return "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6";
     default:
-      return "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3";
+      return "grid-cols-2 lg:grid-cols-3";
   }
 };
 
 const getProductGridGapClassName = (productsPerRow: ProductsPerRow) => {
-  if (productsPerRow >= 5) return "gap-x-4 gap-y-8";
-  if (productsPerRow === 4) return "gap-x-5 gap-y-9";
-  return "gap-x-6 gap-y-10";
+  if (productsPerRow >= 5) return "gap-x-3 gap-y-6 sm:gap-x-4 sm:gap-y-8";
+  if (productsPerRow === 4) return "gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-8";
+  return "gap-x-3 gap-y-7 sm:gap-x-5 sm:gap-y-9";
 };
 
 const getCardTypography = (productsPerRow: ProductsPerRow) => {
@@ -142,12 +142,12 @@ const getCardTypography = (productsPerRow: ProductsPerRow) => {
   }
 
   return {
-    category: "text-[14px]",
-    title: "text-[18px]",
-    meta: "text-[14px]",
-    regularPrice: "text-[18px]",
-    price: "text-[24px]",
-    addToCart: "!px-4 !py-2 !text-[11px]",
+    category: "text-[11px] sm:text-[12px] lg:text-[14px]",
+    title: "text-[14px] sm:text-[16px] lg:text-[18px]",
+    meta: "text-[11px] sm:text-[12px] lg:text-[14px]",
+    regularPrice: "text-[12px] sm:text-[14px] lg:text-[18px]",
+    price: "text-[15px] sm:text-[18px] lg:text-[24px]",
+    addToCart: "!px-2.5 !py-1.5 !text-[10px] sm:!px-3 sm:!py-1.5 sm:!text-[10px] lg:!px-4 lg:!py-2 lg:!text-[11px]",
   };
 };
 
@@ -165,7 +165,7 @@ const FilterChipGroup = ({
   getCount?: (value: string) => number;
 }) => {
   return (
-    <div className="rounded-[12px] border border-[#1f1f1f]/12 bg-transparent p-4">
+    <div className="rounded-[14px] border border-[#1f1f1f]/12 bg-transparent p-4">
       <h3 className="text-[14px] font-semibold text-[#24211d]">{title}</h3>
       {options.length === 0 ? (
         <p className="mt-2 text-xs text-[#8a8378]">No Options Available</p>
@@ -229,6 +229,7 @@ const ShopCatalog = ({
   const [productsPerPage, setProductsPerPage] = useState<number>(12);
   const [productsPerRow, setProductsPerRow] = useState<ProductsPerRow>(3);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const toolbarMenusRef = useRef<HTMLDivElement | null>(null);
 
   const categoryOptions = useMemo(() => {
@@ -391,7 +392,7 @@ const ShopCatalog = ({
   useEffect(() => {
     if (!openToolbarMenu) return;
 
-    const onMouseDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (!toolbarMenusRef.current) return;
       if (toolbarMenusRef.current.contains(event.target as Node)) return;
       setOpenToolbarMenu(null);
@@ -403,11 +404,11 @@ const ShopCatalog = ({
       }
     };
 
-    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("pointerdown", onPointerDown);
     document.addEventListener("keydown", onKeyDown);
 
     return () => {
-      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [openToolbarMenu]);
@@ -424,6 +425,37 @@ const ShopCatalog = ({
       window.removeEventListener("pointercancel", stopDragging);
     };
   }, [isPriceSliderDragging]);
+
+  useEffect(() => {
+    if (!isMobileFiltersOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileFiltersOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isMobileFiltersOpen]);
+
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsMobileFiltersOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   const selectedSortLabel =
     SORT_OPTIONS.find((option) => option.id === sortBy)?.label ?? "By Date Added";
@@ -482,18 +514,18 @@ const ShopCatalog = ({
   };
 
   return (
-    <main className="bg-[#f4f2ee] px-6 py-10 md:px-12 md:py-14 lg:px-24">
-      <section className="mx-auto max-w-[1440px]">
-        <div className="mb-10 flex flex-col items-start gap-4">
-          <h1 className="font-display text-[52px] leading-none text-[#1f1f1f]">
+    <main className="bg-[#f4f2ee] py-8 md:py-14">
+      <section className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-12">
+        <div className="mb-8 flex flex-col items-start gap-3 md:mb-10 md:gap-4">
+          <h1 className="font-display text-[32px] leading-[1.05] text-[#1f1f1f] md:text-[52px] md:leading-none">
             Handmade Canvas Paintings
           </h1>
-          <p className="max-w-[1200px] text-[18px] leading-8 text-[#5f5a52]">
+          <p className="max-w-[1200px] text-[14px] leading-7 text-[#5f5a52] md:text-[18px] md:leading-8">
             <span className="block md:whitespace-nowrap">
               Explore our collection of handmade canvas paintings and unique wall art crafted.
             </span>
             <span className="block md:whitespace-nowrap">
-              At Artace Studio, you'll find modern, abstract, contemporary, and custom canvas paintings designed to elevate any home or office space.
+              At Artace Studio, you&apos;ll find modern, abstract, contemporary, and custom canvas paintings designed to elevate any home or office space.
             </span>
           </p>
         </div>
@@ -511,8 +543,47 @@ const ShopCatalog = ({
             </p>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-            <aside className="h-fit rounded-[12px] border border-[#1f1f1f]/12 bg-transparent p-4 lg:sticky lg:top-28">
+          <>
+            {isMobileFiltersOpen && (
+              <button
+                type="button"
+                aria-label="Close filters"
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="fixed inset-0 z-[60] bg-black/35 transition-opacity duration-300 lg:hidden"
+              />
+            )}
+
+            <div className="mb-4 flex items-center justify-between lg:hidden">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenToolbarMenu(null);
+                  setIsMobileFiltersOpen(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-[14px] border border-[#1f1f1f]/15 bg-transparent px-4 py-2 text-sm font-semibold text-[#2f2b26]"
+              >
+                <SlidersHorizontal className="h-4 w-4" strokeWidth={1.8} />
+                Filters
+                {activeFilterCount > 0 && (
+                  <span className="rounded-full bg-[#1f1f1f] px-2 py-0.5 text-[10px] font-semibold leading-none text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+
+              <p className="text-xs text-[#5f5a52]">
+                {sortedProducts.length} {sortedProducts.length === 1 ? "Product" : "Products"}
+              </p>
+            </div>
+
+            <div className="grid gap-6 lg:gap-8 lg:grid-cols-[300px_minmax(0,1fr)]">
+              <aside
+                className={`fixed inset-0 z-[70] h-dvh w-screen overflow-y-auto overscroll-contain bg-[#f4f2ee] p-4 shadow-2xl transition-transform duration-300 ease-out lg:static lg:z-auto lg:h-auto lg:w-auto lg:max-w-none lg:transform-none lg:shadow-none lg:border lg:border-[#1f1f1f]/12 lg:bg-transparent lg:p-5 lg:block lg:h-fit lg:rounded-[14px] lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-hidden lg:hover:overflow-y-auto lg:pr-2 lg:[scrollbar-width:thin] lg:[&::-webkit-scrollbar]:w-1.5 lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:bg-[#1f1f1f]/25 ${
+                  isMobileFiltersOpen
+                    ? "translate-x-0 pointer-events-auto"
+                    : "-translate-x-[105%] pointer-events-none lg:pointer-events-auto lg:translate-x-0"
+                }`}
+              >
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <h2 className="text-[22px] font-semibold text-[#1f1f1f]">Filters</h2>
@@ -531,9 +602,19 @@ const ShopCatalog = ({
                 </button>
               </div>
 
-              <div className="lg:max-h-[calc(100vh-13rem)] lg:overflow-y-hidden lg:pr-1 lg:hover:overflow-y-auto lg:[scrollbar-width:thin] lg:[&::-webkit-scrollbar]:w-1.5 lg:[&::-webkit-scrollbar-thumb]:rounded-full lg:[&::-webkit-scrollbar-thumb]:bg-[#1f1f1f]/25">
+              <button
+                type="button"
+                aria-label="Close filters panel"
+                onClick={() => setIsMobileFiltersOpen(false)}
+                className="mb-4 inline-flex items-center gap-2 rounded-[10px] border border-[#1f1f1f]/15 px-3 py-1.5 text-xs font-semibold text-[#4f4b45] lg:hidden"
+              >
+                <X className="h-4 w-4" strokeWidth={1.9} />
+                Close
+              </button>
+
+              <div>
                 <div className="space-y-4">
-                  <div className="rounded-[12px] border border-[#1f1f1f]/12 bg-transparent p-4">
+                  <div className="rounded-[14px] border border-[#1f1f1f]/12 bg-transparent p-4">
                   <h3 className="text-[14px] font-semibold text-[#24211d]">By Price</h3>
                   <p className="mt-1 text-xs text-[#7b7468]">Set Your Budget Range</p>
 
@@ -586,13 +667,13 @@ const ShopCatalog = ({
                   </div>
 
                   <div className="mt-4 grid grid-cols-2 gap-2">
-                    <div className="rounded-[10px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
+                    <div className="rounded-[12px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
                       <p className="text-[10px] text-[#7b7468]">Min Price</p>
                       <p className="mt-1 text-sm font-semibold text-[#1f1f1f]">
                         Rs. {formatNumber(priceMin)}
                       </p>
                     </div>
-                    <div className="rounded-[10px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
+                    <div className="rounded-[12px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
                       <p className="text-[10px] text-[#7b7468]">Max Price</p>
                       <p className="mt-1 text-sm font-semibold text-[#1f1f1f]">
                         Rs. {formatNumber(priceMax)}
@@ -652,9 +733,9 @@ const ShopCatalog = ({
               </div>
             </aside>
 
-            <div>
-              <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-[#5f5a52]">
+            <div className="min-w-0">
+              <div className="mb-5 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs text-[#5f5a52] sm:text-sm">
                   Showing{" "}
                   <span className="font-semibold text-[#1f1f1f]">
                     {firstVisibleIndex}-{lastVisibleIndex}
@@ -662,7 +743,10 @@ const ShopCatalog = ({
                   Of {sortedProducts.length} Products
                 </p>
 
-                <div ref={toolbarMenusRef} className="flex flex-wrap items-center gap-2">
+                <div
+                  ref={toolbarMenusRef}
+                  className="relative z-30 flex flex-wrap items-center gap-2 sm:justify-end"
+                >
                   <div className="relative">
                     <button
                       type="button"
@@ -671,9 +755,11 @@ const ShopCatalog = ({
                       }
                       aria-haspopup="menu"
                       aria-expanded={openToolbarMenu === "per-page"}
-                      className="inline-flex items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
+                      className="inline-flex whitespace-nowrap items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
                     >
-                      <span className="text-xs font-semibold text-[#4f4b45]">Per Page</span>
+                      <span className="hidden text-xs font-semibold text-[#4f4b45] sm:inline">
+                        Per Page
+                      </span>
                       <span className="text-sm font-medium text-[#1f1f1f]">
                         {selectedPerPageLabel}
                       </span>
@@ -688,7 +774,7 @@ const ShopCatalog = ({
                     {openToolbarMenu === "per-page" && (
                       <div
                         role="menu"
-                        className="absolute right-0 top-full z-20 mt-2 min-w-[180px] rounded-[12px] border border-[#1f1f1f]/10 bg-[#f4f2ee] p-2 shadow-[0_18px_35px_rgba(0,0,0,0.08)]"
+                        className="absolute left-0 top-full z-[40] mt-2 min-w-[160px] max-w-[calc(100vw-1rem)] rounded-[12px] border border-[#1f1f1f]/10 bg-[#f4f2ee] p-2 shadow-[0_18px_35px_rgba(0,0,0,0.08)] sm:left-auto sm:right-0 sm:min-w-[180px] sm:max-w-none"
                       >
                         {PER_PAGE_OPTIONS.map((option) => {
                           const isSelected = productsPerPage === option;
@@ -718,7 +804,7 @@ const ShopCatalog = ({
                     )}
                   </div>
 
-                  <div className="relative">
+                  <div className="relative hidden md:block">
                     <button
                       type="button"
                       onClick={() =>
@@ -726,7 +812,7 @@ const ShopCatalog = ({
                       }
                       aria-haspopup="menu"
                       aria-expanded={openToolbarMenu === "per-row"}
-                      className="inline-flex items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
+                      className="inline-flex whitespace-nowrap items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
                     >
                       <span className="text-xs font-semibold text-[#4f4b45]">
                         Products Per Row
@@ -782,10 +868,12 @@ const ShopCatalog = ({
                       }
                       aria-haspopup="menu"
                       aria-expanded={openToolbarMenu === "sort"}
-                      className="inline-flex items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
+                      className="inline-flex whitespace-nowrap items-center gap-2 rounded-[12px] border border-[#1f1f1f]/10 bg-transparent px-3 py-2 transition-colors hover:border-[#1f1f1f]/25"
                     >
-                      <span className="text-xs font-semibold text-[#4f4b45]">Sort By</span>
-                      <span className="text-sm font-medium text-[#1f1f1f]">
+                      <span className="hidden text-xs font-semibold text-[#4f4b45] sm:inline">
+                        Sort By
+                      </span>
+                      <span className="max-w-[130px] truncate text-sm font-medium text-[#1f1f1f] sm:max-w-none">
                         {selectedSortLabel}
                       </span>
                       <ChevronDown
@@ -799,7 +887,7 @@ const ShopCatalog = ({
                     {openToolbarMenu === "sort" && (
                       <div
                         role="menu"
-                        className="absolute right-0 top-full z-20 mt-2 min-w-[220px] rounded-[12px] border border-[#1f1f1f]/10 bg-[#f4f2ee] p-2 shadow-[0_18px_35px_rgba(0,0,0,0.08)]"
+                        className="absolute right-0 top-full z-[40] mt-2 min-w-[180px] rounded-[12px] border border-[#1f1f1f]/10 bg-[#f4f2ee] p-2 shadow-[0_18px_35px_rgba(0,0,0,0.08)] sm:min-w-[220px]"
                       >
                         {SORT_OPTIONS.map((option) => {
                           const isSelected = sortBy === option.id;
@@ -851,7 +939,11 @@ const ShopCatalog = ({
                     return (
                       <article
                         key={product.id}
-                        className={`group relative ${isSingleRowLayout ? "rounded-[12px] border border-[#1f1f1f]/10 bg-[#f7f5f0] p-3 sm:p-4" : "flex flex-col"}`}
+                        className={`group relative ${
+                          isSingleRowLayout
+                            ? "rounded-[12px] border border-[#1f1f1f]/10 bg-[#f7f5f0] p-3 sm:p-4"
+                            : "flex flex-col"
+                        }`}
                       >
                         <Link
                           href={`/shop/${product.slug}`}
@@ -868,7 +960,7 @@ const ShopCatalog = ({
                         >
                           <div
                             className={`relative overflow-hidden rounded-[12px] bg-[#e7e3dc] ${
-                              isSingleRowLayout ? "aspect-[4/5] h-full" : "aspect-square"
+                              isSingleRowLayout ? "aspect-[4/5] h-full" : "aspect-[4/5] sm:aspect-square"
                             }`}
                           >
                             <Image
@@ -882,11 +974,11 @@ const ShopCatalog = ({
                                     ? "(max-width: 640px) 100vw, (max-width: 1400px) 20vw, 16vw"
                                     : "(max-width: 640px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               }
-                              className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              className="object-cover transition-transform duration-700 md:group-hover:scale-105"
                             />
                           </div>
 
-                          <div className={isSingleRowLayout ? "" : "mt-4"}>
+                          <div className={isSingleRowLayout ? "" : "mt-2 sm:mt-3 md:mt-4"}>
                             <p className={`${cardTypography.category} text-[#7a7368]`}>
                               {toTitleCase(categoryLabel)}
                             </p>
@@ -895,11 +987,15 @@ const ShopCatalog = ({
                             >
                               {product.name}
                             </h3>
-                            <p className={`mt-1 text-[#6f685f] ${cardTypography.meta}`}>
+                            <p
+                              className={`mt-1 text-[#6f685f] ${cardTypography.meta} ${
+                                isSingleRowLayout ? "" : "hidden sm:block"
+                              }`}
+                            >
                               {paintingMetaLine}
                             </p>
 
-                            <div className="mt-2 flex items-center gap-2">
+                            <div className="mt-1.5 flex items-center gap-1.5 sm:mt-2 sm:gap-2">
                               {product.regularPrice &&
                                 product.price !== null &&
                                 product.regularPrice > product.price && (
@@ -924,7 +1020,7 @@ const ShopCatalog = ({
                               </span>
                             </div>
 
-                            <div className="relative z-20 mt-3 translate-y-1 opacity-0 transition-all duration-300 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto">
+                            <div className="relative z-20 mt-2 translate-y-0 opacity-100 pointer-events-auto transition-all duration-300 md:mt-3 md:translate-y-1 md:opacity-0 md:pointer-events-none md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-hover:pointer-events-auto">
                               <AddToCartButton
                                 id={product.id}
                                 woocommerceProductId={product.id}
@@ -944,13 +1040,13 @@ const ShopCatalog = ({
               )}
 
               {sortedProducts.length > 0 && totalPages > 1 && (
-                <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
-                  <p className="text-sm text-[#5f5a52]">
+                <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <p className="text-xs text-[#5f5a52] sm:text-sm">
                     Page <span className="font-semibold text-[#1f1f1f]">{safeCurrentPage}</span> Of{" "}
                     <span className="font-semibold text-[#1f1f1f]">{totalPages}</span>
                   </p>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:overflow-visible sm:pb-0">
                     <button
                       type="button"
                       disabled={safeCurrentPage === 1}
@@ -990,6 +1086,7 @@ const ShopCatalog = ({
               )}
             </div>
           </div>
+          </>
         )}
       </section>
       <style jsx>{`

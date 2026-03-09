@@ -902,7 +902,7 @@ const SingleProduct = ({
     if (activeInfoTab === "About the Painting") {
       if (!aboutPaintingHtml) {
         return (
-          <p className="text-[18px] leading-8 text-[#595959]">
+          <p className="text-[15px] leading-7 text-[#595959] md:text-[18px] md:leading-8">
             About the painting is currently unavailable.
           </p>
         );
@@ -910,28 +910,28 @@ const SingleProduct = ({
 
       return (
         <div className="space-y-6">
-          <div className="rounded-[12px] border border-[#e4ded4] bg-[#faf8f4] p-5 md:p-6">
+          <div className="rounded-[12px] border border-[#e4ded4] bg-[#faf8f4] p-4 md:p-6">
             <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
               About The Painting
             </p>
-            <h3 className="mt-2 font-display text-[32px] leading-[1.2] text-[#313131]">
+            <h3 className="mt-2 font-display text-[24px] leading-[1.2] text-[#313131] md:text-[32px]">
               {stripHtml(product.name)}
             </h3>
-            <p className="mt-2 text-[17px] leading-7 text-[#595959]">
+            <p className="mt-2 text-[15px] leading-7 text-[#595959] md:text-[17px]">
               Discover the inspiration, process, and visual story behind this
               artwork.
             </p>
           </div>
 
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-            <article className="rounded-[12px] border border-[#e4ded4] bg-white p-5 md:p-6">
+            <article className="rounded-[12px] border border-[#e4ded4] bg-white p-4 md:p-6">
               <div
-                className="prose max-w-none text-[#4f4b45] prose-p:text-[18px] prose-p:leading-8 prose-p:text-[#595959] prose-p:my-0 prose-p:mb-5 prose-headings:font-display prose-headings:text-[#313131] prose-h2:text-[30px] prose-h3:text-[24px] prose-strong:text-[#313131] prose-ul:my-4 prose-li:text-[18px] prose-li:leading-8 prose-li:text-[#595959]"
+                className="prose max-w-none text-[#4f4b45] prose-p:my-0 prose-p:mb-5 prose-p:text-[15px] prose-p:leading-7 prose-p:text-[#595959] md:prose-p:text-[18px] md:prose-p:leading-8 prose-headings:font-display prose-headings:text-[#313131] prose-h2:text-[24px] md:prose-h2:text-[30px] prose-h3:text-[20px] md:prose-h3:text-[24px] prose-strong:text-[#313131] prose-ul:my-4 prose-li:text-[15px] prose-li:leading-7 prose-li:text-[#595959] md:prose-li:text-[18px] md:prose-li:leading-8"
                 dangerouslySetInnerHTML={{ __html: aboutPaintingHtml }}
               />
             </article>
 
-            <aside className="rounded-[12px] border border-[#e4ded4] bg-[#fcfbf8] p-5">
+            <aside className="rounded-[12px] border border-[#e4ded4] bg-[#fcfbf8] p-4 md:p-5">
               <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
                 Quick Highlights
               </p>
@@ -939,11 +939,13 @@ const SingleProduct = ({
                 {aboutPaintingHighlights.map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#313131]" />
-                    <span className="text-[16px] leading-7 text-[#595959]">{item}</span>
+                    <span className="text-[14px] leading-6 text-[#595959] md:text-[16px] md:leading-7">
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
-              <p className="mt-5 text-[15px] leading-7 text-[#6a655d]">
+              <p className="mt-5 text-[14px] leading-6 text-[#6a655d] md:text-[15px] md:leading-7">
                 Every piece is handcrafted and carefully quality-checked before
                 dispatch.
               </p>
@@ -957,16 +959,16 @@ const SingleProduct = ({
       return (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+            <h3 className="font-inter text-[20px] font-medium text-[#313131] md:text-[24px]">
               Product Information
             </h3>
-            <span className="rounded-full bg-[#f4f2ee] px-3 py-1 text-[14px] text-[#595959]">
+            <span className="rounded-full bg-[#f4f2ee] px-3 py-1 text-[12px] text-[#595959] md:text-[14px]">
               Made for mindful buying
             </span>
           </div>
           {specificationRows.length > 0 ? (
             <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e4ded4]">
-              <div className="grid grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] bg-[#f8f6f2] px-4 py-3 text-[15px] font-medium text-[#313131]">
+              <div className="grid grid-cols-[minmax(110px,0.42fr)_minmax(0,1fr)] bg-[#f8f6f2] px-3 py-3 text-[13px] font-medium text-[#313131] md:grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] md:px-4 md:text-[15px]">
                 <p>Attribute</p>
                 <p>Details</p>
               </div>
@@ -974,18 +976,20 @@ const SingleProduct = ({
                 {specificationRows.map((row, index) => (
                   <div
                     key={`${row.label}-${index}`}
-                    className="grid grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] gap-4 px-4 py-3"
+                    className="grid grid-cols-[minmax(110px,0.42fr)_minmax(0,1fr)] gap-3 px-3 py-3 md:grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] md:gap-4 md:px-4"
                   >
-                    <p className="text-[17px] font-medium leading-7 text-[#313131]">
+                    <p className="text-[14px] font-medium leading-6 text-[#313131] md:text-[17px] md:leading-7">
                       {row.label}
                     </p>
-                    <p className="text-[17px] leading-7 text-[#595959]">{row.value}</p>
+                    <p className="text-[14px] leading-6 text-[#595959] md:text-[17px] md:leading-7">
+                      {row.value}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="mt-3 text-[18px] text-[#595959]">
+            <p className="mt-3 text-[15px] text-[#595959] md:text-[18px]">
               Product information is currently unavailable.
             </p>
           )}
@@ -995,7 +999,7 @@ const SingleProduct = ({
 
     if (activeInfoTab === "Care Instructions") {
       return (
-        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+        <div className="space-y-4 text-[15px] leading-7 text-[#595959] md:space-y-5 md:text-[18px] md:leading-8">
           <p>
             Your artwork is made to be enjoyed and requires very little maintenance. Since paintings are displayed vertically, dust rarely settles on the surface. Simply dust the artwork gently with a dry, soft cloth once a month to keep it looking fresh.
           </p>
@@ -1016,36 +1020,44 @@ const SingleProduct = ({
       return (
         <>
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-5">
-              <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-4 md:p-5">
+              <h3 className="font-inter text-[20px] font-medium text-[#313131] md:text-[24px]">
                 Rolled Paintings
               </h3>
               <div className="mt-4 space-y-4">
                 {rolledDeliveryRows.map((row) => (
                   <div key={row.title}>
-                    <p className="text-[18px] font-medium leading-7 text-[#313131]">{row.title}</p>
-                    <p className="text-[18px] leading-7 text-[#595959]">{row.copy}</p>
+                    <p className="text-[15px] font-medium leading-6 text-[#313131] md:text-[18px] md:leading-7">
+                      {row.title}
+                    </p>
+                    <p className="text-[15px] leading-6 text-[#595959] md:text-[18px] md:leading-7">
+                      {row.copy}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-5">
-              <h3 className="font-inter text-[24px] font-medium text-[#313131]">
+            <div className="rounded-[10px] border border-[#dfdbd4] bg-[#faf9f6] p-4 md:p-5">
+              <h3 className="font-inter text-[20px] font-medium text-[#313131] md:text-[24px]">
                 Framed Paintings
               </h3>
               <div className="mt-4 space-y-4">
                 {framedDeliveryRows.map((row) => (
                   <div key={row.title}>
-                    <p className="text-[18px] font-medium leading-7 text-[#313131]">{row.title}</p>
-                    <p className="text-[18px] leading-7 text-[#595959]">{row.copy}</p>
+                    <p className="text-[15px] font-medium leading-6 text-[#313131] md:text-[18px] md:leading-7">
+                      {row.title}
+                    </p>
+                    <p className="text-[15px] leading-6 text-[#595959] md:text-[18px] md:leading-7">
+                      {row.copy}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          <div className="mt-6 rounded-[10px] border border-[#e6e1d8] bg-white p-5 text-[18px] leading-8 text-[#595959]">
+          <div className="mt-6 rounded-[10px] border border-[#e6e1d8] bg-white p-4 text-[15px] leading-7 text-[#595959] md:p-5 md:text-[18px] md:leading-8">
             <p>
               Note: Delivery times are estimated based on our past shipments and may vary depending on the courier partner, customs procedures (for international orders), or other factors beyond our control.
             </p>
@@ -1059,7 +1071,7 @@ const SingleProduct = ({
 
     if (activeInfoTab === "Packaging") {
       return (
-        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+        <div className="space-y-4 text-[15px] leading-7 text-[#595959] md:space-y-5 md:text-[18px] md:leading-8">
           <p>
             Unframed artworks are shipped in rolled format in a protective tube. Framed artworks are shipped in thermocol boxes, secured with multiple layers of bubble wraps. We ensure paintings are packed with utmost care to avoid any damage during transit and delivered to you in perfect condition.
           </p>
@@ -1075,7 +1087,7 @@ const SingleProduct = ({
 
     if (activeInfoTab === "Returns") {
       return (
-        <div className="space-y-5 text-[18px] leading-8 text-[#595959]">
+        <div className="space-y-4 text-[15px] leading-7 text-[#595959] md:space-y-5 md:text-[18px] md:leading-8">
           <p>
             We want you to feel confident in your purchase. If needed, you may return your painting within 15 days of delivery.
           </p>
@@ -1097,13 +1109,13 @@ const SingleProduct = ({
 
   if (!product) {
     return (
-      <section className={`bg-[#f4f2ee] px-6 py-16 md:px-12 lg:px-24 ${className}`}>
-        <div className="mx-auto max-w-[960px] border border-[#1f1f1f]/10 bg-white px-8 py-12 text-center">
-          <h2 className="font-display text-4xl text-[#222]">Product Unavailable</h2>
+      <section className={`bg-[#f4f2ee] px-4 py-12 sm:px-6 md:px-12 lg:px-24 ${className}`}>
+        <div className="mx-auto max-w-[960px] border border-[#1f1f1f]/10 bg-white px-5 py-8 text-center sm:px-8 sm:py-12">
+          <h2 className="font-display text-[30px] text-[#222] sm:text-4xl">Product Unavailable</h2>
           <p className="mt-4 text-[#666]">We could not find this product right now.</p>
           <Link
             href="/"
-            className="mt-8 inline-flex border border-[#222] px-6 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#222] transition-colors hover:bg-[#222] hover:text-white"
+            className="mt-8 inline-flex w-full justify-center border border-[#222] px-6 py-3 text-xs font-semibold uppercase tracking-[0.08em] text-[#222] transition-colors hover:bg-[#222] hover:text-white sm:w-auto"
           >
             Continue Shopping
           </Link>
@@ -1114,15 +1126,15 @@ const SingleProduct = ({
 
   return (
     <main className={`bg-[#f4f2ee] text-[#1f1f1f] ${className}`}>
-      <section className="px-6 py-8 md:px-12 md:py-10 lg:px-24">
+      <section className="px-4 py-6 sm:px-6 md:px-12 md:py-10 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
-          <p className="text-[16px] text-[#6d6962]">
+          <p className="text-[13px] leading-6 text-[#6d6962] sm:text-[16px] sm:leading-normal">
             Shop / Canvas Collection / {product.categories[0]?.name ?? "Bestseller"} / {stripHtml(product.name)}
           </p>
 
-          <div className="mt-[50px] grid gap-y-10 lg:grid-cols-[500px_minmax(0,1fr)] lg:gap-x-[60px]">
+          <div className="mt-8 grid gap-y-8 md:mt-[50px] md:gap-y-10 lg:grid-cols-[500px_minmax(0,1fr)] lg:gap-x-[60px]">
             <div>
-              <div className="max-w-[500px]">
+              <div className="mx-auto max-w-[500px] lg:mx-0">
                 <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
                   <Image
                     src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
@@ -1134,7 +1146,7 @@ const SingleProduct = ({
                   />
                 </div>
 
-                <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+                <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {product.images.map((image, index) => (
                     <button
                       key={image.id}
@@ -1161,11 +1173,11 @@ const SingleProduct = ({
             </div>
 
             <div>
-              <h1 className="font-display text-[28px] leading-[1.2] text-[#24211d]">
+              <h1 className="font-display text-[24px] leading-[1.22] text-[#24211d] md:text-[28px] md:leading-[1.2]">
                 {product.name}
               </h1>
               <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="text-[18px] text-[#313131] underline underline-offset-2">
+                <span className="text-[16px] text-[#313131] underline underline-offset-2 md:text-[18px]">
                   {artistName}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-[#f0e3bc] px-2 py-1 text-[14px] font-medium text-[#5f4a18]">
@@ -1179,31 +1191,31 @@ const SingleProduct = ({
 
               <div className="mt-6 font-inter">
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <span className="text-[28px] font-semibold leading-none text-[#292929]">
+                  <span className="text-[24px] font-semibold leading-none text-[#292929] md:text-[28px]">
                     {formattedPrice ?? "Price on request"}
                   </span>
                   {discountPercentage !== null && formattedRegularPrice && (
-                    <span className="text-[16px] leading-none text-[#494949] line-through">
+                    <span className="text-[14px] leading-none text-[#494949] line-through md:text-[16px]">
                       {formattedRegularPrice}
                     </span>
                   )}
                   {discountPercentage !== null && (
-                    <span className="text-[16px] font-semibold leading-none text-[#14AE5C]">
+                    <span className="text-[14px] font-semibold leading-none text-[#14AE5C] md:text-[16px]">
                       {discountPercentage}% off
                     </span>
                   )}
                 </div>
-                <p className="mt-2 text-[16px] text-[#595959]">Inclusive of all taxes</p>
+                <p className="mt-2 text-[14px] text-[#595959] md:text-[16px]">Inclusive of all taxes</p>
               </div>
 
               {product.shortDescription && (
-                <p className="mt-[30px] max-w-2xl text-[18px] leading-8 text-[#313131]">
+                <p className="mt-6 max-w-2xl text-[15px] leading-7 text-[#313131] md:mt-[30px] md:text-[18px] md:leading-8">
                   {stripHtml(product.shortDescription)}
                 </p>
               )}
 
-              <div className="mt-[30px]">
-                <p className="text-[16px] text-[#595959]">Choose a Size</p>
+              <div className="mt-6 md:mt-[30px]">
+                <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Size</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {sizeOptions.map((size) => (
                     <button
@@ -1234,28 +1246,28 @@ const SingleProduct = ({
               </div>
 
               {product.sku && (
-                <p className="mt-[30px] text-[16px] text-[#595959]">
+                <p className="mt-6 text-[14px] text-[#595959] md:mt-[30px] md:text-[16px]">
                   SKU: {product.sku}
                 </p>
               )}
 
-              <div className="mt-[30px] flex flex-wrap items-center gap-3">
-                <div className="flex h-[50px] items-center overflow-hidden rounded-[10px] border border-[#dcdad8] bg-white">
+              <div className="mt-6 flex flex-wrap items-stretch gap-2.5 sm:gap-3 md:mt-[30px]">
+                <div className="order-1 flex h-[46px] items-center overflow-hidden rounded-[10px] border border-[#dcdad8] bg-white md:order-none md:h-[50px]">
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => Math.max(1, current - 1))}
-                    className="flex h-full w-[44px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7]"
+                    className="flex h-full w-[40px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7] md:w-[44px]"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
-                  <span className="w-[46px] text-center font-inter text-[16px] font-medium text-[#313131]">
+                  <span className="w-[42px] text-center font-inter text-[15px] font-medium text-[#313131] md:w-[46px] md:text-[16px]">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity((current) => current + 1)}
-                    className="flex h-full w-[44px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7]"
+                    className="flex h-full w-[40px] items-center justify-center text-[#313131] transition-colors hover:bg-[#EDF0F8] hover:text-[#3A4980] active:bg-[#dfe6f7] md:w-[44px]"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />
@@ -1266,7 +1278,7 @@ const SingleProduct = ({
                   type="button"
                   disabled={!product.inStock}
                   onClick={handleAddToCart}
-                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-normal text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
+                  className="order-3 inline-flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#1f1f1f] px-4 py-3 text-[16px] font-normal text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578] md:order-none md:w-auto md:px-6 md:text-[18px]"
                 >
                   Add to Bag
                   <Image
@@ -1282,7 +1294,7 @@ const SingleProduct = ({
                 <button
                   type="button"
                   onClick={openCustomSizeModal}
-                  className="inline-flex items-center gap-2 rounded-[6px] bg-[#FFDB4B] px-6 py-3 text-[18px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f]"
+                  className="order-4 inline-flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#FFDB4B] px-4 py-3 text-[16px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f] md:order-none md:w-auto md:px-6 md:text-[18px]"
                 >
                   Order a Custom Size
                   <Image
@@ -1299,7 +1311,7 @@ const SingleProduct = ({
                   type="button"
                   onClick={handleAddToWishlist}
                   aria-label="Add to wishlist"
-                  className={`inline-flex h-[50px] w-[50px] items-center justify-center rounded-[6px] transition-colors ${
+                  className={`order-2 inline-flex h-[46px] w-[46px] items-center justify-center rounded-[6px] transition-colors md:order-none md:h-[50px] md:w-[50px] ${
                     isCurrentSelectionWishlisted
                       ? "bg-[#EDF0F8] text-[#3A4980] hover:bg-[#e1e6f4]"
                       : "bg-[#F3F3F3] text-[#5b5b5b] hover:bg-[#e8e8e8]"
@@ -1313,16 +1325,16 @@ const SingleProduct = ({
                 </button>
               </div>
 
-              <details className="group mt-[24px] overflow-hidden rounded-[6px] bg-transparent">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 font-inter text-[18px] leading-tight text-[#3a3a3a] [&::-webkit-details-marker]:hidden">
+              <details className="group mt-5 overflow-hidden rounded-[6px] bg-transparent md:mt-[24px]">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-3 font-inter text-[15px] leading-6 text-[#3a3a3a] [&::-webkit-details-marker]:hidden md:px-4 md:text-[18px] md:leading-tight">
                   <span className="inline-flex items-center gap-3">
-                    <Truck className="h-5 w-5 shrink-0 text-[#3a3a3a]" />
+                    <Truck className="h-4 w-4 shrink-0 text-[#3a3a3a] md:h-5 md:w-5" />
                     <span>Ships rolled. Frame it locally in your city to hang it</span>
                   </span>
-                  <ChevronDown className="h-5 w-5 text-[#4f4f4f] transition-transform group-open:rotate-180" />
+                  <ChevronDown className="h-4 w-4 text-[#4f4f4f] transition-transform group-open:rotate-180 md:h-5 md:w-5" />
                 </summary>
                 <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-in-out group-open:grid-rows-[1fr]">
-                  <p className="overflow-hidden border-t border-[#ededed] px-4 py-3 text-[15px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100">
+                  <p className="overflow-hidden border-t border-[#ededed] px-3 py-3 text-[14px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100 md:px-4 md:text-[15px]">
                     This reduces shipping costs and prevents damage during transit. You also get to choose the frame as per your decor and taste. Visit any local frame shop for multiple framing options. We ship the artwork carefully rolled in a protective tube. A booklet with framing tips is also included.
                   </p>
                 </div>
@@ -1349,22 +1361,22 @@ const SingleProduct = ({
             </div>
           </div>
 
-          <div className="mt-9 rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-4 md:p-6">
-            <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className="mt-7 hidden rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-3 md:mt-9 md:block md:p-6">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:grid md:gap-2 md:overflow-visible md:px-0 md:pb-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {TAB_LABELS.map((tab) => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveInfoTab(tab)}
-                  className={`rounded-[10px] border px-4 py-3 text-left transition-all ${
+                  className={`min-w-[210px] rounded-[10px] border px-4 py-3 text-left transition-all md:min-w-0 ${
                     activeInfoTab === tab
                       ? "border-[#1f1f1f] bg-[#1f1f1f] text-white"
                       : "border-[#d7d2c9] bg-white text-[#4f4b45] hover:border-[#1f1f1f]/30 hover:bg-[#faf9f6]"
                   }`}
                 >
-                  <span className="block text-[18px] font-medium leading-tight">{tab}</span>
+                  <span className="block text-[16px] font-medium leading-tight md:text-[18px]">{tab}</span>
                   <span
-                    className={`mt-2 block text-[13px] leading-5 ${
+                    className={`mt-2 block text-[12px] leading-5 md:text-[13px] ${
                       activeInfoTab === tab ? "text-white/80" : "text-[#6a655d]"
                     }`}
                   >
@@ -1390,20 +1402,61 @@ const SingleProduct = ({
             </div>
           </div>
 
-          <div className="mt-5 rounded-[16px] border border-[#e1ddd5] bg-white p-5 md:p-7">
+          <div className="mt-5 space-y-2 md:hidden">
+            {TAB_LABELS.map((tab) => {
+              const isActive = activeInfoTab === tab;
+
+              return (
+                <div
+                  key={tab}
+                  className="overflow-hidden rounded-[12px] border border-[#ddd8cf] bg-white"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveInfoTab(tab)}
+                    aria-expanded={isActive}
+                    className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                  >
+                    <span className="font-inter text-[16px] font-medium text-[#2f2b26]">
+                      {tab}
+                    </span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-[#57534b] transition-transform ${
+                        isActive ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <div
+                    className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+                      isActive ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="border-t border-[#eee9df] p-3">
+                        {isActive ? renderActiveTabContent() : null}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-5 hidden rounded-[16px] border border-[#e1ddd5] bg-white p-4 md:block md:p-7">
             {renderActiveTabContent()}
           </div>
         </div>
       </section>
 
       {toastState ? (
-        <div className="fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-[8px] border border-[#d9e7da] bg-white px-4 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-          <BadgeCheck className="h-5 w-5 text-[#14AE5C]" />
-          <p className="font-inter text-[14px] text-[#313131]">{toastState.message}</p>
+        <div className="fixed bottom-4 left-3 right-3 z-50 flex max-w-[calc(100vw-1.5rem)] items-start gap-2.5 rounded-[10px] border border-[#d9e7da] bg-white px-3 py-2.5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-[420px] sm:items-center sm:gap-3 sm:px-4 sm:py-3">
+          <BadgeCheck className="h-4 w-4 shrink-0 text-[#14AE5C] sm:h-5 sm:w-5" />
+          <p className="font-inter text-[13px] text-[#313131] sm:text-[14px]">{toastState.message}</p>
           {toastState.linkHref && toastState.linkLabel ? (
             <Link
               href={toastState.linkHref}
-              className="font-inter text-[14px] text-[#313131] underline underline-offset-2"
+              className="ml-auto whitespace-nowrap font-inter text-[13px] text-[#313131] underline underline-offset-2 sm:ml-0 sm:text-[14px]"
             >
               {toastState.linkLabel}
             </Link>
@@ -1412,7 +1465,7 @@ const SingleProduct = ({
       ) : null}
 
       {isCustomSizeModalOpen ? (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 md:p-6">
+        <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:p-4 md:items-center md:p-6">
           <button
             type="button"
             aria-label="Close custom size modal"
@@ -1420,13 +1473,13 @@ const SingleProduct = ({
             className="absolute inset-0 bg-black/55"
           />
 
-          <div className="relative z-[71] w-full max-w-[1080px] overflow-hidden rounded-[14px] bg-white shadow-[0_22px_48px_rgba(0,0,0,0.28)]">
-            <div className="grid max-h-[88vh] overflow-y-auto lg:grid-cols-[minmax(0,0.54fr)_minmax(0,0.46fr)]">
-              <div className="p-6 md:p-8">
+          <div className="relative z-[71] w-full max-w-[1080px] overflow-hidden rounded-t-[16px] bg-white shadow-[0_22px_48px_rgba(0,0,0,0.28)] sm:rounded-[14px]">
+            <div className="grid max-h-[92dvh] overflow-y-auto lg:grid-cols-[minmax(0,0.54fr)_minmax(0,0.46fr)]">
+              <div className="p-4 sm:p-6 md:p-8">
                 <button
                   type="button"
                   onClick={() => setIsCustomSizeModalOpen(false)}
-                  className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f3f3] text-[#313131] hover:bg-[#e7e7e7]"
+                  className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f3f3] text-[#313131] hover:bg-[#e7e7e7] sm:right-4 sm:top-4"
                   aria-label="Close"
                 >
                   <X className="h-4 w-4" />
@@ -1435,10 +1488,10 @@ const SingleProduct = ({
                 <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
                   Custom Size Calculator
                 </p>
-                <h3 className="mt-2 font-display text-[34px] leading-[1.18] text-[#24211d]">
+                <h3 className="mt-2 font-display text-[28px] leading-[1.18] text-[#24211d] md:text-[34px]">
                   Order a Custom Size
                 </h3>
-                <p className="mt-3 text-[17px] leading-7 text-[#595959]">
+                <p className="mt-3 text-[15px] leading-7 text-[#595959] md:text-[17px]">
                   Enter either width or height. The other dimension is
                   automatically calculated using the original artwork ratio.
                 </p>
@@ -1454,7 +1507,7 @@ const SingleProduct = ({
                       value={customWidth}
                       onChange={(event) => handleCustomWidthChange(event.target.value)}
                       onBlur={() => enforceMinimumCustomDimension("width")}
-                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[18px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980]"
+                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[16px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980] md:text-[18px]"
                       placeholder="Enter width"
                     />
                   </label>
@@ -1469,7 +1522,7 @@ const SingleProduct = ({
                       value={customHeight}
                       onChange={(event) => handleCustomHeightChange(event.target.value)}
                       onBlur={() => enforceMinimumCustomDimension("height")}
-                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[18px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980]"
+                      className="w-full rounded-[10px] border border-[#d7d2c9] px-3 py-3 text-[16px] text-[#24211d] outline-none transition-colors focus:border-[#3A4980] md:text-[18px]"
                       placeholder="Enter height"
                     />
                   </label>
@@ -1489,7 +1542,7 @@ const SingleProduct = ({
 
                 <div className="mt-6 rounded-[12px] border border-[#e3ddd3] bg-[#faf8f4] p-4">
                   <p className="text-[14px] text-[#6a655d]">Estimated Price</p>
-                  <p className="mt-1 font-display text-[34px] leading-none text-[#292929]">
+                  <p className="mt-1 font-display text-[28px] leading-none text-[#292929] md:text-[34px]">
                     {formattedCustomCalculatedPrice ?? "Price on request"}
                   </p>
                   <p className="mt-2 text-[14px] text-[#595959]">
@@ -1506,7 +1559,7 @@ const SingleProduct = ({
                     !customHeight ||
                     !customSizeInputIsValid
                   }
-                  className="mt-6 inline-flex items-center gap-2 rounded-[8px] bg-[#1f1f1f] px-6 py-3 text-[18px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578]"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#1f1f1f] px-6 py-3 text-[16px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578] md:w-auto md:text-[18px]"
                 >
                   Add to Bag
                   <Image
@@ -1520,7 +1573,7 @@ const SingleProduct = ({
                 </button>
               </div>
 
-              <div className="relative min-h-[360px] bg-[#f3f0ea] p-6 md:p-8">
+              <div className="relative hidden min-h-[360px] bg-[#f3f0ea] p-6 md:block md:p-8">
                 <div className="relative flex h-full min-h-[320px] items-center justify-center rounded-[12px] border border-[#ddd7cc] bg-[#ece7de] p-8">
                   <div className="relative w-[68%] rounded-[4px] border-[8px] border-[#f8f4ec] bg-white shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
                     <div className="relative aspect-[4/5] w-full overflow-hidden">
@@ -1564,15 +1617,15 @@ const SingleProduct = ({
         </div>
       ) : null}
 
-      <section className="px-6 py-10 md:px-12 md:py-12 lg:px-24">
+      <section className="px-4 py-10 sm:px-6 md:px-12 md:py-12 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <h2 className="font-display text-[52px] leading-none text-[#1f1f1f]">
+          <div className="mb-7 flex items-end justify-between gap-4 md:mb-8">
+            <h2 className="font-display text-[26px] leading-[1.12] text-[#1f1f1f] md:text-[52px] md:leading-none">
               Shop More Like This
             </h2>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-2 border-b border-[#1f1f1f] pb-1 text-[12px] uppercase tracking-[0.08em]"
+              className="inline-flex items-center gap-2 border-b border-[#1f1f1f] pb-1 text-[11px] uppercase tracking-[0.08em] md:text-[12px]"
             >
               Shop All
               <ArrowRight className="h-3.5 w-3.5" />
@@ -1591,11 +1644,11 @@ const SingleProduct = ({
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
-                <p className="mt-3 text-[14px] text-[#7a7368]">Handmade Painting</p>
-                <h3 className="mt-1 font-display text-[18px] leading-[1.32] text-[#1f1f1f]">
+                <p className="mt-3 text-[12px] text-[#7a7368] md:text-[14px]">Handmade Painting</p>
+                <h3 className="mt-1 font-display text-[15px] leading-[1.32] text-[#1f1f1f] md:text-[18px]">
                   {item.title}
                 </h3>
-                <p className="mt-1 text-[14px] text-[#6f685f]">
+                <p className="mt-1 text-[12px] text-[#6f685f] md:text-[14px]">
                   Handmade Painting | {item.sizes} | Acrylic Colors on Canvas
                 </p>
               </Link>
@@ -1604,50 +1657,50 @@ const SingleProduct = ({
         </div>
       </section>
 
-      <section className="px-6 py-14 md:px-12 md:py-16 lg:px-24">
+      <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
-          <h2 className="text-center font-display text-[52px] leading-none text-[#1f1f1f]">
+          <h2 className="font-display text-[26px] leading-[1.12] text-[#1f1f1f] md:text-center md:text-[52px] md:leading-none">
             Why Artace Studio
           </h2>
-          <p className="mx-auto mt-4 max-w-[980px] text-center text-[18px] leading-8 text-[#595959]">
+          <p className="mt-4 max-w-[980px] text-[15px] leading-7 text-[#595959] md:mx-auto md:text-center md:text-[18px] md:leading-8">
             Bringing a new piece of art into your life is a significant moment, one filled with excitement and personal expression. We believe the experience of acquiring it should be just as inspiring and effortless.
           </p>
 
-          <div className="mt-12 grid gap-x-10 gap-y-10 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 md:mt-12 md:gap-x-10 md:gap-y-10 md:grid-cols-2 lg:grid-cols-4">
             {WHY_ARTACE_POINTS.map(({ title, text, iconSrc }) => (
               <div
                 key={title}
-                className="mx-auto flex h-full w-full max-w-[320px] flex-col items-center text-center lg:max-w-none"
+                className="flex h-full w-full flex-col items-start text-left md:mx-auto md:max-w-[320px] md:items-center md:text-center lg:max-w-none"
               >
                 <Image
                   src={iconSrc}
                   alt={title}
                   width={64}
                   height={64}
-                  className="h-14 w-auto object-contain"
+                  className="h-11 w-auto object-contain md:mx-auto md:h-14"
                 />
-                <h3 className="mt-5 font-display text-[25px] leading-[1.2] text-[#313131]">
+                <h3 className="mt-5 font-display text-[22px] leading-[1.2] text-[#313131] md:text-[25px]">
                   {title}
                 </h3>
-                <p className="mt-2 text-[18px] leading-8 text-[#595959]">{text}</p>
+                <p className="mt-2 text-[15px] leading-7 text-[#595959] md:text-[18px] md:leading-8">{text}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-[#080909] px-6 py-12 text-white md:px-12 md:py-16 lg:px-24">
+      <section className="bg-[#080909] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
         <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">
           <div>
-            <p className="font-inter text-[18px] font-normal text-white/65">
+            <p className="font-inter text-[14px] font-normal text-white/65 md:text-[18px]">
               {toTitleCase(advisor.description)}
             </p>
-            <h2 className="mt-4 max-w-3xl font-display text-[36px] leading-[1.12] text-white">
+            <h2 className="mt-4 max-w-3xl font-display text-[27px] leading-[1.12] text-white md:text-[36px]">
               {advisor.headline}
             </h2>
             <Link
               href={advisor.ctaHref}
-              className="mt-8 inline-flex items-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[18px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3]"
+              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[15px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3] sm:w-auto md:text-[18px]"
             >
               {advisor.ctaLabel}
               <ArrowUpRight className="h-5 w-5" />
@@ -1655,12 +1708,12 @@ const SingleProduct = ({
           </div>
 
           <div className="justify-self-center text-center md:justify-self-end">
-            <div className="relative mx-auto h-64 w-64 overflow-hidden rounded-full md:h-72 md:w-72">
+            <div className="relative mx-auto h-52 w-52 overflow-hidden rounded-full md:h-72 md:w-72">
               <Image
                 src={advisor.image}
                 alt={advisor.name}
                 fill
-                sizes="(max-width: 768px) 256px, 288px"
+                sizes="(max-width: 768px) 208px, 288px"
                 className="object-cover"
               />
             </div>
@@ -1671,15 +1724,15 @@ const SingleProduct = ({
         </div>
       </section>
 
-      <section className="px-6 py-12 md:px-12 md:py-16 lg:px-24">
+      <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
         <div className="mx-auto max-w-[1440px]">
-          <div className="mb-8 flex items-end justify-between gap-4">
-            <h2 className="font-display text-[50px] leading-none text-[#1f1f1f] md:text-[58px]">
+          <div className="mb-7 flex items-end justify-between gap-4 md:mb-8">
+            <h2 className="font-display text-[26px] leading-[1.12] text-[#1f1f1f] md:text-[58px] md:leading-none">
               Read More about Art
             </h2>
             <Link
               href="/blogs"
-              className="inline-flex items-center gap-2 border-b border-[#1f1f1f] pb-1 text-[12px] uppercase tracking-[0.08em]"
+              className="inline-flex items-center gap-2 border-b border-[#1f1f1f] pb-1 text-[11px] uppercase tracking-[0.08em] md:text-[12px]"
             >
               See All
               <ArrowRight className="h-3.5 w-3.5" />
@@ -1701,7 +1754,7 @@ const SingleProduct = ({
                 <p className="mt-3 text-[11px] uppercase tracking-[0.08em] text-[#7a7368]">
                   {post.category}
                 </p>
-                <h3 className="mt-2 font-display text-[28px] leading-[1.18] text-[#1f1f1f]">
+                <h3 className="mt-2 font-display text-[22px] leading-[1.18] text-[#1f1f1f] md:text-[28px]">
                   {post.title}
                 </h3>
               </Link>
