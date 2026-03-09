@@ -29,7 +29,7 @@ const HeroSection = () => {
               Experience gallery-grade quality crafted by skilled artists.
             </p>
             <Link
-              href="#"
+              href="/shop"
               className="mx-auto mt-8 inline-flex items-center gap-3 rounded-md bg-white px-8 py-3 text-[18px] font-medium text-[#2f2f2f] transition-colors hover:bg-[#efefef]"
             >
               Shop Now

@@ -10,8 +10,8 @@ const ArtistInvitation = () => {
         <div className="relative w-full overflow-hidden">
           <div className="relative aspect-[16/10] w-full md:aspect-[16/9]">
             <Image
-              src="/images/interior-room.png"
-              alt="Styled interior room with framed art"
+              src="/Nandikeshavara.jpg"
+              alt="Nandikeshavara artwork"
               fill
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 1240px"

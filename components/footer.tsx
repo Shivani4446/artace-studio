@@ -99,7 +99,7 @@ export default function Footer() {
                 className="h-auto w-[88px]"
               />
             </Link>
-            <p className="mt-16 max-w-[320px] text-[19px] leading-[1.35] text-white/90">
+            <p className="mt-16 max-w-[320px] text-[18px] leading-[1.35] text-white/90">
               We empower independent artists to share their stories with the
               world.
             </p>
@@ -107,7 +107,7 @@ export default function Footer() {
 
           {footerSections.map((section) => (
             <nav key={section.title} aria-label={section.title}>
-              <h2 className="mb-5 text-[19px] font-medium leading-tight text-white">
+              <h2 className="mb-5 text-[18px] font-medium leading-tight text-white">
                 {section.title}
               </h2>
               <ul className="space-y-4 text-[18px] leading-tight text-[#95979f]">
@@ -127,7 +127,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between md:mt-24">
-          <p className="text-[19px] text-[#d4d5d8]">
+          <p className="text-[18px] text-[#d4d5d8]">
             © 2025 Artace Studio. All rights reserved
           </p>
 
@@ -162,3 +162,4 @@ export default function Footer() {
     </footer>
   );
 }
+

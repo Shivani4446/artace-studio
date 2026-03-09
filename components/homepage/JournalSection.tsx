@@ -40,7 +40,7 @@ const JournalSection = () => {
               </p>
 
               <Link 
-                href="/journal" 
+                href="/about-us" 
                 className="group flex items-center gap-2 text-[#2C2C2C] font-inter text-base md:text-lg border-b border-[#2C2C2C] pb-1 hover:opacity-70 transition-opacity"
               >
                 Read Our Journal

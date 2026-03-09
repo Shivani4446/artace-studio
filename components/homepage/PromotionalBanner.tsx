@@ -19,7 +19,7 @@ const campaigns = [
     id: 1,
     image: "/stack-1.webp",
     alt: "Warm minimalist living room with beige sofa",
-    title: "UPTO 40% OFF\nYEAR END SALE NOW ON",
+    title: "Flat 10% Off On Your First Art Purchase",
     description: "Hand-picked masterpieces for those who appreciate refinement.\nExperience gallery-grade quality crafted by skilled artists.",
     ctaText: "Shop Now",
     ctaLink: "/sale",
@@ -30,10 +30,10 @@ const campaigns = [
     id: 2,
     image: "/stack-2.webp", // Blue wall / Abstract Art vibes
     alt: "Modern interior with abstract art and blue textured wall",
-    title: "WE CONNECT YOU WITH\nAUTHENTIC, HANDMADE ART\nTO GIVE YOUR SPACE A\nSOUL.",
+    title: "We Connect You With\nAuthentic, Handmade Art\nTo Give Your Space A\nSoul.",
     description: "We invite you to explore. Not just to find a painting, but to discover a connection. Find the piece that speaks to you. Find the soul for your space.",
     ctaText: "More About Us",
-    ctaLink: "/about",
+    ctaLink: "/about-us",
     type: "link",
     overlay: "bg-black/30" // Medium overlay
   },
@@ -41,10 +41,10 @@ const campaigns = [
     id: 3,
     image: "/stack-3.webp", // Grey Gallery Wall
     alt: "Grey living room with gallery wall frames",
-    title: "BEYOND THE CANVAS\nTHE ART OF HOME &\nPARTNERSHIP",
+    title: "Contact Us For Custom Order For Your Space",
     description: "At Artace Studio, our curation extends beyond the canvas. We believe that the same principles of authenticity, craftsmanship, and narrative power should apply to every element that makes your space your own.",
-    ctaText: "Partner With Us",
-    ctaLink: "/partners",
+    ctaText: "Book a Call Now",
+    ctaLink: "https://cal.com/artace-studio",
     secondaryCta: "See Collection",
     type: "buttons", // Special type for the last card
     overlay: "bg-black/40" // Darker overlay for text readability
@@ -75,11 +75,11 @@ const StackedCampaign = () => {
           </div>
 
           {/* Content Container */}
-          <div className="relative z-10 w-full max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24 h-full flex flex-col justify-center">
+          <div className="relative z-10 mx-auto flex h-full w-full max-w-[1440px] flex-col justify-center px-6 md:px-12">
             
             <div className="max-w-3xl pt-20">
               {/* Heading */}
-              <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-[1.1] mb-6 whitespace-pre-line uppercase tracking-tight">
+              <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-[1.1] mb-6 whitespace-pre-line tracking-tight">
                 {campaign.title}
               </h2>
 
@@ -93,6 +93,8 @@ const StackedCampaign = () => {
                 /* Text Link Style */
                 <Link 
                   href={campaign.ctaLink}
+                  target={campaign.ctaLink.startsWith("http") ? "_blank" : undefined}
+                  rel={campaign.ctaLink.startsWith("http") ? "noopener noreferrer" : undefined}
                   className="inline-flex items-center gap-2 text-white text-base font-medium underline underline-offset-4 hover:opacity-80 transition-opacity"
                 >
                   {campaign.ctaText}
@@ -103,6 +105,8 @@ const StackedCampaign = () => {
                 <div className="flex items-center gap-6">
                   <Link 
                     href={campaign.ctaLink}
+                    target={campaign.ctaLink.startsWith("http") ? "_blank" : undefined}
+                    rel={campaign.ctaLink.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="bg-white text-black px-8 py-3.5 text-sm font-semibold rounded-[4px] hover:bg-gray-100 transition-colors"
                   >
                     {campaign.ctaText}
