@@ -7,18 +7,19 @@ const HeroSection = () => {
   return (
     <section className="relative isolate w-full overflow-hidden bg-black">
       <div className="relative h-[88vh] min-h-[560px] w-full bg-black md:h-[92vh] md:min-h-[620px]">
-        <div className="absolute inset-y-0 right-0 w-full md:w-[56%]">
+        <div className="absolute inset-x-0 bottom-0 h-[48%] md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[56%]">
           <Image
             src="/nandikeshavara-hero-bg.webp"
             alt="Nandikeshavara hero artwork background"
             fill
             priority
-            className="object-cover object-[84%_center]"
+            className="object-cover object-center md:object-[84%_center]"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-transparent md:hidden" />
         </div>
 
         <div className="relative z-10 h-full w-full">
-          <div className="mx-auto flex h-full w-full max-w-[1440px] items-end px-6 pb-10 md:items-center md:px-12 md:pb-0">
+          <div className="mx-auto flex h-full w-full max-w-[1440px] items-start px-6 pb-10 pt-16 md:items-center md:px-12 md:pb-0 md:pt-0">
             <div className="w-full text-left text-white md:w-[70%] lg:w-[64%]">
               <h1 className="font-display text-[30px] font-semibold leading-[1.08] sm:text-[34px] md:text-[36px] lg:text-[44px] xl:text-[52px]">
                 <span className="block md:whitespace-nowrap">Handcrafted Canvas Paintings,</span>

@@ -190,7 +190,7 @@ const ShopBestsellers = async () => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-y-12">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-y-12">
           {products.length === 0 ? (
             <p className="font-inter col-span-full text-sm text-[#666666]">
               No featured products available right now.
@@ -206,7 +206,7 @@ const ShopBestsellers = async () => {
 
                 <div className="relative z-0">
                   {/* Image Container */}
-                  <div className="relative mb-4 w-full aspect-square overflow-hidden rounded-[12px] bg-gray-200">
+                  <div className="relative mb-3 w-full aspect-square overflow-hidden rounded-[10px] bg-gray-200 sm:mb-4 sm:rounded-[12px]">
                     <Image
                       src={product.image}
                       alt={product.alt}
@@ -218,26 +218,26 @@ const ShopBestsellers = async () => {
 
                   {/* Product Info */}
                   <div className="flex flex-col gap-1">
-                    <p className="font-inter text-[14px] text-[#666666]">
+                    <p className="font-inter text-[12px] text-[#666666] sm:text-[14px]">
                       {product.categoryLabel}
                     </p>
-                    <h3 className="font-playfair text-[18px] text-[#2C2C2C] leading-snug">
+                    <h3 className="font-playfair text-[15px] leading-snug text-[#2C2C2C] sm:text-[18px]">
                       {product.title}
                     </h3>
-                    <p className="font-inter text-[14px] text-[#666666]">
+                    <p className="line-clamp-2 font-inter text-[12px] text-[#666666] sm:text-[14px]">
                       {product.subtitle}
                     </p>
                   </div>
                 </div>
 
-                <div className="pointer-events-auto relative z-20 mt-4 translate-y-0 opacity-100 transition-all duration-300 md:pointer-events-none md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100">
+                <div className="pointer-events-auto relative z-20 mt-3 translate-y-0 opacity-100 transition-all duration-300 sm:mt-4 md:pointer-events-none md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100">
                   <AddToCartButton
                     id={product.id}
                     woocommerceProductId={product.id}
                     title={product.title}
                     image={product.image}
                     subtitle={product.subtitle}
-                    className="self-start"
+                    className="origin-top-left scale-[0.88] self-start sm:scale-100"
                   />
                 </div>
               </article>

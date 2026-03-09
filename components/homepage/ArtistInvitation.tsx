@@ -20,11 +20,11 @@ const ArtistInvitation = () => {
           </div>
         </div>
 
-        <div className="mx-auto mt-10 max-w-[840px] text-center md:mt-12">
-          <h2 className="font-display text-[34px] leading-[1.1] text-white sm:text-[40px] md:text-[52px]">
+        <div className="mt-10 max-w-[840px] md:mt-12">
+          <h2 className="font-display text-left text-[34px] leading-[1.1] text-white sm:text-[40px] md:text-[52px]">
             An Invitation to Artists: Share Your Story with Our Collectors</h2>
 
-          <p className="mx-auto mt-6 max-w-[850px] text-[16px] leading-7 text-white/65 md:text-[18px]">
+          <p className="mt-6 max-w-[850px] text-left text-[16px] leading-7 text-white/65 md:text-[18px]">
             At Artace Studio, we believe to build the bridge between your studio and
             the spaces where your work will be most cherished. We are not a
             marketplace; we are a curated digital gallery dedicated to presenting

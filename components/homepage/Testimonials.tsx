@@ -179,29 +179,31 @@ const Testimonials = () => {
             </h2>
           </div>
 
-          <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:gap-2">
-            <div className="w-full min-w-0 max-w-[300px] sm:min-w-[250px]">
+          <div className="flex w-full items-center gap-2 sm:gap-3 md:w-auto">
+            <div className="w-[150px] shrink-0 sm:w-[190px] md:w-auto md:min-w-[250px] md:max-w-[300px]">
               {isMounted ? (
-                <div
-                  ref={trustpilotWidgetRef}
-                  className="trustpilot-widget"
-                  data-locale="en-US"
-                  data-template-id="56278e9abfbbba0bdcd568bc"
-                  data-businessunit-id="66093cb3c75da0cae6905fa5"
-                  data-style-height="52px"
-                  data-style-width="100%"
-                  data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
-                >
-                  <a
-                    href="https://www.trustpilot.com/review/artacestudio.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <div className="origin-left scale-[0.76] sm:scale-[0.88] md:scale-100">
+                  <div
+                    ref={trustpilotWidgetRef}
+                    className="trustpilot-widget"
+                    data-locale="en-US"
+                    data-template-id="56278e9abfbbba0bdcd568bc"
+                    data-businessunit-id="66093cb3c75da0cae6905fa5"
+                    data-style-height="52px"
+                    data-style-width="100%"
+                    data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
                   >
-                    Trustpilot
-                  </a>
+                    <a
+                      href="https://www.trustpilot.com/review/artacestudio.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Trustpilot
+                    </a>
+                  </div>
                 </div>
               ) : (
-                <div className="h-[52px] w-full" aria-hidden="true" />
+                <div className="h-[40px] w-full md:h-[52px]" aria-hidden="true" />
               )}
             </div>
 
@@ -209,16 +211,16 @@ const Testimonials = () => {
               href={GOOGLE_REVIEW_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2"
+              className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2"
             >
               <Image
                 src={GOOGLE_REVIEWS_LOGO_SRC}
                 alt="Google Reviews"
                 width={1118}
                 height={768}
-                className="h-auto w-[115px] md:w-[145px]"
+                className="h-auto w-[80px] sm:w-[95px] md:w-[145px]"
               />
-              <ExternalLink className="h-3.5 w-3.5 shrink-0 text-[#1f1f1f]" />
+              <ExternalLink className="h-3 w-3 shrink-0 text-[#1f1f1f] sm:h-3.5 sm:w-3.5" />
             </Link>
           </div>
         </div>
