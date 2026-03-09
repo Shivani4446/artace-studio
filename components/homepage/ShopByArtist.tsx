@@ -46,7 +46,7 @@ const artists = [
 
 const ShopByArtist = () => {
   return (
-    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}>
+    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 ${playfair.variable} ${inter.variable}`}>
       <div className="max-w-[1440px] mx-auto">
         
         {/* Header */}

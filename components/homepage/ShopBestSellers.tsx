@@ -171,9 +171,9 @@ const ShopBestsellers = async () => {
 
   return (
     <section
-      className={`bg-[#FAF9F6] px-6 py-14 md:px-12 md:py-20 ${playfair.variable} ${inter.variable}`}
+      className={`bg-[#FAF9F6] py-14 md:py-20 ${playfair.variable} ${inter.variable}`}
     >
-      <div className="max-w-[1440px] mx-auto">
+      <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         {/* Header Section */}
         <div className="mb-10 flex flex-col gap-4 md:mb-14 md:flex-row md:items-center md:justify-between">
           <h2 className="font-playfair text-3xl text-[#2C2C2C] uppercase tracking-wide md:text-5xl">

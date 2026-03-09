@@ -5,8 +5,8 @@ import { ArrowUpRight } from "lucide-react";
 
 const ArtistInvitation = () => {
   return (
-    <section className="w-full bg-[#020304] px-6 py-12 text-white md:px-12 md:py-16 lg:py-20">
-      <div className="mx-auto max-w-[1440px]">
+    <section className="w-full bg-[#020304] py-12 text-white md:py-16 lg:py-20">
+      <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         <div className="relative w-full overflow-hidden">
           <div className="relative aspect-[16/10] w-full md:aspect-[16/9]">
             <Image

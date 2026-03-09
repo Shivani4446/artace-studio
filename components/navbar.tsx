@@ -24,14 +24,6 @@ const desktopLinks = [
   { name: "Shop", href: "/shop", hasMegaMenu: true },
 ];
 
-const mobileLinks = [
-  { name: "Home", href: "/" },
-  { name: "Collections", href: "/shop" },
-  { name: "Shop", href: "/shop" },
-  { name: "Resources", href: "/about-us" },
-  { name: "Contact", href: "/contact-us" },
-];
-
 const resourceLinks = [
   { name: "About Us", href: "/about-us" },
   { name: "Team", href: "/team" },
@@ -52,6 +44,37 @@ const paintingLinks = [
   { name: "Vastu Paintings", href: "/shop?category=vastu-paintings" },
   { name: "Table Top Paintings", href: "/shop?category=table-top-paintings" },
   { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
+];
+
+type MobileMenuSubLink = {
+  name: string;
+  href: string;
+};
+
+type MobileMenuLink = {
+  name: string;
+  href: string;
+  children?: MobileMenuSubLink[];
+};
+
+const mobileLinks: MobileMenuLink[] = [
+  { name: "Home", href: "/" },
+  {
+    name: "Collections",
+    href: "/shop",
+    children: [{ name: "View All Collections", href: "/shop" }, ...collectionLinks],
+  },
+  {
+    name: "Shop",
+    href: "/shop",
+    children: [...paintingLinks, { name: "Shop All", href: "/shop" }],
+  },
+  {
+    name: "Resources",
+    href: "/about-us",
+    children: resourceLinks,
+  },
+  { name: "Contact", href: "/contact-us" },
 ];
 
 const searchStaticPrefix = "Search For";
@@ -75,6 +98,9 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMiniCartOpen, setIsMiniCartOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [expandedMobileMenus, setExpandedMobileMenus] = useState<Record<string, boolean>>(
+    {}
+  );
   const [desktopSearchValue, setDesktopSearchValue] = useState("");
   const [mobileSearchValue, setMobileSearchValue] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -82,6 +108,16 @@ const Navbar = () => {
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setExpandedMobileMenus({});
+  };
+  const toggleMobileMenu = () => {
+    if (isMobileMenuOpen) {
+      setExpandedMobileMenus({});
+    }
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   useEffect(() => {
     if (!isMiniCartOpen) return;
@@ -283,7 +319,7 @@ const Navbar = () => {
 
             <button
               className="p-2 text-[#2f2f2f] lg:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              onClick={toggleMobileMenu}
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -416,16 +452,65 @@ const Navbar = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {mobileLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="font-inter text-lg font-medium text-[#333333]"
-                  >
-                    {link.name}
-                  </Link>
+                  link.children && link.children.length > 0 ? (
+                    <div key={link.name} className="rounded-[12px] bg-[#f7f7f7] p-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setExpandedMobileMenus((current) => ({
+                            ...current,
+                            [link.name]: !current[link.name],
+                          }))
+                        }
+                        className="flex w-full items-center justify-between rounded-[10px] px-1 py-1 font-inter text-lg font-medium text-[#333333]"
+                        aria-expanded={Boolean(expandedMobileMenus[link.name])}
+                        aria-controls={`mobile-submenu-${link.name}`}
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown
+                          className={`h-5 w-5 transition-transform ${
+                            expandedMobileMenus[link.name] ? "rotate-180" : ""
+                          }`}
+                          strokeWidth={1.8}
+                        />
+                      </button>
+
+                      <div
+                        id={`mobile-submenu-${link.name}`}
+                        className={`grid transition-all duration-200 ${
+                          expandedMobileMenus[link.name]
+                            ? "mt-2 grid-rows-[1fr]"
+                            : "grid-rows-[0fr]"
+                        }`}
+                      >
+                        <div className="overflow-hidden">
+                          <div className="space-y-2">
+                            {link.children.map((child) => (
+                              <Link
+                                key={`${link.name}-${child.name}`}
+                                href={child.href}
+                                onClick={closeMobileMenu}
+                                className="block rounded-[10px] bg-white px-3 py-2.5 font-inter text-[15px] font-medium text-[#4a4a4a] transition-colors hover:bg-[#ececec] hover:text-black"
+                              >
+                                {child.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      onClick={closeMobileMenu}
+                      className="rounded-[12px] bg-[#f7f7f7] px-3 py-3 font-inter text-lg font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                    >
+                      {link.name}
+                    </Link>
+                  )
                 ))}
               </div>
             </div>

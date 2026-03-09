@@ -1,7 +1,22 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
 
 const TrueArtistrySection = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.setAttribute("muted", "");
+    void video.play().catch(() => {
+      // Ignore autoplay rejections (e.g., low-power mode restrictions).
+    });
+  }, []);
+
   return (
     <section className="w-full bg-[#f7f6f3] py-14 md:py-20">
       <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
@@ -44,12 +59,19 @@ const TrueArtistrySection = () => {
 
           <div className="relative aspect-square overflow-hidden rounded-[12px] bg-black">
             <video
+              ref={videoRef}
               className="h-full w-full object-cover"
               autoPlay
               muted
               loop
               playsInline
-              preload="metadata"
+              preload="auto"
+              onEnded={() => {
+                const video = videoRef.current;
+                if (!video) return;
+                video.currentTime = 0;
+                void video.play().catch(() => {});
+              }}
             >
               <source
                 src="https://api.artacestudio.com/wp-content/uploads/2026/03/first-painting-reel.mp4"

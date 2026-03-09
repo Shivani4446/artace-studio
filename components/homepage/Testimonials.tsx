@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ExternalLink, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 
 const GOOGLE_REVIEW_URL =
   "https://www.google.com/maps/search/?api=1&query=Artace+Studio";
@@ -170,8 +170,8 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="bg-[#f4f2ee] px-6 py-14 md:px-12 md:py-20">
-      <div className="mx-auto max-w-[1440px]">
+    <section className="bg-[#f4f2ee] py-14 md:py-20">
+      <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div>
             <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[38px] md:text-[54px]">
@@ -179,10 +179,10 @@ const Testimonials = () => {
             </h2>
           </div>
 
-          <div className="flex w-full items-center gap-2 sm:gap-3 md:w-auto">
-            <div className="w-[150px] shrink-0 sm:w-[190px] md:w-auto md:min-w-[250px] md:max-w-[300px]">
+          <div className="flex w-full items-center justify-start gap-2 sm:gap-3 md:w-auto">
+            <div className="hidden md:block md:min-w-[250px] md:max-w-[300px]">
               {isMounted ? (
-                <div className="origin-left scale-[0.76] sm:scale-[0.88] md:scale-100">
+                <div className="origin-left md:scale-100">
                   <div
                     ref={trustpilotWidgetRef}
                     className="trustpilot-widget"
@@ -203,7 +203,7 @@ const Testimonials = () => {
                   </div>
                 </div>
               ) : (
-                <div className="h-[40px] w-full md:h-[52px]" aria-hidden="true" />
+                <div className="h-[52px] w-full" aria-hidden="true" />
               )}
             </div>
 
@@ -211,16 +211,15 @@ const Testimonials = () => {
               href={GOOGLE_REVIEW_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex shrink-0 items-center gap-1.5 sm:gap-2"
+              className="inline-flex shrink-0 items-center"
             >
               <Image
                 src={GOOGLE_REVIEWS_LOGO_SRC}
                 alt="Google Reviews"
                 width={1118}
                 height={768}
-                className="h-auto w-[80px] sm:w-[95px] md:w-[145px]"
+                className="h-auto w-[78px] sm:w-[92px] md:w-[145px]"
               />
-              <ExternalLink className="h-3 w-3 shrink-0 text-[#1f1f1f] sm:h-3.5 sm:w-3.5" />
             </Link>
           </div>
         </div>
