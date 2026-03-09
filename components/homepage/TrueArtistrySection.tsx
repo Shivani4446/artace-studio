@@ -3,22 +3,23 @@ import Image from "next/image";
 
 const TrueArtistrySection = () => {
   return (
-    <section className="w-full bg-[#f7f6f3] py-16 md:py-20">
-      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
+    <section className="w-full bg-[#f7f6f3] py-14 md:py-20">
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
         <div className="max-w-2xl">
-          <h2 className="font-display text-[40px] leading-[1.08] text-[#222222] md:text-[52px]">
+          <h2 className="font-display text-[34px] leading-[1.08] text-[#222222] sm:text-[40px] md:text-[52px]">
             True Artistry. No Compromises.
           </h2>
-          <p className="mt-6 font-inter text-[18px] leading-[1.8] text-[#3f3f3f]">
+          <p className="mt-5 font-inter text-[16px] leading-[1.75] text-[#3f3f3f] md:mt-6 md:text-[18px] md:leading-[1.8]">
             In a world flooded with digital prints and mass-produced decor, Artace
             Studio champions the soul of original art. We are not a marketplace; we
             are the artist&apos;s studio. Every piece we create is an authentic,
             handcrafted labor of love, utilizing premium oil and acrylic mediums
-            that bring texture, depth, and life to your walls.
+            that bring texture, depth, and life to your walls. Don&apos;t just
+            decorate your home-invest in a piece of your own story.
           </p>
         </div>
 
-        <div className="relative w-full max-w-[460px] justify-self-center lg:justify-self-end">
+        <div className="relative w-full max-w-[340px] justify-self-center sm:max-w-[420px] lg:max-w-[460px] lg:justify-self-end">
           <div className="pointer-events-none absolute -left-56 -top-14 z-20 hidden md:block">
             <Image
               src="/authentic-vector.svg"

@@ -122,16 +122,16 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
   const gridCards = displayCards.slice(1, 7);
 
   return (
-    <section className="w-full bg-[#efeeec] py-14 md:py-20">
+    <section className="w-full bg-[#efeeec] py-12 md:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
-        <h2 className="font-display text-[52px] leading-[1.02] tracking-tight text-[#2f2f2f]">
+        <h2 className="font-display text-[34px] leading-[1.04] tracking-tight text-[#2f2f2f] sm:text-[42px] md:text-[52px]">
           Discover Our Collections
         </h2>
 
-        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:mt-10 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
           <Link
             href={featuredCard.href}
-            className="group relative block min-h-[340px] overflow-hidden rounded-[12px] bg-[#d6d2ca] md:row-span-2 md:min-h-[560px] lg:min-h-[584px]"
+            className="group relative block min-h-[280px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:col-span-2 sm:min-h-[340px] md:row-span-2 md:min-h-[520px] lg:col-span-1 lg:min-h-[584px]"
           >
             <Image
               src={featuredCard.image}
@@ -142,7 +142,7 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
             <div className="absolute bottom-5 left-5 right-5 md:bottom-6 md:left-6 md:right-6">
-              <h3 className="font-inter text-[18px] font-medium leading-[1.1] text-white">
+              <h3 className="font-inter text-[17px] font-medium leading-[1.1] text-white md:text-[18px]">
                 {toCollectionLabel(featuredCard.title)}
               </h3>
             </div>
@@ -152,7 +152,7 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
             <Link
               key={`${item.id}-${index}`}
               href={item.href}
-              className="group relative block min-h-[220px] overflow-hidden rounded-[12px] bg-[#d6d2ca] md:min-h-[270px] lg:min-h-[280px]"
+              className="group relative block min-h-[190px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px]"
             >
               <Image
                 src={item.image}
@@ -163,7 +163,7 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
-                <h3 className="font-inter text-[18px] font-medium leading-[1.1] text-white">
+                <h3 className="font-inter text-[16px] font-medium leading-[1.1] text-white sm:text-[17px] md:text-[18px]">
                   {toCollectionLabel(item.title)}
                 </h3>
               </div>

@@ -19,16 +19,16 @@ const inter = Inter({
 
 const JournalSection = () => {
   return (
-    <section className={`bg-[#FAF9F6] w-full py-[100px] ${playfair.variable} ${inter.variable}`}>
-      <div className="max-w-[1440px] mx-auto px-6 md:px-12 lg:px-24">
-        <div className="flex flex-col lg:flex-row items-stretch lg:gap-[50px]">
+    <section className={`bg-[#FAF9F6] w-full py-16 md:py-20 ${playfair.variable} ${inter.variable}`}>
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12">
+        <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:gap-[50px]">
           
           {/* Left Column: Text Content */}
           <div className="w-full lg:w-1/2 flex flex-col justify-between">
             
             {/* Top Heading */}
             <div>
-              <h2 className="font-playfair text-4xl md:text-5xl lg:text-6xl text-[#2C2C2C] text-left leading-tight">
+              <h2 className="font-playfair text-4xl text-[#2C2C2C] text-left leading-tight md:text-5xl lg:text-6xl">
                 Artace Studio Journal
               </h2>
             </div>

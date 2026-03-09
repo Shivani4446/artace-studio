@@ -22,7 +22,7 @@ const campaigns = [
     title: "Flat 10% Off On Your First Art Purchase",
     description: "Hand-picked masterpieces for those who appreciate refinement.\nExperience gallery-grade quality crafted by skilled artists.",
     ctaText: "Shop Now",
-    ctaLink: "/sale",
+    ctaLink: "/shop",
     type: "link",
     overlay: "bg-black/20" // Light overlay
   },
@@ -57,7 +57,7 @@ const StackedCampaign = () => {
       {campaigns.map((campaign, index) => (
         <div 
           key={campaign.id} 
-          className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden"
+          className="relative flex min-h-[560px] w-full flex-col justify-end overflow-hidden md:sticky md:top-0 md:h-screen md:justify-center"
           style={{ zIndex: index + 1 }} // Ensures proper stacking order
         >
           {/* Background Image */}
@@ -75,16 +75,16 @@ const StackedCampaign = () => {
           </div>
 
           {/* Content Container */}
-          <div className="relative z-10 mx-auto flex h-full w-full max-w-[1440px] flex-col justify-center px-6 md:px-12">
+          <div className="relative z-10 mx-auto flex h-full w-full max-w-[1440px] flex-col justify-end px-6 py-10 md:justify-center md:px-12 md:py-0">
             
-            <div className="max-w-3xl pt-20">
+            <div className="max-w-3xl">
               {/* Heading */}
-              <h2 className="text-white text-3xl md:text-5xl lg:text-6xl font-bold leading-tight md:leading-[1.1] mb-6 whitespace-pre-line tracking-tight">
+              <h2 className="mb-4 whitespace-pre-line text-[30px] font-bold leading-tight tracking-tight text-white sm:text-4xl md:mb-6 md:text-5xl md:leading-[1.1] lg:text-6xl">
                 {campaign.title}
               </h2>
 
               {/* Description */}
-              <p className="text-white/90 text-sm md:text-lg font-normal leading-relaxed mb-10 max-w-xl whitespace-pre-line">
+              <p className="mb-8 max-w-xl whitespace-pre-line text-[15px] font-normal leading-relaxed text-white/90 md:mb-10 md:text-lg">
                 {campaign.description}
               </p>
 
@@ -102,17 +102,17 @@ const StackedCampaign = () => {
                 </Link>
               ) : (
                 /* Button Style (For last card) */
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
                   <Link 
                     href={campaign.ctaLink}
                     target={campaign.ctaLink.startsWith("http") ? "_blank" : undefined}
                     rel={campaign.ctaLink.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="bg-white text-black px-8 py-3.5 text-sm font-semibold rounded-[4px] hover:bg-gray-100 transition-colors"
+                    className="rounded-[4px] bg-white px-8 py-3.5 text-sm font-semibold text-black transition-colors hover:bg-gray-100"
                   >
                     {campaign.ctaText}
                   </Link>
                   <Link 
-                    href="/collection"
+                    href="/shop"
                     className="inline-flex items-center gap-2 text-white text-sm font-medium hover:underline underline-offset-4 transition-all"
                   >
                     {campaign.secondaryCta}

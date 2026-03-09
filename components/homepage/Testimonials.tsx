@@ -170,17 +170,17 @@ const Testimonials = () => {
   };
 
   return (
-    <section className="bg-[#f4f2ee] px-6 py-14 md:px-12 md:py-18 lg:px-24">
+    <section className="bg-[#f4f2ee] px-6 py-14 md:px-12 md:py-20">
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div>
-            <h2 className="font-display text-[38px] leading-[1.08] text-[#1f1f1f] md:text-[54px]">
+            <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[38px] md:text-[54px]">
               What Collectors Say
             </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
-            <div className="min-w-[250px] max-w-[300px]">
+          <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:gap-2">
+            <div className="w-full min-w-0 max-w-[300px] sm:min-w-[250px]">
               {isMounted ? (
                 <div
                   ref={trustpilotWidgetRef}
@@ -301,7 +301,7 @@ const Testimonials = () => {
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-between">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {slides.map((slide, index) => (
                 <button

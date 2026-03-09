@@ -171,12 +171,12 @@ const ShopBestsellers = async () => {
 
   return (
     <section
-      className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}
+      className={`bg-[#FAF9F6] px-6 py-14 md:px-12 md:py-20 ${playfair.variable} ${inter.variable}`}
     >
       <div className="max-w-[1440px] mx-auto">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-10 md:mb-14 gap-4">
-          <h2 className="font-playfair text-3xl md:text-5xl text-[#2C2C2C] uppercase tracking-wide">
+        <div className="mb-10 flex flex-col gap-4 md:mb-14 md:flex-row md:items-center md:justify-between">
+          <h2 className="font-playfair text-3xl text-[#2C2C2C] uppercase tracking-wide md:text-5xl">
             Shop Bestsellers
           </h2>
 
@@ -190,7 +190,7 @@ const ShopBestsellers = async () => {
         </div>
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-y-12">
           {products.length === 0 ? (
             <p className="font-inter col-span-full text-sm text-[#666666]">
               No featured products available right now.
@@ -230,7 +230,7 @@ const ShopBestsellers = async () => {
                   </div>
                 </div>
 
-                <div className="relative z-20 mt-4 translate-y-1 opacity-0 transition-all duration-300 pointer-events-none group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto">
+                <div className="pointer-events-auto relative z-20 mt-4 translate-y-0 opacity-100 transition-all duration-300 md:pointer-events-none md:translate-y-1 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-y-0 md:group-hover:opacity-100">
                   <AddToCartButton
                     id={product.id}
                     woocommerceProductId={product.id}
