@@ -2,6 +2,7 @@ import React from "react";
 import HeroSection from "@/components/homepage/HeroSection";
 import ShopBestSellers from "@/components/homepage/ShopBestSellers";
 import DiscoverEssentials from "@/components/homepage/DiscoverEssentials";
+import TrueArtistrySection from "@/components/homepage/TrueArtistrySection";
 // import ShopByArtist from "@/components/homepage/ShopByArtist";
 import PromotionalBanner from "@/components/homepage/PromotionalBanner";
 import Testimonials from "@/components/homepage/Testimonials";
@@ -109,6 +110,7 @@ const Home = async () => {
       <HeroSection />
       <ShopBestSellers />
       <DiscoverEssentials categories={discoverCategories} />
+      <TrueArtistrySection />
       {/* <ShopByArtist /> */}
       <Testimonials />
       <PromotionalBanner />

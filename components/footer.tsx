@@ -57,11 +57,13 @@ const socialLinks = [
     label: "Pinterest",
     href: "https://in.pinterest.com/artacestudio/",
     icon: "/pinterest-3.svg",
+    iconClassName: "h-6 w-6",
   },
   {
     label: "Facebook",
     href: "https://facebook.com/artacestudio",
     icon: "/facebook-3-2.svg",
+    iconClassName: "h-6 w-6",
   },
   {
     label: "X",
@@ -128,7 +130,7 @@ export default function Footer() {
 
         <div className="mt-20 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between md:mt-24">
           <p className="text-[18px] text-[#d4d5d8]">
-            © 2025 Artace Studio. All rights reserved
+            © 2026 Artace Studio. All rights reserved
           </p>
 
           <div className="flex items-center gap-5">
@@ -139,7 +141,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.label}
-                className="inline-flex h-5 w-5 items-center justify-center transition-opacity hover:opacity-70"
+                className="inline-flex h-6 w-6 items-center justify-center transition-opacity hover:opacity-70"
               >
                 <Image
                   src={social.icon}
@@ -147,7 +149,7 @@ export default function Footer() {
                   aria-hidden="true"
                   width={20}
                   height={20}
-                  className="h-5 w-5 object-contain"
+                  className={`${social.iconClassName ?? "h-5 w-5"} object-contain`}
                   style={{ filter: "brightness(0) invert(1)" }}
                 />
               </Link>

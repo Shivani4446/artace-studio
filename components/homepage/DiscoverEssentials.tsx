@@ -125,7 +125,7 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
     <section className="w-full bg-[#efeeec] py-14 md:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         <h2 className="font-display text-[52px] leading-[1.02] tracking-tight text-[#2f2f2f]">
-          Discover Essentials
+          Discover Our Collections
         </h2>
 
         <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
