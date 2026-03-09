@@ -35,6 +35,11 @@ const sentient = localFont({
 export const metadata: Metadata = {
   title: "Artace Studio",
   description: "Premium Canvas Paintings",
+  icons: {
+    icon: "/Artace-logo.svg",
+    shortcut: "/Artace-logo.svg",
+    apple: "/Artace-logo.svg",
+  },
 };
 
 export default function RootLayout({

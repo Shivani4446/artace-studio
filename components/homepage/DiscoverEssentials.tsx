@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,204 +19,156 @@ type DiscoverEssentialsProps = {
 const FALLBACK_CATEGORIES: DiscoverCategoryCard[] = [
   {
     id: 1,
-    title: "Contemporary Art",
-    image: "/images/art-forest.png",
-    imageAlt: "Contemporary Art",
-    href: "/shop",
+    title: "Radha Krishna",
+    image: "/stack-1.webp",
+    imageAlt: "Radha Krishna Collection",
+    href: "/shop?category=radha-krishna-paintings",
   },
   {
     id: 2,
-    title: "Radha Krishna",
-    image: "/images/hero-bg.png",
-    imageAlt: "Radha Krishna",
-    href: "/shop",
+    title: "Figurative",
+    image: "/stack-2.webp",
+    imageAlt: "Figurative Collection",
+    href: "/shop?category=figurative-paintings",
   },
   {
     id: 3,
-    title: "Ganesha",
-    image: "/images/interior-room.png",
-    imageAlt: "Ganesha",
-    href: "/shop",
+    title: "Buddha",
+    image: "/stack-3.webp",
+    imageAlt: "Buddha Collection",
+    href: "/shop?category=buddha-paintings",
   },
   {
     id: 4,
-    title: "Buddha",
-    image: "/images/art-floral.png",
-    imageAlt: "Buddha",
-    href: "/shop",
+    title: "Abstract",
+    image: "/images/art-forest.png",
+    imageAlt: "Abstract Collection",
+    href: "/shop?category=abstract-paintings",
+  },
+  {
+    id: 5,
+    title: "Landscapes",
+    image: "/hero-bg.webp",
+    imageAlt: "Landscapes Collection",
+    href: "/shop?category=landscapes-cityscapes-paintings",
+  },
+  {
+    id: 6,
+    title: "Vastu",
+    image: "/images/interior-room.png",
+    imageAlt: "Vastu Collection",
+    href: "/shop?category=vastu-paintings",
+  },
+  {
+    id: 7,
+    title: "Ganapati",
+    image: "/images/hero-bg.png",
+    imageAlt: "Ganapati Collection",
+    href: "/shop?category=ganapati-paintings",
   },
 ];
 
+const PRIORITY_KEYWORDS = ["radha krishna", "figurative", "buddha", "abstract"];
+
+const getCategoryPriority = (title: string) => {
+  const normalizedTitle = title.trim().toLowerCase();
+  const matchIndex = PRIORITY_KEYWORDS.findIndex((keyword) =>
+    normalizedTitle.includes(keyword)
+  );
+
+  return matchIndex === -1 ? Number.POSITIVE_INFINITY : matchIndex;
+};
+
+const toCollectionLabel = (title: string) => {
+  const normalizedTitle = title.trim();
+  if (!normalizedTitle) return "Collection";
+  if (/collection/i.test(normalizedTitle)) return normalizedTitle;
+
+  const cleanedTitle = normalizedTitle
+    .replace(/\bpaintings?\b/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return `${cleanedTitle || normalizedTitle} Collection`;
+};
+
+const getDisplayCards = (categories: DiscoverCategoryCard[]) => {
+  const sourceCards = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
+  const prioritizedCards = sourceCards
+    .map((card, index) => ({
+      card,
+      index,
+      priority: getCategoryPriority(card.title),
+    }))
+    .sort((a, b) => {
+      if (a.priority !== b.priority) return a.priority - b.priority;
+      return a.index - b.index;
+    })
+    .map((entry) => entry.card);
+
+  const cards = prioritizedCards.slice(0, 7);
+  let fillerIndex = 0;
+  while (cards.length < 7) {
+    cards.push(FALLBACK_CATEGORIES[fillerIndex % FALLBACK_CATEGORIES.length]);
+    fillerIndex += 1;
+  }
+
+  return cards;
+};
+
 const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackWrapperRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const categoryCards = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
-
-  const [cardWidth, setCardWidth] = useState(0);
-  const [cardFrameWidth, setCardFrameWidth] = useState(0);
-  const [cardFrameHeight, setCardFrameHeight] = useState(0);
-  const [headingPanelWidth, setHeadingPanelWidth] = useState(0);
-  const [scrollableWidth, setScrollableWidth] = useState(0);
-  const [stickyOffset, setStickyOffset] = useState(80);
-
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (trackWrapperRef.current) {
-        const vw = trackWrapperRef.current.clientWidth;
-        const isMdUp = window.innerWidth >= 768;
-        const nextStickyOffset = isMdUp ? 96 : 80;
-        const stickyViewportHeight = Math.max(window.innerHeight - nextStickyOffset, 0);
-
-        const columnPadding = window.innerWidth >= 1024 ? 48 : isMdUp ? 40 : 24;
-        const sectionVerticalPadding =
-          window.innerWidth >= 1024 ? 80 : isMdUp ? 72 : 64;
-        const maxStaggerOffset = isMdUp ? 32 : 16;
-        const imageBottomGap = 20;
-        const titleBlockHeight = isMdUp ? 64 : 52;
-        const targetFrameWidth = 450;
-
-        // Fit image + title in one viewport while keeping a portrait ratio.
-        const availableImageHeight = Math.max(
-          280,
-          stickyViewportHeight -
-            sectionVerticalPadding -
-            maxStaggerOffset -
-            imageBottomGap -
-            titleBlockHeight
-        );
-        const frameHeight = Math.min(isMdUp ? 600 : 500, availableImageHeight);
-        const frameWidth = isMdUp
-          ? targetFrameWidth
-          : Math.min(targetFrameWidth, Math.max(260, vw - columnPadding * 2 - 8));
-        const cw = frameWidth + columnPadding * 2;
-
-        const hpw =
-          window.innerWidth >= 1024
-            ? 360
-            : window.innerWidth >= 768
-              ? 300
-              : Math.min(320, vw * 0.9);
-
-        setCardFrameHeight(frameHeight);
-        setCardFrameWidth(frameWidth);
-        setCardWidth(cw);
-        setHeadingPanelWidth(hpw);
-        setScrollableWidth(Math.max(0, hpw + cw * categoryCards.length - vw));
-        setStickyOffset(nextStickyOffset);
-      }
-    };
-
-    updateDimensions();
-    window.addEventListener("resize", updateDimensions);
-    requestAnimationFrame(updateDimensions);
-    return () => window.removeEventListener("resize", updateDimensions);
-  }, [categoryCards.length]);
-
-  useEffect(() => {
-    let rafId: number;
-    const handleScroll = () => {
-      if (!containerRef.current || !trackRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const scrolled = stickyOffset - rect.top;
-
-      let progress = scrolled;
-      if (progress < 0) progress = 0;
-      if (progress > scrollableWidth) progress = scrollableWidth;
-
-      rafId = requestAnimationFrame(() => {
-        if (trackRef.current) {
-          trackRef.current.style.transform = `translate3d(-${progress}px, 0, 0)`;
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(rafId);
-    };
-  }, [scrollableWidth, stickyOffset]);
-
-  const sectionScrollHeight = Math.max(scrollableWidth - stickyOffset, 0);
+  const displayCards = getDisplayCards(categories);
+  const featuredCard = displayCards[0];
+  const gridCards = displayCards.slice(1, 7);
 
   return (
-    <section
-      ref={containerRef}
-      style={{ height: `calc(100vh + ${sectionScrollHeight}px)` }}
-      className="relative w-full border-y border-black/5 bg-[#f1f0ed]"
-    >
-      <div className="sticky top-20 h-[calc(100vh-5rem)] w-full overflow-hidden md:top-24 md:h-[calc(100vh-6rem)]">
-        <div className="mx-auto h-full w-full max-w-[1440px] px-4 py-8 md:px-8 md:py-9 lg:px-12 lg:py-10">
-          <div ref={trackWrapperRef} className="relative h-full overflow-hidden">
-            <div
-              ref={trackRef}
-              className="flex h-full w-max will-change-transform"
-              style={{ width: `${headingPanelWidth + cardWidth * categoryCards.length}px` }}
-            >
-              <div
-                style={{ width: headingPanelWidth ? `${headingPanelWidth}px` : "85vw" }}
-                className="relative flex h-full shrink-0 flex-col justify-between border-r border-[#1a1a1a]/10 pr-6 md:pr-10"
-              >
-                <div>
-                  <h2 className="font-display text-[36px] uppercase leading-[1.1] tracking-tight text-[#1A1A1A] md:text-[44px] lg:text-[50px]">
-                    DISCOVER
-                    <br className="hidden md:block" />
-                    <span className="md:hidden"> </span>
-                    ESSENTIALS
-                  </h2>
-                </div>
-                <div className="mt-8 block md:mt-14">
-                  <Link
-                    href="/shop"
-                    className="inline-block border-b border-[#1A1A1A] pb-0.5 text-[11px] font-semibold uppercase tracking-[0.05em] text-[#1A1A1A] transition-colors hover:border-black/50 hover:text-[#1A1A1A]/70 md:text-[12px]"
-                  >
-                    EXPLORE ALL
-                  </Link>
-                </div>
-              </div>
+    <section className="w-full bg-[#efeeec] py-14 md:py-20">
+      <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
+        <h2 className="font-display text-[52px] leading-[1.02] tracking-tight text-[#2f2f2f]">
+          Discover Essentials
+        </h2>
 
-              {categoryCards.map((item, index) => (
-                <div
-                  key={item.id}
-                  style={{ width: cardWidth ? `${cardWidth}px` : "46vw" }}
-                  className="relative flex h-full shrink-0 flex-col border-r border-[#1a1a1a]/10 px-6 md:px-10 lg:px-12"
-                >
-                  <Link
-                    href={item.href}
-                    className={`group flex h-full w-full flex-col gap-5 ${
-                      index % 2 !== 0 ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div className="relative w-full overflow-hidden">
-                      <div
-                        className="relative mx-auto"
-                        style={{
-                          width: cardFrameWidth ? `${cardFrameWidth}px` : "min(100%, 450px)",
-                          height: cardFrameHeight ? `${cardFrameHeight}px` : "min(60vh, 520px)",
-                          maxWidth: "100%",
-                        }}
-                      >
-                        <Image
-                          src={item.image}
-                          alt={item.imageAlt}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                          sizes="(max-width: 767px) 46vw, 450px"
-                        />
-                      </div>
-                    </div>
-                    <h3 className="shrink-0 font-display text-lg text-[#1A1A1A] md:text-xl">
-                      {item.title}
-                    </h3>
-                  </Link>
-                </div>
-              ))}
+        <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
+          <Link
+            href={featuredCard.href}
+            className="group relative block min-h-[340px] overflow-hidden rounded-[12px] bg-[#d6d2ca] md:row-span-2 md:min-h-[560px] lg:min-h-[584px]"
+          >
+            <Image
+              src={featuredCard.image}
+              alt={featuredCard.imageAlt}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5 md:bottom-6 md:left-6 md:right-6">
+              <h3 className="font-inter text-[18px] font-medium leading-[1.1] text-white">
+                {toCollectionLabel(featuredCard.title)}
+              </h3>
             </div>
-          </div>
+          </Link>
+
+          {gridCards.map((item, index) => (
+            <Link
+              key={`${item.id}-${index}`}
+              href={item.href}
+              className="group relative block min-h-[220px] overflow-hidden rounded-[12px] bg-[#d6d2ca] md:min-h-[270px] lg:min-h-[280px]"
+            >
+              <Image
+                src={item.image}
+                alt={item.imageAlt}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 22vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
+                <h3 className="font-inter text-[18px] font-medium leading-[1.1] text-white">
+                  {toCollectionLabel(item.title)}
+                </h3>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
