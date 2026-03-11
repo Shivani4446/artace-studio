@@ -6,7 +6,8 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
+export const revalidate = 120;
+export const dynamicParams = false;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -243,6 +244,16 @@ const getCategoryDescription = (categoryName: string, productCount: number) => {
 
   return `Explore ${productCount} handmade ${baseName.toLowerCase()} works curated for collectors who want a more guided category journey. This page opens with a stronger editorial narrative, surfaces the best-performing works first, then reveals the full collection with proof, advisory, and next-step discovery built in.`;
 };
+
+export async function generateStaticParams() {
+  const categories = await fetchCategories();
+
+  return categories
+    .filter((category) => category.slug.trim().length > 0)
+    .map((category) => ({
+      slug: category.slug,
+    }));
+}
 
 export async function generateMetadata({ params }: CollectionPageProps) {
   const { slug } = await params;

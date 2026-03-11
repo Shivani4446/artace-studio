@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
@@ -10,7 +11,6 @@ import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 type ShopCatalogProps = {
   products: ShopProduct[];
   loadError?: string | null;
-  initialSelectedCategory?: string | null;
 };
 
 type SortById =
@@ -214,10 +214,30 @@ const FilterChipGroup = ({
 const ShopCatalog = ({
   products,
   loadError = null,
-  initialSelectedCategory = null,
 }: ShopCatalogProps) => {
+  const searchParams = useSearchParams();
+  const categoryFromQuery = useMemo(() => {
+    const rawCategorySlug = searchParams.get("category");
+    if (!rawCategorySlug) return null;
+
+    const normalizedSlug = rawCategorySlug.trim().toLowerCase();
+    if (!normalizedSlug) return null;
+
+    for (const product of products) {
+      const matchedIndex = product.categorySlugs.findIndex(
+        (categorySlug) => categorySlug.trim().toLowerCase() === normalizedSlug
+      );
+
+      if (matchedIndex >= 0) {
+        return product.categories[matchedIndex] || null;
+      }
+    }
+
+    return null;
+  }, [products, searchParams]);
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>(() =>
-    initialSelectedCategory ? [initialSelectedCategory] : []
+    categoryFromQuery ? [categoryFromQuery] : []
   );
   const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<SizeBucket[]>([]);

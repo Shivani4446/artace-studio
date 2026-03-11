@@ -1,8 +1,9 @@
+import { Suspense } from "react";
 import ShopCatalog from "@/components/shop/ShopCatalog";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
+export const revalidate = 120;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -275,6 +276,7 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
       image: imageUrl,
       imageAlt: decodeHtmlEntities(primaryImage?.alt || product.name),
       categories: product.categories.map((category) => decodeHtmlEntities(category.name)),
+      categorySlugs: product.categories.map((category) => category.slug),
       price,
       regularPrice,
       currencyCode: product.prices?.currency_code || "INR",
@@ -314,59 +316,21 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   return Array.isArray(payload) ? payload : [];
 };
 
-type ShopPageProps = {
-  searchParams?: Promise<{ category?: string | string[] }>;
-};
-
-const resolveInitialCategoryName = (
-  products: WooStoreProduct[],
-  rawCategorySlug: string | null
-) => {
-  if (!rawCategorySlug) return null;
-
-  const normalizedSlug = rawCategorySlug.trim().toLowerCase();
-  if (!normalizedSlug) return null;
-
-  for (const product of products) {
-    for (const category of product.categories) {
-      if (category.slug.trim().toLowerCase() === normalizedSlug) {
-        return decodeHtmlEntities(category.name);
-      }
-    }
-  }
-
-  return null;
-};
-
-const ShopPage = async ({ searchParams }: ShopPageProps) => {
+const ShopPage = async () => {
   let products: ShopProduct[] = [];
   let loadError: string | null = null;
-  let initialSelectedCategory: string | null = null;
-
-  const resolvedSearchParams = searchParams ? await searchParams : undefined;
-  const rawCategoryParam = resolvedSearchParams?.category;
-  const categorySlug =
-    typeof rawCategoryParam === "string"
-      ? rawCategoryParam
-      : Array.isArray(rawCategoryParam)
-        ? rawCategoryParam[0] || null
-        : null;
 
   try {
     const storeProducts = await getStoreProducts();
     products = normalizeProducts(storeProducts);
-    initialSelectedCategory = resolveInitialCategoryName(storeProducts, categorySlug);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Unable to load products.";
   }
 
   return (
-    <ShopCatalog
-      key={initialSelectedCategory || "all-products"}
-      products={products}
-      loadError={loadError}
-      initialSelectedCategory={initialSelectedCategory}
-    />
+    <Suspense fallback={null}>
+      <ShopCatalog products={products} loadError={loadError} />
+    </Suspense>
   );
 };
 

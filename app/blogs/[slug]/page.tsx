@@ -7,7 +7,8 @@ import {
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
-export const runtime = "edge";
+export const revalidate = 120;
+export const dynamicParams = false;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -31,19 +32,43 @@ const getSiteUrl = () =>
     ""
   );
 
+async function getPostSlugs() {
+  const siteUrl = getSiteUrl();
+  const response = await fetch(
+    `${siteUrl}/wp-json/wp/v2/posts?per_page=100&_fields=slug`,
+    {
+      next: { revalidate: 120 },
+    }
+  );
+
+  if (!response.ok) {
+    return [];
+  }
+
+  const posts = (await response.json()) as Array<{ slug?: string }>;
+  return posts
+    .map((post) => post.slug?.trim())
+    .filter((slug): slug is string => Boolean(slug));
+}
+
 async function getPost(slug: string): Promise<WordPressPost | null> {
   const siteUrl = getSiteUrl();
   const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
   const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
 
   try {
-    const res = await fetch(endpoint, { cache: "no-store" });
+    const res = await fetch(endpoint, { next: { revalidate: 120 } });
     if (!res.ok) return null;
     const data = (await res.json()) as WordPressPost[];
     return data[0] || null;
   } catch {
     return null;
   }
+}
+
+export async function generateStaticParams() {
+  const slugs = await getPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 async function getAuthor(authorId: number) {

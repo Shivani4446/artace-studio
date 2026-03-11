@@ -1,6 +1,6 @@
 import React from "react";
 
-export const runtime = "edge";
+export const revalidate = 120;
 
 type BlogPost = {
   id: number;
@@ -22,11 +22,9 @@ async function getPosts(): Promise<PostsResult> {
 
   try {
     const res = await fetch(endpoint, {
-      // 1. Tell Next.js to ignore the previous 401 "Unauthorized" error cache
-      cache: "no-store",
+      next: { revalidate: 120 },
       headers: {
         "Content-Type": "application/json",
-        // 2. Add a User-Agent so the server doesn't think this is a bot/script
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
       },

@@ -7,6 +7,7 @@ export type ShopProduct = {
   image: string;
   imageAlt: string;
   categories: string[];
+  categorySlugs: string[];
   price: number | null;
   regularPrice: number | null;
   currencyCode: string;
@@ -23,4 +24,3 @@ export type ShopProduct = {
   };
   sizeBuckets: SizeBucket[];
 };
-
