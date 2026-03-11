@@ -702,16 +702,16 @@ const CollectionLandingPage = ({
   const hasTightGallerySpacing =
     isBuddhaCollection || isRadhaKrishnaCollection || isGaneshaCollection;
   const featuredSectionClass = hasTightGallerySpacing
-    ? "px-4 pb-10 pt-10 sm:px-6 md:px-12 md:pb-[40px] md:pt-[100px] lg:px-[50px]"
-    : "px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
+    ? "pb-10 pt-10 md:pb-[40px] md:pt-[100px]"
+    : "py-10 md:py-[100px]";
   const gallerySectionClass = hasTightGallerySpacing
-    ? "px-4 pb-10 pt-10 sm:px-6 md:px-12 md:pb-[100px] md:pt-[60px] lg:px-[50px]"
-    : "px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
+    ? "pb-10 pt-10 md:pb-[100px] md:pt-[60px]"
+    : "py-10 md:py-[100px]";
 
   return (
     <main className="bg-[#fcfaf7] text-[#313131]">
-      <section className="px-4 pb-8 pt-8 sm:px-6 md:px-12 md:pb-14 lg:px-[50px] lg:pt-[100px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="pb-8 pt-8 md:pb-14 lg:pt-[100px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="grid items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-[60px]">
             <div>
               <p className="font-display text-[18px] leading-[1.2] text-[#313131] md:text-[20px]">
@@ -760,8 +760,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 pb-10 sm:px-6 md:px-12 md:pb-12 lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="pb-10 md:pb-12">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#ded8ce] sm:aspect-[16/10] md:aspect-[16/9]">
             <Image
               src={heroBannerImage || FALLBACK_PRODUCT_IMAGE}
@@ -775,8 +775,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 sm:px-6 md:px-12 lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-10 md:py-[100px]">
+      <section>
+        <div className="mx-auto max-w-[1440px] border-t border-black/8 px-6 py-10 md:px-12 md:py-[100px]">
           <div className="grid gap-5 md:gap-8 lg:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)] lg:gap-[60px]">
             <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Overview</p>
             <h2 className="font-display text-[28px] leading-[1.18] text-[#313131] md:text-[32px]">
@@ -789,8 +789,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 sm:px-6 md:px-12 lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-10 md:py-[100px]">
+      <section>
+        <div className="mx-auto max-w-[1440px] border-t border-black/8 px-6 py-10 md:px-12 md:py-[100px]">
           <div className="mx-auto grid gap-6 sm:grid-cols-3 sm:gap-5 lg:max-w-[940px]">
             {benefitItems.map((item) => {
               const Icon = item.icon;
@@ -814,7 +814,7 @@ const CollectionLandingPage = ({
       </section>
 
       <section className={featuredSectionClass}>
-        <div className="mx-auto max-w-[1440px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="mb-8 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="font-display text-[30px] leading-[1.12] text-[#313131] sm:text-[34px] md:text-[52px]">
@@ -847,7 +847,7 @@ const CollectionLandingPage = ({
       </section>
 
       <section id="collection-gallery" className={gallerySectionClass}>
-        <div className="mx-auto max-w-[1440px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="max-w-[980px]">
             <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Collection</p>
             <h2 className="mt-4 font-display text-[28px] leading-[1.2] text-[#313131] md:mt-5 md:text-[32px]">
@@ -866,8 +866,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="bg-[#f4f2ee] px-4 py-10 sm:px-6 md:px-12 md:py-[70px] lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="bg-[#f4f2ee] py-10 md:py-[70px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <h2 className="font-display text-[30px] leading-[1.08] text-[#1f1f1f] sm:text-[34px] md:text-[52px]">
             {collectionCopy.testimonialTitle}
           </h2>
@@ -886,8 +886,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="py-10 md:py-[100px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="max-w-[980px]">
             <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Explore More</p>
             <h2 className="mt-4 font-display text-[34px] leading-[1.08] text-[#313131] sm:text-[40px] md:mt-5 md:text-[52px]">
@@ -915,8 +915,8 @@ const CollectionLandingPage = ({
           />
         </div>
       </section>
-      <section className="bg-[#292929] px-4 py-10 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="bg-[#292929] py-10 text-white md:py-[100px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="max-w-[860px]">
             <h2 className="font-display text-[30px] leading-[1.08] text-white sm:text-[34px] md:text-[52px]">
               {collectionCopy.urgencyTitle}
@@ -941,8 +941,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 py-10 sm:px-6 md:px-12 md:py-[50px] lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px]">
+      <section className="py-10 md:py-[50px]">
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <h2 className="font-display text-[30px] leading-[1.12] text-[#313131] sm:text-[34px] md:text-[52px]">
               Discover our other Collections
@@ -978,8 +978,8 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="bg-[#0e0e0e] px-4 py-10 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
-        <div className="mx-auto grid max-w-[1440px] items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,850px)_minmax(280px,1fr)] lg:gap-[80px]">
+      <section className="bg-[#0e0e0e] py-10 text-white md:py-[100px]">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-8 px-6 md:gap-10 md:px-12 lg:grid-cols-[minmax(0,850px)_minmax(280px,1fr)] lg:gap-[80px]">
           <div>
             <p className="text-[16px] leading-[1.5] text-white/65 md:text-[18px]">
               Complimentary Art Advisory

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -15,9 +15,15 @@ import {
   Trash2,
   ChevronDown,
   ChevronRight,
+  LayoutDashboard,
+  Package,
+  Settings,
+  UserRound,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
+import LogoutButton from "@/components/auth/LogoutButton";
 import {
   collectionLinkItems,
   getCollectionHref,
@@ -181,6 +187,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMiniCartOpen, setIsMiniCartOpen] = useState(false);
   const [openDesktopMenu, setOpenDesktopMenu] = useState<DesktopMenuId | null>(null);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const [expandedMobileMenus, setExpandedMobileMenus] = useState<Record<string, boolean>>(
     {}
   );
@@ -188,15 +195,20 @@ const Navbar = () => {
   const [mobileSearchValue, setMobileSearchValue] = useState("");
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isPlaceholderSliding, setIsPlaceholderSliding] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const { data: session, status: authStatus } = useSession();
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
+  const isAuthenticated = Boolean(session?.accessToken);
+  const accountHref = isAuthenticated ? "/dashboard" : "/login";
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setExpandedMobileMenus({});
   };
   const closeDesktopMenu = () => setOpenDesktopMenu(null);
   const toggleDesktopMenu = (menuId: DesktopMenuId) => {
+    setIsAccountMenuOpen(false);
     setOpenDesktopMenu((current) => (current === menuId ? null : menuId));
   };
   const toggleMobileMenu = () => {
@@ -205,6 +217,20 @@ const Navbar = () => {
     }
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+  const closeAccountMenu = () => setIsAccountMenuOpen(false);
+  const toggleAccountMenu = () => {
+    setOpenDesktopMenu(null);
+    setIsAccountMenuOpen((current) => !current);
+  };
+  const accountDisplayName =
+    session?.user?.name?.trim() || session?.user?.email?.trim() || "Artace Account";
+  const accountInitials =
+    accountDisplayName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() || "")
+      .join("") || "A";
 
   useEffect(() => {
     if (!isMiniCartOpen) return;
@@ -226,11 +252,12 @@ const Navbar = () => {
   }, [isMiniCartOpen]);
 
   useEffect(() => {
-    if (!openDesktopMenu) return;
+    if (!openDesktopMenu && !isAccountMenuOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setOpenDesktopMenu(null);
+        setIsAccountMenuOpen(false);
       }
     };
 
@@ -239,7 +266,26 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [openDesktopMenu]);
+  }, [isAccountMenuOpen, openDesktopMenu]);
+
+  useEffect(() => {
+    if (!isAccountMenuOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("mousedown", handlePointerDown);
+
+    return () => {
+      window.removeEventListener("mousedown", handlePointerDown);
+    };
+  }, [isAccountMenuOpen]);
 
   useEffect(() => {
     const holdDurationMs = 2200;
@@ -544,8 +590,14 @@ const Navbar = () => {
                 <button
                   key={link.name}
                   type="button"
-                  onMouseEnter={() => setOpenDesktopMenu(link.menuId)}
-                  onFocus={() => setOpenDesktopMenu(link.menuId)}
+                  onMouseEnter={() => {
+                    setIsAccountMenuOpen(false);
+                    setOpenDesktopMenu(link.menuId);
+                  }}
+                  onFocus={() => {
+                    setIsAccountMenuOpen(false);
+                    setOpenDesktopMenu(link.menuId);
+                  }}
                   onClick={() => toggleDesktopMenu(link.menuId)}
                   className={`inline-flex items-center gap-2 font-inter text-[18px] font-medium leading-none transition-colors hover:text-black ${
                     openDesktopMenu === link.menuId ? "text-black" : "text-[#2f2f2f]"
@@ -622,11 +674,170 @@ const Navbar = () => {
               )}
             </Link>
 
+            <div
+              ref={accountMenuRef}
+              className="relative"
+              onMouseEnter={() => {
+                if (!isAuthenticated && authStatus !== "loading") {
+                  closeDesktopMenu();
+                  setIsAccountMenuOpen(true);
+                }
+              }}
+              onMouseLeave={() => {
+                if (!isAuthenticated) {
+                  setIsAccountMenuOpen(false);
+                }
+              }}
+            >
+              <button
+                type="button"
+                aria-label={isAuthenticated ? "Open account menu" : "Open account"}
+                onClick={() => {
+                  closeDesktopMenu();
+                  if (isAuthenticated) {
+                    toggleAccountMenu();
+                    return;
+                  }
+                  if (window.innerWidth < 768) {
+                    window.location.href = accountHref;
+                    return;
+                  }
+                  setIsAccountMenuOpen((current) => !current);
+                }}
+                className="relative inline-flex h-9 w-9 cursor-pointer items-center justify-center text-[#2f2f2f] transition-colors hover:text-black md:h-10 md:w-10"
+              >
+                <Image
+                  src="/user.svg"
+                  alt=""
+                  width={20}
+                  height={20}
+                  aria-hidden="true"
+                  className="h-5 w-5"
+                />
+              </button>
+
+              {isAuthenticated ? (
+                <div
+                  className={`absolute right-0 top-[calc(100%+12px)] z-[75] hidden w-[290px] rounded-[18px] border border-black/8 bg-white p-3 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-200 md:block ${
+                    isAccountMenuOpen
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible -translate-y-2 opacity-0"
+                  }`}
+                  role="menu"
+                >
+                  <div className="rounded-[14px] bg-[#fcfaf7] px-4 py-4">
+                    <p className="text-[12px] uppercase tracking-[0.08em] text-[#7a7368]">
+                      Signed in as
+                    </p>
+                    <p className="mt-2 text-[16px] font-medium text-[#1f1f1f]">
+                      {session?.user?.name || "Artace Customer"}
+                    </p>
+                    <p className="mt-1 break-words text-[14px] leading-[1.6] text-[#5b5b5b]">
+                      {session?.user?.email || session?.user?.username || ""}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 space-y-1">
+                    <Link
+                      href="/dashboard"
+                      onClick={closeAccountMenu}
+                      className="flex items-center justify-between rounded-[12px] px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                      role="menuitem"
+                    >
+                      <span className="inline-flex items-center gap-3">
+                        <LayoutDashboard className="h-4 w-4 text-[#5b5b5b]" />
+                        Dashboard
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#7a7368]" />
+                    </Link>
+                    <Link
+                      href="/dashboard/orders"
+                      onClick={closeAccountMenu}
+                      className="flex items-center justify-between rounded-[12px] px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                      role="menuitem"
+                    >
+                      <span className="inline-flex items-center gap-3">
+                        <Package className="h-4 w-4 text-[#5b5b5b]" />
+                        Orders
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#7a7368]" />
+                    </Link>
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={closeAccountMenu}
+                      className="flex items-center justify-between rounded-[12px] px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                      role="menuitem"
+                    >
+                      <span className="inline-flex items-center gap-3">
+                        <UserRound className="h-4 w-4 text-[#5b5b5b]" />
+                        Profile
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#7a7368]" />
+                    </Link>
+                    <Link
+                      href="/dashboard/details"
+                      onClick={closeAccountMenu}
+                      className="flex items-center justify-between rounded-[12px] px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                      role="menuitem"
+                    >
+                      <span className="inline-flex items-center gap-3">
+                        <Settings className="h-4 w-4 text-[#5b5b5b]" />
+                        Details
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-[#7a7368]" />
+                    </Link>
+                  </div>
+
+                  <div className="mt-3 border-t border-black/8 pt-3">
+                    <LogoutButton
+                      className="flex w-full items-center justify-between rounded-[12px] px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                      label="Logout"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={`absolute right-0 top-[calc(100%+12px)] z-[75] hidden w-[250px] rounded-[18px] border border-black/8 bg-white p-3 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-200 md:block ${
+                    isAccountMenuOpen
+                      ? "visible translate-y-0 opacity-100"
+                      : "invisible -translate-y-2 opacity-0"
+                  }`}
+                  role="menu"
+                >
+                  <div className="rounded-[14px] bg-[#fcfaf7] px-4 py-4">
+                    <p className="text-[12px] uppercase tracking-[0.08em] text-[#7a7368]">
+                      Account Access
+                    </p>
+                    <p className="mt-2 text-[15px] leading-[1.6] text-[#1f1f1f]">
+                      Login to track orders, or sign up first if you&apos;re new.
+                    </p>
+                  </div>
+
+                  <div className="mt-3 grid gap-2">
+                    <Link
+                      href="/login"
+                      onClick={closeAccountMenu}
+                      className="inline-flex items-center justify-center rounded-[12px] bg-[#1f1f1f] px-4 py-3 text-[15px] font-medium text-white transition-colors hover:bg-black"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={closeAccountMenu}
+                      className="inline-flex items-center justify-center rounded-[12px] border border-black/10 px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f4efe7]"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
               aria-label="Open cart"
               onClick={() => setIsMiniCartOpen(true)}
-              className="relative inline-flex h-9 w-9 items-center justify-center text-[#2f2f2f] transition-colors hover:text-black md:h-10 md:w-10"
+              className="relative inline-flex h-9 w-9 cursor-pointer items-center justify-center text-[#2f2f2f] transition-colors hover:text-black md:h-10 md:w-10"
             >
               <ShoppingCart className="h-5 w-5" strokeWidth={1.7} />
               {itemCount > 0 && (
@@ -703,6 +914,78 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col gap-3">
+                {authStatus !== "loading" ? (
+                  isAuthenticated ? (
+                    <div className="rounded-[16px] bg-[#f7f7f7] p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#1f1f1f] text-[14px] font-semibold uppercase tracking-[0.04em] text-white">
+                          {accountInitials}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate font-inter text-[16px] font-medium text-[#1f1f1f]">
+                            {session?.user?.name || "Artace Customer"}
+                          </p>
+                          <p className="truncate text-[13px] text-[#6b6b6b]">
+                            {session?.user?.email || session?.user?.username || ""}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <Link
+                          href="/dashboard"
+                          onClick={closeMobileMenu}
+                          className="rounded-[12px] bg-[#1f1f1f] px-3 py-3 text-center font-inter text-[15px] font-medium text-white transition-colors hover:bg-black"
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          href="/dashboard/orders"
+                          onClick={closeMobileMenu}
+                          className="rounded-[12px] bg-white px-3 py-3 text-center font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                        >
+                          Orders
+                        </Link>
+                        <Link
+                          href="/dashboard/profile"
+                          onClick={closeMobileMenu}
+                          className="rounded-[12px] bg-white px-3 py-3 text-center font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                        >
+                          Profile
+                        </Link>
+                        <Link
+                          href="/dashboard/details"
+                          onClick={closeMobileMenu}
+                          className="rounded-[12px] bg-white px-3 py-3 text-center font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                        >
+                          Details
+                        </Link>
+                      </div>
+
+                      <LogoutButton
+                        className="mt-3 w-full rounded-[12px] bg-white px-3 py-3 font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href="/login"
+                        onClick={closeMobileMenu}
+                        className="rounded-[12px] bg-[#1f1f1f] px-3 py-3 text-center font-inter text-[15px] font-medium text-white transition-colors hover:bg-black"
+                      >
+                        Login
+                      </Link>
+                      <Link
+                        href="/signup"
+                        onClick={closeMobileMenu}
+                        className="rounded-[12px] bg-[#f7f7f7] px-3 py-3 text-center font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  )
+                ) : null}
+
                 {mobileLinks.map((link) => (
                   link.children && link.children.length > 0 ? (
                     <div key={link.name} className="rounded-[12px] bg-[#f7f7f7] p-3">

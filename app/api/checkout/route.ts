@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
@@ -107,7 +107,7 @@ const validateAddress = (address: Partial<CheckoutAddressInput>) => {
   return { sanitized, missingRequired };
 };
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { siteUrl, consumerKey, consumerSecret, paymentMethod, paymentMethodTitle } =
     getWooCommerceConfig();
 
@@ -162,8 +162,12 @@ export async function POST(request: Request) {
 
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
-  const cookieStore = await cookies();
-  const customerToken = cookieStore.get("wp_jwt")?.value || "";
+  const sessionToken = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+  const customerToken =
+    typeof sessionToken?.accessToken === "string" ? sessionToken.accessToken : "";
   const authenticatedCustomer = customerToken
     ? await getWordPressUserFromToken(customerToken)
     : null;
