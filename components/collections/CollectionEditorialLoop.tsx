@@ -53,8 +53,8 @@ const CollectionEditorialLoop = ({
   }, [items.length]);
 
   return (
-    <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-[60px]">
-      <div className="space-y-1 lg:self-center">
+    <div className="mt-8 grid gap-8 md:mt-10 md:gap-10 lg:grid-cols-2 lg:items-center lg:gap-[60px]">
+      <div className="order-2 space-y-1 lg:order-1 lg:self-center">
         {items.map((item, index) => {
           const isActive = index === safeActiveIndex;
 
@@ -64,11 +64,11 @@ const CollectionEditorialLoop = ({
               type="button"
               onClick={() => setActiveIndex(index)}
               aria-expanded={isActive}
-              className="block w-full py-5 text-left"
+              className="block w-full py-4 text-left md:py-5"
             >
               <div className="flex items-start">
                 <h3
-                  className={`font-display text-[24px] leading-[1.15] transition-colors md:text-[30px] ${
+                  className={`font-display text-[21px] leading-[1.2] transition-colors md:text-[26px] lg:text-[30px] ${
                     isActive ? "text-[#111111]" : "text-[#8a8378]"
                   }`}
                 >
@@ -76,17 +76,17 @@ const CollectionEditorialLoop = ({
                 </h3>
               </div>
 
-              <div className="mt-6 border-t border-black/10" />
+              <div className="mt-5 border-t border-black/10 md:mt-6" />
 
               <div
                 className={`grid overflow-hidden transition-all duration-500 ease-out ${
                   isActive
-                    ? "mt-[60px] grid-rows-[1fr] opacity-100"
+                    ? "mt-6 grid-rows-[1fr] opacity-100 md:mt-10 lg:mt-[60px]"
                     : "mt-0 grid-rows-[0fr] opacity-60"
                 }`}
               >
                 <div className="overflow-hidden">
-                  <p className="max-w-[620px] text-[18px] leading-[1.7] text-[#5b5b5b]">
+                  <p className="max-w-[620px] text-[16px] leading-[1.7] text-[#5b5b5b] md:text-[17px] lg:text-[18px]">
                     {item.body}
                   </p>
                 </div>
@@ -96,7 +96,7 @@ const CollectionEditorialLoop = ({
         })}
       </div>
 
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[16px] bg-[#ded8ce] lg:w-[92%] lg:justify-self-end">
+      <div className="order-1 relative aspect-[4/4.85] w-full overflow-hidden rounded-[14px] bg-[#ded8ce] md:aspect-[4/5] md:rounded-[16px] lg:order-2 lg:w-[92%] lg:justify-self-end">
         {staticImage ? (
           <>
             <Image

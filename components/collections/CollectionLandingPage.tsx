@@ -454,8 +454,8 @@ const HeroArtworkComposition = ({
 }) => {
   if (vectorOnly && vectorSrc) {
     return (
-      <div className="mx-auto flex h-[320px] w-full max-w-[360px] items-center justify-center">
-        <div className="relative h-[170px] w-[170px] sm:h-[210px] sm:w-[210px] md:h-[240px] md:w-[240px]">
+      <div className="mx-auto flex h-[220px] w-full max-w-[260px] items-center justify-center sm:h-[280px] sm:max-w-[320px] md:h-[320px] md:max-w-[360px]">
+        <div className="relative h-[150px] w-[150px] sm:h-[190px] sm:w-[190px] md:h-[240px] md:w-[240px]">
           <Image src={vectorSrc} alt={`${title} vector`} fill className="object-contain" />
         </div>
       </div>
@@ -464,7 +464,7 @@ const HeroArtworkComposition = ({
 
   return (
     <div
-      className="relative mx-auto h-[320px] w-full max-w-[360px] overflow-hidden rounded-[28px] border border-black/8"
+      className="relative mx-auto h-[280px] w-full max-w-[320px] overflow-hidden rounded-[24px] border border-black/8 sm:h-[320px] sm:max-w-[360px] sm:rounded-[28px]"
       style={{
         background: `linear-gradient(180deg, ${accentSoft} 0%, #fcfaf7 100%)`,
       }}
@@ -498,12 +498,12 @@ const HeroArtworkComposition = ({
         </div>
       )}
 
-      <div className="absolute bottom-5 right-5 rounded-full bg-white/88 px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-[#313131] shadow-[0_14px_30px_rgba(0,0,0,0.08)]">
+      <div className="absolute bottom-4 right-4 rounded-full bg-white/88 px-4 py-2 text-[11px] uppercase tracking-[0.16em] text-[#313131] shadow-[0_14px_30px_rgba(0,0,0,0.08)] sm:bottom-5 sm:right-5">
         Curated Collection
       </div>
 
-      <div className="absolute bottom-0 left-1/2 w-[70%] -translate-x-1/2">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-t-[160px] rounded-b-[24px] border border-black/8 bg-white shadow-[0_20px_40px_rgba(0,0,0,0.10)]">
+      <div className="absolute bottom-0 left-1/2 w-[68%] -translate-x-1/2 sm:w-[70%]">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-t-[128px] rounded-b-[20px] border border-black/8 bg-white shadow-[0_20px_40px_rgba(0,0,0,0.10)] sm:rounded-t-[160px] sm:rounded-b-[24px]">
           <Image
             src={image || FALLBACK_PRODUCT_IMAGE}
             alt={imageAlt || title}
@@ -548,7 +548,7 @@ const FeaturedProductCard = ({
 
         <div className="flex flex-col gap-1">
           <p className="text-[12px] text-[#666666] sm:text-[14px]">{categoryLabel}</p>
-          <h3 className="font-display text-[18px] leading-snug text-[#2c2c2c] sm:text-[22px]">
+          <h3 className="font-display text-[17px] leading-snug text-[#2c2c2c] sm:text-[22px]">
             {product.name}
           </h3>
           <p className="line-clamp-2 text-[12px] text-[#666666] sm:text-[14px]">
@@ -585,11 +585,11 @@ const GalleryCard = ({ product }: { product: CollectionProductCard }) => {
         className="object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 px-4 pb-4 pt-12 md:px-5 md:pb-5">
-        <h3 className="font-display text-[18px] leading-[1.15] text-white md:text-[20px]">
+      <div className="absolute inset-x-0 bottom-0 px-3 pb-3 pt-10 sm:px-4 sm:pb-4 md:px-5 md:pb-5 md:pt-12">
+        <h3 className="font-display text-[16px] leading-[1.15] text-white sm:text-[18px] md:text-[20px]">
           {product.name}
         </h3>
-        <p className="mt-1 text-[14px] leading-[1.5] text-white/70 md:text-[15px]">
+        <p className="mt-1 text-[12px] leading-[1.5] text-white/70 sm:text-[14px] md:text-[15px]">
           {product.sizeLabel}
         </p>
       </div>
@@ -616,14 +616,14 @@ const TestimonialCard = ({
     .toUpperCase();
 
   return (
-    <article className="flex h-full flex-col rounded-[12px] border border-[#1f1f1f]/10 bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.04)]">
+    <article className="flex h-full flex-col rounded-[12px] border border-[#1f1f1f]/10 bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.04)] md:p-6">
       <div className="flex items-center gap-1">
         {Array.from({ length: 5 }, (_, index) => (
           <Star key={`${name}-star-${index}`} className="h-4 w-4 fill-[#FFDB4D] text-[#FFDB4D]" />
         ))}
       </div>
 
-      <p className="mt-5 text-[15px] leading-7 text-[#3f3a32]">&ldquo;{quote}&rdquo;</p>
+      <p className="mt-4 text-[15px] leading-7 text-[#3f3a32] md:mt-5">&ldquo;{quote}&rdquo;</p>
 
       <div className="mt-auto pt-5">
         <div className="border-t border-[#1f1f1f]/10 pt-5">
@@ -702,25 +702,25 @@ const CollectionLandingPage = ({
   const hasTightGallerySpacing =
     isBuddhaCollection || isRadhaKrishnaCollection || isGaneshaCollection;
   const featuredSectionClass = hasTightGallerySpacing
-    ? "px-4 pb-12 pt-12 sm:px-6 md:px-12 md:pb-[40px] md:pt-[100px] lg:px-[50px]"
-    : "px-4 py-12 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
+    ? "px-4 pb-10 pt-10 sm:px-6 md:px-12 md:pb-[40px] md:pt-[100px] lg:px-[50px]"
+    : "px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
   const gallerySectionClass = hasTightGallerySpacing
-    ? "px-4 pb-12 pt-12 sm:px-6 md:px-12 md:pb-[100px] md:pt-[60px] lg:px-[50px]"
-    : "px-4 py-12 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
+    ? "px-4 pb-10 pt-10 sm:px-6 md:px-12 md:pb-[100px] md:pt-[60px] lg:px-[50px]"
+    : "px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]";
 
   return (
     <main className="bg-[#fcfaf7] text-[#313131]">
-      <section className="px-4 pb-10 pt-10 sm:px-6 md:px-12 md:pb-14 lg:px-[50px] lg:pt-[100px]">
+      <section className="px-4 pb-8 pt-8 sm:px-6 md:px-12 md:pb-14 lg:px-[50px] lg:pt-[100px]">
         <div className="mx-auto max-w-[1440px]">
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-[60px]">
+          <div className="grid items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-[60px]">
             <div>
-              <p className="font-display text-[20px] leading-[1.2] text-[#313131]">
+              <p className="font-display text-[18px] leading-[1.2] text-[#313131] md:text-[20px]">
                 {collectionCopy.heroEyebrow}
               </p>
-              <h1 className="mt-5 max-w-[900px] font-display text-[40px] leading-[1.08] text-[#313131] sm:text-[52px]">
+              <h1 className="mt-4 max-w-[900px] font-display text-[34px] leading-[1.08] text-[#313131] sm:text-[44px] md:mt-5 md:text-[52px]">
                 {collectionCopy.heroTitle}
               </h1>
-              <p className="mt-5 max-w-[860px] text-[18px] leading-[1.55] text-[#5b5b5b] md:text-[20px] md:leading-[1.5]">
+              <p className="mt-4 max-w-[860px] text-[16px] leading-[1.65] text-[#5b5b5b] sm:text-[17px] md:mt-5 md:text-[20px] md:leading-[1.5]">
                 {collectionCopy.heroBody}
               </p>
               <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
@@ -728,7 +728,7 @@ const CollectionLandingPage = ({
                   href={CAL_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-[14px] rounded-[6px] bg-[#292929] px-6 py-4 text-[16px] leading-none text-white transition-transform hover:-translate-y-0.5 md:text-[18px]"
+                  className="inline-flex w-full items-center justify-center gap-[14px] rounded-[6px] bg-[#292929] px-6 py-4 text-[16px] leading-none text-white transition-transform hover:-translate-y-0.5 sm:w-auto md:text-[18px]"
                 >
                   {collectionCopy.heroCta}
                   <ArrowRight className="h-5 w-5" />
@@ -737,7 +737,7 @@ const CollectionLandingPage = ({
                 {collectionCopy.heroSecondaryCta ? (
                   <Link
                     href="#collection-gallery"
-                    className="inline-flex items-center justify-center gap-[14px] rounded-[6px] border border-[#292929]/15 bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 md:text-[18px]"
+                    className="inline-flex w-full items-center justify-center gap-[14px] rounded-[6px] border border-[#292929]/15 bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 sm:w-auto md:text-[18px]"
                   >
                     {collectionCopy.heroSecondaryCta}
                     <ArrowRight className="h-5 w-5" />
@@ -760,9 +760,9 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 pb-12 sm:px-6 md:px-12 lg:px-[50px]">
+      <section className="px-4 pb-10 sm:px-6 md:px-12 md:pb-12 lg:px-[50px]">
         <div className="mx-auto max-w-[1440px]">
-          <div className="relative aspect-[16/9] overflow-hidden rounded-[12px] bg-[#ded8ce]">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#ded8ce] sm:aspect-[16/10] md:aspect-[16/9]">
             <Image
               src={heroBannerImage || FALLBACK_PRODUCT_IMAGE}
               alt={heroImageAlt || collectionHeadline}
@@ -776,13 +776,13 @@ const CollectionLandingPage = ({
       </section>
 
       <section className="px-4 sm:px-6 md:px-12 lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-12 md:py-[100px]">
-          <div className="grid gap-8 lg:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)] lg:gap-[60px]">
-            <p className="text-[18px] leading-[1.5] text-[#767676]">Overview</p>
-            <h2 className="font-display text-[30px] leading-[1.2] text-[#313131] md:text-[32px]">
+        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-10 md:py-[100px]">
+          <div className="grid gap-5 md:gap-8 lg:grid-cols-[120px_minmax(0,1fr)_minmax(0,1fr)] lg:gap-[60px]">
+            <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Overview</p>
+            <h2 className="font-display text-[28px] leading-[1.18] text-[#313131] md:text-[32px]">
               {collectionCopy.overviewTitle}
             </h2>
-            <p className="text-[18px] leading-[1.7] text-[#5b5b5b] md:text-[20px] md:leading-[1.55]">
+            <p className="text-[16px] leading-[1.7] text-[#5b5b5b] sm:text-[17px] md:text-[20px] md:leading-[1.55]">
               {collectionCopy.overviewBody}
             </p>
           </div>
@@ -790,20 +790,20 @@ const CollectionLandingPage = ({
       </section>
 
       <section className="px-4 sm:px-6 md:px-12 lg:px-[50px]">
-        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-12 md:py-[100px]">
-          <div className="mx-auto grid gap-8 md:grid-cols-3 md:gap-5 lg:max-w-[940px]">
+        <div className="mx-auto max-w-[1440px] border-t border-black/8 py-10 md:py-[100px]">
+          <div className="mx-auto grid gap-6 sm:grid-cols-3 sm:gap-5 lg:max-w-[940px]">
             {benefitItems.map((item) => {
               const Icon = item.icon;
 
               return (
                 <article
                   key={item.title}
-                  className="flex flex-col items-center gap-8 text-center"
+                  className="mx-auto flex max-w-[280px] flex-col items-center gap-5 text-center sm:max-w-none sm:gap-8"
                 >
                   <div className="rounded-[12px] bg-white p-[18px]">
                     <Icon className="h-6 w-6 text-[#313131]" />
                   </div>
-                  <h3 className="font-display text-[26px] leading-[1.2] text-[#313131] md:text-[28px]">
+                  <h3 className="font-display text-[22px] leading-[1.2] text-[#313131] md:text-[28px]">
                     {item.title}
                   </h3>
                 </article>
@@ -815,26 +815,26 @@ const CollectionLandingPage = ({
 
       <section className={featuredSectionClass}>
         <div className="mx-auto max-w-[1440px]">
-          <div className="mb-10 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between">
+          <div className="mb-8 flex flex-col gap-4 md:mb-14 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="font-display text-[36px] leading-[1.12] text-[#313131] md:text-[52px]">
+              <h2 className="font-display text-[30px] leading-[1.12] text-[#313131] sm:text-[34px] md:text-[52px]">
                 {collectionCopy.featuredHeading}
               </h2>
-              <p className="mt-4 text-[18px] leading-[1.5] text-[#5b5b5b] md:text-[20px]">
+              <p className="mt-3 text-[16px] leading-[1.6] text-[#5b5b5b] sm:text-[17px] md:mt-4 md:text-[20px]">
                 {startingAtLabel} | {collectionCopy.featuredBody}
               </p>
             </div>
 
             <Link
               href={`/shop?category=${encodeURIComponent(categorySlug)}`}
-              className="inline-flex items-center gap-3 border-b border-[#313131] pb-1 text-[18px] uppercase tracking-[0.06em] text-[#313131]"
+              className="inline-flex items-center gap-3 self-start border-b border-[#313131] pb-1 text-[16px] uppercase tracking-[0.06em] text-[#313131] md:text-[18px]"
             >
               Shop All
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-y-12">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-x-5 sm:gap-y-9 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-12">
             {featuredProducts.map((product) => (
               <FeaturedProductCard
                 key={product.id}
@@ -849,18 +849,16 @@ const CollectionLandingPage = ({
       <section id="collection-gallery" className={gallerySectionClass}>
         <div className="mx-auto max-w-[1440px]">
           <div className="max-w-[980px]">
-            <p className="text-[18px] leading-[1.5] text-[#767676]">Collection</p>
-            <h2 className="mt-5 font-display text-[30px] leading-[1.2] text-[#313131] md:text-[32px]">
+            <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Collection</p>
+            <h2 className="mt-4 font-display text-[28px] leading-[1.2] text-[#313131] md:mt-5 md:text-[32px]">
               {collectionCopy.galleryTitle}
             </h2>
-            <p className="mt-5 text-[18px] leading-[1.6] text-[#5b5b5b] md:text-[20px]">
+            <p className="mt-4 text-[16px] leading-[1.65] text-[#5b5b5b] sm:text-[17px] md:mt-5 md:text-[20px]">
               {collectionCopy.galleryBody}
             </p>
           </div>
 
-          <div
-            className="mt-10 grid gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-4"
-          >
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:mt-10 sm:gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-4">
             {galleryProducts.map((product) => (
               <GalleryCard key={`gallery-${product.id}`} product={product} />
             ))}
@@ -868,13 +866,13 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="bg-[#f4f2ee] px-4 py-12 sm:px-6 md:px-12 md:py-[70px] lg:px-[50px]">
+      <section className="bg-[#f4f2ee] px-4 py-10 sm:px-6 md:px-12 md:py-[70px] lg:px-[50px]">
         <div className="mx-auto max-w-[1440px]">
-          <h2 className="font-display text-[36px] leading-[1.08] text-[#1f1f1f] md:text-[52px]">
+          <h2 className="font-display text-[30px] leading-[1.08] text-[#1f1f1f] sm:text-[34px] md:text-[52px]">
             {collectionCopy.testimonialTitle}
           </h2>
 
-          <div className="mt-9 grid gap-5 lg:grid-cols-2">
+          <div className="mt-7 grid gap-4 md:mt-9 md:gap-5 lg:grid-cols-2">
             {collectionCopy.testimonialItems.map((item) => (
               <TestimonialCard
                 key={`${item.name}-${item.location}`}
@@ -888,11 +886,11 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 py-12 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
+      <section className="px-4 py-10 sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
         <div className="mx-auto max-w-[1440px]">
           <div className="max-w-[980px]">
-            <p className="text-[18px] leading-[1.5] text-[#767676]">Explore More</p>
-            <h2 className="mt-5 font-display text-[40px] leading-[1.08] text-[#313131] md:text-[52px]">
+            <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">Explore More</p>
+            <h2 className="mt-4 font-display text-[34px] leading-[1.08] text-[#313131] sm:text-[40px] md:mt-5 md:text-[52px]">
               {editorialHeadingParts.map((part, index) =>
                 /handmade/i.test(part) ? (
                   <span key={`${part}-${index}`} className="text-[#F0CF4C]">
@@ -904,7 +902,7 @@ const CollectionLandingPage = ({
               )}
             </h2>
             {collectionCopy.editorialIntro ? (
-              <p className="mt-5 max-w-[780px] text-[18px] leading-[1.6] text-[#5b5b5b] md:text-[20px]">
+              <p className="mt-4 max-w-[780px] text-[16px] leading-[1.65] text-[#5b5b5b] sm:text-[17px] md:mt-5 md:text-[20px]">
                 {collectionCopy.editorialIntro}
               </p>
             ) : null}
@@ -917,16 +915,16 @@ const CollectionLandingPage = ({
           />
         </div>
       </section>
-      <section className="bg-[#292929] px-4 py-12 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
+      <section className="bg-[#292929] px-4 py-10 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
         <div className="mx-auto max-w-[1440px]">
           <div className="max-w-[860px]">
-            <h2 className="font-display text-[36px] leading-[1.08] text-white md:text-[52px]">
+            <h2 className="font-display text-[30px] leading-[1.08] text-white sm:text-[34px] md:text-[52px]">
               {collectionCopy.urgencyTitle}
             </h2>
-            <p className="mt-4 text-[18px] leading-[1.55] text-white/72 md:text-[20px]">
+            <p className="mt-3 text-[16px] leading-[1.65] text-white/72 sm:text-[17px] md:mt-4 md:text-[20px]">
               {collectionCopy.urgencyBody}
             </p>
-            <p className="mt-8 max-w-[760px] text-[16px] leading-[1.7] text-white/78 md:text-[18px]">
+            <p className="mt-6 max-w-[760px] text-[15px] leading-[1.7] text-white/78 md:mt-8 md:text-[18px]">
               Original, ready-to-ship pieces are highly sought after and sell quickly.
               For custom sizes, our artist commission calendar is strictly limited.
             </p>
@@ -934,7 +932,7 @@ const CollectionLandingPage = ({
               href={CAL_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center justify-center gap-[14px] rounded-[6px] bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 md:text-[18px]"
+              className="mt-7 inline-flex w-full items-center justify-center gap-[14px] rounded-[6px] bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 sm:w-auto md:mt-8 md:text-[18px]"
             >
               {collectionCopy.urgencyCta}
               <ArrowRight className="h-5 w-5" />
@@ -943,23 +941,23 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="px-4 py-12 sm:px-6 md:px-12 md:py-[50px] lg:px-[50px]">
+      <section className="px-4 py-10 sm:px-6 md:px-12 md:py-[50px] lg:px-[50px]">
         <div className="mx-auto max-w-[1440px]">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-            <h2 className="font-display text-[36px] leading-[1.12] text-[#313131] md:text-[52px]">
+            <h2 className="font-display text-[30px] leading-[1.12] text-[#313131] sm:text-[34px] md:text-[52px]">
               Discover our other Collections
             </h2>
 
             <Link
               href="/shop"
-              className="inline-flex items-center gap-3 border-b border-[#313131] pb-1 text-[18px]  tracking-[0.06em] text-[#313131]"
+              className="inline-flex items-center gap-3 self-start border-b border-[#313131] pb-1 text-[16px] tracking-[0.06em] text-[#313131] md:text-[18px]"
             >
               See All
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:max-w-[1080px] lg:grid-cols-3">
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:mt-10 sm:gap-5 lg:max-w-[1080px] lg:grid-cols-3">
             {relatedCollections.map((item) => (
               <Link key={item.slug} href={getCollectionHref(item.slug)} className="group block">
                 <div className="relative aspect-square overflow-hidden rounded-[12px] bg-[#ded8ce]">
@@ -971,7 +969,7 @@ const CollectionLandingPage = ({
                     className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                   />
                 </div>
-                <h3 className="mt-4 font-display text-[20px] leading-[1.2] text-[#313131] md:text-[22px]">
+                <h3 className="mt-3 font-display text-[18px] leading-[1.2] text-[#313131] md:mt-4 md:text-[22px]">
                   {toBaseCollectionName(item.name) || item.name}
                 </h3>
               </Link>
@@ -980,23 +978,23 @@ const CollectionLandingPage = ({
         </div>
       </section>
 
-      <section className="bg-[#0e0e0e] px-4 py-12 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
-        <div className="mx-auto grid max-w-[1440px] items-center gap-10 lg:grid-cols-[minmax(0,850px)_minmax(280px,1fr)] lg:gap-[80px]">
+      <section className="bg-[#0e0e0e] px-4 py-10 text-white sm:px-6 md:px-12 md:py-[100px] lg:px-[50px]">
+        <div className="mx-auto grid max-w-[1440px] items-center gap-8 md:gap-10 lg:grid-cols-[minmax(0,850px)_minmax(280px,1fr)] lg:gap-[80px]">
           <div>
-            <p className="text-[18px] leading-[1.5] text-white/65">
+            <p className="text-[16px] leading-[1.5] text-white/65 md:text-[18px]">
               Complimentary Art Advisory
             </p>
-            <h2 className="mt-6 font-display text-[32px] leading-[1.2] md:text-[36px]">
+            <h2 className="mt-4 font-display text-[28px] leading-[1.2] sm:text-[32px] md:mt-6 md:text-[36px]">
               {collectionCopy.advisoryTitle}
             </h2>
-            <p className="mt-6 max-w-[820px] text-[18px] leading-[1.6] text-white/80 md:text-[20px]">
+            <p className="mt-4 max-w-[820px] text-[16px] leading-[1.7] text-white/80 sm:text-[17px] md:mt-6 md:text-[20px]">
               {collectionCopy.advisoryBody}
             </p>
             <Link
               href={collectionCopy.advisoryHref || CAL_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-10 inline-flex items-center justify-center gap-[14px] rounded-[6px] bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 md:text-[18px]"
+              className="mt-7 inline-flex w-full items-center justify-center gap-[14px] rounded-[6px] bg-white px-6 py-4 text-[16px] leading-none text-[#292929] transition-transform hover:-translate-y-0.5 sm:w-auto md:mt-10 md:text-[18px]"
             >
               {collectionCopy.advisoryCta}
               <ArrowUpRight className="h-5 w-5" />
@@ -1004,7 +1002,7 @@ const CollectionLandingPage = ({
           </div>
 
           <div className="justify-self-center text-center lg:justify-self-end">
-            <div className="relative mx-auto h-[260px] w-[260px] overflow-hidden rounded-full md:h-[350px] md:w-[350px]">
+            <div className="relative mx-auto h-[220px] w-[220px] overflow-hidden rounded-full sm:h-[260px] sm:w-[260px] md:h-[350px] md:w-[350px]">
               <Image
                 src="/Sahil-mahalley.webp"
                 alt="Sahil Mahalley"
