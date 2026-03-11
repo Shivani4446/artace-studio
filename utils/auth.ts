@@ -1,5 +1,5 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import {
   getWordPressJwtEndpoint,
   getWordPressUserFromToken,
@@ -13,6 +13,20 @@ type JwtAuthPayload = {
   user_id?: number | string;
 };
 
+export type AppAuthSession = {
+  accessToken: string;
+  user: {
+    id?: string;
+    name?: string;
+    email?: string;
+    username?: string;
+  };
+};
+
+export const AUTH_COOKIE_NAME = "artace_wp_session";
+
+const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 14;
+
 const safeText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
 const safeId = (value: unknown) => {
@@ -22,114 +36,105 @@ const safeId = (value: unknown) => {
   return integer > 0 ? integer : 0;
 };
 
-export const authConfig = {
-  secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
-  session: {
-    strategy: "jwt",
-  },
-  providers: [
-    Credentials({
-      name: "WordPress",
-      credentials: {
-        username: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const username = safeText(credentials?.username);
-        const password = safeText(credentials?.password);
+const buildSessionFromToken = async (
+  accessToken: string,
+  fallback?: Partial<JwtAuthPayload>
+): Promise<AppAuthSession | null> => {
+  if (!accessToken) {
+    return null;
+  }
 
-        if (!username || !password) {
-          return null;
-        }
+  const wpUser = await getWordPressUserFromToken(accessToken);
+  const resolvedId = wpUser?.id || safeId(fallback?.user_id);
+  const resolvedName =
+    wpUser?.name ||
+    safeText(fallback?.user_display_name) ||
+    safeText(fallback?.user_nicename) ||
+    undefined;
+  const resolvedEmail = wpUser?.email || safeText(fallback?.user_email) || undefined;
+  const resolvedUsername =
+    wpUser?.username || safeText(fallback?.user_nicename) || undefined;
 
-        const response = await fetch(getWordPressJwtEndpoint(), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username, password }),
-          cache: "no-store",
-        });
+  return {
+    accessToken,
+    user: {
+      id: resolvedId ? String(resolvedId) : undefined,
+      name: resolvedName,
+      email: resolvedEmail,
+      username: resolvedUsername,
+    },
+  };
+};
 
-        const payload = (await response.json()) as JwtAuthPayload;
+export const authenticateWordPressCredentials = async (
+  username: string,
+  password: string
+): Promise<AppAuthSession | null> => {
+  const normalizedUsername = safeText(username);
+  const normalizedPassword = safeText(password);
 
-        if (!response.ok || !payload.token) {
-          return null;
-        }
+  if (!normalizedUsername || !normalizedPassword) {
+    return null;
+  }
 
-        const wpUser = await getWordPressUserFromToken(payload.token);
-        const resolvedId = wpUser?.id || safeId(payload.user_id);
-        const resolvedName =
-          wpUser?.name ||
-          safeText(payload.user_display_name) ||
-          safeText(payload.user_nicename) ||
-          username;
-        const resolvedEmail = wpUser?.email || safeText(payload.user_email) || username;
-        const resolvedUsername =
-          wpUser?.username || safeText(payload.user_nicename) || username;
-
-        return {
-          id: String(resolvedId || resolvedUsername || resolvedEmail),
-          name: resolvedName,
-          email: resolvedEmail,
-          username: resolvedUsername,
-          accessToken: payload.token,
-        };
-      },
+  const response = await fetch(getWordPressJwtEndpoint(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      username: normalizedUsername,
+      password: normalizedPassword,
     }),
-  ],
-  callbacks: {
-    async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.accessToken =
-          "accessToken" in user && typeof user.accessToken === "string"
-            ? user.accessToken
-            : undefined;
-        token.username =
-          "username" in user && typeof user.username === "string"
-            ? user.username
-            : undefined;
-      }
+    cache: "no-store",
+  });
 
-      if (trigger === "update" && session?.user) {
-        if (typeof session.user.name === "string") {
-          token.name = session.user.name;
-        }
-        if (typeof session.user.email === "string") {
-          token.email = session.user.email;
-        }
-        if (typeof session.user.username === "string") {
-          token.username = session.user.username;
-        }
-      }
+  const payload = (await response.json()) as JwtAuthPayload;
 
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        if (typeof token.sub === "string") {
-          session.user.id = token.sub;
-        }
-        if (typeof token.name === "string") {
-          session.user.name = token.name;
-        }
-        if (typeof token.email === "string") {
-          session.user.email = token.email;
-        }
-        if (typeof token.username === "string") {
-          session.user.username = token.username;
-        }
-      }
-      if (typeof token.accessToken === "string") {
-        session.accessToken = token.accessToken;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/login",
-  },
-} satisfies NextAuthConfig;
+  if (!response.ok || !payload.token) {
+    return null;
+  }
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+  return buildSessionFromToken(payload.token, payload);
+};
+
+export const getAuthSession = async (): Promise<AppAuthSession | null> => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(AUTH_COOKIE_NAME)?.value || "";
+  return buildSessionFromToken(accessToken);
+};
+
+export const getAuthSessionFromRequest = async (
+  request: NextRequest
+): Promise<AppAuthSession | null> => {
+  const accessToken = request.cookies.get(AUTH_COOKIE_NAME)?.value || "";
+  return buildSessionFromToken(accessToken);
+};
+
+export const applyAuthCookie = (response: NextResponse, accessToken: string) => {
+  response.cookies.set({
+    name: AUTH_COOKIE_NAME,
+    value: accessToken,
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: AUTH_COOKIE_MAX_AGE,
+  });
+
+  return response;
+};
+
+export const clearAuthCookie = (response: NextResponse) => {
+  response.cookies.set({
+    name: AUTH_COOKIE_NAME,
+    value: "",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+  });
+
+  return response;
+};

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getAuthSessionFromRequest } from "@/utils/auth";
 import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
@@ -162,12 +162,8 @@ export async function POST(request: NextRequest) {
 
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
-  const sessionToken = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-  const customerToken =
-    typeof sessionToken?.accessToken === "string" ? sessionToken.accessToken : "";
+  const session = await getAuthSessionFromRequest(request);
+  const customerToken = session?.accessToken || "";
   const authenticatedCustomer = customerToken
     ? await getWordPressUserFromToken(customerToken)
     : null;

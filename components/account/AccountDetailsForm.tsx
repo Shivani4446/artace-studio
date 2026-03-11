@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import type { WordPressProfile } from "@/utils/wordpress-auth";
 
 type AccountDetailsFormProps = {
@@ -11,7 +11,7 @@ type AccountDetailsFormProps = {
 export default function AccountDetailsForm({
   profile,
 }: AccountDetailsFormProps) {
-  const { update } = useSession();
+  const { session, updateSession } = useAuthSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -50,13 +50,19 @@ export default function AccountDetailsForm({
       return;
     }
 
-    await update({
-      user: {
-        name: result.profile.displayName || result.profile.name,
-        email: result.profile.email,
-        username: result.profile.username,
-      },
-    });
+    updateSession(
+      session
+        ? {
+            ...session,
+            user: {
+              ...session.user,
+              name: result.profile.displayName || result.profile.name,
+              email: result.profile.email,
+              username: result.profile.username,
+            },
+          }
+        : null
+    );
 
     setMessage("Your account details have been updated.");
     setIsSubmitting(false);

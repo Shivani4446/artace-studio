@@ -1,10 +1,10 @@
-import { auth } from "@/utils/auth";
+import { getAuthSession } from "@/utils/auth";
 import { getWordPressProfile } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
 
 export default async function DashboardProfilePage() {
-  const session = await auth();
+  const session = await getAuthSession();
   const profile = session?.accessToken
     ? await getWordPressProfile(session.accessToken).catch(() => null)
     : null;

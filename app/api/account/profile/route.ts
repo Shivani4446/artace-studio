@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getAuthSessionFromRequest } from "@/utils/auth";
 import {
   getWordPressProfile,
   updateWordPressProfile,
@@ -11,16 +11,13 @@ const unauthorizedResponse = () =>
   NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
 export async function GET(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  const session = await getAuthSessionFromRequest(request);
 
-  if (typeof token?.accessToken !== "string" || !token.accessToken) {
+  if (!session?.accessToken) {
     return unauthorizedResponse();
   }
 
-  const profile = await getWordPressProfile(token.accessToken);
+  const profile = await getWordPressProfile(session.accessToken);
 
   if (!profile) {
     return NextResponse.json(
@@ -33,12 +30,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+  const session = await getAuthSessionFromRequest(request);
 
-  if (typeof token?.accessToken !== "string" || !token.accessToken) {
+  if (!session?.accessToken) {
     return unauthorizedResponse();
   }
 
@@ -50,7 +44,7 @@ export async function PATCH(request: NextRequest) {
     description?: unknown;
   };
 
-  const profile = await updateWordPressProfile(token.accessToken, {
+  const profile = await updateWordPressProfile(session.accessToken, {
     firstName: typeof body.firstName === "string" ? body.firstName : "",
     lastName: typeof body.lastName === "string" ? body.lastName : "",
     displayName: typeof body.displayName === "string" ? body.displayName : "",

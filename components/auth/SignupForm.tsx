@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
 export default function SignupForm({
   callbackUrl,
@@ -52,6 +51,7 @@ export default function SignupForm({
     const registerResult = (await registerResponse.json()) as {
       message?: string;
       ok?: boolean;
+      signedIn?: boolean;
     };
 
     if (!registerResponse.ok || !registerResult.ok) {
@@ -60,19 +60,9 @@ export default function SignupForm({
       return;
     }
 
-    const signInResult = await signIn("credentials", {
-      redirect: false,
-      username: email,
-      password,
-      callbackUrl,
-    });
-
-    if (signInResult?.error) {
-      window.location.href = `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`;
-      return;
-    }
-
-    window.location.href = signInResult?.url || callbackUrl;
+    window.location.href = registerResult.signedIn
+      ? callbackUrl
+      : `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`;
   };
 
   return (

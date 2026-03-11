@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  applyAuthCookie,
+  authenticateWordPressCredentials,
+} from "@/utils/auth";
 import { getWordPressSiteUrl } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
@@ -105,8 +109,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: apiMessage }, { status: 400 });
   }
 
-  return NextResponse.json({
+  const session = await authenticateWordPressCredentials(email, password);
+
+  if (!session) {
+    return NextResponse.json(
+      {
+        ok: true,
+        message: "Your account has been created. Please log in now.",
+        signedIn: false,
+      },
+      { status: 200 }
+    );
+  }
+
+  const successResponse = NextResponse.json({
     ok: true,
     message: "Your account has been created. Signing you in now.",
+    signedIn: true,
+    session,
   });
+
+  return applyAuthCookie(successResponse, session.accessToken);
 }

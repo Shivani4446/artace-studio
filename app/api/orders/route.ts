@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { getAuthSessionFromRequest } from "@/utils/auth";
 import { fetchWooCommerceOrdersForToken } from "@/utils/woocommerce-orders";
 
 export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-  const accessToken = typeof token?.accessToken === "string" ? token.accessToken : "";
+  const session = await getAuthSessionFromRequest(request);
+  const accessToken = session?.accessToken || "";
 
   if (!accessToken) {
     return NextResponse.json({ error: "Please login first." }, { status: 401 });

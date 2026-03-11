@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 import AccountDetailsForm from "@/components/account/AccountDetailsForm";
-import { auth } from "@/utils/auth";
+import { getAuthSession } from "@/utils/auth";
 import { getWordPressProfile } from "@/utils/wordpress-auth";
 
 export const runtime = "edge";
 
 export default async function DashboardDetailsPage() {
-  const session = await auth();
+  const session = await getAuthSession();
 
   if (!session?.accessToken) {
     redirect("/login?callbackUrl=/dashboard/details");

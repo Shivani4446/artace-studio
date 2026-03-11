@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth } from "@/utils/auth";
+import { getAuthSession } from "@/utils/auth";
 import {
   DashboardOrder,
   fetchWooCommerceOrdersForToken,
@@ -104,7 +104,7 @@ const OrderCard = ({ order }: { order: DashboardOrder }) => (
 );
 
 export default async function OrdersDashboardPage() {
-  const session = await auth();
+  const session = await getAuthSession();
   let orders: DashboardOrder[] = [];
   let error = "";
 

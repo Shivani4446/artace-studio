@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
 export default function LoginForm({
   callbackUrl,
@@ -27,22 +26,32 @@ export default function LoginForm({
       return;
     }
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      username,
-      password,
-      callbackUrl,
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        password,
+      }),
     });
 
-    if (result?.error) {
+    const result = (await response.json()) as {
+      ok?: boolean;
+      message?: string;
+    };
+
+    if (!response.ok || !result.ok) {
       setError(
-        "No account matched those credentials. Create an account first if you are new."
+        result.message ||
+          "No account matched those credentials. Create an account first if you are new."
       );
       setIsSubmitting(false);
       return;
     }
 
-    window.location.href = result?.url || callbackUrl;
+    window.location.href = callbackUrl;
   };
 
   return (

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import LoginForm from "@/components/auth/LoginForm";
-import { auth } from "@/utils/auth";
+import { getAuthSession } from "@/utils/auth";
 
 export const runtime = "edge";
 
@@ -11,7 +11,7 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const session = await auth();
+  const session = await getAuthSession();
   const params = await searchParams;
   const callbackUrl =
     typeof params.callbackUrl === "string" && params.callbackUrl.startsWith("/")

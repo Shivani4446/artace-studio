@@ -20,7 +20,7 @@ import {
   Settings,
   UserRound,
 } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import LogoutButton from "@/components/auth/LogoutButton";
@@ -196,7 +196,7 @@ const Navbar = () => {
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isPlaceholderSliding, setIsPlaceholderSliding] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
-  const { data: session, status: authStatus } = useSession();
+  const { session, status: authStatus } = useAuthSession();
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
