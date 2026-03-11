@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getWordPressSiteUrl } from "@/utils/wordpress-auth";
 
+export const runtime = "edge";
+
 const sanitizeText = (value: unknown) =>
   typeof value === "string" ? value.trim() : "";
 

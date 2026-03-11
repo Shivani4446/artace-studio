@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import LoginForm from "@/components/auth/LoginForm";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
+
+export const runtime = "edge";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -10,7 +11,7 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const params = await searchParams;
   const callbackUrl =
     typeof params.callbackUrl === "string" && params.callbackUrl.startsWith("/")

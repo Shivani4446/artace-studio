@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 
+export const runtime = "edge";
+
 type ResetPasswordPageProps = {
   searchParams: Promise<{
     key?: string;

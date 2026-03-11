@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
 import {
   DashboardOrder,
   fetchWooCommerceOrdersForToken,
 } from "@/utils/woocommerce-orders";
+
+export const runtime = "edge";
 
 const formatCurrency = (value: string, currency: string) => {
   const amount = Number(value);
@@ -103,7 +104,7 @@ const OrderCard = ({ order }: { order: DashboardOrder }) => (
 );
 
 export default async function OrdersDashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   let orders: DashboardOrder[] = [];
   let error = "";
 

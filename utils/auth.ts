@@ -1,5 +1,5 @@
-import type { NextAuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import NextAuth, { type NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import {
   getWordPressJwtEndpoint,
   getWordPressUserFromToken,
@@ -22,13 +22,14 @@ const safeId = (value: unknown) => {
   return integer > 0 ? integer : 0;
 };
 
-export const authOptions: NextAuthOptions = {
+export const authConfig = {
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   session: {
     strategy: "jwt",
   },
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "WordPress",
       credentials: {
         username: { label: "Email", type: "text" },
@@ -107,19 +108,28 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = typeof token.sub === "string" ? token.sub : undefined;
-        session.user.name = typeof token.name === "string" ? token.name : session.user.name;
-        session.user.email =
-          typeof token.email === "string" ? token.email : session.user.email;
-        session.user.username =
-          typeof token.username === "string" ? token.username : undefined;
+        if (typeof token.sub === "string") {
+          session.user.id = token.sub;
+        }
+        if (typeof token.name === "string") {
+          session.user.name = token.name;
+        }
+        if (typeof token.email === "string") {
+          session.user.email = token.email;
+        }
+        if (typeof token.username === "string") {
+          session.user.username = token.username;
+        }
       }
-      session.accessToken =
-        typeof token.accessToken === "string" ? token.accessToken : undefined;
+      if (typeof token.accessToken === "string") {
+        session.accessToken = token.accessToken;
+      }
       return session;
     },
   },
   pages: {
     signIn: "/login",
   },
-};
+} satisfies NextAuthConfig;
+
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

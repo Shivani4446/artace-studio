@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import SignupForm from "@/components/auth/SignupForm";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
+
+export const runtime = "edge";
 
 type SignupPageProps = {
   searchParams: Promise<{
@@ -10,7 +11,7 @@ type SignupPageProps = {
 };
 
 export default async function SignupPage({ searchParams }: SignupPageProps) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const params = await searchParams;
   const callbackUrl =
     typeof params.callbackUrl === "string" && params.callbackUrl.startsWith("/")

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import LogoutButton from "@/components/auth/LogoutButton";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
+
+export const runtime = "edge";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
 
   if (!session?.accessToken) {
     redirect("/login?callbackUrl=/dashboard");

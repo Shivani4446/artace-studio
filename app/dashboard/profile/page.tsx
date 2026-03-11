@@ -1,9 +1,10 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
 import { getWordPressProfile } from "@/utils/wordpress-auth";
 
+export const runtime = "edge";
+
 export default async function DashboardProfilePage() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const profile = session?.accessToken
     ? await getWordPressProfile(session.accessToken).catch(() => null)
     : null;

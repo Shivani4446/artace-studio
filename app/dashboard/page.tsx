@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/utils/auth";
+import { auth } from "@/utils/auth";
 import { fetchWooCommerceOrdersForToken } from "@/utils/woocommerce-orders";
 
+export const runtime = "edge";
+
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const orders = session?.accessToken
     ? await fetchWooCommerceOrdersForToken(session.accessToken).catch(() => [])
     : [];
