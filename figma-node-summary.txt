@@ -1,0 +1,23 @@
+Frame `3422:37` is `Category-Template-Page-1`, a long category landing page (`1440px` wide, about `9506px` tall) for the Buddha collection.
+
+**Structure**
+- Top nav: logo, links `Home`, `Painting Collections`, `Shop Art`, `Resources`, `Contact`, plus 3 utility icons.
+- Hero: eyebrow `Bring Serenity Home`, main title `The Handcrafted Buddha Collection`, supporting copy, and CTA `Custom Order your Buddha Painting`, with an illustration on the right.
+- Feature image section: one large rounded artwork banner below the hero.
+- Overview split section: label `Overview`, headline `Art That Breathes Peace Into Your Space.`, and a long descriptive paragraph in a 3-column layout.
+- Trust/value strip: three icon cards for `Step-by-Step Collaborative Approval`, `Secure Global Shipping`, and `100% Handpainted on Premium Canvas`.
+- Product carousel/grid: `Shop Best Buddha Paintings`, pricing note `Starting from ₹5,000`, `Shop All`, and 4 artwork cards including `Moments of Inner Peace`, `Land, Light & Life`, `Energies of Color & Space`, `Sacred Art of Ganesh`.
+- Gallery block: section headline about spaces helped create, followed by two 3-column image rows.
+- Testimonials: `Sanctuaries We've Helped Create` with two quote cards from `Aisha M` and `Rohan D`.
+- Editorial/story section: `Beyond the Canvas: The Making of a Handmade artwork` with 3 text subsections: `The Vision Behind`, `The Craftsmanship`, `The Artace Guarantee`, paired with a tall sticky image.
+- CTA section: `See a artwork that speaks to you?` and button `Order your Buddha Painting Today`.
+- Related collections: `Discover our other Collection` with 3 cards: `Contemporary Art`, `Radha Krishna`, `Ganesha`.
+- Advisor CTA: dark section `Find Your Perfect Peace`, CTA `Book Your Free Design Consultation`, and advisor portrait label `Sahil Mahalley, Art Advisor`.
+- Footer: large brand footer with columns `Shop`, `Resources`, `Support`, social icons, and oversized `ARTACE STUDIO` wordmark.
+
+**Style / Layout Notes**
+- Overall palette is warm off-white with charcoal text; dark sections near the bottom use black/near-black backgrounds with white or muted gray text.
+- Typography mixes a serif display face for headings (`Sentient`) with sans-serif body/nav text (`Inter`).
+- Gold accent is used selectively for highlighted words like `Handmade` and `artwork`.
+- Layout uses wide horizontal gutters (`50px`/`60px`), strong vertical spacing, rounded image/card corners (`6px` to `12px`), and clean editorial grids.
+- Visual rhythm alternates between text-heavy sections, product cards, image galleries, testimonial cards, and high-contrast CTA bands.

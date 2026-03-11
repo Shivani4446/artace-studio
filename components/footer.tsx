@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getCollectionHref } from "@/utils/collections";
 
 type FooterSection = {
   title: string;
@@ -13,12 +14,13 @@ const footerSections: FooterSection[] = [
   {
     title: "Collections",
     links: [
-      { label: "Radha Krishna", href: "#" },
-      { label: "Buddha", href: "#" },
-      { label: "Ganesha", href: "#" },
-      { label: "Landscapes", href: "#" },
-      { label: "Modern/ Contemporary", href: "#" },
-      { label: "Portraits", href: "#" },
+      { label: "Radha Krishna", href: getCollectionHref("radha-krishna-paintings") },
+      { label: "Buddha", href: getCollectionHref("buddha-paintings") },
+      { label: "Ganesha", href: getCollectionHref("ganapati-paintings") },
+      {
+        label: "Landscape & Cityscape",
+        href: getCollectionHref("landscapes-cityscapes-paintings"),
+      },
     ],
   },
   {
@@ -26,7 +28,7 @@ const footerSections: FooterSection[] = [
     links: [
       { label: "Shop", href: "/shop" },
       { label: "Cart", href: "/cart" },
-      { label: "Track Your Order", href: "#" },
+      { label: "Track Your Order", href: "/dashboard/orders" },
       { label: "Wishlist", href: "/wishlist" },
     ],
   },
@@ -36,8 +38,7 @@ const footerSections: FooterSection[] = [
       { label: "Blogs", href: "/blogs" },
       { label: "About Us", href: "/about-us" },
       { label: "Team", href: "/team" },
-      { label: "Family Portraits", href: "#" },
-      { label: "Painting Categories", href: "#" },
+      { label: "Painting Categories", href: "/shop" },
     ],
   },
   {

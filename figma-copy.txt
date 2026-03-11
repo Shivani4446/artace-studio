@@ -1,0 +1,21 @@
+1. `Hero` — Heading: `Bring Serenity Home`; title: `The Handcrafted Buddha Collection`; subheading: `Transform your space into a sanctuary of peace. Co-create a bespoke, museum-quality masterpiece that radiates mindfulness and timeless elegance.`; CTA: `Custom Order your Buddha Painting`; cards/images: `0 cards, 2 images`.
+
+2. `Overview` — Heading: `Overview`; title: `Art That Breathes Peace Into Your Space.`; subheading: `Finding the perfect focal point for your home shouldn't be a compromise. In a market flooded with lifeless digital prints, our master artists dedicate hours of deliberate brushwork to capture the profound tranquility of the awakened mind. Whether you seek the deep, rich textures of oil or the vibrant flow of acrylic, each Buddha painting is a bespoke collaboration—handcrafted to bring positive Vastu energy, calm, and unparalleled sophistication to your walls.`; CTA: `None`; cards/images: `0 cards, 0 images`.
+
+3. `Trust / Benefits` — No visible section heading; visible card headings: `Step-by-Step Collaborative Approval`, `Secure Global Shipping`, `100% Handpainted on Premium Canvas`; CTA: `None`; cards/images: `3 cards, 3 icon images`.
+
+4. `Shop Best Buddha Paintings` — Heading: `Shop Best Buddha Paintings`; subheading: `Starting from ₹5,000 | Fully Customizable Sizes to Fit Your Space`; CTA: `Shop All`; cards/images: `4 cards, 4 images`.
+
+5. `Collection Gallery` — Heading: `Collection`; title: `The Buddha Gallery: Claim Your Piece of Peace`; subheading: `Browse our exclusive portfolio of handcrafted Buddha canvases. Every brushstroke is an original expression of tranquility, designed to anchor your space.`; CTA: `None`; cards/images: `6 cards, 6 images`.
+
+6. `Testimonials` — Heading: `Sanctuaries We've Helped Create`; subheading: `None`; CTA: `None`; cards/images: `2 cards, 2 images`.
+
+7. `Explore More` — Heading: `Explore More`; title: `Beyond the Canvas: The Making of a Handmade artwork`; subheadings: `The Vision Behind`, `The Craftsmanship`, `The Artace Guarantee`; CTA: `None`; cards/images: `0 cards, 2 images`.
+
+8. `Urgency CTA` — Heading: `See a artwork that speaks to you?`; subheading: `Secure an original handmade canvas painting today, or let it inspire a bespoke commission perfectly sized for your wall.`; CTA: `Order your Buddha Painting Today`; cards/images: `1 card, 0 images`.
+
+9. `Other Collection` — Heading: `Discover our other Collection`; subheading: `None`; CTA: `SEE All`; cards/images: `3 cards, 3 images`.
+
+10. `Art Advisory CTA` — Heading: `Complimentary Art Advisory`; title: `Find Your Perfect Peace`; subheading: `Unsure which size fits your wall, or want to discuss a custom color palette that matches your interior? Our complimentary art advisory service pairs you with an expert curator to guide your vision effortlessly, from concept to canvas.`; CTA: `Book Your Free Design Consultation`; cards/images: `0 cards, 1 image`.
+
+11. `Footer` — Visible headings: `Shop`, `Resources`, `Support`; CTA: `None`; cards/images: `0 cards, 5 images`.

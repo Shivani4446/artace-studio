@@ -14,36 +14,106 @@ import {
   Minus,
   Trash2,
   ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
+import {
+  collectionLinkItems,
+  getCollectionHref,
+} from "@/utils/collections";
+
+type DesktopMenuId = "collections" | "shop" | "resources";
+
+const resourceLinks = [
+  {
+    name: "About Us",
+    href: "/about-us",
+    description: "The Artace story, our process, and what makes each canvas original.",
+  },
+  {
+    name: "Team",
+    href: "/team",
+    description: "Meet the artists, advisors, and makers behind every commission.",
+  },
+  {
+    name: "Blogs",
+    href: "/blogs",
+    description: "Ideas on styling art, gifting, collecting, and choosing the right piece.",
+  },
+];
+
+const collectionDescriptions: Record<string, string> = {
+  "ganapati-paintings": "Auspicious canvases for prosperity and new beginnings.",
+  "radha-krishna-paintings": "Devotional paintings centered on love and harmony.",
+  "buddha-paintings": "Meditative works that bring stillness indoors.",
+  "landscapes-cityscapes-paintings": "Expansive horizons and urban scenes with atmosphere.",
+  "figurative-paintings": "Portrait-led storytelling with warmth and presence.",
+};
 
 const desktopLinks = [
   { name: "Home", href: "/" },
-  { name: "Collections", href: "/shop", hasMegaMenu: true },
-  { name: "Shop", href: "/shop", hasMegaMenu: true },
+  { name: "Painting Collections", href: "/shop", menuId: "collections" as DesktopMenuId },
+  { name: "Shop Art", href: "/shop", menuId: "shop" as DesktopMenuId },
+  { name: "Resources", href: "/about-us", menuId: "resources" as DesktopMenuId },
+  { name: "Contact", href: "/contact-us" },
 ];
 
-const resourceLinks = [
-  { name: "About Us", href: "/about-us" },
-  { name: "Team", href: "/team" },
-  { name: "Blogs", href: "/blogs" },
-];
-
-const collectionLinks = [
-  { name: "Ganapati Painting", href: "/shop?category=ganapati-paintings" },
-  { name: "Radha Krishna", href: "/shop?category=radha-krishna-paintings" },
-  { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
-  { name: "Family Portraits", href: "/shop?category=figurative-paintings" },
-];
+const collectionLinks = collectionLinkItems.map((item) => ({
+  name: item.name,
+  href: getCollectionHref(item.categorySlug),
+  slug: item.categorySlug,
+  description:
+    collectionDescriptions[item.categorySlug] ||
+    "Handcrafted canvases curated for a distinct mood, story, and room.",
+}));
 
 const paintingLinks = [
-  { name: "Religious Painting", href: "/shop?category=religious-paintings" },
-  { name: "Landscapes Painting", href: "/shop?category=landscapes-cityscapes-paintings" },
-  { name: "Cityscape Paintings", href: "/shop?category=landscapes-cityscapes-paintings" },
-  { name: "Vastu Paintings", href: "/shop?category=vastu-paintings" },
-  { name: "Table Top Paintings", href: "/shop?category=table-top-paintings" },
-  { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
+  {
+    name: "Religious Paintings",
+    href: "/shop?category=religious-paintings",
+    description: "Spiritual icons and devotional scenes painted with depth and reverence.",
+  },
+  {
+    name: "Landscape Paintings",
+    href: "/shop?category=landscapes-cityscapes-paintings",
+    description: "Mountain air, rivers, forests, and serene horizons for expansive rooms.",
+  },
+  {
+    name: "Cityscape Paintings",
+    href: "/shop?category=landscapes-cityscapes-paintings",
+    description: "Urban skylines and rainy streets with texture, contrast, and mood.",
+  },
+  {
+    name: "Vastu Paintings",
+    href: "/shop?category=vastu-paintings",
+    description: "Artwork chosen to support energy, balance, and intentional placement.",
+  },
+  {
+    name: "Table Top Paintings",
+    href: "/shop?category=table-top-paintings",
+    description: "Smaller-format originals for consoles, shelves, studies, and quiet corners.",
+  },
+  {
+    name: "Buddha Paintings",
+    href: "/shop?category=buddha-paintings",
+    description: "Calm, meditative works that anchor the room with a quieter presence.",
+  },
+];
+
+const shopHighlights = [
+  {
+    title: "Original Hand-Painted Art",
+    body: "Rich texture, visible brushwork, and artist-grade materials in every piece.",
+  },
+  {
+    title: "Custom Sizes Available",
+    body: "Adjust scale, palette, and framing direction to fit your wall properly.",
+  },
+  {
+    title: "Guided by Art Advisors",
+    body: "Shortlist faster with support on placement, sizing, and collection curation.",
+  },
 ];
 
 type MobileMenuSubLink = {
@@ -60,12 +130,12 @@ type MobileMenuLink = {
 const mobileLinks: MobileMenuLink[] = [
   { name: "Home", href: "/" },
   {
-    name: "Collections",
+    name: "Painting Collections",
     href: "/shop",
     children: [{ name: "View All Collections", href: "/shop" }, ...collectionLinks],
   },
   {
-    name: "Shop",
+    name: "Shop Art",
     href: "/shop",
     children: [...paintingLinks, { name: "Shop All", href: "/shop" }],
   },
@@ -94,10 +164,23 @@ const searchPlaceholderTerms = [
   "Custom Order",
 ];
 
+const DesktopNavArrow = ({ isOpen }: { isOpen: boolean }) => (
+  <Image
+    src="/slant-down-arrow-right.svg"
+    alt=""
+    width={14}
+    height={14}
+    aria-hidden="true"
+    className={`h-[14px] w-[14px] transition-transform duration-200 ${
+      isOpen ? "translate-x-[1px] translate-y-[1px]" : ""
+    }`}
+  />
+);
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMiniCartOpen, setIsMiniCartOpen] = useState(false);
-  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [openDesktopMenu, setOpenDesktopMenu] = useState<DesktopMenuId | null>(null);
   const [expandedMobileMenus, setExpandedMobileMenus] = useState<Record<string, boolean>>(
     {}
   );
@@ -111,6 +194,10 @@ const Navbar = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
     setExpandedMobileMenus({});
+  };
+  const closeDesktopMenu = () => setOpenDesktopMenu(null);
+  const toggleDesktopMenu = (menuId: DesktopMenuId) => {
+    setOpenDesktopMenu((current) => (current === menuId ? null : menuId));
   };
   const toggleMobileMenu = () => {
     if (isMobileMenuOpen) {
@@ -137,6 +224,22 @@ const Navbar = () => {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [isMiniCartOpen]);
+
+  useEffect(() => {
+    if (!openDesktopMenu) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpenDesktopMenu(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [openDesktopMenu]);
 
   useEffect(() => {
     const holdDurationMs = 2200;
@@ -169,11 +272,257 @@ const Navbar = () => {
     };
   }, []);
 
+  const isDesktopMenuOpen = openDesktopMenu !== null;
+
+  const renderDesktopMenu = () => {
+    if (openDesktopMenu === "collections") {
+      return (
+        <div className="grid grid-cols-[250px_minmax(0,1fr)_300px] items-stretch gap-8">
+          <div className="flex flex-col justify-between rounded-[18px] bg-white px-6 py-6">
+            <div>
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
+                Painting Collections
+              </p>
+              <h3 className="mt-4 font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+                Explore all collections.
+              </h3>
+              <p className="mt-4 font-inter text-[15px] leading-[1.75] text-[#626262]">
+                Choose a collection first, then refine the piece for your room.
+              </p>
+            </div>
+
+            <Link
+              href="/shop"
+              className="mt-6 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
+            >
+              View all collections
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 rounded-[18px] border border-black/6 bg-white px-6 py-5">
+            {collectionLinks.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-inter text-[16px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
+                      {item.name}
+                    </p>
+                    <p className="mt-1 font-inter text-[14px] leading-[1.55] text-[#6b6b6b]">
+                      {item.description}
+                    </p>
+                  </div>
+                  <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="relative overflow-hidden rounded-[18px] bg-[#d8d2c8]">
+            <Image
+              src="/radha-krishna-collection-bg.webp"
+              alt="Handmade painting collections"
+              fill
+              sizes="300px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/84 via-black/42 to-black/10 px-6 py-6 text-white">
+              <div className="flex h-full flex-col justify-end">
+                <p className="max-w-[220px] font-display text-[24px] leading-[1.08]">
+                  Find the right collection faster.
+                </p>
+                <p className="mt-3 max-w-[240px] font-inter text-[14px] leading-[1.65] text-white/82">
+                  Start with a theme, then tailor size and finish for your space.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (openDesktopMenu === "shop") {
+      return (
+        <div className="grid grid-cols-[minmax(0,1fr)_250px_300px] items-stretch gap-8">
+          <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
+            <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
+              <div>
+                <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+                  Browse by art category.
+                </h3>
+                <p className="mt-3 max-w-[520px] font-inter text-[14px] leading-[1.7] text-[#626262]">
+                  Use category-led navigation when you already know the kind of painting
+                  you want to buy or commission.
+                </p>
+              </div>
+              <Link
+                href="/shop"
+                className="inline-flex items-center gap-2 whitespace-nowrap font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
+              >
+                Shop all art
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1 pt-2">
+              {paintingLinks.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="font-inter text-[15px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
+                        {item.name}
+                      </p>
+                      <p className="mt-2 max-w-[260px] font-inter text-[13px] leading-[1.6] text-[#6b6b6b]">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[18px] bg-white px-5 py-5">
+            <div className="space-y-4">
+              {shopHighlights.map((item) => (
+                <div
+                  key={item.title}
+                  className="border-b border-[#ebe5dc] pb-4 last:border-b-0 last:pb-0"
+                >
+                  <p className="font-inter text-[14px] font-medium text-[#2c2c2c]">
+                    {item.title}
+                  </p>
+                  <p className="mt-1 font-inter text-[13px] leading-[1.6] text-[#6b6b6b]">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-rows-[1fr_auto] gap-4">
+            <div className="relative overflow-hidden rounded-[18px] bg-[#d8d2c8]">
+              <Image
+                src="/who-are-we.webp"
+                alt="Original handmade artwork for home and office interiors"
+                fill
+                sizes="300px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/56 via-black/8 to-transparent px-6 py-6 text-white">
+                <div className="flex h-full flex-col justify-end">
+                  <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/72">
+                    Original Art
+                  </p>
+                  <p className="mt-3 max-w-[210px] font-display text-[24px] leading-[1.08]">
+                    Buy with more confidence.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/contact-us"
+              className="rounded-[18px] bg-[#2a2a2a] px-5 py-5 text-white transition-colors hover:bg-[#1f1f1f]"
+            >
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/62">
+                Need Help Choosing?
+              </p>
+              <p className="mt-3 font-display text-[24px] leading-[1.08]">
+                Talk to an art advisor.
+              </p>
+              <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-white">
+                Contact us
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    if (openDesktopMenu === "resources") {
+      return (
+        <div className="grid grid-cols-[minmax(0,1fr)_300px] items-stretch gap-8">
+          <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
+            <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
+              <div>
+                <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+                  Learn, explore, and contact the studio.
+                </h3>
+              </div>
+              <Link
+                href="/contact-us"
+                className="inline-flex items-center gap-2 whitespace-nowrap font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
+              >
+                Contact
+                <ArrowUpRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-3 gap-5 pt-5">
+              {resourceLinks.map((resource) => (
+                <Link
+                  key={resource.name}
+                  href={resource.href}
+                  className="group rounded-[16px] bg-[#faf8f4] px-5 py-5 transition-colors hover:bg-[#f4efe7]"
+                >
+                  <p className="font-inter text-[15px] font-medium text-[#2c2c2c]">
+                    {resource.name}
+                  </p>
+                  <p className="mt-2 font-inter text-[14px] leading-[1.7] text-[#6b6b6b]">
+                    {resource.description}
+                  </p>
+                  <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
+                    Open
+                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[18px] bg-[#d8d2c8]">
+            <Image
+              src="/journal-img.webp"
+              alt="Artace resources and journal"
+              fill
+              sizes="300px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-black/12 to-transparent px-6 py-6 text-white">
+              <div className="flex h-full flex-col justify-end">
+                <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/72">
+                  Art Journal
+                </p>
+                <p className="mt-3 max-w-[220px] font-display text-[24px] leading-[1.08]">
+                  Practical guidance for collecting and styling art.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <nav
-        className="sticky top-0 z-50 border-b border-[#d8d3ca] bg-white"
-        onMouseLeave={() => setIsMegaMenuOpen(false)}
+        className="sticky top-0 z-[60] border-b border-[#d8d3ca] bg-white"
+        onMouseLeave={closeDesktopMenu}
       >
         <div className="mx-auto flex h-[88px] max-w-[1440px] items-center justify-between px-6 md:h-[102px] md:px-12">
           <div className="flex-shrink-0">
@@ -189,63 +538,33 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="hidden lg:flex items-center gap-10">
+          <div className="hidden items-center gap-10 lg:flex">
             {desktopLinks.map((link) =>
-              link.hasMegaMenu ? (
+              link.menuId ? (
                 <button
                   key={link.name}
                   type="button"
-                  onMouseEnter={() => setIsMegaMenuOpen(true)}
-                  onFocus={() => setIsMegaMenuOpen(true)}
-                  onClick={() => setIsMegaMenuOpen((current) => !current)}
-                  className="inline-flex items-center gap-1 font-inter text-[16px] font-medium text-[#2f2f2f] transition-colors hover:text-black"
+                  onMouseEnter={() => setOpenDesktopMenu(link.menuId)}
+                  onFocus={() => setOpenDesktopMenu(link.menuId)}
+                  onClick={() => toggleDesktopMenu(link.menuId)}
+                  className={`inline-flex items-center gap-2 font-inter text-[18px] font-medium leading-none transition-colors hover:text-black ${
+                    openDesktopMenu === link.menuId ? "text-black" : "text-[#2f2f2f]"
+                  }`}
                 >
                   {link.name}
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      isMegaMenuOpen ? "rotate-180" : ""
-                    }`}
-                    strokeWidth={1.7}
-                  />
+                  <DesktopNavArrow isOpen={openDesktopMenu === link.menuId} />
                 </button>
               ) : (
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="inline-flex items-center gap-1 font-inter text-[16px] font-medium text-[#2f2f2f] transition-colors hover:text-black"
+                  onMouseEnter={closeDesktopMenu}
+                  className="inline-flex items-center gap-1 font-inter text-[18px] font-medium text-[#2f2f2f] transition-colors hover:text-black"
                 >
                   {link.name}
                 </Link>
               )
             )}
-
-            <div
-              className="group relative"
-              onMouseEnter={() => setIsMegaMenuOpen(false)}
-              onFocus={() => setIsMegaMenuOpen(false)}
-            >
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 font-inter text-[16px] font-medium text-[#2f2f2f] transition-colors hover:text-black"
-              >
-                Resources
-                <ChevronDown className="h-4 w-4" strokeWidth={1.8} />
-              </button>
-
-              <div className="invisible absolute left-0 top-full z-20 pt-3 opacity-0 transition duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                <div className="min-w-[190px] rounded-[12px] border border-[#1f1f1f]/10 bg-[#f4f2ee] p-2 shadow-[0_18px_35px_rgba(0,0,0,0.08)]">
-                  {resourceLinks.map((resource) => (
-                    <Link
-                      key={resource.name}
-                      href={resource.href}
-                      className="block rounded-[6px] px-3 py-2 font-inter text-[14px] font-medium text-[#333333] transition-colors hover:bg-[#ece8df] hover:text-black"
-                    >
-                      {resource.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="flex items-center gap-1 md:gap-2">
@@ -328,83 +647,14 @@ const Navbar = () => {
         </div>
 
         <div
-          className={`absolute left-0 right-0 top-full hidden h-[450px] overflow-hidden border-t border-[#d8d3ca] bg-[#f4f2ee] transition-all duration-200 lg:block ${
-            isMegaMenuOpen
+          className={`absolute left-0 right-0 top-full hidden max-h-[calc(100vh-118px)] overflow-y-auto border-t border-[#d8d3ca] bg-[#f4f2ee] transition-all duration-200 lg:block ${
+            isDesktopMenuOpen
               ? "visible translate-y-0 opacity-100"
               : "invisible -translate-y-2 opacity-0"
           }`}
-          onMouseEnter={() => setIsMegaMenuOpen(true)}
         >
-          <div className="mx-auto h-full max-w-[1440px] px-6 py-8 md:px-12">
-            <div className="grid h-full grid-cols-[1fr_1fr_1.2fr_0.95fr] gap-8">
-              <div className="pr-6">
-                <h3 className="font-inter text-[18px] font-semibold text-[#2f2f2f]">
-                  Collection
-                </h3>
-                <div className="mt-6 space-y-5">
-                  {collectionLinks.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="block font-inter text-[18px] text-[#555] transition-colors hover:text-black"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="border-l border-[#c6c1b6] pl-8 pr-6">
-                <h3 className="font-inter text-[18px] font-semibold text-[#2f2f2f]">
-                  Shop Categories
-                </h3>
-                <div className="mt-6 space-y-5">
-                  {paintingLinks.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="block font-inter text-[18px] text-[#555] transition-colors hover:text-black"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                  <Link
-                    href="/shop"
-                    className="mt-1 block font-inter text-[18px] font-semibold text-[#2f2f2f]"
-                  >
-                    Shop All
-                  </Link>
-                </div>
-              </div>
-
-              <div className="border-l border-[#c6c1b6] pl-8 pr-6">
-                <h3 className="font-inter text-[18px] font-semibold text-[#2f2f2f]">
-                  Become A Partner
-                </h3>
-                <p className="mt-4 max-w-[420px] font-inter text-[18px] leading-[1.7] text-[#5c5c5c]">
-                  Join our global network of partners and sell your paintings with us.
-                </p>
-                <Link
-                  href="/contact-us"
-                  className="mt-10 inline-flex items-center gap-2 rounded-[8px] bg-[#2d2f34] px-6 py-3 font-inter text-[18px] font-medium text-white transition-colors hover:bg-[#1f2124]"
-                >
-                  Learn More
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </div>
-
-              <div className="self-stretch pl-2">
-                <div className="relative h-full w-full overflow-hidden bg-[#ddd7cc]">
-                  <Image
-                    src="/who-are-we.webp"
-                    alt="Living room with framed wall art"
-                    fill
-                    sizes="(max-width: 1400px) 22vw, 320px"
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            </div>
+          <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-12">
+            {renderDesktopMenu()}
           </div>
         </div>
 
@@ -517,6 +767,17 @@ const Navbar = () => {
           </div>
         )}
       </nav>
+
+      <button
+        type="button"
+        aria-label="Close menu"
+        onClick={closeDesktopMenu}
+        className={`fixed inset-0 top-[88px] z-40 hidden bg-[#f7f2ea]/40 backdrop-blur-[10px] transition-opacity duration-300 md:top-[102px] lg:block ${
+          isDesktopMenuOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      />
 
       <div
         className={`fixed inset-0 z-[70] transition-opacity duration-300 ease-out ${

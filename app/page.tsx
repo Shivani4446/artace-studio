@@ -9,6 +9,7 @@ import Testimonials from "@/components/homepage/Testimonials";
 import JournalSection from "@/components/homepage/JournalSection";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
 import { decodeHtmlEntities } from "@/utils/text";
+import { getCollectionHref } from "@/utils/collections";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
@@ -71,7 +72,7 @@ const normalizeDiscoverCategories = (
         title,
         image: imageUrl,
         imageAlt,
-        href: `/shop?category=${encodeURIComponent(category.slug)}`,
+        href: getCollectionHref(category.slug),
       };
     });
 };

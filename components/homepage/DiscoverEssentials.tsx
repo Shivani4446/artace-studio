@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { getCollectionHref } from "@/utils/collections";
 
 type DiscoverCategoryCard = {
   id: number;
@@ -22,49 +23,49 @@ const FALLBACK_CATEGORIES: DiscoverCategoryCard[] = [
     title: "Radha Krishna",
     image: "/stack-1.webp",
     imageAlt: "Radha Krishna Collection",
-    href: "/shop?category=radha-krishna-paintings",
+    href: getCollectionHref("radha-krishna-paintings"),
   },
   {
     id: 2,
     title: "Figurative",
     image: "/stack-2.webp",
     imageAlt: "Figurative Collection",
-    href: "/shop?category=figurative-paintings",
+    href: getCollectionHref("figurative-paintings"),
   },
   {
     id: 3,
     title: "Buddha",
     image: "/stack-3.webp",
     imageAlt: "Buddha Collection",
-    href: "/shop?category=buddha-paintings",
+    href: getCollectionHref("buddha-paintings"),
   },
   {
     id: 4,
     title: "Abstract",
     image: "/images/art-forest.png",
     imageAlt: "Abstract Collection",
-    href: "/shop?category=abstract-paintings",
+    href: getCollectionHref("abstract-paintings"),
   },
   {
     id: 5,
     title: "Landscapes",
     image: "/hero-bg.webp",
     imageAlt: "Landscapes Collection",
-    href: "/shop?category=landscapes-cityscapes-paintings",
+    href: getCollectionHref("landscapes-cityscapes-paintings"),
   },
   {
     id: 6,
     title: "Vastu",
     image: "/images/interior-room.png",
     imageAlt: "Vastu Collection",
-    href: "/shop?category=vastu-paintings",
+    href: getCollectionHref("vastu-paintings"),
   },
   {
     id: 7,
     title: "Ganapati",
     image: "/images/hero-bg.png",
     imageAlt: "Ganapati Collection",
-    href: "/shop?category=ganapati-paintings",
+    href: getCollectionHref("ganapati-paintings"),
   },
 ];
 
