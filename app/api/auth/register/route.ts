@@ -240,11 +240,19 @@ export async function POST(request: NextRequest) {
 
     return applyAuthCookie(successResponse, session.accessToken);
   } catch (error) {
-    const message =
+    const rawMessage =
       error instanceof Error
         ? error.message
         : "Unable to create your account right now.";
 
-    return NextResponse.json({ ok: false, message }, { status: 502 });
+    if (process.env.NODE_ENV === "production") {
+      console.error("[auth/register] failed:", rawMessage);
+      return NextResponse.json(
+        { ok: false, message: "Unable to create your account right now." },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({ ok: false, message: rawMessage }, { status: 502 });
   }
 }

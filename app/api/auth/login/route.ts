@@ -173,12 +173,12 @@ export async function POST(request: NextRequest) {
 
     return applyAuthCookie(response, session.accessToken);
   } catch (error) {
-    const message =
+    const rawMessage =
       error instanceof Error
         ? error.message
         : "Unable to sign you in right now. Please try again.";
 
-    const lower = message.toLowerCase();
+    const lower = rawMessage.toLowerCase();
     const status =
       lower.includes("temporarily locked out") ||
       lower.includes("locked out") ||
@@ -186,6 +186,15 @@ export async function POST(request: NextRequest) {
       ? 429
       : 502;
 
-    return NextResponse.json({ ok: false, message }, { status });
+    if (process.env.NODE_ENV === "production") {
+      const message =
+        status === 429
+          ? "Login is temporarily blocked. Please try again in a few minutes."
+          : "Unable to sign you in right now. Please try again.";
+      console.error("[auth/login] failed:", rawMessage);
+      return NextResponse.json({ ok: false, message }, { status });
+    }
+
+    return NextResponse.json({ ok: false, message: rawMessage }, { status });
   }
 }
