@@ -41,7 +41,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1440px] flex-col items-center justify-center px-6 py-20 text-center md:px-12">
+      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1440px] flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:px-12">
         <div className="mb-6 rounded-full bg-[#F5F5F5] p-6">
           <ShoppingBag className="h-12 w-12 text-[#666]" />
         </div>
@@ -51,7 +51,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/shop"
-          className="mt-8 inline-flex min-h-11 items-center gap-2 bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
+          className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Continue Shopping
@@ -64,7 +64,7 @@ export default function CartPage() {
   const checkoutDisabled = !hasCheckoutReadyItems;
 
   return (
-    <main className="mx-auto w-full max-w-[1440px] px-6 py-12 md:px-12 md:py-16">
+    <main className="mx-auto w-full max-w-[1440px] px-4 py-10 sm:px-6 md:px-12 md:py-16">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-[#666]">Cart</p>
@@ -76,7 +76,7 @@ export default function CartPage() {
         <button
           type="button"
           onClick={clearCart}
-          className="min-h-11 text-sm font-medium text-[#666] underline underline-offset-4 hover:text-[#111]"
+          className="min-h-11 rounded-[10px] px-3 text-sm font-medium text-[#666] underline underline-offset-4 hover:text-[#111]"
         >
           Clear Cart
         </button>

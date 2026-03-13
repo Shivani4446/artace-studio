@@ -152,9 +152,9 @@ function CheckoutSuccessInner() {
         : "bg-[#f5f1e8] text-[#665f57]";
 
   return (
-    <main className="mx-auto w-full max-w-[1200px] px-6 py-12 md:px-12 md:py-16">
+    <main className="mx-auto w-full max-w-[1200px] px-4 py-10 sm:px-6 md:px-12 md:py-16">
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
-        <section className="rounded-[28px] border border-black/8 bg-white p-8 shadow-[0_22px_60px_rgba(0,0,0,0.06)] md:p-10">
+        <section className="rounded-[28px] border border-black/8 bg-white p-6 shadow-[0_22px_60px_rgba(0,0,0,0.06)] sm:p-8 md:p-10">
           <h1 className="font-display text-4xl text-[#222] md:text-5xl">
             {content.title}
           </h1>
@@ -208,7 +208,7 @@ function CheckoutSuccessInner() {
           )}
         </section>
 
-        <aside className="rounded-[28px] border border-black/8 bg-white p-6 shadow-[0_22px_60px_rgba(0,0,0,0.06)] md:p-8">
+        <aside className="rounded-[28px] border border-black/8 bg-white p-6 shadow-[0_22px_60px_rgba(0,0,0,0.06)] sm:p-7 md:p-8">
           <div className={`rounded-[20px] px-5 py-5 ${panelClasses}`}>
             <p className="text-base font-medium">
               {statusPayload?.status

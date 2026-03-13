@@ -409,14 +409,14 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1200px] flex-col items-center justify-center px-6 py-16 text-center md:px-12">
+      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1200px] flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:px-12">
         <h1 className="font-display text-4xl text-[#222] md:text-5xl">Checkout</h1>
         <p className="mt-4 max-w-xl text-lg text-[#666]">
           Your cart is empty. Add items before checking out.
         </p>
         <Link
           href="/cart"
-          className="mt-8 inline-flex min-h-11 items-center gap-2 bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
+          className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Cart
@@ -426,7 +426,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1200px] px-6 py-10 md:px-12 md:py-14">
+    <main className="mx-auto w-full max-w-[1200px] px-4 py-10 sm:px-6 md:px-12 md:py-14">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-[#666]">Checkout</p>
@@ -470,6 +470,7 @@ export default function CheckoutPage() {
                 placeholder="First Name"
                 value={form.firstName}
                 onChange={handleFieldChange("firstName")}
+                autoComplete="given-name"
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
               <input
@@ -477,6 +478,7 @@ export default function CheckoutPage() {
                 placeholder="Last Name"
                 value={form.lastName}
                 onChange={handleFieldChange("lastName")}
+                autoComplete="family-name"
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
             </div>
@@ -485,6 +487,7 @@ export default function CheckoutPage() {
               placeholder="Email"
               value={form.email}
               onChange={handleFieldChange("email")}
+              autoComplete="email"
               className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
             />
             <input
@@ -492,6 +495,8 @@ export default function CheckoutPage() {
               placeholder="Phone"
               value={form.phone}
               onChange={handleFieldChange("phone")}
+              autoComplete="tel"
+              inputMode="tel"
               className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
             />
             <input
@@ -499,6 +504,7 @@ export default function CheckoutPage() {
               placeholder="Address Line 1"
               value={form.address1}
               onChange={handleFieldChange("address1")}
+              autoComplete="address-line1"
               className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
             />
             <input
@@ -506,6 +512,7 @@ export default function CheckoutPage() {
               placeholder="Address Line 2 (Optional)"
               value={form.address2}
               onChange={handleFieldChange("address2")}
+              autoComplete="address-line2"
               className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
             />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -514,6 +521,7 @@ export default function CheckoutPage() {
                 placeholder="City"
                 value={form.city}
                 onChange={handleFieldChange("city")}
+                autoComplete="address-level2"
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
               <input
@@ -521,6 +529,7 @@ export default function CheckoutPage() {
                 placeholder="State"
                 value={form.state}
                 onChange={handleFieldChange("state")}
+                autoComplete="address-level1"
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
             </div>
@@ -530,13 +539,20 @@ export default function CheckoutPage() {
                 placeholder="PIN / ZIP"
                 value={form.postcode}
                 onChange={handleFieldChange("postcode")}
+                autoComplete="postal-code"
+                inputMode="numeric"
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
               <input
                 type="text"
                 placeholder="Country Code (IN)"
                 value={form.country}
-                onChange={handleFieldChange("country")}
+                onChange={(e) => {
+                  const next = e.target.value.toUpperCase().slice(0, 2);
+                  setForm((current) => ({ ...current, country: next }));
+                }}
+                autoComplete="country"
+                maxLength={2}
                 className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] uppercase outline-none transition-colors focus:border-[#1f1f1f]/35"
               />
             </div>

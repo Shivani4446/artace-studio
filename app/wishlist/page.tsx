@@ -22,7 +22,7 @@ const WishlistPage = () => {
 
   if (items.length === 0) {
     return (
-      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1440px] flex-col items-center justify-center px-6 py-20 text-center md:px-12">
+      <main className="mx-auto flex min-h-[70vh] w-full max-w-[1440px] flex-col items-center justify-center px-4 py-16 text-center sm:px-6 md:px-12">
         <div className="mb-6 rounded-full bg-[#F5F5F5] p-6">
           <Heart className="h-12 w-12 text-[#666]" />
         </div>
@@ -34,7 +34,7 @@ const WishlistPage = () => {
         </p>
         <Link
           href="/shop"
-          className="mt-8 inline-flex items-center gap-2 bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
+          className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-[10px] bg-[#222] px-8 py-4 text-sm font-medium uppercase tracking-[0.05em] text-white transition-colors hover:bg-black"
         >
           <ArrowLeft className="h-4 w-4" />
           Explore Paintings
@@ -44,7 +44,7 @@ const WishlistPage = () => {
   }
 
   return (
-    <main className="mx-auto w-full max-w-[1440px] px-6 py-12 md:px-12 md:py-16">
+    <main className="mx-auto w-full max-w-[1440px] px-4 py-10 sm:px-6 md:px-12 md:py-16">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm uppercase tracking-[0.08em] text-[#666]">Wishlist</p>
@@ -58,7 +58,7 @@ const WishlistPage = () => {
         <button
           type="button"
           onClick={clearWishlist}
-          className="text-sm font-medium text-[#666] underline underline-offset-4 hover:text-[#111]"
+          className="min-h-11 rounded-[10px] px-3 text-sm font-medium text-[#666] underline underline-offset-4 hover:text-[#111]"
         >
           Clear Wishlist
         </button>
@@ -69,7 +69,10 @@ const WishlistPage = () => {
           const formattedPrice = formatPrice(item.price);
 
           return (
-            <article key={item.id} className="flex gap-6 border-b border-[#E5E5E5] pb-6">
+            <article
+              key={item.id}
+              className="flex flex-col gap-4 border-b border-[#E5E5E5] pb-6 sm:flex-row sm:gap-6"
+            >
               <div className="relative h-32 w-28 shrink-0 overflow-hidden rounded-lg bg-[#F5F5F5]">
                 <Image
                   src={item.image}
@@ -82,7 +85,7 @@ const WishlistPage = () => {
 
               <div className="flex flex-1 flex-col justify-between gap-4">
                 <div>
-                  <h2 className="font-display text-xl text-[#222]">{item.title}</h2>
+                  <h2 className="break-words font-display text-xl text-[#222]">{item.title}</h2>
                   {item.subtitle ? (
                     <p className="mt-1 text-sm text-[#666]">{item.subtitle}</p>
                   ) : null}
@@ -91,11 +94,11 @@ const WishlistPage = () => {
                   ) : null}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                   <button
                     type="button"
                     onClick={() => addItem(item, 1)}
-                    className="inline-flex items-center gap-2 rounded-[6px] bg-[#1f1f1f] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black"
+                    className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[10px] bg-[#1f1f1f] px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-black sm:w-auto"
                   >
                     <ShoppingBag className="h-4 w-4" />
                     Add to Bag
@@ -104,7 +107,7 @@ const WishlistPage = () => {
                   {item.href ? (
                     <Link
                       href={item.href}
-                      className="text-sm font-medium text-[#444] underline underline-offset-4 hover:text-[#111]"
+                      className="min-h-11 w-full rounded-[10px] px-3 text-center text-sm font-medium text-[#444] underline underline-offset-4 hover:text-[#111] sm:w-auto sm:px-0 sm:text-left"
                     >
                       View Product
                     </Link>
@@ -113,7 +116,7 @@ const WishlistPage = () => {
                   <button
                     type="button"
                     onClick={() => removeItem(item.id)}
-                    className="inline-flex items-center gap-1 text-sm text-[#666] transition-colors hover:text-[#222]"
+                    className="inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-[10px] px-3 text-sm text-[#666] transition-colors hover:bg-[#f5f0e8] hover:text-[#222] sm:w-auto sm:justify-start sm:px-0 sm:hover:bg-transparent"
                   >
                     <Trash2 className="h-4 w-4" />
                     Remove
@@ -127,7 +130,7 @@ const WishlistPage = () => {
 
       <Link
         href="/shop"
-        className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-[#666] transition-colors hover:text-[#222]"
+        className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-[10px] px-3 text-sm font-medium text-[#666] transition-colors hover:bg-[#f5f0e8] hover:text-[#222] sm:px-0 sm:hover:bg-transparent"
       >
         <ArrowLeft className="h-4 w-4" />
         Continue Shopping

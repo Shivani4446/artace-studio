@@ -53,7 +53,7 @@ export default function DashboardShell({
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`block rounded-[10px] px-4 py-3 text-[15px] font-medium transition-colors ${
+                    className={`flex min-h-11 items-center rounded-[10px] px-4 py-3 text-[15px] font-medium transition-colors ${
                       isActive
                         ? "bg-[#1f1f1f] text-white"
                         : "bg-[#fcfaf7] text-[#2c2c2c] hover:bg-[#f3eee6]"
@@ -66,7 +66,7 @@ export default function DashboardShell({
             </nav>
 
             <LogoutButton
-              className="mt-6 inline-flex w-full items-center justify-center rounded-[10px] border border-black/10 px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f5f0e8] lg:mt-8"
+              className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-[10px] border border-black/10 px-4 py-3 text-[15px] font-medium text-[#1f1f1f] transition-colors hover:bg-[#f5f0e8] lg:mt-8"
             />
           </aside>
 
