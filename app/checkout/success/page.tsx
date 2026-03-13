@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { clearPendingCheckout } from "@/utils/checkout-client";
@@ -34,7 +34,7 @@ const formatCurrency = (total: string, currency: string) => {
   }
 };
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessInner() {
   const searchParams = useSearchParams();
   const { status: authStatus } = useAuthSession();
   const { clearCart } = useCart();
@@ -263,5 +263,28 @@ export default function CheckoutSuccessPage() {
         </aside>
       </div>
     </main>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  // `useSearchParams()` triggers a CSR bailout; wrapping in Suspense allows static
+  // rendering to complete with a fallback while hydration reads the query string.
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-[100svh] bg-[#fcfaf7] px-4 py-6 sm:px-6 sm:py-8 lg:px-[50px]">
+          <section className="mx-auto w-full max-w-[1100px] rounded-[28px] border border-black/8 bg-white p-6 shadow-[0_22px_60px_rgba(0,0,0,0.06)] md:p-10">
+            <h1 className="font-display text-[34px] leading-[1.05] text-[#1f1f1f] md:text-[44px]">
+              Checking your payment
+            </h1>
+            <p className="mt-4 text-[16px] leading-[1.75] text-[#5b5b5b] md:text-[18px]">
+              Loading your order status…
+            </p>
+          </section>
+        </main>
+      }
+    >
+      <CheckoutSuccessInner />
+    </Suspense>
   );
 }
