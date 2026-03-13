@@ -68,7 +68,7 @@ const parseMetaData = (value: unknown): WooMetaDataItem[] => {
   if (!Array.isArray(value)) return [];
 
   return value
-    .map((item) => {
+    .map((item): WooMetaDataItem | null => {
       const record = item as WooMetaDataPayload;
       const key = sanitizeText(record?.key);
       if (!key) return null;
@@ -81,13 +81,12 @@ const parseMetaData = (value: unknown): WooMetaDataItem[] => {
             ? ""
             : JSON.stringify(rawValue);
 
-      return {
-        id: ensurePositiveInt(record?.id) || undefined,
-        key,
-        value: normalizedValue,
-      };
+      const id = ensurePositiveInt(record?.id);
+      return id
+        ? { id, key, value: normalizedValue }
+        : { key, value: normalizedValue };
     })
-    .filter((item): item is WooMetaDataItem => Boolean(item));
+    .filter((item): item is WooMetaDataItem => item !== null);
 };
 
 const buildOrderPayUrl = (siteUrl: string, orderId: number | null, orderKey: string) => {

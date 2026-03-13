@@ -292,10 +292,14 @@ export default function CheckoutPage() {
         throw new Error(payload.error || "Unable to start Razorpay checkout.");
       }
 
+      const orderId = payload.orderId;
+      const orderKey = payload.orderKey;
+      const orderNumber = payload.orderNumber;
+
       writePendingCheckout({
-        orderId: payload.orderId,
-        orderKey: payload.orderKey,
-        orderNumber: payload.orderNumber,
+        orderId,
+        orderKey,
+        orderNumber,
         razorpayOrderId: payload.razorpay.orderId,
       });
 
@@ -323,8 +327,8 @@ export default function CheckoutPage() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                orderId: payload.orderId,
-                orderKey: payload.orderKey,
+                orderId,
+                orderKey,
                 razorpayOrderId: razorpayResponse.razorpay_order_id,
                 razorpayPaymentId: razorpayResponse.razorpay_payment_id,
                 razorpaySignature: razorpayResponse.razorpay_signature,
@@ -346,7 +350,7 @@ export default function CheckoutPage() {
             }
 
             router.push(
-              `/checkout/success?orderId=${payload.orderId}&orderKey=${encodeURIComponent(payload.orderKey)}`
+              `/checkout/success?orderId=${orderId}&orderKey=${encodeURIComponent(orderKey)}`
             );
           } catch {
             setCheckoutStage("idle");
