@@ -61,8 +61,17 @@ export const ensurePositiveInt = (value: unknown) => {
   return integer > 0 ? integer : null;
 };
 
-const toBasicAuthToken = (username: string, password: string) =>
-  Buffer.from(`${username}:${password}`).toString("base64");
+const toBasicAuthToken = (username: string, password: string) => {
+  const raw = `${username}:${password}`;
+  if (typeof btoa === "function") return btoa(raw);
+
+  const maybeBuffer = globalThis as {
+    Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } };
+  };
+  if (maybeBuffer.Buffer) return maybeBuffer.Buffer.from(raw, "utf8").toString("base64");
+
+  throw new Error("No base64 encoder available.");
+};
 
 const parseMetaData = (value: unknown): WooMetaDataItem[] => {
   if (!Array.isArray(value)) return [];

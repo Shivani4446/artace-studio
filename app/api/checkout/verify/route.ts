@@ -10,7 +10,7 @@ import {
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 type VerifyCheckoutRequestBody = {
   orderId: number;
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const isValidSignature = verifyRazorpayPaymentSignature({
+    const isValidSignature = await verifyRazorpayPaymentSignature({
       orderId: razorpayOrderId,
       paymentId: razorpayPaymentId,
       signature: razorpaySignature,

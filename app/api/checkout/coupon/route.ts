@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 type WooCouponPayload = {
   id?: unknown;
@@ -21,6 +21,21 @@ type WooCouponPayload = {
 const DEFAULT_WP_JSON_PREFIX = "/wp-json";
 
 const sanitizeText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
+
+const toBase64 = (value: string) => {
+  if (typeof btoa === "function") {
+    return btoa(value);
+  }
+
+  const maybeBuffer = globalThis as {
+    Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } };
+  };
+  if (maybeBuffer.Buffer) {
+    return maybeBuffer.Buffer.from(value, "utf8").toString("base64");
+  }
+
+  throw new Error("No base64 encoder available.");
+};
 
 const normalizeWpJsonPrefix = (value: string) => {
   const trimmed = sanitizeText(value) || DEFAULT_WP_JSON_PREFIX;
@@ -46,7 +61,7 @@ const getWooAuthHeader = () => {
     throw new Error("WooCommerce API credentials are missing.");
   }
 
-  const token = Buffer.from(`${key}:${secret}`).toString("base64");
+  const token = toBase64(`${key}:${secret}`);
   return `Basic ${token}`;
 };
 

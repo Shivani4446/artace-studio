@@ -8,7 +8,7 @@ import {
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 type RazorpayEntityWithNotes = {
   id?: unknown;
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const isValidSignature = verifyRazorpayWebhookSignature({
+    const isValidSignature = await verifyRazorpayWebhookSignature({
       body: rawBody,
       signature,
     });

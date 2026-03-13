@@ -1,5 +1,3 @@
-import crypto from "node:crypto";
-
 type RazorpayOrderPayload = {
   id?: unknown;
   amount?: unknown;
@@ -19,6 +17,56 @@ export type RazorpayOrderSummary = {
 };
 
 const sanitizeText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
+
+const bytesToHex = (bytes: Uint8Array) =>
+  Array.from(bytes)
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+
+const toBase64 = (value: string) => {
+  if (typeof btoa === "function") {
+    return btoa(value);
+  }
+
+  const maybeBuffer = globalThis as {
+    Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } };
+  };
+  if (maybeBuffer.Buffer) {
+    return maybeBuffer.Buffer.from(value, "utf8").toString("base64");
+  }
+
+  throw new Error("No base64 encoder available.");
+};
+
+const safeCompare = (left: string, right: string) => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  let diff = 0;
+  for (let i = 0; i < left.length; i++) {
+    diff |= left.charCodeAt(i) ^ right.charCodeAt(i);
+  }
+  return diff === 0;
+};
+
+const hmacSha256Hex = async (secret: string, message: string) => {
+  const subtle = globalThis.crypto?.subtle;
+  if (!subtle) {
+    throw new Error("WebCrypto is not available to compute an HMAC signature.");
+  }
+
+  const encoder = new TextEncoder();
+  const key = await subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await subtle.sign("HMAC", key, encoder.encode(message));
+  return bytesToHex(new Uint8Array(signature));
+};
 
 const getRazorpayConfig = () => {
   const keyId = process.env.RAZORPAY_KEY_ID || "";
@@ -40,18 +88,7 @@ const parseRazorpayOrder = (payload: RazorpayOrderPayload): RazorpayOrderSummary
 });
 
 const buildBasicAuthHeader = (keyId: string, keySecret: string) =>
-  `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`;
-
-const safeCompare = (left: string, right: string) => {
-  const leftBuffer = Buffer.from(left, "utf8");
-  const rightBuffer = Buffer.from(right, "utf8");
-
-  if (leftBuffer.length !== rightBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
-};
+  `Basic ${toBase64(`${keyId}:${keySecret}`)}`;
 
 export const getRazorpayPublicConfig = () => {
   const { keyId } = getRazorpayConfig();
@@ -124,7 +161,7 @@ export const createRazorpayOrder = async ({
   return order;
 };
 
-export const verifyRazorpayPaymentSignature = ({
+export const verifyRazorpayPaymentSignature = async ({
   orderId,
   paymentId,
   signature,
@@ -139,15 +176,12 @@ export const verifyRazorpayPaymentSignature = ({
     throw new Error("Razorpay secret is missing. Set RAZORPAY_KEY_SECRET.");
   }
 
-  const expectedSignature = crypto
-    .createHmac("sha256", keySecret)
-    .update(`${orderId}|${paymentId}`)
-    .digest("hex");
+  const expectedSignature = await hmacSha256Hex(keySecret, `${orderId}|${paymentId}`);
 
   return safeCompare(expectedSignature, signature);
 };
 
-export const verifyRazorpayWebhookSignature = ({
+export const verifyRazorpayWebhookSignature = async ({
   body,
   signature,
 }: {
@@ -160,10 +194,7 @@ export const verifyRazorpayWebhookSignature = ({
     throw new Error("Razorpay webhook secret is missing. Set RAZORPAY_WEBHOOK_SECRET.");
   }
 
-  const expectedSignature = crypto
-    .createHmac("sha256", webhookSecret)
-    .update(body)
-    .digest("hex");
+  const expectedSignature = await hmacSha256Hex(webhookSecret, body);
 
   return safeCompare(expectedSignature, signature);
 };

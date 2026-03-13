@@ -6,7 +6,7 @@ import {
   sanitizeText,
 } from "@/utils/woocommerce-checkout";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const orderId = ensurePositiveInt(request.nextUrl.searchParams.get("orderId"));
