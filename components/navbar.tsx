@@ -200,7 +200,7 @@ const Navbar = () => {
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
-  const isAuthenticated = Boolean(session?.accessToken);
+  const isAuthenticated = authStatus === "authenticated";
   const accountHref = isAuthenticated ? "/dashboard" : "/login";
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);

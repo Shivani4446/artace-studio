@@ -20,21 +20,29 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## WooCommerce Checkout Env
+## WooCommerce + Razorpay Checkout Env
 
-To create WooCommerce orders from Next.js (`POST /api/checkout`), set:
+To create WooCommerce orders from Next.js and initialize Razorpay checkout (`POST /api/checkout`), set:
 
 ```bash
 WOOCOMMERCE_SITE_URL=https://artacestudio.com
 WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-WOOCOMMERCE_PAYMENT_METHOD=bacs
-WOOCOMMERCE_PAYMENT_METHOD_TITLE=Direct Bank Transfer
+WOOCOMMERCE_PAYMENT_METHOD=razorpay
+WOOCOMMERCE_PAYMENT_METHOD_TITLE=Razorpay
+RAZORPAY_KEY_ID=rzp_live_xxxxxxxxxx
+RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxx
+RAZORPAY_WEBHOOK_SECRET=xxxxxxxxxxxxxxxx
 ```
 
 Notes:
 - `WOOCOMMERCE_CONSUMER_KEY` and `WOOCOMMERCE_CONSUMER_SECRET` must be server-side only.
-- `WOOCOMMERCE_PAYMENT_METHOD` should match an enabled WooCommerce gateway ID (`cod`, `bacs`, etc.).
+- `WOOCOMMERCE_PAYMENT_METHOD` should match the gateway ID stored on Woo orders. For this flow it should stay aligned to `razorpay`.
+- If `https://YOUR_DOMAIN/wp-json/wc/v3/*` returns `404`, set `WOOCOMMERCE_REST_URL` to the origin that actually serves WordPress/Woo REST (for example `https://api.yourdomain.com`).
+- If WordPress is installed under a subpath, set `WOOCOMMERCE_WP_JSON_PREFIX` accordingly (for example `/wordpress/wp-json`).
+- `RAZORPAY_KEY_ID` is returned by the checkout API and used by the browser to open Razorpay Checkout.
+- `RAZORPAY_KEY_SECRET` and `RAZORPAY_WEBHOOK_SECRET` must remain server-side only.
+- Point your Razorpay webhook at `POST /api/razorpay/webhook`.
 
 ## Learn More
 

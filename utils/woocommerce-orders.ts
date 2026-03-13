@@ -1,7 +1,9 @@
 import {
+  extractWordPressUserFromJwt,
   getWordPressSiteUrl,
   getWordPressUserFromToken,
 } from "@/utils/wordpress-auth";
+import { getWordPressJwtSecret, verifyHs256Jwt } from "@/utils/jwt";
 
 export type DashboardOrder = {
   id: number;
@@ -28,6 +30,7 @@ type WooOrder = {
   status: string;
   date_created: string;
   total: string;
+  meta_data?: Array<{ key?: unknown; value?: unknown }>;
   currency: string;
   payment_method_title: string;
   billing?: {
@@ -44,6 +47,31 @@ type WooOrder = {
   }>;
 };
 
+const sanitizeText = (value: unknown) => (typeof value === "string" ? value.trim() : "");
+
+const getMetaValue = (meta: WooOrder["meta_data"], key: string) => {
+  if (!Array.isArray(meta)) return "";
+  const match = meta.find((item) => sanitizeText(item?.key) === key);
+  const raw = match?.value;
+  if (raw === null || raw === undefined) return "";
+  if (typeof raw === "string") return raw;
+  if (typeof raw === "number") return String(raw);
+  try {
+    return JSON.stringify(raw);
+  } catch {
+    return "";
+  }
+};
+
+const resolvePaidTotal = (order: WooOrder) => {
+  // Prefer the persisted "paid amount" set at capture/verify time.
+  const paidTotal = sanitizeText(getMetaValue(order.meta_data, "_artace_paid_total"));
+  if (paidTotal) return paidTotal;
+
+  // Fallback to order.total (may change if edited later in Woo admin).
+  return order.total || "";
+};
+
 const toBasicAuthToken = (username: string, password: string) => {
   const raw = `${username}:${password}`;
   if (typeof btoa === "function") return btoa(raw);
@@ -58,7 +86,7 @@ const toBasicAuthToken = (username: string, password: string) => {
 
 const getWooCommerceConfig = () => {
   return {
-    siteUrl: getWordPressSiteUrl(),
+    siteUrl: (process.env.WOOCOMMERCE_REST_URL || getWordPressSiteUrl()).replace(/\/+$/, ""),
     consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY,
     consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET,
   };
@@ -73,8 +101,23 @@ export const fetchWooCommerceOrdersForToken = async (
     throw new Error("Please login first.");
   }
 
-  const customer = await getWordPressUserFromToken(customerToken);
-  if (!customer || !customer.id) {
+  let customerId = 0;
+
+  const secret = getWordPressJwtSecret();
+  if (secret) {
+    const ok = await verifyHs256Jwt(customerToken, secret);
+    if (!ok) {
+      throw new Error("Invalid session.");
+    }
+
+    const jwtUser = extractWordPressUserFromJwt(customerToken);
+    customerId = typeof jwtUser.id === "number" ? jwtUser.id : 0;
+  } else {
+    const customer = await getWordPressUserFromToken(customerToken);
+    customerId = customer?.id || 0;
+  }
+
+  if (!customerId) {
     throw new Error("Invalid session.");
   }
 
@@ -85,20 +128,38 @@ export const fetchWooCommerceOrdersForToken = async (
   }
 
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+  const wpJsonOrdersUrl = `${siteUrl}/wp-json/wc/v3/orders?per_page=50&orderby=date&order=desc&customer=${customerId}`;
 
-  const response = await fetch(
-    `${siteUrl}/wp-json/wc/v3/orders?per_page=50&orderby=date&order=desc&customer=${customer.id}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Basic ${basicToken}`,
-        "Content-Type": "application/json",
-      },
-      cache: "no-store",
-    }
-  );
+  const response = await fetch(wpJsonOrdersUrl, {
+    method: "GET",
+    headers: {
+      Authorization: `Basic ${basicToken}`,
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
 
-  const rawText = await response.text();
+  // Fallback for servers without /wp-json rewrite routing.
+  const fallbackResponse =
+    response.status === 404
+      ? await fetch(
+          `${siteUrl}/?rest_route=${encodeURIComponent(
+            `/wc/v3/orders?per_page=50&orderby=date&order=desc&customer=${customerId}`
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Basic ${basicToken}`,
+              "Content-Type": "application/json",
+            },
+            cache: "no-store",
+          }
+        )
+      : null;
+
+  const effectiveResponse = fallbackResponse || response;
+
+  const rawText = await effectiveResponse.text();
   let parsed: WooOrder[] | { message?: string } = [];
   try {
     parsed = rawText ? (JSON.parse(rawText) as WooOrder[] | { message?: string }) : [];
@@ -106,11 +167,11 @@ export const fetchWooCommerceOrdersForToken = async (
     parsed = [];
   }
 
-  if (!response.ok) {
+  if (!effectiveResponse.ok) {
     const apiMessage =
       !Array.isArray(parsed) && typeof parsed.message === "string"
         ? parsed.message
-        : `Failed to fetch orders (${response.status}).`;
+        : `Failed to fetch orders (${effectiveResponse.status}).`;
     throw new Error(apiMessage);
   }
 
@@ -119,8 +180,11 @@ export const fetchWooCommerceOrdersForToken = async (
     number: order.number || String(order.id),
     status: order.status || "",
     dateCreated: order.date_created || "",
-    total: order.total || "",
-    currency: order.currency || "INR",
+    total: resolvePaidTotal(order),
+    currency:
+      sanitizeText(getMetaValue(order.meta_data, "_artace_paid_currency")) ||
+      order.currency ||
+      "INR",
     paymentMethodTitle: order.payment_method_title || "",
     customerName: `${order.billing?.first_name || ""} ${
       order.billing?.last_name || ""

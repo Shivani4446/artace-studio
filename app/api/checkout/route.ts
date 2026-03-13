@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
-import { getWordPressUserFromToken } from "@/utils/wordpress-auth";
+import { createRazorpayOrder, getRazorpayPublicConfig } from "@/utils/razorpay";
+import {
+  createWooCommerceOrder,
+  ensurePositiveInt,
+  getWooCommercePaymentConfig,
+  mergeWooMetaData,
+  parseAmountToMinorUnits,
+  sanitizeText,
+  updateWooCommerceOrder,
+} from "@/utils/woocommerce-checkout";
 
-export const runtime = "edge";
-
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
+export const runtime = "nodejs";
 
 type CheckoutLineItemInput = {
   productId: number;
@@ -30,54 +37,13 @@ type CheckoutRequestBody = {
   billing: CheckoutAddressInput;
   shipping?: Partial<CheckoutAddressInput>;
   customerNote?: string;
-};
-
-const sanitizeText = (value: unknown) => {
-  if (typeof value !== "string") return "";
-  return value.trim();
+  couponCode?: string;
 };
 
 const normalizeCountry = (value: string) => {
   const normalized = value.trim().toUpperCase();
   if (normalized.length === 2) return normalized;
   return "IN";
-};
-
-const ensurePositiveInt = (value: unknown) => {
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) return null;
-  const integer = Math.floor(parsed);
-  return integer > 0 ? integer : null;
-};
-
-const toBasicAuthToken = (username: string, password: string) => {
-  const raw = `${username}:${password}`;
-  if (typeof btoa === "function") return btoa(raw);
-
-  const maybeBuffer = (globalThis as { Buffer?: { from: (v: string) => { toString: (enc: string) => string } } }).Buffer;
-  if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
-
-  throw new Error("No base64 encoder available.");
-};
-
-const getWooCommerceConfig = () => {
-  const siteUrl =
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    DEFAULT_WOOCOMMERCE_SITE_URL;
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
-  const paymentMethod = process.env.WOOCOMMERCE_PAYMENT_METHOD || "bacs";
-  const paymentMethodTitle =
-    process.env.WOOCOMMERCE_PAYMENT_METHOD_TITLE || "Direct Bank Transfer";
-
-  return {
-    siteUrl: siteUrl.replace(/\/+$/, ""),
-    consumerKey,
-    consumerSecret,
-    paymentMethod,
-    paymentMethodTitle,
-  };
 };
 
 const validateAddress = (address: Partial<CheckoutAddressInput>) => {
@@ -108,20 +74,8 @@ const validateAddress = (address: Partial<CheckoutAddressInput>) => {
 };
 
 export async function POST(request: NextRequest) {
-  const { siteUrl, consumerKey, consumerSecret, paymentMethod, paymentMethodTitle } =
-    getWooCommerceConfig();
-
-  if (!consumerKey || !consumerSecret) {
-    return NextResponse.json(
-      {
-        error:
-          "WooCommerce API credentials are missing. Set WOOCOMMERCE_CONSUMER_KEY and WOOCOMMERCE_CONSUMER_SECRET.",
-      },
-      { status: 500 }
-    );
-  }
-
   let body: CheckoutRequestBody;
+
   try {
     body = (await request.json()) as CheckoutRequestBody;
   } catch {
@@ -135,6 +89,7 @@ export async function POST(request: NextRequest) {
       const quantity = ensurePositiveInt(item.quantity);
       const variationId = ensurePositiveInt(item.variationId);
       if (!productId || !quantity) return null;
+
       return {
         product_id: productId,
         quantity,
@@ -160,87 +115,136 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const couponCode = sanitizeText(body.couponCode).toLowerCase();
+  const couponLines = couponCode ? [{ code: couponCode }] : [];
+
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
   const session = await getAuthSessionFromRequest(request);
-  const customerToken = session?.accessToken || "";
-  const authenticatedCustomer = customerToken
-    ? await getWordPressUserFromToken(customerToken)
-    : null;
 
-  const payload = {
-    payment_method: paymentMethod,
-    payment_method_title: paymentMethodTitle,
-    set_paid: false,
-    billing: {
-      first_name: billing.firstName,
-      last_name: billing.lastName,
-      address_1: billing.address1,
-      address_2: billing.address2,
-      city: billing.city,
-      state: billing.state,
-      postcode: billing.postcode,
-      country: billing.country,
-      email: billing.email,
-      phone: billing.phone,
-    },
-    shipping: {
-      first_name: shipping.firstName || billing.firstName,
-      last_name: shipping.lastName || billing.lastName,
-      address_1: shipping.address1 || billing.address1,
-      address_2: shipping.address2 || billing.address2,
-      city: shipping.city || billing.city,
-      state: shipping.state || billing.state,
-      postcode: shipping.postcode || billing.postcode,
-      country: shipping.country || billing.country,
-    },
-    line_items: normalizedLineItems,
-    customer_note: sanitizeText(body.customerNote),
-    ...(authenticatedCustomer?.id ? { customer_id: authenticatedCustomer.id } : {}),
-  };
+  // New flow: account required before placing an order.
+  if (!session?.accessToken) {
+    return NextResponse.json(
+      { error: "Please sign in or create an account before checkout." },
+      { status: 401 }
+    );
+  }
 
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+  const customerId = ensurePositiveInt(session.user.id);
+  if (!customerId) {
+    return NextResponse.json(
+      { error: "Your account session is missing a customer id. Please sign in again." },
+      { status: 401 }
+    );
+  }
 
-  const response = await fetch(`${siteUrl}/wp-json/wc/v3/orders`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basicToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-  });
+  const { paymentMethod, paymentMethodTitle } = getWooCommercePaymentConfig();
 
-  const rawText = await response.text();
-  let parsed: Record<string, unknown> = {};
   try {
-    parsed = rawText ? (JSON.parse(rawText) as Record<string, unknown>) : {};
-  } catch {
-    parsed = {};
+    const wooOrder = await createWooCommerceOrder({
+      payment_method: paymentMethod,
+      payment_method_title: paymentMethodTitle,
+      set_paid: false,
+      billing: {
+        first_name: billing.firstName,
+        last_name: billing.lastName,
+        address_1: billing.address1,
+        address_2: billing.address2,
+        city: billing.city,
+        state: billing.state,
+        postcode: billing.postcode,
+        country: billing.country,
+        email: billing.email,
+        phone: billing.phone,
+      },
+      shipping: {
+        first_name: shipping.firstName || billing.firstName,
+        last_name: shipping.lastName || billing.lastName,
+        address_1: shipping.address1 || billing.address1,
+        address_2: shipping.address2 || billing.address2,
+        city: shipping.city || billing.city,
+        state: shipping.state || billing.state,
+        postcode: shipping.postcode || billing.postcode,
+        country: shipping.country || billing.country,
+      },
+      line_items: normalizedLineItems,
+      ...(couponLines.length ? { coupon_lines: couponLines } : {}),
+      customer_note: sanitizeText(body.customerNote),
+      customer_id: customerId,
+    });
+
+    if (!wooOrder.orderId || !wooOrder.orderKey) {
+      throw new Error("WooCommerce did not return a valid order identifier.");
+    }
+
+    const amount = parseAmountToMinorUnits(wooOrder.total);
+    if (!amount) {
+      throw new Error("WooCommerce returned an invalid order total for payment.");
+    }
+
+    const razorpayOrder = await createRazorpayOrder({
+      amount,
+      currency: wooOrder.currency || "INR",
+      receipt: `woo_${wooOrder.orderId}`,
+      notes: {
+        woo_order_id: String(wooOrder.orderId),
+        woo_order_key: wooOrder.orderKey,
+        woo_order_number: wooOrder.orderNumber,
+      },
+    });
+
+    const updatedWooOrder = await updateWooCommerceOrder(wooOrder.orderId, {
+      meta_data: mergeWooMetaData(wooOrder.metaData, {
+        _artace_razorpay_order_id: razorpayOrder.id,
+        _artace_checkout_origin: request.nextUrl.origin,
+      }),
+    });
+
+    const { keyId } = getRazorpayPublicConfig();
+
+    return NextResponse.json({
+      success: true,
+      orderId: updatedWooOrder.orderId,
+      orderKey: updatedWooOrder.orderKey,
+      orderNumber: updatedWooOrder.orderNumber,
+      status: updatedWooOrder.status,
+      total: updatedWooOrder.total,
+      currency: updatedWooOrder.currency,
+      razorpay: {
+        keyId,
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Artace Studio",
+        description: `Order #${updatedWooOrder.orderNumber}`,
+        prefill: {
+          name: `${billing.firstName} ${billing.lastName}`.trim(),
+          email: billing.email,
+          contact: billing.phone,
+        },
+        notes: razorpayOrder.notes,
+      },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Unable to initialize checkout right now.",
+      },
+      {
+        status:
+          error instanceof Error
+            ? (() => {
+                const match = error.message.match(/\[(\d{3})\]\s/);
+                const parsed = match ? Number(match[1]) : 502;
+                return Number.isFinite(parsed) && parsed >= 400 && parsed <= 599
+                  ? parsed
+                  : 502;
+              })()
+            : 502,
+      }
+    );
   }
-
-  if (!response.ok) {
-    const apiError =
-      (typeof parsed.message === "string" && parsed.message) ||
-      `WooCommerce order creation failed (${response.status}).`;
-    return NextResponse.json({ error: apiError }, { status: 502 });
-  }
-
-  const orderId = ensurePositiveInt(parsed.id);
-  const orderKey = sanitizeText(parsed.order_key);
-  const checkoutPaymentUrl = sanitizeText(parsed.checkout_payment_url);
-  const generatedPaymentUrl =
-    orderId && orderKey
-      ? `${siteUrl}/checkout/order-pay/${orderId}/?pay_for_order=true&key=${orderKey}`
-      : "";
-
-  return NextResponse.json({
-    success: true,
-    orderId,
-    orderNumber: sanitizeText(parsed.number) || `${orderId || ""}`,
-    status: sanitizeText(parsed.status),
-    total: sanitizeText(parsed.total),
-    currency: sanitizeText(parsed.currency),
-    paymentUrl: checkoutPaymentUrl || generatedPaymentUrl || null,
-  });
 }

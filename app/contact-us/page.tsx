@@ -168,13 +168,13 @@ const ContactPage = () => {
           <p className="text-[18px] text-[#AAAAAA] mb-8">
             Worldwide Distributors
           </p>
-          <div className="flex flex-col md:flex-row justify-between items-end gap-10">
-            <h2 className="text-5xl font-serif max-w-4xl leading-[1.2]">
-              We're proudly based in India. However, you can also find us in
+            <div className="flex flex-col md:flex-row justify-between items-end gap-10">
+              <h2 className="text-5xl font-serif max-w-4xl leading-[1.2]">
+              We&apos;re proudly based in India. However, you can also find us in
               Europe, the Middle East, Australia and around the globe.
-            </h2>
-            <button className="bg-white text-black px-8 py-4 rounded text-[18px] flex items-center gap-3 hover:bg-gray-200 transition-colors whitespace-nowrap mb-2">
-              Become a Distributor
+              </h2>
+              <button className="bg-white text-black px-8 py-4 rounded text-[18px] flex items-center gap-3 hover:bg-gray-200 transition-colors whitespace-nowrap mb-2">
+                Become a Distributor
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.25 5.25H12.75V12.75" stroke="#292929" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M5.25 12.75L12.75 5.25" stroke="#292929" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -54,11 +54,8 @@ const SingleBlogContent = ({ content }: Props) => {
   );
 
   const [activeId, setActiveId] = useState<string>("");
-  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    setIsInitialized(true);
-
     const handleScroll = () => {
       if (h2Headings.length === 0) return;
 
@@ -103,13 +100,13 @@ const SingleBlogContent = ({ content }: Props) => {
         <aside className="md:col-span-1 sticky top-24 h-fit">
           <h3 className="font-semibold mb-4 text-[24px]">Table of Contents</h3>
           <ul className="space-y-2 text-sm">
-            {h2Headings.map((heading, index) => (
+            {h2Headings.map((heading) => (
               <li key={heading.id}>
                 <a
                   href={`#${heading.id}`}
                   onClick={(e) => handleClick(e, heading.id)}
                   className={`cursor-pointer block transition-colors ${
-                    isInitialized && activeId === heading.id
+                    activeId === heading.id
                       ? "font-semibold text-[#202124]"
                       : "text-gray-600 hover:text-[#222327]"
                   }`}

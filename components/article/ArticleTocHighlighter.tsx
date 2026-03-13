@@ -9,11 +9,8 @@ type Props = {
 
 export default function ArticleTocHighlighter({ toc }: Props) {
   const [activeId, setActiveId] = useState<string>("");
-  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    setIsInitialized(true);
-
     const handleScroll = () => {
       const headingElements = toc
         .map((item) => document.getElementById(item.id))
@@ -74,13 +71,13 @@ export default function ArticleTocHighlighter({ toc }: Props) {
         Table of Contents
       </h2>
       <ul className="mt-6 space-y-3.5">
-        {toc.map((item, index) => (
+        {toc.map((item) => (
           <li key={item.id}>
             <a
               href={`#${item.id}`}
               onClick={(e) => handleClick(e, item.id)}
               className={`block text-[18px] leading-[1.45] transition-colors cursor-pointer ${
-                isInitialized && activeId === item.id
+                activeId === item.id
                   ? "font-semibold text-[#202124]"
                   : "font-normal text-[#66645f] hover:text-[#222327]"
               }`}

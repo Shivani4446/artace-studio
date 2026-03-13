@@ -44,7 +44,7 @@ SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 Use Postman or terminal:
 
 ```bash
-curl -X POST "https://artacestudio.com/wp-json/jwt-auth/v1/token" \
+curl -X POST "https://YOUR_WORDPRESS_API_ORIGIN/wp-json/jwt-auth/v1/token" \
   -H "Content-Type: application/json" \
   -d '{"username":"YOUR_WP_USERNAME","password":"YOUR_WP_PASSWORD"}'
 ```
@@ -56,10 +56,16 @@ If this fails:
 - credentials wrong, or
 - plugin config/server blocking POST
 
+If this returns `503` with an HTML page like **"You are temporarily locked out"**:
+
+- your security plugin/WAF (commonly Wordfence/Cloudflare) is blocking the request based on IP or brute-force rules
+- unblock your current IP and whitelist the REST routes (see Step 9)
+- reduce repeated login attempts while testing (some setups lock after a few failures)
+
 ## Step 5: Test JWT validate endpoint
 
 ```bash
-curl -X POST "https://artacestudio.com/wp-json/jwt-auth/v1/token/validate" \
+curl -X POST "https://YOUR_WORDPRESS_API_ORIGIN/wp-json/jwt-auth/v1/token/validate" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -68,7 +74,7 @@ Expected: success JSON.
 ## Step 6: Test WordPress authenticated endpoint
 
 ```bash
-curl "https://artacestudio.com/wp-json/wp/v2/users/me" \
+curl "https://YOUR_WORDPRESS_API_ORIGIN/wp-json/wp/v2/users/me" \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -83,7 +89,7 @@ If this returns unauthorized:
 
 Open:
 
-`https://artacestudio.com/wp-json/wp/v2/posts?per_page=1`
+`https://YOUR_WORDPRESS_API_ORIGIN/wp-json/wp/v2/posts?per_page=1`
 
 Expected: posts array.
 
@@ -131,7 +137,12 @@ In your Next.js `.env.local`:
 
 ```env
 WOOCOMMERCE_SITE_URL=https://artacestudio.com
-WORDPRESS_JWT_AUTH_URL=https://artacestudio.com/wp-json/jwt-auth/v1/token
+WOOCOMMERCE_REST_URL=https://api.artacestudio.com
+# Optional: override the JWT URL explicitly, otherwise the app will derive it from WOOCOMMERCE_REST_URL/WORDPRESS_API_URL.
+WORDPRESS_JWT_AUTH_URL=https://api.artacestudio.com/wp-json/jwt-auth/v1/token
+# Recommended: verify JWT signatures server-side when WP user endpoints are blocked by security plugins.
+# This value must match `JWT_AUTH_SECRET_KEY` in your WordPress wp-config.php.
+WORDPRESS_JWT_SECRET_KEY=your-long-random-secret
 ```
 
 Restart Next.js dev server after changes.

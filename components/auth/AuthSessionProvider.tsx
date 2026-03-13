@@ -8,20 +8,20 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { AppAuthSession } from "@/utils/auth";
+import type { AppAuthPublicSession } from "@/utils/auth";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 
 type AuthContextValue = {
-  session: AppAuthSession | null;
+  session: AppAuthPublicSession | null;
   status: AuthStatus;
   refreshSession: () => Promise<void>;
-  updateSession: (nextSession: AppAuthSession | null) => void;
+  updateSession: (nextSession: AppAuthPublicSession | null) => void;
 };
 
 const AuthSessionContext = createContext<AuthContextValue | null>(null);
 
-const readSession = async (): Promise<AppAuthSession | null> => {
+const readSession = async (): Promise<AppAuthPublicSession | null> => {
   const response = await fetch("/api/auth/session", {
     method: "GET",
     cache: "no-store",
@@ -32,7 +32,7 @@ const readSession = async (): Promise<AppAuthSession | null> => {
   }
 
   const payload = (await response.json()) as {
-    session?: AppAuthSession | null;
+    session?: AppAuthPublicSession | null;
   };
 
   return payload.session || null;
@@ -43,7 +43,7 @@ export default function AuthSessionProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [session, setSession] = useState<AppAuthSession | null>(null);
+  const [session, setSession] = useState<AppAuthPublicSession | null>(null);
   const [status, setStatus] = useState<AuthStatus>("loading");
 
   const refreshSession = useCallback(async () => {
@@ -52,7 +52,7 @@ export default function AuthSessionProvider({
     setStatus(nextSession ? "authenticated" : "unauthenticated");
   }, []);
 
-  const updateSession = useCallback((nextSession: AppAuthSession | null) => {
+  const updateSession = useCallback((nextSession: AppAuthPublicSession | null) => {
     setSession(nextSession);
     setStatus(nextSession ? "authenticated" : "unauthenticated");
   }, []);

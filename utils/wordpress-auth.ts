@@ -69,7 +69,9 @@ const decodeBase64Url = (value: string) => {
   return decodeBase64(padded);
 };
 
-const extractUserFromJwt = (token: string): Partial<WordPressAuthUser> => {
+export const extractWordPressUserFromJwt = (
+  token: string
+): Partial<WordPressAuthUser> => {
   try {
     const parts = token.split(".");
     if (parts.length < 2) return {};
@@ -102,10 +104,20 @@ export const getWordPressSiteUrl = () => {
   return siteUrl.replace(/\/+$/, "");
 };
 
+export const getWordPressApiUrl = () => {
+  const apiUrl =
+    safeText(process.env.WORDPRESS_API_URL) ||
+    safeText(process.env.WOOCOMMERCE_REST_URL) ||
+    getWordPressSiteUrl() ||
+    DEFAULT_WOOCOMMERCE_SITE_URL;
+
+  return apiUrl.replace(/\/+$/, "");
+};
+
 export const getWordPressJwtEndpoint = () => {
   const configured = safeText(process.env.WORDPRESS_JWT_AUTH_URL);
   if (configured) return configured.replace(/\/+$/, "");
-  return `${getWordPressSiteUrl()}/wp-json/jwt-auth/v1/token`;
+  return `${getWordPressApiUrl()}/wp-json/jwt-auth/v1/token`;
 };
 
 const getWordPressLostPasswordEndpoint = () =>
@@ -185,8 +197,8 @@ const getCookieHeader = (cookies: string[]) =>
 export const getWordPressProfile = async (
   token: string
 ): Promise<WordPressProfile | null> => {
-  const siteUrl = getWordPressSiteUrl();
-  const fallback = extractUserFromJwt(token);
+  const siteUrl = getWordPressApiUrl();
+  const fallback = extractWordPressUserFromJwt(token);
 
   try {
     const response = await fetch(`${siteUrl}/wp-json/wp/v2/users/me?context=edit`, {
@@ -246,7 +258,7 @@ export const updateWordPressProfile = async (
 
   try {
     const response = await fetch(
-      `${getWordPressSiteUrl()}/wp-json/wp/v2/users/${currentProfile.id}`,
+      `${getWordPressApiUrl()}/wp-json/wp/v2/users/${currentProfile.id}`,
       {
         method: "POST",
         headers: {
