@@ -339,6 +339,7 @@ const Navbar = () => {
 
             <Link
               href="/shop"
+              onClick={closeDesktopMenu}
               className="mt-6 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
             >
               View all collections
@@ -351,6 +352,7 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={closeDesktopMenu}
                 className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
               >
                 <div className="flex items-start justify-between gap-4">
@@ -407,6 +409,7 @@ const Navbar = () => {
               </div>
               <Link
                 href="/shop"
+                onClick={closeDesktopMenu}
                 className="inline-flex items-center gap-2 whitespace-nowrap font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
               >
                 Shop all art
@@ -419,6 +422,7 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={closeDesktopMenu}
                   className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -479,6 +483,7 @@ const Navbar = () => {
 
             <Link
               href="/contact-us"
+              onClick={closeDesktopMenu}
               className="rounded-[18px] bg-[#2a2a2a] px-5 py-5 text-white transition-colors hover:bg-[#1f1f1f]"
             >
               <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/62">
@@ -509,6 +514,7 @@ const Navbar = () => {
               </div>
               <Link
                 href="/contact-us"
+                onClick={closeDesktopMenu}
                 className="inline-flex items-center gap-2 whitespace-nowrap font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
               >
                 Contact
@@ -521,6 +527,7 @@ const Navbar = () => {
                 <Link
                   key={resource.name}
                   href={resource.href}
+                  onClick={closeDesktopMenu}
                   className="group rounded-[16px] bg-[#faf8f4] px-5 py-5 transition-colors hover:bg-[#f4efe7]"
                 >
                   <p className="font-inter text-[15px] font-medium text-[#2c2c2c]">
@@ -863,6 +870,7 @@ const Navbar = () => {
               ? "visible translate-y-0 opacity-100"
               : "invisible -translate-y-2 opacity-0"
           }`}
+          onMouseLeave={closeDesktopMenu}
         >
           <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-12">
             {renderDesktopMenu()}
