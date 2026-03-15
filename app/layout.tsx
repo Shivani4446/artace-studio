@@ -9,6 +9,7 @@ import Footer from "@/components/footer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
+import ProductImageProtection from "./product-image-protection";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -56,6 +57,11 @@ export default function RootLayout({
           src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
           async
         />
+        <script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="AHn7dT8Dlwwm42L41CA4Xg"
+          async
+        />
       </head>
       <body
         suppressHydrationWarning
@@ -64,6 +70,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           <CartProvider>
             <WishlistProvider>
+              <ProductImageProtection />
               <Navbar />
               {children}
               <Footer />

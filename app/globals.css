@@ -45,6 +45,33 @@ p {
   font-family: var(--font-sentient), serif;
 }
 
+/* Prevent image copying and dragging */
+/* Disable right-click on images */
+img {
+  -webkit-user-drag: element;
+  user-drag: element;
+  -webkit-touch-callout: none;
+}
+
+/* Disable selection on product images */
+.relative.overflow-hidden.rounded-\[12px\] img,
+.relative.overflow-hidden.rounded-t-\[128px\] img {
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: auto;
+}
+
+/* Protected image - prevents copying */
+.protected-image {
+  pointer-events: auto;
+}
+
+/* Disable right-click on images */
+img.protected-image {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
 .article-intro p {
   margin: 0;
   color: #3f3d37;
