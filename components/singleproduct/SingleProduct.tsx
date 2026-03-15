@@ -1577,7 +1577,7 @@ const SingleProduct = ({
                 <div className="relative flex h-full min-h-[320px] items-center justify-center rounded-[12px] border border-[#ddd7cc] bg-[#ece7de] p-8">
                   <div className="relative w-[68%] rounded-[4px] border-[8px] border-[#f8f4ec] bg-white shadow-[0_20px_40px_rgba(0,0,0,0.25)]">
                     <div className="relative aspect-[4/5] w-full overflow-hidden">
-                      <ProtectedImage
+                      <Image
                         src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
                         alt={selectedImage?.alt || stripHtml(product.name)}
                         fill
