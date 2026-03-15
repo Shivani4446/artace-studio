@@ -33,24 +33,27 @@ const getSiteUrl = () =>
   );
 
 async function getPostSlugs() {
-  const siteUrl = getSiteUrl();
-  const response = await fetch(
-    `${siteUrl}/wp-json/wp/v2/posts?per_page=100&_fields=slug`,
-    {
-      next: { revalidate: 120 },
-    }
-  );
+  try {
+    const siteUrl = getSiteUrl();
+    const response = await fetch(
+      `${siteUrl}/wp-json/wp/v2/posts?per_page=100&_fields=slug`,
+      {
+        next: { revalidate: 120 },
+      }
+    );
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return [];
+    }
+
+    const posts = (await response.json()) as Array<{ slug?: string }>;
+    return posts
+      .map((post) => post.slug?.trim())
+    .filter((slug): slug is string => Boolean(slug));
+  } catch {
     return [];
   }
-
-  const posts = (await response.json()) as Array<{ slug?: string }>;
-  return posts
-    .map((post) => post.slug?.trim())
-    .filter((slug): slug is string => Boolean(slug));
 }
-
 async function getPost(slug: string): Promise<WordPressPost | null> {
   const siteUrl = getSiteUrl();
   const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
@@ -67,8 +70,12 @@ async function getPost(slug: string): Promise<WordPressPost | null> {
 }
 
 export async function generateStaticParams() {
-  const slugs = await getPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getPostSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 async function getAuthor(authorId: number) {
