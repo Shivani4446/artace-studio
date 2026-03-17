@@ -76,10 +76,10 @@ export default function ArticleTocHighlighter({ toc }: Props) {
             <a
               href={`#${item.id}`}
               onClick={(e) => handleClick(e, item.id)}
-              className={`block text-[18px] leading-[1.45] transition-colors cursor-pointer ${
+              className={`block text-[18px] leading-[1.45] font-normal transition-colors cursor-pointer ${
                 activeId === item.id
-                  ? "font-semibold text-[#202124]"
-                  : "font-normal text-[#66645f] hover:text-[#222327]"
+                  ? "text-[#292929]"
+                  : "text-[#595959] hover:text-[#595959]"
               }`}
             >
               {item.title}

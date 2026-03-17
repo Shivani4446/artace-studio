@@ -6,6 +6,7 @@ import type { TocItem } from "@/utils/article";
 import ArticleTocHighlighter from "./ArticleTocHighlighter";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { decodeHtmlEntities } from "@/utils/text";
+import BlogContentWithProducts from "@/components/blog/BlogContentWithProducts";
 
 type Props = {
   eyebrow?: string;
@@ -22,6 +23,9 @@ type Props = {
     description?: string;
     avatar_urls?: Record<string, string>;
   } | null;
+  tags?: string[];
+  embeddedProductIds?: number[];
+  embeddedProductSlugs?: string[];
 };
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
@@ -82,6 +86,7 @@ type FeaturedProductCard = {
   categoryLabel: string;
   subtitle: string;
   price: number | null;
+  prices: WooStorePrices;
 };
 
 const parseMinorUnitPrice = (
@@ -116,10 +121,13 @@ const getSizesLabel = (attributes: WooStoreAttribute[] | undefined) => {
   return `${uniqueSizeOptions.length} Size${uniqueSizeOptions.length === 1 ? "" : "s"}`;
 };
 
-const normalizeFeaturedProducts = (
-  products: WooStoreProduct[]
+const normalizeProducts = (
+  products: WooStoreProduct[],
+  limit?: number
 ): FeaturedProductCard[] => {
-  return products.slice(0, FEATURED_PRODUCTS_LIMIT).map((product) => {
+  const normalized = typeof limit === "number" ? products.slice(0, limit) : products;
+
+  return normalized.map((product) => {
     const minorUnit = product.prices?.currency_minor_unit ?? 2;
     const primaryImage = product.images?.[0];
     const imageUrl = primaryImage?.src || "/images/product-ship.png";
@@ -140,6 +148,7 @@ const normalizeFeaturedProducts = (
       categoryLabel,
       subtitle,
       price: parseMinorUnitPrice(product.prices?.price, minorUnit),
+      prices: product.prices,
     };
   });
 };
@@ -164,7 +173,129 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const payload = (await response.json()) as WooStoreProduct[];
     if (!Array.isArray(payload)) return [];
 
-    return normalizeFeaturedProducts(payload);
+    return normalizeProducts(payload, FEATURED_PRODUCTS_LIMIT);
+  } catch {
+    return [];
+  }
+};
+
+// Fetch specific products by IDs (for embedded products in blog content)
+const getProductsByIds = async (productIds: number[]): Promise<FeaturedProductCard[]> => {
+  if (!productIds || productIds.length === 0) return [];
+  
+  try {
+    const apiBaseUrl =
+      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
+    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+
+    // Woo Store API commonly caps per_page at 100; keep this robust for larger embeds.
+    const MAX_PER_PAGE = 100;
+    const uniqueIds = Array.from(new Set(productIds)).filter((id) => id > 0);
+    const idChunks: number[][] = [];
+    for (let i = 0; i < uniqueIds.length; i += MAX_PER_PAGE) {
+      idChunks.push(uniqueIds.slice(i, i + MAX_PER_PAGE));
+    }
+
+    const chunkResults = await Promise.all(
+      idChunks.map(async (ids) => {
+        const idsParam = ids.join(",");
+        const response = await fetch(
+          `${normalizedBaseUrl}/wp-json/wc/store/v1/products?include=${idsParam}&per_page=${ids.length}`,
+          {
+            next: { revalidate: 120 },
+          }
+        );
+
+        if (!response.ok) {
+          return [] as WooStoreProduct[];
+        }
+
+        const payload = (await response.json()) as WooStoreProduct[];
+        return Array.isArray(payload) ? payload : [];
+      })
+    );
+
+    const normalizedProducts = normalizeProducts(chunkResults.flat());
+
+    // Preserve the original embed ordering from the article content.
+    const byId = new Map(normalizedProducts.map((product) => [product.id, product]));
+    return uniqueIds.map((id) => byId.get(id)).filter(Boolean) as FeaturedProductCard[];
+  } catch {
+    return [];
+  }
+};
+
+// Fetch specific products by slugs (for embedded products when IDs are not available)
+const getProductsBySlugs = async (
+  slugs: string[]
+): Promise<FeaturedProductCard[]> => {
+  if (!slugs || slugs.length === 0) return [];
+
+  const uniqueSlugs = Array.from(
+    new Set(slugs.map((slug) => slug.trim().toLowerCase()).filter(Boolean))
+  );
+  if (uniqueSlugs.length === 0) return [];
+
+  try {
+    const apiBaseUrl =
+      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
+    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+
+    const slugParam = uniqueSlugs.join(",");
+    const response = await fetch(
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?slug=${encodeURIComponent(
+        slugParam
+      )}&per_page=${uniqueSlugs.length}`,
+      {
+        next: { revalidate: 120 },
+      }
+    );
+
+    if (response.ok) {
+      const payload = (await response.json()) as WooStoreProduct[];
+      if (Array.isArray(payload) && payload.length > 0) {
+        const normalizedProducts = normalizeProducts(payload);
+        const bySlug = new Map(
+          normalizedProducts.map((product) => [product.slug.toLowerCase(), product])
+        );
+        return uniqueSlugs
+          .map((slug) => bySlug.get(slug))
+          .filter(Boolean) as FeaturedProductCard[];
+      }
+    }
+  } catch {
+    // Ignore and fall back to search below.
+  }
+
+  try {
+    const apiBaseUrl =
+      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
+    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+
+    const slugResults = await Promise.all(
+      uniqueSlugs.map(async (slug) => {
+        const response = await fetch(
+          `${normalizedBaseUrl}/wp-json/wc/store/v1/products?search=${encodeURIComponent(
+            slug
+          )}&per_page=8`,
+          {
+            next: { revalidate: 120 },
+          }
+        );
+
+        if (!response.ok) return [] as WooStoreProduct[];
+        const payload = (await response.json()) as WooStoreProduct[];
+        return Array.isArray(payload) ? payload : [];
+      })
+    );
+
+    const normalizedProducts = normalizeProducts(slugResults.flat());
+    const bySlug = new Map(
+      normalizedProducts.map((product) => [product.slug.toLowerCase(), product])
+    );
+    return uniqueSlugs
+      .map((slug) => bySlug.get(slug))
+      .filter(Boolean) as FeaturedProductCard[];
   } catch {
     return [];
   }
@@ -181,7 +312,29 @@ const ArticleLayout = async ({
   toc,
   contentHtml,
   author,
+  tags,
+  embeddedProductIds,
+  embeddedProductSlugs,
 }: Props) => {
+  // Fetch embedded products by IDs and slugs (for when IDs aren't present in Woo markup)
+  const embeddedProductsById =
+    embeddedProductIds && embeddedProductIds.length > 0
+      ? await getProductsByIds(embeddedProductIds)
+      : [];
+  const embeddedProductsBySlug =
+    embeddedProductSlugs && embeddedProductSlugs.length > 0
+      ? await getProductsBySlugs(embeddedProductSlugs)
+      : [];
+
+  const embeddedProducts = Array.from(
+    new Map(
+      [...embeddedProductsById, ...embeddedProductsBySlug].map((product) => [
+        product.id,
+        product,
+      ])
+    ).values()
+  );
+  
   const products = await getFeaturedProducts();
 
   return (
@@ -219,13 +372,30 @@ const ArticleLayout = async ({
             </div>
           ) : null}
 
-          {(lastUpdated || readTimeMinutes) && (
+          {(lastUpdated || readTimeMinutes || (tags && tags.length > 0)) && (
             <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] text-[#6b6962] md:text-[15px]">
               {lastUpdated && <span>Last Updated: {lastUpdated}</span>}
               {lastUpdated && readTimeMinutes ? (
                 <span className="text-[#96948f]">&middot;</span>
               ) : null}
               {readTimeMinutes ? <span>{readTimeMinutes} min read</span> : null}
+              {tags && tags.length > 0 && (
+                <>
+                  {(lastUpdated || readTimeMinutes) && (
+                    <span className="text-[#96948f]">&middot;</span>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-[#1f1f1f]/18 bg-[#1f1f1f]/4 px-3 py-1 text-[12px] font-medium text-[#3e3a34]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           )}
         </header>
@@ -238,10 +408,12 @@ const ArticleLayout = async ({
           <div className="hidden md:block" />
         )}
 
-        <article
-          className="article-content max-w-[760px] first-h2-aligned"
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
-        />
+        <article className="max-w-[760px] first-h2-aligned">
+          <BlogContentWithProducts
+            contentHtml={contentHtml}
+            products={embeddedProducts}
+          />
+        </article>
       </div>
     </section>
 
@@ -326,9 +498,13 @@ const ArticleLayout = async ({
                     <p className="font-inter text-[14px] text-[#999999]">
                       {product.subtitle}
                     </p>
-                    {product.price && (
+                    {typeof product.price === "number" && (
                       <p className="font-inter text-[16px] text-white mt-2">
-                        ₹{product.price.toLocaleString("en-IN")}
+                        {new Intl.NumberFormat("en-IN", {
+                          style: "currency",
+                          currency: product.prices?.currency_code ?? "INR",
+                          maximumFractionDigits: 0,
+                        }).format(product.price)}
                       </p>
                     )}
                   </div>

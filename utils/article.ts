@@ -190,7 +190,12 @@ export const htmlToArticleContent = (html: string) => {
   const toc: TocItem[] = [];
   const usedIds = new Set<string>();
 
-  const transformedHtml = html.replace(
+  const cleanedHtml = html.replace(
+    /<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi,
+    ""
+  );
+
+  const transformedHtml = cleanedHtml.replace(
     /<h([1-6])([^>]*)>([\s\S]*?)<\/h\1>/gi,
     (fullMatch, levelText: string, attrs: string, innerHtml: string) => {
       const level = Number(levelText);
@@ -235,3 +240,203 @@ export const formatArticleDate = (value: string | Date) =>
     month: "long",
     year: "numeric",
   }).format(new Date(value));
+
+/**
+ * Extracts product IDs from WooCommerce blocks in HTML content
+ * WooCommerce blocks look like: <div data-block-name="woocommerce/single-product" data-product-id="561">
+ */
+export const extractWooCommerceProductIds = (html: string): number[] => {
+  const seen = new Set<number>();
+  const orderedIds: number[] = [];
+
+  const addId = (rawId: string | number) => {
+    const productId =
+      typeof rawId === "number" ? rawId : Number.parseInt(String(rawId), 10);
+
+    if (!Number.isFinite(productId) || productId <= 0) return;
+    if (seen.has(productId)) return;
+
+    seen.add(productId);
+    orderedIds.push(productId);
+  };
+
+  // Rendered block markup (most common for Woo blocks)
+  const dataAttrRegex = /data-product-id=["'](\d+)["']/g;
+  let match: RegExpExecArray | null;
+  while ((match = dataAttrRegex.exec(html)) !== null) {
+    addId(match[1]);
+  }
+
+  // Classic Woo add-to-cart forms (often present even when data-product-id isn't).
+  const addToCartRegex =
+    /name=["']add-to-cart["'][^>]*\svalue=["'](\d+)["']/gi;
+  while ((match = addToCartRegex.exec(html)) !== null) {
+    addId(match[1]);
+  }
+
+  const productIdInputRegex =
+    /name=["']product_id["'][^>]*\svalue=["'](\d+)["']/gi;
+  while ((match = productIdInputRegex.exec(html)) !== null) {
+    addId(match[1]);
+  }
+
+  const addToCartHrefRegex = /[?&]add-to-cart=(\d+)/gi;
+  while ((match = addToCartHrefRegex.exec(html)) !== null) {
+    addId(match[1]);
+  }
+
+  // Gutenberg block comments can be present in content.rendered too.
+  // Example: <!-- wp:woocommerce/single-product {"productId":561} /-->
+  const blockCommentRegex =
+    /<!--\s*wp:woocommerce\/(single-product|featured-product)\s+({[\s\S]*?})\s*\/?-->/gi;
+  while ((match = blockCommentRegex.exec(html)) !== null) {
+    const attrs = match[2] ?? "";
+    const idMatch =
+      attrs.match(/"productId"\s*:\s*(\d+)/i) ?? attrs.match(/"id"\s*:\s*(\d+)/i);
+
+    if (idMatch?.[1]) addId(idMatch[1]);
+  }
+
+  return orderedIds;
+};
+
+/**
+ * Extracts product slugs from WooCommerce product links in HTML content.
+ * Looks for /product/{slug} or /shop/{slug} style links.
+ */
+export const extractWooCommerceProductSlugs = (html: string): string[] => {
+  const seen = new Set<string>();
+  const orderedSlugs: string[] = [];
+
+  const addSlug = (value: string | null | undefined) => {
+    const slug = (value ?? "").trim().toLowerCase();
+    if (!slug) return;
+    if (seen.has(slug)) return;
+    seen.add(slug);
+    orderedSlugs.push(slug);
+  };
+
+  const hrefRegex = /href=["']([^"']+)["']/gi;
+  let match: RegExpExecArray | null;
+  while ((match = hrefRegex.exec(html)) !== null) {
+    const href = match[1] ?? "";
+    try {
+      const url = new URL(href, "https://artace.invalid");
+      const path = url.pathname.replace(/\/+$/, "");
+      const segments = path.split("/").filter(Boolean);
+      if (segments.length === 0) continue;
+
+      const productIndex = segments.findIndex(
+        (segment) => segment === "product" || segment === "shop"
+      );
+      if (productIndex >= 0 && segments[productIndex + 1]) {
+        addSlug(segments[productIndex + 1]);
+        continue;
+      }
+
+      addSlug(segments[segments.length - 1]);
+    } catch {
+      // Ignore malformed hrefs.
+    }
+  }
+
+  const permalinkRegex = /data-product_permalink=["']([^"']+)["']/gi;
+  while ((match = permalinkRegex.exec(html)) !== null) {
+    const href = match[1] ?? "";
+    try {
+      const url = new URL(href, "https://artace.invalid");
+      const path = url.pathname.replace(/\/+$/, "");
+      const segments = path.split("/").filter(Boolean);
+      if (segments.length === 0) continue;
+
+      const productIndex = segments.findIndex(
+        (segment) => segment === "product" || segment === "shop"
+      );
+      if (productIndex >= 0 && segments[productIndex + 1]) {
+        addSlug(segments[productIndex + 1]);
+        continue;
+      }
+
+      addSlug(segments[segments.length - 1]);
+    } catch {
+      // Ignore malformed permalinks.
+    }
+  }
+
+  return orderedSlugs;
+};
+
+const findMatchingCloseTag = (
+  html: string,
+  tagName: string,
+  startIndex: number
+) => {
+  const tagRegex = new RegExp(`<\\/?${tagName}\\b[^>]*>`, "gi");
+  tagRegex.lastIndex = startIndex;
+  let depth = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = tagRegex.exec(html)) !== null) {
+    const tag = match[0].toLowerCase();
+    if (tag.startsWith(`</${tagName}`)) {
+      depth -= 1;
+      if (depth === 0) {
+        return tagRegex.lastIndex;
+      }
+      continue;
+    }
+
+    if (tag.startsWith(`<${tagName}`)) {
+      depth += 1;
+    }
+  }
+
+  return null;
+};
+
+const extractDivBlockByClass = (html: string, className: string) => {
+  const openTagRegex = new RegExp(
+    `<div\\b[^>]*class=["'][^"']*${className}[^"']*["'][^>]*>`,
+    "i"
+  );
+  const match = openTagRegex.exec(html);
+  if (!match) return null;
+
+  const startIndex = match.index;
+  const endIndex = findMatchingCloseTag(html, "div", startIndex);
+  if (!endIndex) return null;
+
+  return {
+    startIndex,
+    endIndex,
+    blockHtml: html.slice(startIndex, endIndex),
+  };
+};
+
+/**
+ * Extracts RankMath TOC items (if present) and returns HTML without the TOC block.
+ */
+export const extractRankMathToc = (html: string) => {
+  const block = extractDivBlockByClass(html, "rank-math-toc");
+  if (!block) {
+    return { html, toc: [] as TocItem[] };
+  }
+
+  const tocItems: TocItem[] = [];
+  const linkRegex = /<a[^>]*href=["']#([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  let match: RegExpExecArray | null;
+  const seen = new Set<string>();
+
+  while ((match = linkRegex.exec(block.blockHtml)) !== null) {
+    const id = match[1]?.trim();
+    const label = stripHtmlAndDecode(match[2] ?? "").trim();
+    if (!id || !label || seen.has(id)) continue;
+    seen.add(id);
+    tocItems.push({ id, title: label, level: 2 });
+  }
+
+  const cleanedHtml =
+    html.slice(0, block.startIndex) + html.slice(block.endIndex);
+
+  return { html: cleanedHtml, toc: tocItems };
+};

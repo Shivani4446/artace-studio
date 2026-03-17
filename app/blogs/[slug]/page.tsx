@@ -4,6 +4,9 @@ import {
   estimateReadTimeMinutes,
   formatArticleDate,
   htmlToArticleContent,
+  extractWooCommerceProductIds,
+  extractWooCommerceProductSlugs,
+  extractRankMathToc,
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
@@ -21,13 +24,15 @@ type WordPressPost = {
   content?: { rendered?: string };
   modified?: string;
   author?: number;
+  tags?: number[];
   _embedded?: {
     author?: Array<Record<string, unknown>>;
+    ["wp:term"]?: Array<Array<{ id: number; name?: string; taxonomy?: string }>>;
   };
 };
 
 const getSiteUrl = () =>
-  (process.env.WOOCOMMERCE_SITE_URL || "https://api.artacestudio.com/").replace(
+  (process.env.WORDPRESS_API_URL || process.env.WOOCOMMERCE_SITE_URL || "https://api.artacestudio.com/").replace(
     /\/+$/,
     ""
   );
@@ -88,6 +93,35 @@ async function getAuthor(authorId: number) {
   return res.json();
 }
 
+async function getAllTags() {
+  const siteUrl = getSiteUrl();
+  const allTags: Array<{ id: number; name: string }> = [];
+  let page = 1;
+  let totalPages = 1;
+
+  do {
+    const res = await fetch(
+      `${siteUrl}/wp-json/wp/v2/tags?per_page=100&page=${page}`,
+      { next: { revalidate: 120 } }
+    );
+
+    if (!res.ok) {
+      return [];
+    }
+
+    const payload = await res.json();
+    allTags.push(...(Array.isArray(payload) ? payload : []));
+
+    const totalPagesHeader = res.headers.get("x-wp-totalpages");
+    const parsedTotalPages = totalPagesHeader ? Number(totalPagesHeader) : 1;
+    totalPages = Number.isFinite(parsedTotalPages) && parsedTotalPages > 0 ? parsedTotalPages : 1;
+
+    page += 1;
+  } while (page <= totalPages);
+
+  return allTags;
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPost(slug);
@@ -108,7 +142,12 @@ const SingleBlogPage = async ({ params }: Props) => {
   const titleHtml = decodeHtmlEntities(post.title?.rendered ?? "");
   const introHtml = decodeHtmlEntities(post.excerpt?.rendered ?? "");
   const decodedContent = decodeHtmlEntities(post.content?.rendered ?? "");
-  const { html: contentHtml, toc } = htmlToArticleContent(decodedContent);
+  const { html: contentWithoutRankMathToc, toc: rankMathToc } =
+    extractRankMathToc(decodedContent);
+  const { html: contentHtml, toc: fallbackToc } = htmlToArticleContent(
+    contentWithoutRankMathToc
+  );
+  const toc = rankMathToc.length > 0 ? rankMathToc : fallbackToc;
   const readTimeMinutes = estimateReadTimeMinutes(decodedContent);
   const formattedDate = post.modified
     ? formatArticleDate(post.modified)
@@ -122,6 +161,31 @@ const SingleBlogPage = async ({ params }: Props) => {
     author = await getAuthor(post.author);
   }
 
+  // Fetch all tags and extract tags for this post
+  const allTags = await getAllTags();
+  const tagNameById = new Map(allTags.map((tag) => [tag.id, tag.name]));
+  
+  // Get tags from both the tags array and embedded terms
+  const tagsFromIds = (post.tags ?? [])
+    .map((tagId) => tagNameById.get(tagId))
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
+  
+  const tagsFromEmbedded = (post._embedded?.["wp:term"] ?? [])
+    .flat()
+    .filter((term) => term.taxonomy === "post_tag")
+    .map((term) => stripHtmlAndDecode(term.name ?? ""))
+    .filter(Boolean);
+  
+  const resolvedTags = Array.from(
+    new Set([...tagsFromIds, ...tagsFromEmbedded])
+  );
+
+  // Extract product IDs from WooCommerce blocks in the content
+  const embeddedProductIds =
+    extractWooCommerceProductIds(contentWithoutRankMathToc);
+  const embeddedProductSlugs =
+    extractWooCommerceProductSlugs(contentWithoutRankMathToc);
+
   return (
     <main>
       <ArticleLayout
@@ -133,6 +197,9 @@ const SingleBlogPage = async ({ params }: Props) => {
         toc={toc}
         contentHtml={contentHtml}
         author={author}
+        tags={resolvedTags}
+        embeddedProductIds={embeddedProductIds}
+        embeddedProductSlugs={embeddedProductSlugs}
       />
     </main>
   );

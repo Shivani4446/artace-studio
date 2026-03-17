@@ -5,9 +5,19 @@ import { useEffect } from "react";
 /**
  * This component adds watermarks to product images without modifying the component structure.
  * It adds event listeners to prevent right-click and adds watermark overlays.
+ * 
+ * NOTE: This skips watermarks on blog pages (/blogs, /blog-test)
  */
 export default function ProductImageProtection() {
   useEffect(() => {
+    // Check if we're on a blog page - skip watermarks there
+    const path = window.location.pathname;
+    const isBlogPage = path.startsWith('/blogs') || path.startsWith('/blog');
+    
+    if (isBlogPage) {
+      return; // Skip entirely on blog pages
+    }
+
     // Function to add watermarks to image containers
     const addWatermarks = () => {
       // Find all image containers in product-related sections

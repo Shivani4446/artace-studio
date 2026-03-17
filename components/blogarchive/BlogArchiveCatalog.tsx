@@ -13,6 +13,7 @@ export type BlogArchivePost = {
   image: string;
   imageAlt: string;
   categories: string[];
+  tags: string[];
   publishedAt: string | null;
   modifiedAt: string | null;
 };

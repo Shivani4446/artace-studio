@@ -26,6 +26,7 @@ type WordPressPost = {
   date?: string;
   modified?: string;
   categories?: number[];
+  tags?: number[];
   _embedded?: {
     ["wp:featuredmedia"]?: Array<{
       source_url?: string;
@@ -40,8 +41,14 @@ type WordPressCategory = {
   name: string;
 };
 
+type WordPressTag = {
+  id: number;
+  name: string;
+};
+
 const getWordPressSiteUrl = () =>
   (
+    process.env.WORDPRESS_API_URL ||
     process.env.WOOCOMMERCE_SITE_URL ||
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
     DEFAULT_WORDPRESS_SITE_URL
@@ -94,7 +101,8 @@ const fetchAllCategories = async (siteUrl: string): Promise<WordPressCategory[]>
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch categories (${response.status}).`);
+      // Return empty array if categories endpoint is not available
+      return [];
     }
 
     const payload = (await response.json()) as WordPressCategory[];
@@ -113,11 +121,47 @@ const fetchAllCategories = async (siteUrl: string): Promise<WordPressCategory[]>
   return allCategories;
 };
 
+const fetchAllTags = async (siteUrl: string): Promise<WordPressTag[]> => {
+  const allTags: WordPressTag[] = [];
+  let page = 1;
+  let totalPages = 1;
+
+  do {
+    const response = await fetch(
+      `${siteUrl}/wp-json/wp/v2/tags?per_page=100&page=${page}`,
+      {
+        next: { revalidate: 120 },
+      }
+    );
+
+    if (!response.ok) {
+      // Tags endpoint might not be available, return empty array
+      return [];
+    }
+
+    const payload = (await response.json()) as WordPressTag[];
+    allTags.push(...(Array.isArray(payload) ? payload : []));
+
+    const totalPagesHeader = response.headers.get("x-wp-totalpages");
+    const parsedTotalPages = totalPagesHeader ? Number(totalPagesHeader) : 1;
+    totalPages =
+      Number.isFinite(parsedTotalPages) && parsedTotalPages > 0
+        ? parsedTotalPages
+        : 1;
+
+    page += 1;
+  } while (page <= totalPages);
+
+  return allTags;
+};
+
 const normalizePosts = (
   posts: WordPressPost[],
-  categories: WordPressCategory[]
+  categories: WordPressCategory[],
+  tags: WordPressTag[]
 ): BlogArchivePost[] => {
   const categoryNameById = new Map(categories.map((category) => [category.id, category.name]));
+  const tagNameById = new Map(tags.map((tag) => [tag.id, tag.name]));
 
   return posts.map((post) => {
     const title = stripHtmlAndDecode(post.title?.rendered ?? "");
@@ -141,6 +185,21 @@ const normalizePosts = (
       new Set([...categoriesFromIds, ...categoriesFromEmbedded])
     );
 
+    // Get tags from post
+    const tagsFromIds = (post.tags ?? [])
+      .map((tagId) => tagNameById.get(tagId))
+      .filter((value): value is string => typeof value === "string" && value.length > 0);
+
+    const tagsFromEmbedded = (post._embedded?.["wp:term"] ?? [])
+      .flat()
+      .filter((term) => term.taxonomy === "post_tag")
+      .map((term) => stripHtmlAndDecode(term.name ?? ""))
+      .filter(Boolean);
+
+    const resolvedTags = Array.from(
+      new Set([...tagsFromIds, ...tagsFromEmbedded])
+    );
+
     return {
       id: post.id,
       slug: post.slug,
@@ -149,6 +208,7 @@ const normalizePosts = (
       image,
       imageAlt,
       categories: resolvedCategories.length > 0 ? resolvedCategories : ["Uncategorized"],
+      tags: resolvedTags,
       publishedAt: post.date || null,
       modifiedAt: post.modified || post.date || null,
     };
@@ -161,11 +221,12 @@ const BlogsPage = async () => {
 
   try {
     const siteUrl = getWordPressSiteUrl();
-    const [rawPosts, rawCategories] = await Promise.all([
+    const [rawPosts, rawCategories, rawTags] = await Promise.all([
       fetchAllPosts(siteUrl),
       fetchAllCategories(siteUrl),
+      fetchAllTags(siteUrl),
     ]);
-    posts = normalizePosts(rawPosts, rawCategories);
+    posts = normalizePosts(rawPosts, rawCategories, rawTags);
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Unable to load blog posts.";
   }
