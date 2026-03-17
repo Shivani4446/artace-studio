@@ -57,19 +57,25 @@ const getWooAuthHeaders = () => {
 };
 
 async function fetchWooJson<T>(path: string, params: Record<string, string | number>) {
-  const url = new URL(`${getWooApiOrigin()}${getWpJsonPrefix()}${path}`);
-  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
+  try {
+    const url = new URL(`${getWooApiOrigin()}${getWpJsonPrefix()}${path}`);
+    for (const [key, value] of Object.entries(params)) {
+      url.searchParams.set(key, String(value));
+    }
 
-  const response = await fetch(url.toString(), {
-    headers: getWooAuthHeaders(),
-    next: { revalidate: REVALIDATE_SECONDS },
-  });
+    const response = await fetch(url.toString(), {
+      headers: getWooAuthHeaders(),
+      next: { revalidate: REVALIDATE_SECONDS },
+    });
 
-  if (!response.ok) {
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as T;
+  } catch {
     return null;
   }
-
-  return (await response.json()) as T;
 }
 
 async function getAllProducts() {
