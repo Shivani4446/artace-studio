@@ -12,7 +12,7 @@ import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -38,28 +38,6 @@ const getSiteUrl = () =>
     ""
   );
 
-async function getPostSlugs() {
-  try {
-    const siteUrl = getSiteUrl();
-    const response = await fetch(
-      `${siteUrl}/wp-json/wp/v2/posts?per_page=100&_fields=slug`,
-      {
-        next: { revalidate: 120 },
-      }
-    );
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const posts = (await response.json()) as Array<{ slug?: string }>;
-    return posts
-      .map((post) => post.slug?.trim())
-    .filter((slug): slug is string => Boolean(slug));
-  } catch {
-    return [];
-  }
-}
 async function getPost(slug: string): Promise<WordPressPost | null> {
   const siteUrl = getSiteUrl();
   const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
@@ -72,15 +50,6 @@ async function getPost(slug: string): Promise<WordPressPost | null> {
     return data[0] || null;
   } catch {
     return null;
-  }
-}
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getPostSlugs();
-    return slugs.map((slug) => ({ slug }));
-  } catch {
-    return [];
   }
 }
 

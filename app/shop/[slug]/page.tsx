@@ -4,7 +4,7 @@ import { decodeHtmlEntities } from "@/utils/text";
 
 export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -627,11 +627,6 @@ const getRelatedProductsForProduct = async (
 
   return mergedProducts.slice(0, RELATED_PRODUCTS_LIMIT).map(toRelatedCard);
 };
-
-export async function generateStaticParams() {
-  const slugs = await fetchAllProductSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
 
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { slug } = await params;
