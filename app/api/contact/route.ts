@@ -1,0 +1,196 @@
+import { NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+
+type ContactPayload = {
+  firstName: string;
+  lastName?: string;
+  email: string;
+  phone?: string;
+  country?: string;
+  company?: string;
+  message: string;
+  consent: boolean;
+  turnstileToken?: string;
+};
+
+const SUPABASE_URL =
+  process.env.SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env["Project URL"] ||
+  "";
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env["Anon Key"] ||
+  "";
+
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "info@artacestudio.com";
+
+const SMTP_HOST = process.env.SMTP_HOST || "";
+const SMTP_PORT = Number(process.env.SMTP_PORT || "0");
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const SMTP_FROM = process.env.SMTP_FROM || "";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
+
+const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
+
+const buildEmailText = (payload: ContactPayload) => {
+  return [
+    "New contact form submission:",
+    "",
+    `Name: ${payload.firstName} ${payload.lastName || ""}`.trim(),
+    `Email: ${payload.email}`,
+    payload.phone ? `Phone: ${payload.phone}` : "",
+    payload.country ? `Country: ${payload.country}` : "",
+    payload.company ? `Company: ${payload.company}` : "",
+    "",
+    "Message:",
+    payload.message,
+  ]
+    .filter(Boolean)
+    .join("\n");
+};
+
+const sendEmail = async (payload: ContactPayload) => {
+  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM) {
+    return { skipped: true };
+  }
+
+  const nodemailer = await import("nodemailer");
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: SMTP_PORT === 465,
+    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  });
+
+  await transporter.sendMail({
+    from: SMTP_FROM,
+    to: CONTACT_TO_EMAIL,
+    subject: `New contact request from ${payload.firstName}`,
+    text: buildEmailText(payload),
+  });
+
+  return { skipped: false };
+};
+
+export async function POST(request: Request) {
+  let payload: ContactPayload;
+
+  try {
+    payload = (await request.json()) as ContactPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
+
+  const sanitized: ContactPayload = {
+    firstName: String(payload.firstName || "").trim(),
+    lastName: String(payload.lastName || "").trim(),
+    email: String(payload.email || "").trim(),
+    phone: String(payload.phone || "").trim(),
+    country: String(payload.country || "").trim(),
+    company: String(payload.company || "").trim(),
+    message: String(payload.message || "").trim(),
+    consent: Boolean(payload.consent),
+    turnstileToken: String(payload.turnstileToken || "").trim(),
+  };
+
+  if (!sanitized.firstName || !sanitized.email || !sanitized.message) {
+    return NextResponse.json(
+      { error: "Please fill in the required fields." },
+      { status: 400 }
+    );
+  }
+
+  if (!isValidEmail(sanitized.email)) {
+    return NextResponse.json({ error: "Please provide a valid email address." }, { status: 400 });
+  }
+
+  if (!sanitized.consent) {
+    return NextResponse.json({ error: "Please accept the privacy policy." }, { status: 400 });
+  }
+
+  if (!TURNSTILE_SECRET_KEY) {
+    return NextResponse.json(
+      { error: "Turnstile is not configured on the server." },
+      { status: 500 }
+    );
+  }
+
+  if (!sanitized.turnstileToken) {
+    return NextResponse.json({ error: "Verification failed. Please try again." }, { status: 400 });
+  }
+
+  const turnstileResponse = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        secret: TURNSTILE_SECRET_KEY,
+        response: sanitized.turnstileToken,
+        remoteip: request.headers.get("x-forwarded-for") ?? "",
+      }),
+    }
+  );
+
+  const turnstileResult = (await turnstileResponse.json()) as { success?: boolean };
+
+  if (!turnstileResult?.success) {
+    return NextResponse.json(
+      { error: "Verification failed. Please refresh and try again." },
+      { status: 400 }
+    );
+  }
+
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Supabase credentials are not configured on the server." },
+      { status: 500 }
+    );
+  }
+
+  const insertResponse = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages`, {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_SERVICE_ROLE_KEY,
+      Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "return=representation",
+    },
+    body: JSON.stringify({
+      first_name: sanitized.firstName,
+      last_name: sanitized.lastName || null,
+      email: sanitized.email,
+      phone: sanitized.phone || null,
+      country: sanitized.country || null,
+      company: sanitized.company || null,
+      message: sanitized.message,
+      consent: sanitized.consent,
+      user_agent: request.headers.get("user-agent"),
+      ip_address: request.headers.get("x-forwarded-for"),
+    }),
+  });
+
+  if (!insertResponse.ok) {
+    const errorText = await insertResponse.text();
+    return NextResponse.json(
+      { error: "Could not save your message. Please try again.", details: errorText },
+      { status: 500 }
+    );
+  }
+
+  try {
+    await sendEmail(sanitized);
+  } catch {
+    return NextResponse.json(
+      { error: "Message saved, but email delivery failed. Please check email settings." },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ok: true });
+}

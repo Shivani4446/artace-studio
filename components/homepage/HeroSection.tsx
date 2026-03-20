@@ -9,12 +9,13 @@ const HeroSection = () => {
       <div className="relative h-[88vh] min-h-[560px] w-full bg-black md:h-[92vh] md:min-h-[620px]">
         <div className="absolute inset-x-0 bottom-0 h-[48%] md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[56%]">
           <Image
-            src="/nandikeshavara-hero-bg.webp"
-            alt="Nandikeshavara hero artwork background"
+            src="/radha-krishna-hero-bg.webp"
+            alt="Radha Krishna hero artwork background"
             fill
             priority
             className="object-cover object-center md:object-[84%_center]"
           />
+          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/55 to-black/95" />
           <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-transparent md:hidden" />
         </div>
 

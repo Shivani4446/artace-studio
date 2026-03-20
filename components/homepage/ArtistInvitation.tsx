@@ -7,20 +7,8 @@ const ArtistInvitation = () => {
   return (
     <section className="w-full bg-[#020304] py-12 text-white md:py-16 lg:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
-        <div className="relative w-full overflow-hidden">
-          <div className="relative aspect-[16/10] w-full md:aspect-[16/9]">
-            <Image
-              src="/Nandikeshavara.jpg"
-              alt="Nandikeshavara artwork"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 1240px"
-              priority
-            />
-          </div>
-        </div>
-
-        <div className="mt-10 max-w-[840px] md:mt-12">
+        <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between md:gap-12">
+          <div className="max-w-[840px] md:max-w-[720px]">
           <h2 className="font-display text-left text-[34px] leading-[1.1] text-white sm:text-[40px] md:text-[52px]">
             An Invitation to Artists: Share Your Story with Our Collectors</h2>
 
@@ -38,6 +26,19 @@ const ArtistInvitation = () => {
             Partner With Us
             <ArrowUpRight className="h-4 w-4" strokeWidth={1.9} />
           </Link>
+          </div>
+
+          <div className="w-full max-w-[420px] md:w-[38%]">
+            <div className="relative h-[220px] w-full sm:h-[260px] md:h-[300px] lg:h-[320px]">
+              <Image
+                src="/partner-with-us.svg"
+                alt="Partner with Artace Studio"
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 40vw, 420px"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

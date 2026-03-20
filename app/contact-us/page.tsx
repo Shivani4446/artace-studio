@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 import {
   Search,
   MessageCircle,
@@ -11,9 +14,110 @@ import {
 const ContactPage = () => {
   // Brand Gold Color: #C5A059 (approx)
   // Footer Dark: #0A0A0A
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileSiteKey =
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || process.env.TURNSTILE_SITE_KEY || "";
+  const turnstileRef = useRef<HTMLDivElement | null>(null);
+  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      const turnstile = (window as Window & { turnstile?: { remove: (id: string) => void } })
+        .turnstile;
+      if (turnstileWidgetId && turnstile) {
+        turnstile.remove(turnstileWidgetId);
+      }
+    };
+  }, [turnstileWidgetId]);
+
+  const handleTurnstileLoad = () => {
+    const turnstile = (
+      window as Window & {
+        turnstile?: {
+          render: (
+            container: HTMLElement,
+            options: {
+              sitekey: string;
+              callback: (token: string) => void;
+              "expired-callback": () => void;
+              "error-callback": () => void;
+            }
+          ) => string;
+        };
+      }
+    ).turnstile;
+
+    if (!turnstile || !turnstileRef.current || !turnstileSiteKey) {
+      return;
+    }
+
+    if (turnstileWidgetId) {
+      return;
+    }
+
+    const widgetId = turnstile.render(turnstileRef.current, {
+      sitekey: turnstileSiteKey,
+      callback: (token: string) => setTurnstileToken(token),
+      "expired-callback": () => setTurnstileToken(""),
+      "error-callback": () => setTurnstileToken(""),
+    });
+
+    setTurnstileWidgetId(widgetId);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus("submitting");
+    setErrorMessage("");
+
+    const formData = new FormData(event.currentTarget);
+    const payload = {
+      firstName: String(formData.get("firstName") ?? "").trim(),
+      lastName: String(formData.get("lastName") ?? "").trim(),
+      email: String(formData.get("email") ?? "").trim(),
+      phone: String(formData.get("phone") ?? "").trim(),
+      country: String(formData.get("country") ?? "").trim(),
+      company: String(formData.get("company") ?? "").trim(),
+      message: String(formData.get("message") ?? "").trim(),
+      consent: formData.get("privacyConsent") === "on",
+      turnstileToken,
+    };
+
+    try {
+      if (!turnstileToken) {
+        throw new Error("Please complete the verification challenge.");
+      }
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error ?? "We could not send your message. Please try again.");
+      }
+
+      setStatus("success");
+      event.currentTarget.reset();
+      setTurnstileToken("");
+    } catch (error) {
+      setStatus("error");
+      setErrorMessage(error instanceof Error ? error.message : "We could not send your message.");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans selection:bg-[#C5A059]/20">
+      <Script
+        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+        async
+        defer
+        onLoad={handleTurnstileLoad}
+      />
       <main className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* --- HERO / CONTACT US --- */}
         <section className="pt-32">
@@ -79,12 +183,18 @@ const ContactPage = () => {
           </div>
 
           <div className="flex-grow">
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
+            <form
+              className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12"
+              onSubmit={handleSubmit}
+            >
               <div className="border-b border-gray-200 pb-3">
                 <input
                   type="text"
                   placeholder="First Name"
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="firstName"
+                  required
+                  autoComplete="given-name"
                 />
               </div>
               <div className="border-b border-gray-200 pb-3">
@@ -92,6 +202,8 @@ const ContactPage = () => {
                   type="text"
                   placeholder="Last Name"
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="lastName"
+                  autoComplete="family-name"
                 />
               </div>
               <div className="border-b border-gray-200 pb-3">
@@ -99,6 +211,9 @@ const ContactPage = () => {
                   type="email"
                   placeholder="Email Address"
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="email"
+                  required
+                  autoComplete="email"
                 />
               </div>
               <div className="border-b border-gray-200 pb-3">
@@ -106,6 +221,8 @@ const ContactPage = () => {
                   type="tel"
                   placeholder="Phone No."
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="phone"
+                  autoComplete="tel"
                 />
               </div>
               <div className="border-b border-gray-200 pb-3">
@@ -113,6 +230,8 @@ const ContactPage = () => {
                   type="text"
                   placeholder="Country"
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="country"
+                  autoComplete="country-name"
                 />
               </div>
               <div className="border-b border-gray-200 pb-3">
@@ -120,6 +239,8 @@ const ContactPage = () => {
                   type="text"
                   placeholder="Company Name"
                   className="w-full outline-none text-[18px] placeholder:text-[#595959]"
+                  name="company"
+                  autoComplete="organization"
                 />
               </div>
               <div className="md:col-span-2 border-b border-gray-200 pb-3">
@@ -127,12 +248,18 @@ const ContactPage = () => {
                   placeholder="Write Your Message"
                   rows={1}
                   className="w-full outline-none text-[18px] placeholder:text-[#595959] resize-none"
+                  name="message"
+                  required
                 />
               </div>
 
               <div className="md:col-span-2 flex flex-col md:flex-row items-center gap-10 pt-4">
-                <button className="bg-[#292929] text-white px-[24px] py-[16px] rounded text-[18px] hover:bg-black transition-all flex items-center gap-[14px]">
-                  Send Message
+                <button
+                  className="bg-[#292929] text-white px-[24px] py-[16px] rounded text-[18px] hover:bg-black transition-all flex items-center gap-[14px] disabled:opacity-60 disabled:cursor-not-allowed"
+                  type="submit"
+                  disabled={status === "submitting"}
+                >
+                  {status === "submitting" ? "Sending..." : "Send Message"}
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5.25 5.25H12.75V12.75" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                     <path d="M5.25 12.75L12.75 5.25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -143,6 +270,8 @@ const ContactPage = () => {
                     type="checkbox"
                     id="privacy"
                     className="w-4 h-4 accent-[#222] border-gray-300"
+                    name="privacyConsent"
+                    required
                   />
                   <label htmlFor="privacy">
                     I Agree to the{" "}
@@ -152,11 +281,31 @@ const ContactPage = () => {
                   </label>
                 </div>
               </div>
+              <div className="md:col-span-2 -mt-2">
+                {turnstileSiteKey ? (
+                  <div ref={turnstileRef} />
+                ) : (
+                  <p className="text-[14px] text-red-600">
+                    Turnstile site key is missing. Check your environment variables.
+                  </p>
+                )}
+              </div>
 
-              <p className="md:col-span-2 text-[14px] text-[#595959] -mt-4">
-                This site is protected by reCAPTCHA and the Google Privacy
-                Policy and Terms of Service apply.
-              </p>
+              {status === "success" ? (
+                <p className="md:col-span-2 text-[14px] text-green-700 -mt-4">
+                  Thanks for reaching out! We&apos;ve received your message and will
+                  respond shortly.
+                </p>
+              ) : null}
+              {status === "error" ? (
+                <p className="md:col-span-2 text-[14px] text-red-600 -mt-4">
+                  {errorMessage || "We could not send your message. Please try again."}
+                </p>
+              ) : (
+                <p className="md:col-span-2 text-[14px] text-[#595959] -mt-4">
+                  This site is protected by Cloudflare Turnstile.
+                </p>
+              )}
             </form>
           </div>
         </section>
