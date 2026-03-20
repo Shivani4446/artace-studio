@@ -6,6 +6,7 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { decodeHtmlEntities } from "@/utils/text";
 
+export const runtime = "edge";
 export const revalidate = 120;
 export const dynamicParams = false;
 

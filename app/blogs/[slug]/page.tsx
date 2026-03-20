@@ -10,6 +10,7 @@ import {
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
+export const runtime = "edge";
 export const revalidate = 120;
 export const dynamicParams = false;
 
