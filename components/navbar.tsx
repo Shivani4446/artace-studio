@@ -174,10 +174,10 @@ const DesktopNavArrow = ({ isOpen }: { isOpen: boolean }) => (
   <Image
     src="/slant-down-arrow-right.svg"
     alt=""
-    width={14}
-    height={14}
+    width={18}
+    height={18}
     aria-hidden="true"
-    className={`h-[14px] w-[14px] transition-transform duration-200 ${
+    className={`h-[18px] w-[18px] transition-transform duration-200 ${
       isOpen ? "translate-x-[1px] translate-y-[1px]" : ""
     }`}
   />
@@ -597,14 +597,6 @@ const Navbar = () => {
                 <button
                   key={link.name}
                   type="button"
-                  onMouseEnter={() => {
-                    setIsAccountMenuOpen(false);
-                    setOpenDesktopMenu(link.menuId);
-                  }}
-                  onFocus={() => {
-                    setIsAccountMenuOpen(false);
-                    setOpenDesktopMenu(link.menuId);
-                  }}
                   onClick={() => toggleDesktopMenu(link.menuId)}
                   className={`inline-flex items-center gap-2 font-inter text-[18px] font-medium leading-none transition-colors hover:text-black ${
                     openDesktopMenu === link.menuId ? "text-black" : "text-[#2f2f2f]"
@@ -865,15 +857,19 @@ const Navbar = () => {
         </div>
 
         <div
-          className={`absolute left-0 right-0 top-full hidden max-h-[calc(100vh-118px)] overflow-y-auto border-t border-[#d8d3ca] bg-[#f4f2ee] transition-all duration-200 lg:block ${
+          className={`absolute left-0 right-0 top-full hidden transition-all duration-200 lg:block ${
             isDesktopMenuOpen
               ? "visible translate-y-0 opacity-100"
               : "invisible -translate-y-2 opacity-0"
           }`}
           onMouseLeave={closeDesktopMenu}
         >
-          <div className="mx-auto max-w-[1440px] px-6 py-8 md:px-12">
-            {renderDesktopMenu()}
+          <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+            <div className="mt-4 max-h-[calc(100vh-140px)] overflow-y-auto rounded-[12px] border border-[#d8d3ca] bg-[#f4f2ee] shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
+              <div className="px-6 py-8 md:px-12">
+                {renderDesktopMenu()}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1058,17 +1054,6 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-
-      <button
-        type="button"
-        aria-label="Close menu"
-        onClick={closeDesktopMenu}
-        className={`fixed inset-0 top-[88px] z-40 hidden bg-[#f7f2ea]/40 backdrop-blur-[10px] transition-opacity duration-300 md:top-[102px] lg:block ${
-          isDesktopMenuOpen
-            ? "pointer-events-auto opacity-100"
-            : "pointer-events-none opacity-0"
-        }`}
-      />
 
       <div
         className={`fixed inset-0 z-[70] transition-opacity duration-300 ease-out ${

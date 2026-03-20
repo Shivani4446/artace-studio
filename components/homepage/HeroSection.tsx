@@ -23,7 +23,7 @@ const HeroSection = () => {
             <div className="w-full text-left text-white md:w-[70%] lg:w-[64%]">
               <h1 className="font-display text-[30px] font-semibold leading-[1.08] sm:text-[34px] md:text-[36px] lg:text-[44px] xl:text-[52px]">
                 <span className="block md:whitespace-nowrap">Handcrafted Canvas Paintings,</span>
-                <span className="block md:whitespace-nowrap">Bespoke to Your Vision.</span>
+                <span className="block md:whitespace-nowrap">Bespoke to Your Vision</span>
               </h1>
               <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/90 md:mt-5 md:text-[18px]">
                 Stop searching for the perfect piece. Experience the soul of authentic
