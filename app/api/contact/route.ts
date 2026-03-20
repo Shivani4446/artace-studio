@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "nodejs";
+export const runtime = "edge";
 
 type ContactPayload = {
   firstName: string;
@@ -28,11 +28,8 @@ const SUPABASE_SERVICE_ROLE_KEY =
 
 const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "info@artacestudio.com";
 
-const SMTP_HOST = process.env.SMTP_HOST || "";
-const SMTP_PORT = Number(process.env.SMTP_PORT || "0");
-const SMTP_USER = process.env.SMTP_USER || "";
-const SMTP_PASS = process.env.SMTP_PASS || "";
-const SMTP_FROM = process.env.SMTP_FROM || "";
+const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+const RESEND_FROM = process.env.RESEND_FROM || "";
 const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
 
 const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
@@ -55,24 +52,28 @@ const buildEmailText = (payload: ContactPayload) => {
 };
 
 const sendEmail = async (payload: ContactPayload) => {
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS || !SMTP_FROM) {
+  if (!RESEND_API_KEY || !RESEND_FROM) {
     return { skipped: true };
   }
 
-  const nodemailer = await import("nodemailer");
-  const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
+  const response = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: RESEND_FROM,
+      to: [CONTACT_TO_EMAIL],
+      subject: `New contact request from ${payload.firstName}`,
+      text: buildEmailText(payload),
+    }),
   });
 
-  await transporter.sendMail({
-    from: SMTP_FROM,
-    to: CONTACT_TO_EMAIL,
-    subject: `New contact request from ${payload.firstName}`,
-    text: buildEmailText(payload),
-  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Email delivery failed.");
+  }
 
   return { skipped: false };
 };
@@ -184,7 +185,13 @@ export async function POST(request: Request) {
   }
 
   try {
-    await sendEmail(sanitized);
+    const emailResult = await sendEmail(sanitized);
+    if (emailResult.skipped) {
+      return NextResponse.json(
+        { error: "Message saved, but email is not configured." },
+        { status: 500 }
+      );
+    }
   } catch {
     return NextResponse.json(
       { error: "Message saved, but email delivery failed. Please check email settings." },
