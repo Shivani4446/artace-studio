@@ -458,6 +458,14 @@ const Navbar = () => {
                 </div>
               ))}
             </div>
+            <Link
+              href="/corporate-bulk-orders"
+              onClick={closeDesktopMenu}
+              className="mt-6 inline-flex items-center gap-2 rounded-[12px] border border-[#ebe5dc] px-4 py-3 font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f4efe7]"
+            >
+              Corporate & Bulk Orders
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
           </div>
 
           <div className="grid grid-rows-[1fr_auto] gap-4">
