@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Search,
@@ -133,6 +134,15 @@ type MobileMenuLink = {
   children?: MobileMenuSubLink[];
 };
 
+type SearchSuggestion = {
+  id: string;
+  type: "product" | "blog" | "collection" | "page";
+  title: string;
+  href: string;
+  subtitle?: string;
+  image?: string;
+};
+
 const mobileLinks: MobileMenuLink[] = [
   { name: "Home", href: "/" },
   {
@@ -193,9 +203,16 @@ const Navbar = () => {
   );
   const [desktopSearchValue, setDesktopSearchValue] = useState("");
   const [mobileSearchValue, setMobileSearchValue] = useState("");
+  const [desktopSuggestions, setDesktopSuggestions] = useState<SearchSuggestion[]>([]);
+  const [mobileSuggestions, setMobileSuggestions] = useState<SearchSuggestion[]>([]);
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isDesktopSearchLoading, setIsDesktopSearchLoading] = useState(false);
+  const [isMobileSearchLoading, setIsMobileSearchLoading] = useState(false);
   const [placeholderIndex, setPlaceholderIndex] = useState(0);
   const [isPlaceholderSliding, setIsPlaceholderSliding] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
   const { session, status: authStatus } = useAuthSession();
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
@@ -317,6 +334,84 @@ const Navbar = () => {
       }
     };
   }, []);
+
+  const handleSearchSubmit = (value: string) => {
+    const query = value.trim();
+    if (!query) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+    setIsDesktopSearchOpen(false);
+    setIsMobileSearchOpen(false);
+  };
+
+  useEffect(() => {
+    const query = desktopSearchValue.trim();
+    if (query.length < 2) {
+      setDesktopSuggestions([]);
+      setIsDesktopSearchLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    const timer = window.setTimeout(async () => {
+      setIsDesktopSearchLoading(true);
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=6`);
+        if (!isActive) return;
+        if (response.ok) {
+          const data = (await response.json()) as { suggestions?: SearchSuggestion[] };
+          setDesktopSuggestions(data.suggestions ?? []);
+        }
+      } catch {
+        if (isActive) {
+          setDesktopSuggestions([]);
+        }
+      } finally {
+        if (isActive) {
+          setIsDesktopSearchLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      isActive = false;
+      window.clearTimeout(timer);
+    };
+  }, [desktopSearchValue]);
+
+  useEffect(() => {
+    const query = mobileSearchValue.trim();
+    if (query.length < 2) {
+      setMobileSuggestions([]);
+      setIsMobileSearchLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    const timer = window.setTimeout(async () => {
+      setIsMobileSearchLoading(true);
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}&limit=6`);
+        if (!isActive) return;
+        if (response.ok) {
+          const data = (await response.json()) as { suggestions?: SearchSuggestion[] };
+          setMobileSuggestions(data.suggestions ?? []);
+        }
+      } catch {
+        if (isActive) {
+          setMobileSuggestions([]);
+        }
+      } finally {
+        if (isActive) {
+          setIsMobileSearchLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      isActive = false;
+      window.clearTimeout(timer);
+    };
+  }, [mobileSearchValue]);
 
   const isDesktopMenuOpen = openDesktopMenu !== null;
 
@@ -635,6 +730,16 @@ const Navbar = () => {
                   aria-label="Search"
                   value={desktopSearchValue}
                   onChange={(event) => setDesktopSearchValue(event.target.value)}
+                  onFocus={() => setIsDesktopSearchOpen(true)}
+                  onBlur={() => {
+                    window.setTimeout(() => setIsDesktopSearchOpen(false), 150);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleSearchSubmit(desktopSearchValue);
+                    }
+                  }}
                   className="relative z-10 bg-transparent border-none outline-none text-[16px] text-[#333333] w-full font-inter"
                 />
                 {desktopSearchValue.length === 0 && (
@@ -665,6 +770,66 @@ const Navbar = () => {
                     </span>
                   </span>
                 )}
+
+                {isDesktopSearchOpen &&
+                  desktopSearchValue.trim().length >= 2 &&
+                  (isDesktopSearchLoading || desktopSuggestions.length > 0) && (
+                    <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[70] rounded-[16px] border border-black/10 bg-white p-3 shadow-[0_16px_40px_rgba(0,0,0,0.12)]">
+                      {isDesktopSearchLoading ? (
+                        <p className="px-3 py-2 text-[14px] text-[#6b6b6b]">
+                          Searching...
+                        </p>
+                      ) : null}
+                      {desktopSuggestions.map((suggestion) => (
+                        <Link
+                          key={suggestion.id}
+                          href={suggestion.href}
+                          onClick={() => setIsDesktopSearchOpen(false)}
+                          className="flex items-center gap-3 rounded-[12px] px-3 py-2 transition-colors hover:bg-[#f6f3ee]"
+                        >
+                          {suggestion.image ? (
+                            <span className="relative h-10 w-10 overflow-hidden rounded-[10px] bg-[#f1f1f1]">
+                              <Image
+                                src={suggestion.image}
+                                alt=""
+                                fill
+                                sizes="40px"
+                                className="object-cover"
+                              />
+                            </span>
+                          ) : (
+                            <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#f1f1f1] text-[12px] font-semibold text-[#7a7368]">
+                              {suggestion.type === "product"
+                                ? "Art"
+                                : suggestion.type === "blog"
+                                ? "Blog"
+                                : suggestion.type === "collection"
+                                ? "Col"
+                                : "Page"}
+                            </span>
+                          )}
+                          <div className="min-w-0">
+                            <p className="truncate text-[14px] font-medium text-[#2c2c2c]">
+                              {suggestion.title}
+                            </p>
+                            {suggestion.subtitle ? (
+                              <p className="text-[12px] text-[#7a7368]">
+                                {suggestion.subtitle}
+                              </p>
+                            ) : null}
+                          </div>
+                        </Link>
+                      ))}
+                      <button
+                        type="button"
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={() => handleSearchSubmit(desktopSearchValue)}
+                        className="mt-2 w-full rounded-[10px] border border-black/10 px-3 py-2 text-[13px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f6f3ee]"
+                      >
+                        See all results for "{desktopSearchValue.trim()}"
+                      </button>
+                    </div>
+                  )}
               </div>
             </div>
 
@@ -892,6 +1057,17 @@ const Navbar = () => {
                     aria-label="Search"
                     value={mobileSearchValue}
                     onChange={(event) => setMobileSearchValue(event.target.value)}
+                    onFocus={() => setIsMobileSearchOpen(true)}
+                    onBlur={() => {
+                      window.setTimeout(() => setIsMobileSearchOpen(false), 150);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault();
+                        handleSearchSubmit(mobileSearchValue);
+                        closeMobileMenu();
+                      }
+                    }}
                     className="relative z-10 bg-transparent border-none outline-none text-[16px] text-[#333333] w-full font-inter"
                   />
                   {mobileSearchValue.length === 0 && (
@@ -922,6 +1098,72 @@ const Navbar = () => {
                       </span>
                     </span>
                   )}
+
+                  {isMobileSearchOpen &&
+                    mobileSearchValue.trim().length >= 2 &&
+                    (isMobileSearchLoading || mobileSuggestions.length > 0) && (
+                      <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[70] rounded-[16px] border border-black/10 bg-white p-3 shadow-[0_16px_40px_rgba(0,0,0,0.12)]">
+                        {isMobileSearchLoading ? (
+                          <p className="px-3 py-2 text-[14px] text-[#6b6b6b]">
+                            Searching...
+                          </p>
+                        ) : null}
+                        {mobileSuggestions.map((suggestion) => (
+                          <Link
+                            key={suggestion.id}
+                            href={suggestion.href}
+                            onClick={() => {
+                              setIsMobileSearchOpen(false);
+                              closeMobileMenu();
+                            }}
+                            className="flex items-center gap-3 rounded-[12px] px-3 py-2 transition-colors hover:bg-[#f6f3ee]"
+                          >
+                            {suggestion.image ? (
+                              <span className="relative h-10 w-10 overflow-hidden rounded-[10px] bg-[#f1f1f1]">
+                                <Image
+                                  src={suggestion.image}
+                                  alt=""
+                                  fill
+                                  sizes="40px"
+                                  className="object-cover"
+                                />
+                              </span>
+                            ) : (
+                              <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#f1f1f1] text-[12px] font-semibold text-[#7a7368]">
+                                {suggestion.type === "product"
+                                  ? "Art"
+                                  : suggestion.type === "blog"
+                                  ? "Blog"
+                                  : suggestion.type === "collection"
+                                  ? "Col"
+                                  : "Page"}
+                              </span>
+                            )}
+                            <div className="min-w-0">
+                              <p className="truncate text-[14px] font-medium text-[#2c2c2c]">
+                                {suggestion.title}
+                              </p>
+                              {suggestion.subtitle ? (
+                                <p className="text-[12px] text-[#7a7368]">
+                                  {suggestion.subtitle}
+                                </p>
+                              ) : null}
+                            </div>
+                          </Link>
+                        ))}
+                        <button
+                          type="button"
+                          onMouseDown={(event) => event.preventDefault()}
+                          onClick={() => {
+                            handleSearchSubmit(mobileSearchValue);
+                            closeMobileMenu();
+                          }}
+                          className="mt-2 w-full rounded-[10px] border border-black/10 px-3 py-2 text-[13px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f6f3ee]"
+                        >
+                          See all results for "{mobileSearchValue.trim()}"
+                        </button>
+                      </div>
+                    )}
                 </div>
               </div>
 
