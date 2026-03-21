@@ -29,7 +29,7 @@ export async function GET(request: Request) {
   const suggestions: Suggestion[] = [
     ...products.map((product) => ({
       id: `product-${product.id}`,
-      type: "product",
+      type: "product" as const,
       title: product.name,
       href: `/shop/${product.slug}`,
       subtitle: "Artwork",
@@ -37,21 +37,21 @@ export async function GET(request: Request) {
     })),
     ...collections.map((collection) => ({
       id: `collection-${collection.id}`,
-      type: "collection",
+      type: "collection" as const,
       title: collection.title,
       href: collection.href,
       subtitle: "Collection",
     })),
     ...blogs.map((post) => ({
       id: `blog-${post.id}`,
-      type: "blog",
+      type: "blog" as const,
       title: post.title,
       href: `/blogs/${post.slug}`,
       subtitle: "Journal",
     })),
     ...pages.map((page) => ({
       id: `page-${page.id}`,
-      type: "page",
+      type: "page" as const,
       title: page.title,
       href: page.href,
       subtitle: "Page",
