@@ -10,6 +10,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
 import ProductImageProtection from "./product-image-protection";
+import PromotionModal from "@/components/ui/PromotionModal";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -70,6 +71,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           <CartProvider>
             <WishlistProvider>
+              <PromotionModal />
               <ProductImageProtection />
               <Navbar />
               {children}
