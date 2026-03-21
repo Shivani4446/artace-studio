@@ -43,7 +43,7 @@ export default function HeroSection() {
           <p
             className={`${inter.className} text-base font-light tracking-wide text-white/90 sm:text-lg md:text-xl`}
           >
-            If you care deeply about art, quality, and meaning - you belong here.
+            If you care deeply about art, quality, and meaning you belong here.
           </p>
 
         </div>
