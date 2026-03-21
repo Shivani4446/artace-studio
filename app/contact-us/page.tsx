@@ -21,6 +21,7 @@ const ContactPage = () => {
     setStatus("submitting");
     setErrorMessage("");
 
+    const form = event.currentTarget;
     const formData = new FormData(event.currentTarget);
     const payload = {
       firstName: String(formData.get("firstName") ?? "").trim(),
@@ -46,7 +47,7 @@ const ContactPage = () => {
       }
 
       setStatus("success");
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       setStatus("error");
       setErrorMessage(error instanceof Error ? error.message : "We could not send your message.");
