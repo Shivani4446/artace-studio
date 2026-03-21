@@ -16,6 +16,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = (searchParams.get("q") || "").trim();
   const limit = Math.min(Number(searchParams.get("limit") || "6"), 10);
+  const mode = (searchParams.get("mode") || "suggest").trim();
 
   if (query.length < 2) {
     return NextResponse.json({ suggestions: [] });
@@ -57,6 +58,16 @@ export async function GET(request: Request) {
       subtitle: "Page",
     })),
   ].slice(0, limit);
+
+  if (mode === "full") {
+    return NextResponse.json({
+      products,
+      blogs,
+      collections,
+      pages,
+      suggestions,
+    });
+  }
 
   return NextResponse.json({ suggestions });
 }

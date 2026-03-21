@@ -1,20 +1,97 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { fetchSearchResults } from "@/lib/search";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export const runtime = "edge";
-export const dynamic = "force-dynamic";
-
-type SearchPageProps = {
-  searchParams?: { q?: string };
+type SearchProduct = {
+  id: number;
+  name: string;
+  slug: string;
+  image?: string;
 };
 
-const SearchPage = async ({ searchParams }: SearchPageProps) => {
-  const query = (searchParams?.q || "").trim();
-  const { products, blogs, collections, pages } = await fetchSearchResults(query, {
-    productLimit: 12,
-    blogLimit: 8,
+type SearchBlogPost = {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+};
+
+type SearchCollection = {
+  id: string;
+  title: string;
+  href: string;
+};
+
+type SearchPage = {
+  id: string;
+  title: string;
+  href: string;
+};
+
+type SearchResponse = {
+  products: SearchProduct[];
+  blogs: SearchBlogPost[];
+  collections: SearchCollection[];
+  pages: SearchPage[];
+};
+
+const SearchPage = () => {
+  const searchParams = useSearchParams();
+  const query = useMemo(() => (searchParams.get("q") || "").trim(), [searchParams]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [results, setResults] = useState<SearchResponse>({
+    products: [],
+    blogs: [],
+    collections: [],
+    pages: [],
   });
+
+  useEffect(() => {
+    let isActive = true;
+
+    const fetchResults = async () => {
+      if (!query) {
+        setResults({ products: [], blogs: [], collections: [], pages: [] });
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `/api/search?mode=full&q=${encodeURIComponent(query)}&limit=12`
+        );
+        if (!isActive) return;
+        if (response.ok) {
+          const data = (await response.json()) as SearchResponse;
+          setResults({
+            products: data.products ?? [],
+            blogs: data.blogs ?? [],
+            collections: data.collections ?? [],
+            pages: data.pages ?? [],
+          });
+        } else {
+          setResults({ products: [], blogs: [], collections: [], pages: [] });
+        }
+      } catch {
+        if (isActive) {
+          setResults({ products: [], blogs: [], collections: [], pages: [] });
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchResults();
+
+    return () => {
+      isActive = false;
+    };
+  }, [query]);
 
   return (
     <main className="bg-white text-[#1a1a1a]">
@@ -35,6 +112,10 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
 
         {query && (
           <div className="mt-10 grid gap-12">
+            {isLoading ? (
+              <p className="text-[15px] text-[#777]">Searching...</p>
+            ) : null}
+
             <section>
               <div className="flex items-end justify-between gap-4">
                 <h2 className="font-display text-[24px] text-[#2c2c2c]">Artworks</h2>
@@ -45,13 +126,13 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
                   Shop all art
                 </Link>
               </div>
-              {products.length === 0 ? (
+              {results.products.length === 0 ? (
                 <p className="mt-4 text-[15px] text-[#777]">
                   No artworks found for this query.
                 </p>
               ) : (
                 <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {products.map((product) => (
+                  {results.products.map((product) => (
                     <Link
                       key={product.id}
                       href={`/shop/${product.slug}`}
@@ -87,13 +168,13 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
                   View collections
                 </Link>
               </div>
-              {collections.length === 0 ? (
+              {results.collections.length === 0 ? (
                 <p className="mt-4 text-[15px] text-[#777]">
                   No collections found for this query.
                 </p>
               ) : (
                 <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {collections.map((collection) => (
+                  {results.collections.map((collection) => (
                     <Link
                       key={collection.id}
                       href={collection.href}
@@ -118,13 +199,13 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
               <div className="flex items-end justify-between gap-4">
                 <h2 className="font-display text-[24px] text-[#2c2c2c]">Pages</h2>
               </div>
-              {pages.length === 0 ? (
+              {results.pages.length === 0 ? (
                 <p className="mt-4 text-[15px] text-[#777]">
                   No pages found for this query.
                 </p>
               ) : (
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  {pages.map((page) => (
+                  {results.pages.map((page) => (
                     <Link
                       key={page.id}
                       href={page.href}
@@ -152,13 +233,13 @@ const SearchPage = async ({ searchParams }: SearchPageProps) => {
                   Explore all blogs
                 </Link>
               </div>
-              {blogs.length === 0 ? (
+              {results.blogs.length === 0 ? (
                 <p className="mt-4 text-[15px] text-[#777]">
                   No journal posts found for this query.
                 </p>
               ) : (
                 <div className="mt-6 grid gap-6 lg:grid-cols-2">
-                  {blogs.map((post) => (
+                  {results.blogs.map((post) => (
                     <Link
                       key={post.id}
                       href={`/blogs/${post.slug}`}

@@ -2,9 +2,8 @@ import React from "react";
 import SingleProduct from "@/components/singleproduct/SingleProduct";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -650,3 +649,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
 };
 
 export default SingleProductPage;
+export async function generateStaticParams() {
+  const slugs = await fetchAllProductSlugs();
+  return slugs.map((slug) => ({ slug }));
+}

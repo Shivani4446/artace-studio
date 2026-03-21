@@ -6,9 +6,8 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -338,3 +337,12 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
 };
 
 export default CollectionPage;
+export async function generateStaticParams() {
+  const categories = await fetchCategories();
+
+  return categories
+    .filter((category) => category.slug.trim().length > 0)
+    .map((category) => ({
+      slug: category.slug,
+    }));
+}
