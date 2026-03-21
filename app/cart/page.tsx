@@ -172,6 +172,15 @@ export default function CartPage() {
             <p className="mt-3 text-sm leading-6 text-[#666]">
               Delivery details and payment happen on the next step.
             </p>
+            <div className="mt-6">
+              <Image
+                src="/payments-icons.webp"
+                alt="Secure Payments Supported"
+                width={180}
+                height={20}
+                className="h-auto w-full max-w-[270px] opacity-80"
+              />
+            </div>
           </div>
 
           {!hasCheckoutReadyItems && (
