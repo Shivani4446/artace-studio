@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import Script from "next/script";
+import React, { useState } from "react";
 import {
   Search,
   MessageCircle,
@@ -16,56 +15,6 @@ const ContactPage = () => {
   // Footer Dark: #0A0A0A
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
-  const [turnstileToken, setTurnstileToken] = useState("");
-  const turnstileSiteKey =
-    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || process.env.TURNSTILE_SITE_KEY || "";
-  const turnstileRef = useRef<HTMLDivElement | null>(null);
-  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      const turnstile = (window as Window & { turnstile?: { remove: (id: string) => void } })
-        .turnstile;
-      if (turnstileWidgetId && turnstile) {
-        turnstile.remove(turnstileWidgetId);
-      }
-    };
-  }, [turnstileWidgetId]);
-
-  const handleTurnstileLoad = () => {
-    const turnstile = (
-      window as Window & {
-        turnstile?: {
-          render: (
-            container: HTMLElement,
-            options: {
-              sitekey: string;
-              callback: (token: string) => void;
-              "expired-callback": () => void;
-              "error-callback": () => void;
-            }
-          ) => string;
-        };
-      }
-    ).turnstile;
-
-    if (!turnstile || !turnstileRef.current || !turnstileSiteKey) {
-      return;
-    }
-
-    if (turnstileWidgetId) {
-      return;
-    }
-
-    const widgetId = turnstile.render(turnstileRef.current, {
-      sitekey: turnstileSiteKey,
-      callback: (token: string) => setTurnstileToken(token),
-      "expired-callback": () => setTurnstileToken(""),
-      "error-callback": () => setTurnstileToken(""),
-    });
-
-    setTurnstileWidgetId(widgetId);
-  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -82,14 +31,9 @@ const ContactPage = () => {
       company: String(formData.get("company") ?? "").trim(),
       message: String(formData.get("message") ?? "").trim(),
       consent: formData.get("privacyConsent") === "on",
-      turnstileToken,
     };
 
     try {
-      if (!turnstileToken) {
-        throw new Error("Please complete the verification challenge.");
-      }
-
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -103,7 +47,6 @@ const ContactPage = () => {
 
       setStatus("success");
       event.currentTarget.reset();
-      setTurnstileToken("");
     } catch (error) {
       setStatus("error");
       setErrorMessage(error instanceof Error ? error.message : "We could not send your message.");
@@ -112,12 +55,6 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-white text-[#1a1a1a] font-sans selection:bg-[#C5A059]/20">
-      <Script
-        src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
-        async
-        defer
-        onLoad={handleTurnstileLoad}
-      />
       <main className="max-w-[1440px] mx-auto px-6 md:px-12">
         {/* --- HERO / CONTACT US --- */}
         <section className="pt-32">
@@ -281,15 +218,6 @@ const ContactPage = () => {
                   </label>
                 </div>
               </div>
-              <div className="md:col-span-2 -mt-2">
-                {turnstileSiteKey ? (
-                  <div ref={turnstileRef} />
-                ) : (
-                  <p className="text-[14px] text-red-600">
-                    Turnstile site key is missing. Check your environment variables.
-                  </p>
-                )}
-              </div>
 
               {status === "success" ? (
                 <p className="md:col-span-2 text-[14px] text-green-700 -mt-4">
@@ -303,7 +231,7 @@ const ContactPage = () => {
                 </p>
               ) : (
                 <p className="md:col-span-2 text-[14px] text-[#595959] -mt-4">
-                  This site is protected by Cloudflare Turnstile.
+                  We&apos;ll get back to you within 1-2 business days.
                 </p>
               )}
             </form>

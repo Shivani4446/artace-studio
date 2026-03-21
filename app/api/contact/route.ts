@@ -11,7 +11,6 @@ type ContactPayload = {
   company?: string;
   message: string;
   consent: boolean;
-  turnstileToken?: string;
 };
 
 const SUPABASE_URL =
@@ -30,7 +29,6 @@ const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL || "info@artacestudio.com"
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
 const RESEND_FROM = process.env.RESEND_FROM || "";
-const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY || "";
 
 const isValidEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
 
@@ -96,7 +94,6 @@ export async function POST(request: Request) {
     company: String(payload.company || "").trim(),
     message: String(payload.message || "").trim(),
     consent: Boolean(payload.consent),
-    turnstileToken: String(payload.turnstileToken || "").trim(),
   };
 
   if (!sanitized.firstName || !sanitized.email || !sanitized.message) {
@@ -112,39 +109,6 @@ export async function POST(request: Request) {
 
   if (!sanitized.consent) {
     return NextResponse.json({ error: "Please accept the privacy policy." }, { status: 400 });
-  }
-
-  if (!TURNSTILE_SECRET_KEY) {
-    return NextResponse.json(
-      { error: "Turnstile is not configured on the server." },
-      { status: 500 }
-    );
-  }
-
-  if (!sanitized.turnstileToken) {
-    return NextResponse.json({ error: "Verification failed. Please try again." }, { status: 400 });
-  }
-
-  const turnstileResponse = await fetch(
-    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        secret: TURNSTILE_SECRET_KEY,
-        response: sanitized.turnstileToken,
-        remoteip: request.headers.get("x-forwarded-for") ?? "",
-      }),
-    }
-  );
-
-  const turnstileResult = (await turnstileResponse.json()) as { success?: boolean };
-
-  if (!turnstileResult?.success) {
-    return NextResponse.json(
-      { error: "Verification failed. Please refresh and try again." },
-      { status: 400 }
-    );
   }
 
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
