@@ -35,7 +35,7 @@ const getSiteUrl = () =>
     "https://api.artacestudio.com/")
     .replace(/\/+$/, "");
 
-const getWooAuthHeaders = () => {
+const getWooAuthHeaders = (): Record<string, string> => {
   const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
   const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
   if (!consumerKey || !consumerSecret) return {};
@@ -44,9 +44,12 @@ const getWooAuthHeaders = () => {
   const encoded =
     typeof btoa === "function"
       ? btoa(raw)
-      : (globalThis as { Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } } })
-          .Buffer?.from(raw, "utf8")
-          .toString("base64");
+      : (
+          globalThis as {
+            Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } };
+          }
+        ).Buffer?.from(raw, "utf8")
+          .toString("base64") ?? "";
 
   if (!encoded) return {};
 
@@ -119,12 +122,12 @@ export async function fetchSearchResults(
   ]);
 
   const wooAuthHeaders = getWooAuthHeaders();
-  const wooResponse =
-    Object.keys(wooAuthHeaders).length > 0
-      ? await fetch(buildWooApiUrl(trimmedQuery, productLimit), {
-          headers: wooAuthHeaders,
-        })
-      : null;
+  const hasWooAuth = Object.keys(wooAuthHeaders).length > 0;
+  const wooResponse = hasWooAuth
+    ? await fetch(buildWooApiUrl(trimmedQuery, productLimit), {
+        headers: wooAuthHeaders,
+      })
+    : null;
 
   let products: SearchProduct[] = [];
   let blogs: SearchBlogPost[] = [];
