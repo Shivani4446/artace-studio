@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import Image from "next/image";
@@ -50,6 +51,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
+
   return (
     <html lang="en">
       <head>
@@ -68,6 +71,9 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${inter.variable} ${sentient.variable} antialiased`}
       >
+        {process.env.NODE_ENV === "production" && gtmId ? (
+          <GoogleTagManager gtmId={gtmId} />
+        ) : null}
         <AuthSessionProvider>
           <CartProvider>
             <WishlistProvider>

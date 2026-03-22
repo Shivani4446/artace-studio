@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { clearPendingCheckout } from "@/utils/checkout-client";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
+import { trackPurchase } from "@/utils/gtm";
 
 type CheckoutStatusPayload = {
   success?: boolean;
@@ -38,12 +39,20 @@ function CheckoutSuccessInner() {
   const searchParams = useSearchParams();
   const { status: authStatus } = useAuthSession();
   const { clearCart } = useCart();
+  const { items } = useCart();
   const [statusPayload, setStatusPayload] = useState<CheckoutStatusPayload | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const purchaseItemsRef = useRef(items);
 
   const orderId = searchParams.get("orderId") || "";
   const orderKey = searchParams.get("orderKey") || "";
+
+  useEffect(() => {
+    if (items.length > 0) {
+      purchaseItemsRef.current = items;
+    }
+  }, [items]);
 
   useEffect(() => {
     let isActive = true;
@@ -79,6 +88,15 @@ function CheckoutSuccessInner() {
       setIsLoading(false);
 
       if (payload.paymentState === "success") {
+        trackPurchase({
+          orderId: payload.orderId ?? orderId,
+          orderNumber: payload.orderNumber,
+          total: payload.total,
+          currency: payload.currency || "INR",
+          paymentMethod: payload.paymentMethodTitle,
+          dedupeKey: `purchase:${payload.orderId ?? orderId}`,
+          items: purchaseItemsRef.current,
+        });
         clearCart();
         clearPendingCheckout();
         return;

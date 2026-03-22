@@ -7,6 +7,7 @@ import { ArrowLeft, Lock, ShieldCheck } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
+import { trackBeginCheckout } from "@/utils/gtm";
 
 type CheckoutFormState = {
   firstName: string;
@@ -155,12 +156,35 @@ export default function CheckoutPage() {
     () => items.some((item) => getCheckoutProductId(item.id, item.woocommerceProductId)),
     [items]
   );
+  const beginCheckoutTrackingKey = useMemo(
+    () =>
+      items
+        .map((item) =>
+          [
+            item.id,
+            item.woocommerceProductId ?? "",
+            item.woocommerceVariationId ?? "",
+            item.quantity,
+          ].join(":")
+        )
+        .join("|"),
+    [items]
+  );
 
   useEffect(() => {
     if (authStatus === "unauthenticated") {
       router.replace(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
     }
   }, [authStatus, router]);
+
+  useEffect(() => {
+    if (!hasCheckoutReadyItems || items.length === 0) return;
+
+    trackBeginCheckout(items, {
+      value: subtotal,
+      dedupeKey: `begin_checkout:${beginCheckoutTrackingKey}`,
+    });
+  }, [beginCheckoutTrackingKey, hasCheckoutReadyItems, items, subtotal]);
 
   useEffect(() => {
     if (authStatus !== "authenticated") return;

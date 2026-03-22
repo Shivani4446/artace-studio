@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { trackAddToCart } from "@/utils/gtm";
 
 export type CartProduct = {
   id: number | string;
@@ -81,6 +82,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     (product: CartProduct, quantity = 1) => {
       const safeQty = Math.max(1, Math.floor(quantity));
 
+      trackAddToCart(product, safeQty);
+
       setItems((prevItems) => {
         const existingIndex = prevItems.findIndex((item) => item.id === product.id);
 
@@ -99,11 +102,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const incrementItem = useCallback((id: CartItem["id"]) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
+    setItems((prevItems) => {
+      const targetItem = prevItems.find((item) => item.id === id);
+      if (targetItem) {
+        trackAddToCart(targetItem, 1);
+      }
+
+      return prevItems.map((item) =>
         item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      )
-    );
+      );
+    });
   }, []);
 
   const decrementItem = useCallback((id: CartItem["id"]) => {
