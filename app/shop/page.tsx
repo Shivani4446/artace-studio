@@ -9,6 +9,8 @@ const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const MEDIUM_FILTER_OPTIONS = ["Acrylic", "Oil", "Watercolor"] as const;
 const MATERIAL_FILTER_OPTIONS = ["Canvas", "Paper"] as const;
+const PRODUCTS_PER_PAGE = 100;
+const MAX_PRODUCT_PAGES = 10;
 
 type WooStorePrices = {
   currency_code: string;
@@ -300,20 +302,39 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   const apiBaseUrl =
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
   const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+  const products: WooStoreProduct[] = [];
+  let totalPages = 1;
 
-  const response = await fetch(
-    `${normalizedBaseUrl}/wp-json/wc/store/v1/products?per_page=48`,
-    {
-      next: { revalidate: 120 },
+  for (let page = 1; page <= totalPages && page <= MAX_PRODUCT_PAGES; page += 1) {
+    const response = await fetch(
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}`,
+      {
+        next: { revalidate: 120 },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch WooCommerce products (${response.status}).`);
     }
-  );
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch WooCommerce products (${response.status}).`);
+    const headerTotalPages = Number(response.headers.get("x-wp-totalpages") || "");
+    if (Number.isFinite(headerTotalPages) && headerTotalPages > 0) {
+      totalPages = headerTotalPages;
+    }
+
+    const payload = (await response.json()) as WooStoreProduct[];
+    if (!Array.isArray(payload) || payload.length === 0) {
+      break;
+    }
+
+    products.push(...payload);
+
+    if (payload.length < PRODUCTS_PER_PAGE) {
+      break;
+    }
   }
 
-  const payload = (await response.json()) as WooStoreProduct[];
-  return Array.isArray(payload) ? payload : [];
+  return products;
 };
 
 const ShopPage = async () => {
