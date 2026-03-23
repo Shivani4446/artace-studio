@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
+import { getWordPressBlogSiteUrl } from "@/utils/wordpress-blog";
 
 type Props = {
   currentPostId: number;
@@ -20,9 +21,13 @@ type RelatedPost = {
 
 async function getRelatedPosts(currentPostId: number) {
   const res = await fetch(
-    "https://api.artacestudio.com/wp-json/wp/v2/posts?per_page=3&_embed",
+    `${getWordPressBlogSiteUrl()}/wp-json/wp/v2/posts?status=publish&per_page=3&_embed`,
     { next: { revalidate: 60 } }
   );
+
+  if (!res.ok) {
+    return [];
+  }
 
   const posts = (await res.json()) as RelatedPost[];
 

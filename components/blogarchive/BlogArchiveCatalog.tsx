@@ -20,6 +20,8 @@ export type BlogArchivePost = {
 
 type BlogArchiveCatalogProps = {
   posts: BlogArchivePost[];
+  availableCategories?: string[];
+  availableTags?: string[];
   loadError?: string | null;
 };
 
@@ -168,9 +170,12 @@ const FilterChipGroup = ({
 
 const BlogArchiveCatalog = ({
   posts,
+  availableCategories = [],
+  availableTags = [],
   loadError = null,
 }: BlogArchiveCatalogProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortById>("latest");
   const [openToolbarMenu, setOpenToolbarMenu] = useState<ToolbarMenuId>(null);
   const [postsPerPage, setPostsPerPage] = useState<number>(12);
@@ -179,16 +184,36 @@ const BlogArchiveCatalog = ({
   const toolbarMenusRef = useRef<HTMLDivElement | null>(null);
 
   const categoryOptions = useMemo(() => {
-    return Array.from(new Set(posts.flatMap((post) => post.categories))).sort((a, b) =>
-      a.localeCompare(b)
-    );
-  }, [posts]);
+    const fallbackCategories = posts.flatMap((post) => post.categories);
+    return Array.from(
+      new Set(
+        (availableCategories.length > 0 ? availableCategories : fallbackCategories).filter(Boolean)
+      )
+    ).sort((a, b) => a.localeCompare(b));
+  }, [availableCategories, posts]);
+
+  const tagOptions = useMemo(() => {
+    const fallbackTags = posts.flatMap((post) => post.tags);
+    return Array.from(
+      new Set((availableTags.length > 0 ? availableTags : fallbackTags).filter(Boolean))
+    ).sort((a, b) => a.localeCompare(b));
+  }, [availableTags, posts]);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     posts.forEach((post) => {
       post.categories.forEach((category) => {
         counts[category] = (counts[category] ?? 0) + 1;
+      });
+    });
+    return counts;
+  }, [posts]);
+
+  const tagCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    posts.forEach((post) => {
+      post.tags.forEach((tag) => {
+        counts[tag] = (counts[tag] ?? 0) + 1;
       });
     });
     return counts;
@@ -203,9 +228,13 @@ const BlogArchiveCatalog = ({
         return false;
       }
 
+      if (selectedTags.length > 0 && !post.tags.some((tag) => selectedTags.includes(tag))) {
+        return false;
+      }
+
       return true;
     });
-  }, [posts, selectedCategories]);
+  }, [posts, selectedCategories, selectedTags]);
 
   const sortedPosts = useMemo(() => {
     const sortable = [...filteredPosts];
@@ -270,7 +299,7 @@ const BlogArchiveCatalog = ({
   const selectedPerPageLabel = `${postsPerPage}`;
   const selectedPerRowLabel = `${postsPerRow}`;
 
-  const activeFilterCount = selectedCategories.length;
+  const activeFilterCount = selectedCategories.length + selectedTags.length;
 
   const totalPages = Math.max(1, Math.ceil(sortedPosts.length / postsPerPage));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -298,6 +327,7 @@ const BlogArchiveCatalog = ({
 
   const clearFilters = () => {
     setSelectedCategories([]);
+    setSelectedTags([]);
     setCurrentPage(1);
   };
 
@@ -351,11 +381,25 @@ const BlogArchiveCatalog = ({
                 title="By Category"
                 options={categoryOptions}
                 selected={selectedCategories}
-                onToggle={(value) =>
-                  setSelectedCategories((current) => toggleSelection(current, value))
-                }
+                onToggle={(value) => {
+                  setSelectedCategories((current) => toggleSelection(current, value));
+                  setCurrentPage(1);
+                }}
                 getCount={(value) => categoryCounts[value] ?? 0}
               />
+
+              <div className="mt-4">
+                <FilterChipGroup
+                  title="By Tag"
+                  options={tagOptions}
+                  selected={selectedTags}
+                  onToggle={(value) => {
+                    setSelectedTags((current) => toggleSelection(current, value));
+                    setCurrentPage(1);
+                  }}
+                  getCount={(value) => tagCounts[value] ?? 0}
+                />
+              </div>
             </aside>
 
             <div>
