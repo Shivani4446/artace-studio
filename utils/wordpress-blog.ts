@@ -3,6 +3,11 @@ import { stripHtmlAndDecode } from "@/utils/text";
 export const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com/";
 export const WORDPRESS_BLOG_REVALIDATE_SECONDS = 120;
 const FALLBACK_BLOG_IMAGE = "/journal-img.webp";
+const PUBLIC_WORDPRESS_HEADERS = {
+  Accept: "application/json",
+  "Content-Type": "application/json",
+  "User-Agent": "ArtaceStudio-Storefront/1.0",
+};
 
 type WordPressRendered = {
   rendered?: string;
@@ -86,9 +91,32 @@ const fetchWordPressCollection = async <T>(
 
   do {
     const separator = path.includes("?") ? "&" : "?";
-    const response = await fetch(`${siteUrl}${path}${separator}per_page=100&page=${page}`, {
-      next: { revalidate },
-    });
+    const requestPath = `${path}${separator}per_page=100&page=${page}`;
+    const primaryUrl = `${siteUrl}${requestPath}`;
+    const restRoutePath = requestPath.replace(/^\/wp-json/, "");
+
+    let response: Response;
+
+    try {
+      response = await fetch(primaryUrl, {
+        headers: PUBLIC_WORDPRESS_HEADERS,
+        next: { revalidate },
+      });
+    } catch {
+      const fallbackUrl = `${siteUrl}/?rest_route=${encodeURIComponent(restRoutePath)}`;
+      response = await fetch(fallbackUrl, {
+        headers: PUBLIC_WORDPRESS_HEADERS,
+        next: { revalidate },
+      });
+    }
+
+    if (response.status === 404) {
+      const fallbackUrl = `${siteUrl}/?rest_route=${encodeURIComponent(restRoutePath)}`;
+      response = await fetch(fallbackUrl, {
+        headers: PUBLIC_WORDPRESS_HEADERS,
+        next: { revalidate },
+      });
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to fetch WordPress collection (${response.status}).`);

@@ -8,7 +8,8 @@ import {
   type WordPressNormalizedBlogPost,
 } from "@/utils/wordpress-blog";
 
-export const revalidate = 120;
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 const BlogsPage = async () => {
   let posts: WordPressNormalizedBlogPost[] = [];

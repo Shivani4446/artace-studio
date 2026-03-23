@@ -14,6 +14,11 @@ const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const PRODUCTS_PER_PAGE = 100;
 const MAX_PRODUCT_PAGES = 5;
+const PUBLIC_WOO_HEADERS = {
+  Accept: "application/json",
+  "Content-Type": "application/json",
+  "User-Agent": "ArtaceStudio-Storefront/1.0",
+};
 
 type CollectionPageProps = {
   params: Promise<{ slug: string }>;
@@ -76,6 +81,51 @@ const getApiBaseUrl = () => {
   const apiBaseUrl =
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
   return apiBaseUrl.replace(/\/+$/, "");
+};
+
+const fetchWooStoreJson = async <T,>(path: string): Promise<T | null> => {
+  const apiBaseUrl = getApiBaseUrl();
+  const doFetch = async (url: string) =>
+    fetch(url, {
+      headers: PUBLIC_WOO_HEADERS,
+      next: { revalidate: 120 },
+    });
+
+  try {
+    let response = await doFetch(`${apiBaseUrl}${path}`);
+
+    if (response.status === 404 && path.startsWith("/wp-json/")) {
+      const fallbackUrl = `${apiBaseUrl}/?rest_route=${encodeURIComponent(
+        path.replace(/^\/wp-json/, "")
+      )}`;
+      response = await doFetch(fallbackUrl);
+    }
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as T;
+  } catch {
+    if (!path.startsWith("/wp-json/")) {
+      return null;
+    }
+
+    try {
+      const fallbackUrl = `${apiBaseUrl}/?rest_route=${encodeURIComponent(
+        path.replace(/^\/wp-json/, "")
+      )}`;
+      const fallbackResponse = await doFetch(fallbackUrl);
+
+      if (!fallbackResponse.ok) {
+        return null;
+      }
+
+      return (await fallbackResponse.json()) as T;
+    } catch {
+      return null;
+    }
+  }
 };
 
 const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
@@ -160,48 +210,33 @@ const sortProductsForFeature = (products: WooStoreProduct[]) => {
   });
 };
 
-const fetchCategories = async (): Promise<WooStoreCategory[]> => {
-  try {
-    const response = await fetch(
-      `${getApiBaseUrl()}/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=100`,
-      {
-        next: { revalidate: 120 },
-      }
-    );
+const fetchCategories = async (): Promise<WooStoreCategory[] | null> => {
+  const payload = await fetchWooStoreJson<unknown>(
+    "/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=100"
+  );
 
-    if (!response.ok) return [];
-    const payload = (await response.json()) as WooStoreCategory[];
-    return Array.isArray(payload) ? payload : [];
-  } catch {
-    return [];
-  }
+  return Array.isArray(payload) ? (payload as WooStoreCategory[]) : null;
 };
 
-const fetchAllProducts = async (): Promise<WooStoreProduct[]> => {
+const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
   const products: WooStoreProduct[] = [];
 
-  try {
-    for (let page = 1; page <= MAX_PRODUCT_PAGES; page += 1) {
-      const response = await fetch(
-        `${getApiBaseUrl()}/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}`,
-        {
-          next: { revalidate: 120 },
-        }
-      );
+  for (let page = 1; page <= MAX_PRODUCT_PAGES; page += 1) {
+    const payload = await fetchWooStoreJson<unknown>(
+      `/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}`
+    );
 
-      if (!response.ok) break;
-
-      const payload = (await response.json()) as WooStoreProduct[];
-      if (!Array.isArray(payload) || payload.length === 0) break;
-
-      products.push(...payload);
-
-      if (payload.length < PRODUCTS_PER_PAGE) {
-        break;
-      }
+    if (payload === null) {
+      return null;
     }
-  } catch {
-    return [];
+
+    if (!Array.isArray(payload) || payload.length === 0) break;
+
+    products.push(...(payload as WooStoreProduct[]));
+
+    if (payload.length < PRODUCTS_PER_PAGE) {
+      break;
+    }
   }
 
   return products;
@@ -263,6 +298,19 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
   const decodedSlug = decodeURIComponent(slug);
 
   const [categories, allProducts] = await Promise.all([fetchCategories(), fetchAllProducts()]);
+
+  if (categories === null || allProducts === null) {
+    return (
+      <main className="mx-auto max-w-5xl px-6 py-16">
+        <div className="rounded-xl border border-[#1f1f1f]/10 bg-white p-8 text-[#5f5a52]">
+          <p className="font-semibold text-[#222]">Collection Temporarily Unavailable</p>
+          <p className="mt-2 text-sm">
+            We could not reach the live catalog service just now. Please refresh in a moment.
+          </p>
+        </div>
+      </main>
+    );
+  }
 
   const matchedProducts = allProducts.filter((product) =>
     product.categories.some((category) => category.slug === decodedSlug)
