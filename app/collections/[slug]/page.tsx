@@ -6,9 +6,8 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -217,6 +216,19 @@ const fetchCategories = async (): Promise<WooStoreCategory[] | null> => {
 
   return Array.isArray(payload) ? (payload as WooStoreCategory[]) : null;
 };
+
+export async function generateStaticParams() {
+  const categories = await fetchCategories();
+
+  if (!categories) {
+    return [];
+  }
+
+  return categories
+    .map((category) => category.slug?.trim())
+    .filter((slug): slug is string => Boolean(slug))
+    .map((slug) => ({ slug }));
+}
 
 const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
   const products: WooStoreProduct[] = [];

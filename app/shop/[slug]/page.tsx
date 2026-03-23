@@ -2,9 +2,8 @@ import React from "react";
 import SingleProduct from "@/components/singleproduct/SingleProduct";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -194,6 +193,12 @@ const fetchAllProductSlugs = async () => {
 
   return Array.from(new Set(slugs));
 };
+
+export async function generateStaticParams() {
+  const slugs = await fetchAllProductSlugs();
+
+  return slugs.map((slug) => ({ slug }));
+}
 
 const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
   try {
