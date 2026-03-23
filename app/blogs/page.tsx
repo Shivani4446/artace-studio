@@ -10,6 +10,7 @@ import {
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
+export const runtime = "edge";
 
 const BlogsPage = async () => {
   let posts: WordPressNormalizedBlogPost[] = [];
