@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import {
   estimateReadTimeMinutes,
@@ -10,15 +11,15 @@ import {
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import {
-  fetchAllWordPressPosts,
   fetchAllWordPressTags,
   getWordPressBlogSiteUrl,
   resolveWordPressPostTags,
   type WordPressBlogPost,
 } from "@/utils/wordpress-blog";
 
+export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -37,21 +38,6 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   } catch {
     return null;
   }
-}
-
-export async function generateStaticParams() {
-  let posts: WordPressBlogPost[] = [];
-
-  try {
-    posts = await fetchAllWordPressPosts();
-  } catch {
-    return [];
-  }
-
-  return posts
-    .map((post) => post.slug?.trim())
-    .filter((slug): slug is string => Boolean(slug))
-    .map((slug) => ({ slug }));
 }
 
 async function getAuthor(authorId: number) {
@@ -80,7 +66,9 @@ const SingleBlogPage = async ({ params }: Props) => {
   const { slug } = await params;
   const post = await getPost(slug);
 
-  if (!post) return <div>Post not found</div>;
+  if (!post) {
+    notFound();
+  }
   const titleHtml = decodeHtmlEntities(post.title?.rendered ?? "");
   const introHtml = decodeHtmlEntities(post.excerpt?.rendered ?? "");
   const decodedContent = decodeHtmlEntities(post.content?.rendered ?? "");

@@ -75,21 +75,16 @@ const collectionLinks = collectionLinkItems.map((item) => ({
     "Handcrafted canvases curated for a distinct mood, story, and room.",
 }));
 
-const paintingLinks = [
+const shopCategoryLinks = [
   {
     name: "Religious Paintings",
     href: "/shop?category=religious-paintings",
     description: "Spiritual icons and devotional scenes painted with depth and reverence.",
   },
   {
-    name: "Landscape Paintings",
+    name: "Landscape & Cityscape",
     href: "/shop?category=landscapes-cityscapes-paintings",
-    description: "Mountain air, rivers, forests, and serene horizons for expansive rooms.",
-  },
-  {
-    name: "Cityscape Paintings",
-    href: "/shop?category=landscapes-cityscapes-paintings",
-    description: "Urban skylines and rainy streets with texture, contrast, and mood.",
+    description: "Nature-led horizons and urban scenes with atmosphere, depth, and motion.",
   },
   {
     name: "Vastu Paintings",
@@ -105,6 +100,26 @@ const paintingLinks = [
     name: "Buddha Paintings",
     href: "/shop?category=buddha-paintings",
     description: "Calm, meditative works that anchor the room with a quieter presence.",
+  },
+  {
+    name: "Radha Krishna",
+    href: "/shop?category=radha-krishna-paintings",
+    description: "Devotional paintings centered on divine love, harmony, and grace.",
+  },
+  {
+    name: "Ganapati Paintings",
+    href: "/shop?category=ganapati-paintings",
+    description: "Auspicious artwork created to bring warmth, blessings, and presence indoors.",
+  },
+  {
+    name: "Figurative Paintings",
+    href: "/shop?category=figurative-paintings",
+    description: "Portrait-led and human-centered works with emotion, gesture, and story.",
+  },
+  {
+    name: "Abstract Paintings",
+    href: "/shop?category=abstract-paintings",
+    description: "Texture-rich contemporary canvases for modern, layered interiors.",
   },
 ];
 
@@ -153,7 +168,7 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [...paintingLinks, { name: "Shop All", href: "/shop" }],
+    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }],
   },
   {
     name: "Resources",
@@ -490,7 +505,7 @@ const Navbar = () => {
 
     if (openDesktopMenu === "shop") {
       return (
-        <div className="grid grid-cols-[minmax(0,1fr)_250px_300px] items-stretch gap-8">
+        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-stretch gap-8">
           <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
             <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
               <div>
@@ -512,8 +527,8 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 pt-2">
-              {paintingLinks.map((item) => (
+            <div className="grid grid-cols-3 gap-x-6 gap-y-1 pt-2">
+              {shopCategoryLinks.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
@@ -537,66 +552,34 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="rounded-[18px] bg-white px-5 py-5">
-            <div className="space-y-4">
-              {shopHighlights.map((item) => (
-                <div
-                  key={item.title}
-                  className="border-b border-[#ebe5dc] pb-4 last:border-b-0 last:pb-0"
-                >
-                  <p className="font-inter text-[14px] font-medium text-[#2c2c2c]">
-                    {item.title}
-                  </p>
-                  <p className="mt-1 font-inter text-[13px] leading-[1.6] text-[#6b6b6b]">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-rows-[auto_auto_1fr] gap-4">
+            {shopHighlights.slice(0, 2).map((item) => (
+              <div
+                key={item.title}
+                className="rounded-[18px] bg-white px-5 py-5"
+              >
+                <p className="font-inter text-[14px] font-medium text-[#2c2c2c]">
+                  {item.title}
+                </p>
+                <p className="mt-2 font-inter text-[13px] leading-[1.65] text-[#6b6b6b]">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+
             <Link
               href="/corporate-bulk-orders"
               onClick={closeDesktopMenu}
-              className="mt-6 inline-flex items-center gap-2 rounded-[12px] border border-[#ebe5dc] px-4 py-3 font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f4efe7]"
+              className="rounded-[18px] border border-[#ebe5dc] bg-[#f4efe7] px-5 py-5 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
             >
-              Corporate & Bulk Orders
-              <ArrowUpRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-rows-[1fr_auto] gap-4">
-            <div className="relative overflow-hidden rounded-[18px] bg-[#d8d2c8]">
-              <Image
-                src="/who-are-we.webp"
-                alt="Original handmade artwork for home and office interiors"
-                fill
-                sizes="300px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/56 via-black/8 to-transparent px-6 py-6 text-white">
-                <div className="flex h-full flex-col justify-end">
-                  <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/72">
-                    Original Art
-                  </p>
-                  <p className="mt-3 max-w-[210px] font-display text-[24px] leading-[1.08]">
-                    Buy with more confidence.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <Link
-              href="/contact-us"
-              onClick={closeDesktopMenu}
-              className="rounded-[18px] bg-[#2a2a2a] px-5 py-5 text-white transition-colors hover:bg-[#1f1f1f]"
-            >
-              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/62">
-                Need Help Choosing?
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
+                Corporate Orders
               </p>
               <p className="mt-3 font-display text-[24px] leading-[1.08]">
-                Talk to an art advisor.
+                Plan bulk art orders for offices, gifting, and styled spaces.
               </p>
-              <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-white">
-                Contact us
+              <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
+                Explore corporate orders
                 <ArrowUpRight className="h-4 w-4" />
               </div>
             </Link>
