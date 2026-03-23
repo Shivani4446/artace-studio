@@ -5,12 +5,13 @@ import {
   fetchAllWordPressTags,
   getWordPressTaxonomyNames,
   normalizeWordPressBlogPosts,
+  type WordPressNormalizedBlogPost,
 } from "@/utils/wordpress-blog";
 
 export const revalidate = 120;
 
 const BlogsPage = async () => {
-  let posts = [];
+  let posts: WordPressNormalizedBlogPost[] = [];
   let availableCategories: string[] = [];
   let availableTags: string[] = [];
   let loadError: string | null = null;
