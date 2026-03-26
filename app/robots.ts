@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const DEFAULT_BASE_URL = "https://your-domain.com";
-const DISALLOWED_PATHS = [
+const DISALLOWED_PATHS: string[] = [
   "/account",
   "/cart",
   "/checkout",
@@ -12,7 +12,7 @@ const DISALLOWED_PATHS = [
   "/forgot-password",
   "/reset-password",
   "/wishlist",
-] as const;
+];
 const EXPLICIT_ALLOWED_BOTS = ["Google-Extended", "GPTBot", "ClaudeBot"] as const;
 
 const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
