@@ -1,6 +1,19 @@
 import type { MetadataRoute } from "next";
 
 const DEFAULT_BASE_URL = "https://your-domain.com";
+const DISALLOWED_PATHS = [
+  "/account",
+  "/cart",
+  "/checkout",
+  "/dashboard",
+  "/api",
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/wishlist",
+] as const;
+const EXPLICIT_ALLOWED_BOTS = ["Google-Extended", "GPTBot", "ClaudeBot"] as const;
 
 const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
 
@@ -17,22 +30,18 @@ const getBaseUrl = () => {
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: [
-        "/account",
-        "/cart",
-        "/checkout",
-        "/dashboard",
-        "/api",
-        "/login",
-        "/signup",
-        "/forgot-password",
-        "/reset-password",
-        "/wishlist",
-      ],
-    },
+    rules: [
+      ...EXPLICIT_ALLOWED_BOTS.map((userAgent) => ({
+        userAgent,
+        allow: "/",
+        disallow: DISALLOWED_PATHS,
+      })),
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: DISALLOWED_PATHS,
+      },
+    ],
     sitemap: `${getBaseUrl()}/sitemap.xml`,
   };
 }
