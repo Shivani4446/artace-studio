@@ -10,6 +10,7 @@ import JournalSection from "@/components/homepage/JournalSection";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
+import { homepageSchema } from "./homepage-schema";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
@@ -108,6 +109,10 @@ const Home = async () => {
 
   return (
     <main className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageSchema) }}
+      />
       <HeroSection />
       <ShopBestSellers />
       <DiscoverEssentials categories={discoverCategories} />
