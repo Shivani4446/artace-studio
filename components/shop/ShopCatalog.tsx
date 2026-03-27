@@ -749,6 +749,18 @@ const ShopCatalog = ({
                       setSelectedColors((current) => toggleSelection(current, value))
                     }
                   />
+
+                  {/* Custom Order Card */}
+                  <div className="rounded-[14px] border border-[#1f1f1f]/12 bg-transparent p-4">
+                    <h3 className="text-[14px] font-semibold text-[#24211d]">Can&apos;t find what you&apos;re looking for?</h3>
+                    <p className="mt-1 text-xs text-[#7b7468]">Create your dream painting with our custom order service.</p>
+                    <Link
+                      href="/custom-order"
+                      className="mt-3 inline-flex w-full items-center justify-center rounded-[10px] bg-[#292929] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black"
+                    >
+                      Create Custom Order
+                    </Link>
+                  </div>
                 </div>
               </div>
             </aside>

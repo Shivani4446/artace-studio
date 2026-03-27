@@ -39,9 +39,7 @@ const HeroSection = () => {
                   <ShoppingCart className="h-4 w-4" strokeWidth={2} />
                 </Link>
                 <Link
-                  href="https://cal.com/artace-studio"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/custom-order"
                   className="inline-flex w-full items-center justify-center rounded-md border border-white/80 px-7 py-3 text-[17px] font-medium text-white transition-colors hover:bg-white/10 sm:w-auto sm:text-[18px]"
                 >
                   Have a Custom Order

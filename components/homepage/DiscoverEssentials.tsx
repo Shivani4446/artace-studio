@@ -69,6 +69,14 @@ const FALLBACK_CATEGORIES: DiscoverCategoryCard[] = [
   },
 ];
 
+const CUSTOM_ORDER_CARD: DiscoverCategoryCard = {
+  id: 999,
+  title: "Custom Order",
+  image: "/images/product-ship.png",
+  imageAlt: "Create your custom painting",
+  href: "/custom-order",
+};
+
 const PRIORITY_KEYWORDS = ["radha krishna", "figurative", "buddha", "abstract"];
 
 const getCategoryPriority = (title: string) => {
@@ -113,6 +121,8 @@ const getDisplayCards = (categories: DiscoverCategoryCard[]) => {
     cards.push(FALLBACK_CATEGORIES[fillerIndex % FALLBACK_CATEGORIES.length]);
     fillerIndex += 1;
   }
+  // Replace last card with Custom Order card
+  cards[6] = CUSTOM_ORDER_CARD;
 
   return cards;
 };
@@ -150,25 +160,45 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
           </Link>
 
           {gridCards.map((item, index) => (
-            <Link
-              key={`${item.id}-${index}`}
-              href={item.href}
-              className="group relative block min-h-[190px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px]"
-            >
-              <Image
-                src={item.image}
-                alt={item.imageAlt}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 22vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
-                <h3 className="font-inter text-[16px] font-medium leading-[1.1] text-white sm:text-[17px] md:text-[18px]">
-                  {toCollectionLabel(item.title)}
-                </h3>
-              </div>
-            </Link>
+            item.title === "Custom Order" ? (
+              <Link
+                key={`${item.id}-${index}`}
+                href={item.href}
+                className="group relative flex flex-col items-center justify-center min-h-[190px] overflow-hidden rounded-[12px] bg-[#292929] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px] transition-colors hover:bg-[#1f1f1f]"
+              >
+                <div className="text-center px-4">
+                  <h3 className="font-inter text-[18px] font-medium leading-[1.2] text-white sm:text-[20px] md:text-[22px]">
+                    Can&apos;t find what you&apos;re looking for?
+                  </h3>
+                  <p className="mt-2 text-[14px] text-white/80 sm:text-[16px]">
+                    Create your dream painting with our custom order service.
+                  </p>
+                  <span className="mt-4 inline-block rounded-full bg-white px-6 py-2 text-[14px] font-medium text-[#292929] transition-transform group-hover:scale-105">
+                    Create Custom Order
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <Link
+                key={`${item.id}-${index}`}
+                href={item.href}
+                className="group relative block min-h-[190px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px]"
+              >
+                <Image
+                  src={item.image}
+                  alt={item.imageAlt}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 22vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 md:bottom-5 md:left-5 md:right-5">
+                  <h3 className="font-inter text-[16px] font-medium leading-[1.1] text-white sm:text-[17px] md:text-[18px]">
+                    {toCollectionLabel(item.title)}
+                  </h3>
+                </div>
+              </Link>
+            )
           ))}
         </div>
       </div>

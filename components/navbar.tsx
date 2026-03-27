@@ -168,7 +168,7 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }],
+    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }],
   },
   {
     name: "Resources",
@@ -552,7 +552,7 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="grid grid-rows-[auto_auto_1fr] gap-4">
+           <div className="grid grid-rows-[auto_auto_1fr_auto] gap-4">
             {shopHighlights.slice(0, 2).map((item) => (
               <div
                 key={item.title}
@@ -809,7 +809,7 @@ const Navbar = () => {
                         onClick={() => handleSearchSubmit(desktopSearchValue)}
                         className="mt-2 w-full rounded-[10px] border border-black/10 px-3 py-2 text-[13px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f6f3ee]"
                       >
-                        See all results for "{desktopSearchValue.trim()}"
+                        See all results for &quot;{desktopSearchValue.trim()}&quot;
                       </button>
                     </div>
                   )}
@@ -1143,7 +1143,7 @@ const Navbar = () => {
                           }}
                           className="mt-2 w-full rounded-[10px] border border-black/10 px-3 py-2 text-[13px] font-medium text-[#2c2c2c] transition-colors hover:bg-[#f6f3ee]"
                         >
-                          See all results for "{mobileSearchValue.trim()}"
+                          See all results for &quot;{mobileSearchValue.trim()}&quot;
                         </button>
                       </div>
                     )}
@@ -1196,8 +1196,24 @@ const Navbar = () => {
                           className="rounded-[12px] bg-white px-3 py-3 text-center font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
                         >
                           Details
-                        </Link>
-                      </div>
+            </Link>
+            <Link
+              href="/custom-order"
+              onClick={closeDesktopMenu}
+              className="rounded-[18px] border border-[#ebe5dc] bg-[#292929] px-5 py-5 text-white transition-colors hover:bg-[#1f1f1f]"
+            >
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-white/70">
+                Custom Order
+              </p>
+              <p className="mt-3 font-display text-[24px] leading-[1.08]">
+                Create your dream painting from scratch.
+              </p>
+              <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-white">
+                Start custom order
+                <ArrowUpRight className="h-4 w-4" />
+              </div>
+            </Link>
+          </div>
 
                       <LogoutButton
                         className="mt-3 w-full rounded-[12px] bg-white px-3 py-3 font-inter text-[15px] font-medium text-[#333333] transition-colors hover:bg-[#ececec]"
