@@ -300,8 +300,11 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
 
 const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   const apiBaseUrl =
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
+    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
+    process.env.WOOCOMMERCE_REST_URL ||
+    DEFAULT_WOOCOMMERCE_SITE_URL;
   const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+  console.log(`[Shop] Fetching products from: ${normalizedBaseUrl}`);
   const products: WooStoreProduct[] = [];
   let totalPages = 1;
 
