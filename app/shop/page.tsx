@@ -3,8 +3,7 @@ import ShopCatalog from "@/components/shop/ShopCatalog";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
-export const revalidate = 120;
+export const revalidate = 60;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -319,7 +318,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     const response = await fetch(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
-        cache: "no-store",
+        next: { revalidate },
       }
     );
 

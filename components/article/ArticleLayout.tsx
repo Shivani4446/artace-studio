@@ -8,6 +8,8 @@ import AddToCartButton from "@/components/cart/AddToCartButton";
 import { decodeHtmlEntities } from "@/utils/text";
 import BlogContentWithProducts from "@/components/blog/BlogContentWithProducts";
 
+const STOREFRONT_REVALIDATE_SECONDS = 60;
+
 type Props = {
   eyebrow?: string;
   title?: string;
@@ -162,7 +164,7 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const response = await fetch(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}&orderby=date&order=desc`,
       {
-        cache: "no-store",
+        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
       }
     );
 
@@ -202,7 +204,7 @@ const getProductsByIds = async (productIds: number[]): Promise<FeaturedProductCa
         const response = await fetch(
           `${normalizedBaseUrl}/wp-json/wc/store/v1/products?include=${idsParam}&per_page=${ids.length}`,
           {
-            cache: "no-store",
+            next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
           }
         );
 
@@ -247,7 +249,7 @@ const getProductsBySlugs = async (
         slugParam
       )}&per_page=${uniqueSlugs.length}`,
       {
-        cache: "no-store",
+        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
       }
     );
 
@@ -279,7 +281,7 @@ const getProductsBySlugs = async (
             slug
           )}&per_page=8`,
           {
-            cache: "no-store",
+            next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
           }
         );
 

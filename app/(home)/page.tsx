@@ -12,10 +12,9 @@ import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
 import { homepageSchema } from "./homepage-schema";
 
-export const runtime = "edge";
-
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
+const STOREFRONT_REVALIDATE_SECONDS = 60;
 const EXCLUDED_DISCOVER_CATEGORY_SLUGS = new Set([
   "all-canvas-paintings",
   "all-canvas-paintngs",
@@ -89,7 +88,7 @@ const getDiscoverCategories = async (): Promise<DiscoverCategoryCard[]> => {
     const response = await fetch(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=24`,
       {
-        cache: "no-store",
+        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
       }
     );
 

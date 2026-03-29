@@ -22,6 +22,7 @@ const inter = Inter({
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const FEATURED_PRODUCTS_LIMIT = 4;
+const STOREFRONT_REVALIDATE_SECONDS = 60;
 
 type WooStorePrices = {
   currency_code: string;
@@ -149,7 +150,7 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const response = await fetch(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}&orderby=date&order=desc`,
       {
-        cache: "no-store",
+        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
       }
     );
 
