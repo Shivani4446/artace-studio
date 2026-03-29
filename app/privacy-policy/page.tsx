@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Privacy Policy | Artace Studio",
   description: "How Artace Studio collects, uses, stores, and protects your personal information.",

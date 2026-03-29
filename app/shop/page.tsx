@@ -3,6 +3,7 @@ import ShopCatalog from "@/components/shop/ShopCatalog";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 
+export const runtime = "edge";
 export const revalidate = 120;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";

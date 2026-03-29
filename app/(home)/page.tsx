@@ -12,6 +12,8 @@ import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
 import { homepageSchema } from "./homepage-schema";
 
+export const runtime = "edge";
+
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
 const EXCLUDED_DISCOVER_CATEGORY_SLUGS = new Set([

@@ -6,6 +6,7 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { decodeHtmlEntities } from "@/utils/text";
 
+export const runtime = "edge";
 export const revalidate = 120;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";

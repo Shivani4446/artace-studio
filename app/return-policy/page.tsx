@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Return Policy | Artace Studio",
   description: "Return eligibility and process for artworks purchased from Artace Studio.",

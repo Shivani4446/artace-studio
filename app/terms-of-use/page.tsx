@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Terms of Use | Artace Studio",
   description: "Terms and conditions governing the use of the Artace Studio website and services.",
