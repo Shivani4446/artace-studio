@@ -116,6 +116,8 @@ export type WooCommerceStoreProduct = {
   categories: WooCommerceStoreCategory[];
   attributes: WooCommerceStoreAttribute[];
   prices: WooCommerceStorePrices;
+  variations?: Variation[];
+  faqs?: FAQItem[];
 };
 
 type SingleProductImage = {
@@ -136,6 +138,21 @@ type SingleProductAttribute = {
   id: number;
   name: string;
   options: string[];
+};
+
+export type Variation = {
+  id: number;
+  attributes: { name: string; value: string }[];
+  price: number | null;
+  regularPrice: number | null;
+  salePrice: number | null;
+  onSale: boolean;
+  inStock: boolean;
+};
+
+export type FAQItem = {
+  question: string;
+  answer: string;
 };
 
 export type SingleProductData = {
@@ -160,6 +177,8 @@ export type SingleProductData = {
   images: SingleProductImage[];
   categories: SingleProductCategory[];
   attributes: SingleProductAttribute[];
+  variations?: Variation[];
+  faqs?: FAQItem[];
 };
 
 type RelatedProductCard = {
@@ -342,6 +361,19 @@ const normalizeWooCommerceStoreProduct = (
           ? attribute.options.map((option) => decodeHtmlEntities(option))
           : (attribute.terms ?? []).map((term) => decodeHtmlEntities(term.name)),
     })),
+    variations: (product.variations ?? []).map((variation) => ({
+      id: variation.id,
+      attributes: variation.attributes.map((attr) => ({
+        name: decodeHtmlEntities(attr.name),
+        value: decodeHtmlEntities(attr.value),
+      })),
+      price: variation.price,
+      regularPrice: variation.regularPrice,
+      salePrice: variation.salePrice,
+      onSale: variation.onSale,
+      inStock: variation.inStock,
+    })),
+    faqs: product.faqs ?? [],
   };
 };
 
@@ -462,7 +494,7 @@ const SingleProduct = ({
   const sizeOptions = useMemo(() => {
     if (!product) return ["16x20", "20x30", "30x40"];
     const sizeAttribute = product.attributes.find((attribute) =>
-      /size/i.test(attribute.name)
+      /size|dimension/i.test(attribute.name)
     );
     if (sizeAttribute && sizeAttribute.options.length > 0) {
       return sizeAttribute.options;
@@ -561,6 +593,37 @@ const SingleProduct = ({
       ? selectedSize
       : (sizeOptions[0] ?? "");
 
+  const currentVariation = useMemo(() => {
+    if (!product?.variations || product.variations.length === 0) return null;
+    const sizeValue = selectedSizeValue;
+    if (!sizeValue) return null;
+    
+    // First try to find a variation where the size attribute name matches and value matches
+    const variationBySizeAttribute = product.variations.find((variation) =>
+      variation.attributes.some(
+        (attr) =>
+          /size|dimension/i.test(attr.name) && attr.value.toLowerCase() === sizeValue.toLowerCase()
+      )
+    );
+    
+    if (variationBySizeAttribute) return variationBySizeAttribute;
+    
+    // If not found, try to find a variation where ANY attribute value matches the selected size
+    // This handles cases where the attribute name might be different (e.g., "pa_size", "Size", etc.)
+    const variationByValue = product.variations.find((variation) =>
+      variation.attributes.some(
+        (attr) => attr.value.toLowerCase() === sizeValue.toLowerCase()
+      )
+    );
+    
+    return variationByValue ?? null;
+  }, [product, selectedSizeValue]);
+
+  const currentPrice = currentVariation?.price ?? product?.price ?? null;
+  const currentRegularPrice = currentVariation?.regularPrice ?? product?.regularPrice ?? null;
+  const currentSalePrice = currentVariation?.salePrice ?? product?.salePrice ?? null;
+  const currentOnSale = currentVariation?.onSale ?? product?.onSale ?? false;
+
   const wishlistItemId = product
     ? `${product.id}-${selectedSizeValue || "default"}`
     : "";
@@ -614,7 +677,7 @@ const SingleProduct = ({
     customHeight || formatDimensionValue(baseSizeDimensions.height);
 
   const customCalculatedPrice = useMemo(() => {
-    if (!product || product.price === null || !baseSizeArea || baseSizeArea <= 0) {
+    if (!product || currentPrice === null || !baseSizeArea || baseSizeArea <= 0) {
       return null;
     }
     if (!Number.isFinite(customWidthNumber) || !Number.isFinite(customHeightNumber)) {
@@ -623,8 +686,8 @@ const SingleProduct = ({
     if (customWidthNumber <= 0 || customHeightNumber <= 0) return null;
 
     const customArea = customWidthNumber * customHeightNumber;
-    return product.price * (customArea / baseSizeArea);
-  }, [baseSizeArea, customHeightNumber, customWidthNumber, product]);
+    return currentPrice * (customArea / baseSizeArea);
+  }, [baseSizeArea, customHeightNumber, customWidthNumber, product, currentPrice]);
 
   const formattedCustomCalculatedPrice = useMemo(() => {
     if (!product) return null;
@@ -650,29 +713,29 @@ const SingleProduct = ({
 
   const formattedPrice = useMemo(() => {
     if (!product) return null;
-    return formatPrice(product.price, product.currencyCode, product.currencySymbol);
-  }, [product]);
+    return formatPrice(currentPrice, product.currencyCode, product.currencySymbol);
+  }, [product, currentPrice]);
 
   const formattedRegularPrice = useMemo(() => {
     if (!product) return null;
     return formatPrice(
-      product.regularPrice,
+      currentRegularPrice,
       product.currencyCode,
       product.currencySymbol
     );
-  }, [product]);
+  }, [product, currentRegularPrice]);
 
   const discountPercentage = useMemo(() => {
-    if (!product || product.regularPrice === null || product.price === null) {
+    if (!product || currentRegularPrice === null || currentPrice === null) {
       return null;
     }
-    if (product.regularPrice <= product.price || product.regularPrice <= 0) {
+    if (currentRegularPrice <= currentPrice || currentRegularPrice <= 0) {
       return null;
     }
     return Math.round(
-      ((product.regularPrice - product.price) / product.regularPrice) * 100
+      ((currentRegularPrice - currentPrice) / currentRegularPrice) * 100
     );
-  }, [product]);
+  }, [product, currentPrice, currentRegularPrice]);
 
   const displayRating = product?.averageRating && product.averageRating > 0 ? product.averageRating : 4.8;
   const displayReviewCount = product?.reviewCount && product.reviewCount > 0 ? product.reviewCount : 86;
@@ -747,7 +810,7 @@ const SingleProduct = ({
         title: stripHtml(product.name),
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,
-        price: product.price ?? undefined,
+        price: currentPrice ?? undefined,
       },
       quantity
     );
@@ -778,7 +841,7 @@ const SingleProduct = ({
         title: stripHtml(product.name),
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,
-        price: product.price ?? undefined,
+        price: currentPrice ?? undefined,
         href: `/shop/${product.slug}`,
       });
     }
@@ -883,7 +946,7 @@ const SingleProduct = ({
         title: `${stripHtml(product.name)} (Custom Size)`,
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,
-        price: customCalculatedPrice ?? product.price ?? undefined,
+        price: customCalculatedPrice ?? currentPrice ?? undefined,
       },
       1
     );
@@ -1212,6 +1275,25 @@ const SingleProduct = ({
                 <p className="mt-6 max-w-2xl text-[15px] leading-7 text-[#313131] md:mt-[30px] md:text-[18px] md:leading-8">
                   {stripHtml(product.shortDescription)}
                 </p>
+              )}
+
+              {product.faqs && product.faqs.length > 0 && (
+                <div className="mt-8 md:mt-10">
+                  <h3 className="font-display text-[20px] text-[#1f1f1f] md:text-[24px]">Frequently Asked Questions</h3>
+                  <div className="mt-4 space-y-4">
+                    {product.faqs.map((faq, index) => (
+                      <details key={index} className="group rounded-[8px] border border-[#e4ded4] bg-white">
+                        <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[15px] font-medium text-[#313131] md:text-[17px] [&::-webkit-details-marker]:hidden">
+                          {faq.question}
+                          <ChevronDown className="h-4 w-4 text-[#595959] transition-transform group-open:rotate-180" />
+                        </summary>
+                        <div className="border-t border-[#e4ded4] px-4 py-3 text-[14px] leading-6 text-[#595959] md:text-[16px] md:leading-7">
+                          <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                </div>
               )}
 
               <div className="mt-6 md:mt-[30px]">

@@ -309,10 +309,16 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
   let totalPages = 1;
 
   for (let page = 1; page <= totalPages && page <= MAX_PRODUCT_PAGES; page += 1) {
+    const queryParams = new URLSearchParams({
+      per_page: String(PRODUCTS_PER_PAGE),
+      page: String(page),
+      orderby: "date",
+      order: "desc",
+    });
     const response = await fetch(
-      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}`,
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
-        next: { revalidate: 120 },
+        cache: "no-store",
       }
     );
 

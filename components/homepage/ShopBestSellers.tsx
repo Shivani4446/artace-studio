@@ -147,9 +147,9 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
 
     const response = await fetch(
-      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}`,
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}&orderby=date&order=desc`,
       {
-        next: { revalidate: 120 },
+        cache: "no-store",
       }
     );
 

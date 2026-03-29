@@ -3,7 +3,6 @@ import SingleProduct from "@/components/singleproduct/SingleProduct";
 import { decodeHtmlEntities } from "@/utils/text";
 
 export const revalidate = 120;
-export const dynamicParams = false;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -70,6 +69,23 @@ type WooStoreAttribute = {
   options?: string[];
 };
 
+const parseMinorUnitPrice = (rawValue: string | undefined, minorUnit: number): number | null => {
+  if (!rawValue) return null;
+  const numericValue = Number(rawValue);
+  if (Number.isNaN(numericValue)) return null;
+  return numericValue / 10 ** minorUnit;
+};
+
+type VariationData = {
+  id: number;
+  attributes: { name: string; value: string }[];
+  price: number | null;
+  regularPrice: number | null;
+  salePrice: number | null;
+  onSale: boolean;
+  inStock: boolean;
+};
+
 type WooStoreProduct = {
   id: number;
   slug: string;
@@ -91,6 +107,8 @@ type WooStoreProduct = {
   related?: number[];
   upsell_ids?: number[];
   cross_sell_ids?: number[];
+  variations?: VariationData[];
+  faqs?: { question: string; answer: string }[];
 };
 
 type RelatedProductCard = {
@@ -157,7 +175,7 @@ const fetchStoreProducts = async (
 ): Promise<WooStoreProduct[]> => {
   try {
     const response = await fetch(`${getApiBaseUrl()}/wp-json/wc/store/v1/products?${queryString}`, {
-      next: { revalidate: 120 },
+      cache: "no-store",
     });
 
     if (!response.ok) return [];
@@ -173,7 +191,7 @@ const fetchAllProductSlugs = async () => {
 
   for (let page = 1; page <= MAX_PRODUCT_SLUG_PAGES; page += 1) {
     const payload = await fetchStoreProducts(
-      `per_page=${PRODUCT_SLUGS_PER_PAGE}&page=${page}`
+      `per_page=${PRODUCT_SLUGS_PER_PAGE}&page=${page}&orderby=date&order=desc`
     );
 
     if (payload.length === 0) {
@@ -418,7 +436,7 @@ const fetchProductInformationFromWooApi = async (productId: number) => {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
-      next: { revalidate: 120 },
+      cache: "no-store",
     });
 
     if (!response.ok) return [];
@@ -436,7 +454,7 @@ const fetchProductInformationFromWordPressApi = async (productId: number) => {
     const response = await fetch(
       `${siteUrl}/wp-json/wp/v2/product/${productId}?acf_format=standard&_fields=acf,meta`,
       {
-        next: { revalidate: 120 },
+        cache: "no-store",
       }
     );
 
@@ -457,7 +475,7 @@ const fetchProductInformationFromAcfApi = async (productId: number) => {
 
   for (const endpoint of acfEndpointCandidates) {
     try {
-      const response = await fetch(endpoint, { next: { revalidate: 120 } });
+      const response = await fetch(endpoint, { cache: "no-store" });
       if (!response.ok) continue;
 
       const payload = (await response.json()) as { acf?: Record<string, unknown> };
@@ -486,6 +504,166 @@ const fetchProductInformationFromAcfApi = async (productId: number) => {
   return [];
 };
 
+type WooV3VariationAttribute = {
+  id?: number;
+  name?: string;
+  option?: string;
+  value?: string;
+};
+
+type WooV3Variation = {
+  id: number;
+  attributes?: WooV3VariationAttribute[];
+  price?: string;
+  regular_price?: string;
+  sale_price?: string;
+  on_sale?: boolean;
+  is_in_stock?: boolean;
+};
+
+type WooV3ProductMetaDataItem = {
+  id?: number;
+  key?: string;
+  value?: unknown;
+};
+
+type WooV3ProductForFAQ = {
+  meta_data?: WooV3ProductMetaDataItem[];
+};
+
+const fetchProductVariations = async (productId: number): Promise<VariationData[]> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+  if (!consumerKey || !consumerSecret) return [];
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const response = await fetch(
+      `${siteUrl}/wp-json/wc/v3/products/${productId}/variations?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}&per_page=100`,
+      {
+        headers: {
+          Authorization: `Basic ${basicToken}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) return [];
+    const payload = (await response.json()) as WooV3Variation[];
+    if (!Array.isArray(payload)) return [];
+
+    return payload.map((variation) => ({
+      id: variation.id,
+      attributes: (variation.attributes ?? []).map((attr) => ({
+        name: attr.name ?? '',
+        value: attr.option ?? attr.value ?? '',
+      })),
+      price: parseMinorUnitPrice(variation.price, 2),
+      regularPrice: parseMinorUnitPrice(variation.regular_price, 2),
+      salePrice: parseMinorUnitPrice(variation.sale_price, 2),
+      onSale: Boolean(variation.on_sale),
+      inStock: Boolean(variation.is_in_stock),
+    }));
+  } catch {
+    return [];
+  }
+};
+
+type FAQItemFromApi = {
+  type?: string;
+  title?: string;
+  content?: string;
+  question?: string;
+  answer?: string;
+};
+
+const fetchProductFAQ = async (productId: number): Promise<{ question: string; answer: string }[]> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+  if (!consumerKey || !consumerSecret) return [];
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const response = await fetch(
+      `${siteUrl}/wp-json/wc/v3/products/${productId}?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
+      {
+        headers: {
+          Authorization: `Basic ${basicToken}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) return [];
+    const payload = (await response.json()) as WooV3ProductForFAQ;
+    const metaData = payload.meta_data ?? [];
+    
+    // Try different FAQ meta keys that WooCommerce FAQ plugins might use
+    const faqMetaKeys = ['wpcpf_faqs', '_wpcpf_faqs', 'faqs', '_faqs', 'product_faqs', '_product_faqs'];
+    let faqMeta: WooV3ProductMetaDataItem | undefined;
+    
+    for (const key of faqMetaKeys) {
+      faqMeta = metaData.find((meta) => meta.key === key);
+      if (faqMeta && faqMeta.value) break;
+    }
+    
+    if (!faqMeta || !faqMeta.value) return [];
+
+    // Handle different FAQ data structures
+    const faqValue = faqMeta.value;
+    
+    // If it's an object with numbered keys (like wpcpf_faqs plugin format)
+    if (typeof faqValue === 'object' && !Array.isArray(faqValue)) {
+      const faqObject = faqValue as Record<string, FAQItemFromApi>;
+      return Object.values(faqObject)
+        .filter((item): item is FAQItemFromApi => Boolean(item && (item.title || item.question)))
+        .map((item) => ({
+          question: item.title ?? item.question ?? '',
+          answer: item.content ?? item.answer ?? '',
+        }));
+    }
+    
+    // If it's an array of FAQ items
+    if (Array.isArray(faqValue)) {
+      return faqValue
+        .filter((item): item is FAQItemFromApi => Boolean(item && typeof item === 'object' && (item.title || item.question)))
+        .map((item) => ({
+          question: item.title ?? item.question ?? '',
+          answer: item.content ?? item.answer ?? '',
+        }));
+    }
+    
+    // If it's a JSON string, try to parse it
+    if (typeof faqValue === 'string') {
+      try {
+        const parsed = JSON.parse(faqValue);
+        if (typeof parsed === 'object' && parsed !== null) {
+          if (Array.isArray(parsed)) {
+            return parsed
+              .filter((item): item is FAQItemFromApi => Boolean(item && typeof item === 'object' && (item.title || item.question)))
+              .map((item) => ({
+                question: item.title ?? item.question ?? '',
+                answer: item.content ?? item.answer ?? '',
+              }));
+          }
+          return Object.values(parsed as Record<string, FAQItemFromApi>)
+            .filter((item): item is FAQItemFromApi => Boolean(item && (item.title || item.question)))
+            .map((item) => ({
+              question: item.title ?? item.question ?? '',
+              answer: item.content ?? item.answer ?? '',
+            }));
+        }
+      } catch {
+        // JSON parse failed, return empty
+      }
+    }
+
+    return [];
+  } catch {
+    return [];
+  }
+};
+
 const mergeProductInformationIntoProduct = (
   product: WooStoreProduct,
   informationItems: string[]
@@ -511,16 +689,22 @@ const mergeProductInformationIntoProduct = (
 
 const getProductWithProductInformation = async (product: WooStoreProduct) => {
   const existingInformationItems = getProductInformationFromStoreProduct(product);
+  const variationsPromise = fetchProductVariations(product.id);
+  const faqPromise = fetchProductFAQ(product.id);
 
   if (existingInformationItems.length > 0) {
-    return mergeProductInformationIntoProduct(product, existingInformationItems);
+    const [variations, faqs] = await Promise.all([variationsPromise, faqPromise]);
+    const productWithExtras = { ...product, variations, faqs };
+    return mergeProductInformationIntoProduct(productWithExtras, existingInformationItems);
   }
 
-  const [acfApiInformationItems, wooApiInformationItems, wordPressApiInformationItems] =
+  const [acfApiInformationItems, wooApiInformationItems, wordPressApiInformationItems, variations, faqs] =
     await Promise.all([
       fetchProductInformationFromAcfApi(product.id),
       fetchProductInformationFromWooApi(product.id),
       fetchProductInformationFromWordPressApi(product.id),
+      variationsPromise,
+      faqPromise,
     ]);
 
   const mergedInformationItems = normalizeProductInformationItems([
@@ -529,7 +713,8 @@ const getProductWithProductInformation = async (product: WooStoreProduct) => {
     ...wordPressApiInformationItems,
   ]);
 
-  return mergeProductInformationIntoProduct(product, mergedInformationItems);
+  const productWithExtras = { ...product, variations, faqs };
+  return mergeProductInformationIntoProduct(productWithExtras, mergedInformationItems);
 };
 
 const getAttributeOptions = (attribute: WooStoreAttribute) => {

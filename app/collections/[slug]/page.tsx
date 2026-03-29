@@ -7,7 +7,6 @@ import CollectionLandingPage, {
 import { decodeHtmlEntities } from "@/utils/text";
 
 export const revalidate = 120;
-export const dynamicParams = false;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -87,7 +86,7 @@ const fetchWooStoreJson = async <T,>(path: string): Promise<T | null> => {
   const doFetch = async (url: string) =>
     fetch(url, {
       headers: PUBLIC_WOO_HEADERS,
-      next: { revalidate: 120 },
+      cache: "no-store",
     });
 
   try {
@@ -235,7 +234,7 @@ const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
 
   for (let page = 1; page <= MAX_PRODUCT_PAGES; page += 1) {
     const payload = await fetchWooStoreJson<unknown>(
-      `/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}`
+      `/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}&orderby=date&order=desc`
     );
 
     if (payload === null) {

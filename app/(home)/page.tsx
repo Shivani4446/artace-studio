@@ -87,7 +87,7 @@ const getDiscoverCategories = async (): Promise<DiscoverCategoryCard[]> => {
     const response = await fetch(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=24`,
       {
-        next: { revalidate: 120 },
+        cache: "no-store",
       }
     );
 
