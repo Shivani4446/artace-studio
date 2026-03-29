@@ -464,6 +464,44 @@ const normalizeDimensionInput = (value: string) => {
   );
 };
 
+const ProductFAQs = ({ faqs }: { faqs: FAQItem[] }) => {
+  if (faqs.length === 0) return null;
+
+  return (
+    <section className="rounded-[16px] border border-[#ded8ce] bg-gradient-to-b from-[#fcfbf8] to-white p-5 shadow-[0_18px_40px_rgba(31,31,31,0.04)] md:p-8">
+      <div className="max-w-[780px]">
+        <p className="font-inter text-[12px] uppercase tracking-[0.12em] text-[#6a655d] md:text-[13px]">
+          Common Questions
+        </p>
+        <h2 className="mt-3 font-display text-[28px] leading-[1.08] text-[#1f1f1f] md:text-[40px]">
+          Frequently Asked Questions
+        </h2>
+        <p className="mt-3 text-[15px] leading-7 text-[#5d5850] md:text-[18px] md:leading-8">
+          Everything collectors usually want to know before browsing more pieces
+          from this collection.
+        </p>
+      </div>
+
+      <div className="mt-6 space-y-3 md:mt-8">
+        {faqs.map((faq, index) => (
+          <details
+            key={`${faq.question}-${index}`}
+            className="group overflow-hidden rounded-[12px] border border-[#e4ded4] bg-white"
+          >
+            <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-4 px-4 py-4 text-[15px] font-medium leading-6 text-[#313131] [&::-webkit-details-marker]:hidden md:min-h-[56px] md:px-5 md:text-[18px] md:leading-7">
+              <span>{faq.question}</span>
+              <ChevronDown className="h-4 w-4 shrink-0 text-[#595959] transition-transform group-open:rotate-180 md:h-5 md:w-5" />
+            </summary>
+            <div className="border-t border-[#ece7de] px-4 py-4 text-[14px] leading-6 text-[#595959] md:px-5 md:text-[16px] md:leading-7">
+              <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const SingleProduct = ({
   initialProduct = null,
   relatedProducts = DEFAULT_RELATED_PRODUCTS,
@@ -621,8 +659,6 @@ const SingleProduct = ({
 
   const currentPrice = currentVariation?.price ?? product?.price ?? null;
   const currentRegularPrice = currentVariation?.regularPrice ?? product?.regularPrice ?? null;
-  const currentSalePrice = currentVariation?.salePrice ?? product?.salePrice ?? null;
-  const currentOnSale = currentVariation?.onSale ?? product?.onSale ?? false;
 
   const wishlistItemId = product
     ? `${product.id}-${selectedSizeValue || "default"}`
@@ -1277,25 +1313,6 @@ const SingleProduct = ({
                 </p>
               )}
 
-              {product.faqs && product.faqs.length > 0 && (
-                <div className="mt-8 md:mt-10">
-                  <h3 className="font-display text-[20px] text-[#1f1f1f] md:text-[24px]">Frequently Asked Questions</h3>
-                  <div className="mt-4 space-y-4">
-                    {product.faqs.map((faq, index) => (
-                      <details key={index} className="group rounded-[8px] border border-[#e4ded4] bg-white">
-                        <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[15px] font-medium text-[#313131] md:text-[17px] [&::-webkit-details-marker]:hidden">
-                          {faq.question}
-                          <ChevronDown className="h-4 w-4 text-[#595959] transition-transform group-open:rotate-180" />
-                        </summary>
-                        <div className="border-t border-[#e4ded4] px-4 py-3 text-[14px] leading-6 text-[#595959] md:text-[16px] md:leading-7">
-                          <div dangerouslySetInnerHTML={{ __html: faq.answer }} />
-                        </div>
-                      </details>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <div className="mt-6 md:mt-[30px]">
                 <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Size</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -1697,6 +1714,14 @@ const SingleProduct = ({
             </div>
           </div>
         </div>
+      ) : null}
+
+      {product.faqs && product.faqs.length > 0 ? (
+        <section className="px-4 pt-4 sm:px-6 md:px-12 md:pt-6 lg:px-24">
+          <div className="mx-auto max-w-[1440px]">
+            <ProductFAQs faqs={product.faqs} />
+          </div>
+        </section>
       ) : null}
 
       <section className="px-4 py-10 sm:px-6 md:px-12 md:py-12 lg:px-24">

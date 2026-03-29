@@ -70,13 +70,6 @@ type WooStoreAttribute = {
   options?: string[];
 };
 
-const parseMinorUnitPrice = (rawValue: string | undefined, minorUnit: number): number | null => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
-};
-
 type VariationData = {
   id: number;
   attributes: { name: string; value: string }[];
@@ -169,6 +162,13 @@ const toBasicAuthToken = (username: string, password: string) => {
   if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
 
   throw new Error("No base64 encoder available.");
+};
+
+const parseWooCommerceDecimalPrice = (rawValue: string | undefined): number | null => {
+  if (!rawValue) return null;
+  const numericValue = Number(rawValue);
+  if (Number.isNaN(numericValue)) return null;
+  return numericValue;
 };
 
 const fetchStoreProducts = async (
@@ -559,9 +559,9 @@ const fetchProductVariations = async (productId: number): Promise<VariationData[
         name: attr.name ?? '',
         value: attr.option ?? attr.value ?? '',
       })),
-      price: parseMinorUnitPrice(variation.price, 2),
-      regularPrice: parseMinorUnitPrice(variation.regular_price, 2),
-      salePrice: parseMinorUnitPrice(variation.sale_price, 2),
+      price: parseWooCommerceDecimalPrice(variation.price),
+      regularPrice: parseWooCommerceDecimalPrice(variation.regular_price),
+      salePrice: parseWooCommerceDecimalPrice(variation.sale_price),
       onSale: Boolean(variation.on_sale),
       inStock: Boolean(variation.is_in_stock),
     }));
