@@ -217,19 +217,6 @@ const fetchCategories = async (): Promise<WooStoreCategory[] | null> => {
   return Array.isArray(payload) ? (payload as WooStoreCategory[]) : null;
 };
 
-export async function generateStaticParams() {
-  const categories = await fetchCategories();
-
-  if (!categories) {
-    return [];
-  }
-
-  return categories
-    .map((category) => category.slug?.trim())
-    .filter((slug): slug is string => Boolean(slug))
-    .map((slug) => ({ slug }));
-}
-
 const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
   const products: WooStoreProduct[] = [];
 

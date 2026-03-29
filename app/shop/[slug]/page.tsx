@@ -31,8 +31,6 @@ const PRODUCT_INFORMATION_META_KEYS = [
   "certificate_provided",
   "country_of_origin",
 ];
-const PRODUCT_SLUGS_PER_PAGE = 100;
-const MAX_PRODUCT_SLUG_PAGES = 5;
 
 type WooStorePrices = {
   currency_code: string;
@@ -186,38 +184,6 @@ const fetchStoreProducts = async (
     return [];
   }
 };
-
-const fetchAllProductSlugs = async () => {
-  const slugs: string[] = [];
-
-  for (let page = 1; page <= MAX_PRODUCT_SLUG_PAGES; page += 1) {
-    const payload = await fetchStoreProducts(
-      `per_page=${PRODUCT_SLUGS_PER_PAGE}&page=${page}&orderby=date&order=desc`
-    );
-
-    if (payload.length === 0) {
-      break;
-    }
-
-    slugs.push(
-      ...payload
-        .map((product) => product.slug?.trim())
-        .filter((slug): slug is string => Boolean(slug))
-    );
-
-    if (payload.length < PRODUCT_SLUGS_PER_PAGE) {
-      break;
-    }
-  }
-
-  return Array.from(new Set(slugs));
-};
-
-export async function generateStaticParams() {
-  const slugs = await fetchAllProductSlugs();
-
-  return slugs.map((slug) => ({ slug }));
-}
 
 const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
   try {
