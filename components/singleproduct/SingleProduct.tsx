@@ -490,6 +490,16 @@ const sizeOptionsMatch = (firstValue: string, secondValue: string) => {
   );
 };
 
+const uniqueSizeOptions = (values: string[]) =>
+  Array.from(
+    new Map(
+      values
+        .map((value) => decodeHtmlEntities(value).trim())
+        .filter(Boolean)
+        .map((value) => [normalizeSizeOptionValue(value), value] as const)
+    ).values()
+  );
+
 const ProductFAQs = ({ faqs }: { faqs: FAQItem[] }) => {
   if (faqs.length === 0) return null;
 
@@ -557,12 +567,26 @@ const SingleProduct = ({
 
   const sizeOptions = useMemo(() => {
     if (!product) return ["16x20", "20x30", "30x40"];
-    const sizeAttribute = product.attributes.find((attribute) =>
-      /size|dimension/i.test(attribute.name)
+    const sizeOptionsFromAttributes = uniqueSizeOptions(
+      product.attributes
+        .filter((attribute) => /size|dimension/i.test(attribute.name))
+        .flatMap((attribute) => attribute.options)
     );
-    if (sizeAttribute && sizeAttribute.options.length > 0) {
-      return sizeAttribute.options;
+    if (sizeOptionsFromAttributes.length > 0) {
+      return sizeOptionsFromAttributes;
     }
+
+    const sizeOptionsFromVariations = uniqueSizeOptions(
+      (product.variations ?? []).flatMap((variation) =>
+        variation.attributes
+          .filter((attribute) => /size|dimension/i.test(attribute.name))
+          .map((attribute) => attribute.value)
+      )
+    );
+    if (sizeOptionsFromVariations.length > 0) {
+      return sizeOptionsFromVariations;
+    }
+
     return ["16x20", "20x30", "30x40"];
   }, [product]);
 
