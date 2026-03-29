@@ -464,6 +464,32 @@ const normalizeDimensionInput = (value: string) => {
   );
 };
 
+const normalizeSizeOptionValue = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\u00d7/g, "x")
+    .replace(/\s*[xX]\s*/g, "x")
+    .replace(/["']/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const sizeOptionsMatch = (firstValue: string, secondValue: string) => {
+  const normalizedFirst = normalizeSizeOptionValue(firstValue);
+  const normalizedSecond = normalizeSizeOptionValue(secondValue);
+
+  if (normalizedFirst === normalizedSecond) return true;
+
+  const firstDimensions = parseSizeDimensions(firstValue);
+  const secondDimensions = parseSizeDimensions(secondValue);
+
+  if (!firstDimensions || !secondDimensions) return false;
+
+  return (
+    firstDimensions.width === secondDimensions.width &&
+    firstDimensions.height === secondDimensions.height
+  );
+};
+
 const ProductFAQs = ({ faqs }: { faqs: FAQItem[] }) => {
   if (faqs.length === 0) return null;
 
@@ -635,25 +661,23 @@ const SingleProduct = ({
     if (!product?.variations || product.variations.length === 0) return null;
     const sizeValue = selectedSizeValue;
     if (!sizeValue) return null;
-    
+
     // First try to find a variation where the size attribute name matches and value matches
     const variationBySizeAttribute = product.variations.find((variation) =>
       variation.attributes.some(
         (attr) =>
-          /size|dimension/i.test(attr.name) && attr.value.toLowerCase() === sizeValue.toLowerCase()
+          /size|dimension/i.test(attr.name) && sizeOptionsMatch(attr.value, sizeValue)
       )
     );
-    
+
     if (variationBySizeAttribute) return variationBySizeAttribute;
-    
+
     // If not found, try to find a variation where ANY attribute value matches the selected size
     // This handles cases where the attribute name might be different (e.g., "pa_size", "Size", etc.)
     const variationByValue = product.variations.find((variation) =>
-      variation.attributes.some(
-        (attr) => attr.value.toLowerCase() === sizeValue.toLowerCase()
-      )
+      variation.attributes.some((attr) => sizeOptionsMatch(attr.value, sizeValue))
     );
-    
+
     return variationByValue ?? null;
   }, [product, selectedSizeValue]);
 

@@ -13,6 +13,11 @@ type ShopCatalogProps = {
   loadError?: string | null;
 };
 
+type ShopCatalogApiResponse = {
+  products?: ShopProduct[];
+  error?: string;
+};
+
 type SortById =
   | "price"
   | "date-added"
@@ -212,10 +217,62 @@ const FilterChipGroup = ({
 };
 
 const ShopCatalog = ({
-  products,
-  loadError = null,
+  products: initialProducts,
+  loadError: initialLoadError = null,
 }: ShopCatalogProps) => {
+  const [catalogProducts, setCatalogProducts] = useState<ShopProduct[]>(initialProducts);
+  const [catalogLoadError, setCatalogLoadError] = useState<string | null>(
+    initialLoadError
+  );
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    setCatalogProducts(initialProducts);
+  }, [initialProducts]);
+
+  useEffect(() => {
+    setCatalogLoadError(initialLoadError);
+  }, [initialLoadError]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadLatestProducts = async () => {
+      try {
+        const response = await fetch("/api/store/products", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+
+        const payload = (await response.json()) as ShopCatalogApiResponse;
+
+        if (!response.ok) {
+          throw new Error(payload.error || "Unable to refresh products.");
+        }
+
+        if (!controller.signal.aborted && Array.isArray(payload.products)) {
+          setCatalogProducts(payload.products);
+          setCatalogLoadError(null);
+        }
+      } catch (error) {
+        if (controller.signal.aborted) return;
+
+        if (initialProducts.length === 0) {
+          setCatalogLoadError(
+            error instanceof Error ? error.message : "Unable to refresh products."
+          );
+        }
+      }
+    };
+
+    void loadLatestProducts();
+
+    return () => controller.abort();
+  }, [initialProducts.length]);
+
+  const products = catalogProducts;
+  const loadError = catalogLoadError;
+
   const categoryFromQuery = useMemo(() => {
     const rawCategorySlug = searchParams.get("category");
     if (!rawCategorySlug) return null;
