@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const DEFAULT_BASE_URL = "https://artacestudio.com";
+const DEFAULT_BASE_URL = "https://www.artacestudio.com";
 const DEFAULT_WP_JSON_PREFIX = "/wp-json";
 const REVALIDATE_SECONDS = 60 * 60; // 1 hour
 
@@ -13,7 +13,11 @@ const normalizeBaseUrl = (value: string) => {
     const normalized = new URL(trimmed);
 
     if (normalized.hostname === "api.artacestudio.com") {
-      normalized.hostname = "artacestudio.com";
+      normalized.hostname = "www.artacestudio.com";
+    }
+
+    if (normalized.hostname === "artacestudio.com") {
+      normalized.hostname = "www.artacestudio.com";
     }
 
     return trimTrailingSlashes(normalized.origin);
