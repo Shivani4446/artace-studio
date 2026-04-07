@@ -44,6 +44,12 @@ const resourceLinks = [
     description: "Meet the artists, advisors, and makers behind every commission.",
   },
   {
+    name: "Exhibition",
+    href: "/exhibition",
+    description:
+      "Follow Artace's growing exhibition journey across India and global design destinations.",
+  },
+  {
     name: "Blogs",
     href: "/blogs",
     description: "Ideas on styling art, gifting, collecting, and choosing the right piece.",
@@ -608,7 +614,7 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 gap-5 pt-5">
+            <div className="grid gap-5 pt-5 lg:grid-cols-2 xl:grid-cols-4">
               {resourceLinks.map((resource) => (
                 <Link
                   key={resource.name}

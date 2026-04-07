@@ -113,6 +113,7 @@ export async function fetchSearchResults(
     }));
 
   const pages: SearchPage[] = [
+    { id: "exhibition", title: "Exhibition", href: "/exhibition" },
     { id: "team", title: "Team", href: "/team" },
   ].filter((page) => page.title.toLowerCase().includes(normalizedQuery));
 
