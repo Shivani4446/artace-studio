@@ -1,20 +1,34 @@
 import type { MetadataRoute } from "next";
 
-const DEFAULT_BASE_URL = "https://your-domain.com";
+const DEFAULT_BASE_URL = "https://artacestudio.com";
 const DEFAULT_WP_JSON_PREFIX = "/wp-json";
 const REVALIDATE_SECONDS = 60 * 60; // 1 hour
 
 const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
 
+const normalizeBaseUrl = (value: string) => {
+  const trimmed = trimTrailingSlashes(value.trim());
+
+  try {
+    const normalized = new URL(trimmed);
+
+    if (normalized.hostname === "api.artacestudio.com") {
+      normalized.hostname = "artacestudio.com";
+    }
+
+    return trimTrailingSlashes(normalized.origin);
+  } catch {
+    return trimmed;
+  }
+};
+
 const getBaseUrl = () => {
   const raw =
     process.env.SITE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
     DEFAULT_BASE_URL;
 
-  return trimTrailingSlashes(raw.trim());
+  return normalizeBaseUrl(raw);
 };
 
 const getWooApiOrigin = () => {
