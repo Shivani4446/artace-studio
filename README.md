@@ -25,7 +25,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 To create WooCommerce orders from Next.js and initialize Razorpay checkout (`POST /api/checkout`), set:
 
 ```bash
-WOOCOMMERCE_SITE_URL=https://www.artacestudio.com
+WOOCOMMERCE_SITE_URL=https://artacestudio.com
 WOOCOMMERCE_CONSUMER_KEY=ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 WOOCOMMERCE_PAYMENT_METHOD=razorpay

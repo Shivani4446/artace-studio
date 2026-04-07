@@ -3,12 +3,12 @@ export const homepageSchema = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://www.artacestudio.com/#organization",
+      "@id": "https://artacestudio.com/#organization",
       name: "Artace Studio",
-      url: "https://www.artacestudio.com",
+      url: "https://artacestudio.com",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.artacestudio.com/Artace-logo.svg",
+        url: "https://artacestudio.com/Artace-logo.svg",
         width: 200,
         height: 60,
       },
@@ -37,29 +37,29 @@ export const homepageSchema = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://www.artacestudio.com/#website",
-      url: "https://www.artacestudio.com",
+      "@id": "https://artacestudio.com/#website",
+      url: "https://artacestudio.com",
       name: "Artace Studio",
       description: "Handcrafted Canvas Paintings, Bespoke to Your Vision",
       publisher: {
-        "@id": "https://www.artacestudio.com/#organization",
+        "@id": "https://artacestudio.com/#organization",
       },
       potentialAction: {
         "@type": "SearchAction",
         target: {
           "@type": "EntryPoint",
           urlTemplate:
-            "https://www.artacestudio.com/shop?search={search_term_string}",
+            "https://artacestudio.com/shop?search={search_term_string}",
         },
         "query-input": "required name=search_term_string",
       },
     },
     {
       "@type": "LocalBusiness",
-      "@id": "https://www.artacestudio.com/#localbusiness",
+      "@id": "https://artacestudio.com/#localbusiness",
       name: "Artace Studio",
-      image: "https://www.artacestudio.com/Artace-logo.svg",
-      url: "https://www.artacestudio.com",
+      image: "https://artacestudio.com/Artace-logo.svg",
+      url: "https://artacestudio.com",
       telephone: "+91-9657609102",
       priceRange: "\u20B9\u20B9",
       address: {
@@ -95,9 +95,9 @@ export const homepageSchema = {
     },
     {
       "@type": "AggregateRating",
-      "@id": "https://www.artacestudio.com/#aggregaterating",
+      "@id": "https://artacestudio.com/#aggregaterating",
       itemReviewed: {
-        "@id": "https://www.artacestudio.com/#organization",
+        "@id": "https://artacestudio.com/#organization",
       },
       ratingValue: "4.9",
       bestRating: "5",
@@ -112,7 +112,7 @@ export const homepageSchema = {
           "@type": "ListItem",
           position: 1,
           name: "Home",
-          item: "https://www.artacestudio.com",
+          item: "https://artacestudio.com",
         },
       ],
     },

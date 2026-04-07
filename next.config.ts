@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "www.artacestudio.com",
+        hostname: "artacestudio.com",
       },
       {
         protocol: "https",
