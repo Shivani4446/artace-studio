@@ -23,10 +23,11 @@ const footerSections: FooterSection[] = [
       },
     ],
   },
-  {
+{
     title: "Shop",
     links: [
       { label: "Shop", href: "/shop" },
+      { label: "Art Rentals", href: "/rentals" },
       { label: "Corporate & Bulk Orders", href: "/corporate-bulk-orders" },
       { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "/dashboard/orders" },

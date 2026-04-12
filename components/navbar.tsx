@@ -174,7 +174,7 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }],
+    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }, { name: "Art Rentals", href: "/rentals" }],
   },
   {
     name: "Resources",
@@ -511,7 +511,7 @@ const Navbar = () => {
 
     if (openDesktopMenu === "shop") {
       return (
-        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-stretch gap-8">
+        <div className="grid grid-cols-[minmax(0,1fr)_250px] items-stretch gap-6">
           <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
             <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
               <div>
@@ -558,35 +558,52 @@ const Navbar = () => {
             </div>
           </div>
 
-           <div className="grid grid-rows-[auto_auto_1fr_auto] gap-4">
-            {shopHighlights.slice(0, 2).map((item) => (
-              <div
-                key={item.title}
-                className="rounded-[18px] bg-white px-5 py-5"
+<div className="grid grid-rows-[auto_auto_auto] gap-3">
+              {shopHighlights.slice(0, 2).map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-[14px] bg-white px-4 py-3"
+                >
+                  <p className="font-inter text-[13px] font-medium text-[#2c2c2c]">
+                    {item.title}
+                  </p>
+                  <p className="mt-1 font-inter text-[12px] leading-[1.5] text-[#6b6b6b]">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+
+              <Link
+                href="/rentals"
+                onClick={closeDesktopMenu}
+                className="rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-4 py-3 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
               >
-                <p className="font-inter text-[14px] font-medium text-[#2c2c2c]">
-                  {item.title}
+                <p className="font-inter text-[10px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
+                  Art Rentals
                 </p>
-                <p className="mt-2 font-inter text-[13px] leading-[1.65] text-[#6b6b6b]">
-                  {item.body}
+                <p className="mt-1 font-display text-[16px] leading-[1.08]">
+                  Rent artwork for offices, hotels, restaurants & spaces.
                 </p>
-              </div>
-            ))}
+                <div className="mt-2 inline-flex items-center gap-1 font-inter text-[12px] font-medium text-[#2c2c2c]">
+                  Explore rentals
+                  <ArrowUpRight className="h-3 w-3" />
+                </div>
+              </Link>
 
             <Link
               href="/corporate-bulk-orders"
               onClick={closeDesktopMenu}
-              className="rounded-[18px] border border-[#ebe5dc] bg-[#f4efe7] px-5 py-5 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
+              className="rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-4 py-3 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
             >
-              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
+              <p className="font-inter text-[10px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
                 Corporate Orders
               </p>
-              <p className="mt-3 font-display text-[24px] leading-[1.08]">
+              <p className="mt-1 font-display text-[16px] leading-[1.08]">
                 Plan bulk art orders for offices, gifting, and styled spaces.
               </p>
-              <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
+              <div className="mt-2 inline-flex items-center gap-1 font-inter text-[12px] font-medium text-[#2c2c2c]">
                 Explore corporate orders
-                <ArrowUpRight className="h-4 w-4" />
+                <ArrowUpRight className="h-3 w-3" />
               </div>
             </Link>
           </div>
@@ -1027,7 +1044,7 @@ const Navbar = () => {
           onMouseLeave={closeDesktopMenu}
         >
           <div className="mx-auto max-w-[1440px] px-6 md:px-12">
-            <div className="mt-4 max-h-[calc(100vh-140px)] overflow-y-auto rounded-[12px] border border-[#d8d3ca] bg-[#f4f2ee] shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
+            <div className="mt-4 rounded-[12px] border border-[#d8d3ca] bg-[#f4f2ee] shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
               <div className="px-6 py-8 md:px-12">
                 {renderDesktopMenu()}
               </div>
@@ -1036,7 +1053,7 @@ const Navbar = () => {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="absolute left-0 top-full w-full border-b border-gray-100 bg-white px-6 py-6 shadow-xl lg:hidden">
+          <div className="absolute left-0 top-full w-full max-h-[calc(100dvh-88px)] border-b border-gray-100 bg-white px-6 py-6 overflow-y-auto shadow-xl lg:hidden md:max-h-[calc(100dvh-102px)]">
             <div className="flex flex-col gap-6">
               <div className="flex items-center bg-[#f2f2f2] rounded-full px-4 py-3 w-full">
                 <Search className="w-5 h-5 text-[#555555] mr-3" />
