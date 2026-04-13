@@ -3,6 +3,8 @@ import type { NextRequest } from "next/server";
 import { AUTH_COOKIE_NAME } from "@/utils/auth";
 import { getWordPressJwtSecret, isProbablyJwt, verifyHs256Jwt } from "@/utils/jwt";
 
+export const runtime = "edge";
+
 export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get(AUTH_COOKIE_NAME)?.value || "";
 
