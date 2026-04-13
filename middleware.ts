@@ -5,7 +5,7 @@ import { getWordPressJwtSecret, isProbablyJwt, verifyHs256Jwt } from "@/utils/jw
 
 export const runtime = "edge";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get(AUTH_COOKIE_NAME)?.value || "";
 
   if (!accessToken) {
