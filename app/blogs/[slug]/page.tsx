@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ArticleLayout from "@/components/article/ArticleLayout";
+import dynamic from "next/dynamic";
+
+const ArticleLayout = dynamic(() =>
+  import("@/components/article/ArticleLayout").then((mod) => mod.default)
+);
 import {
   estimateReadTimeMinutes,
   formatArticleDate,

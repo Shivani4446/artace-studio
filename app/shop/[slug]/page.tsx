@@ -1,5 +1,9 @@
 import React from "react";
-import SingleProduct from "@/components/singleproduct/SingleProduct";
+import dynamic from "next/dynamic";
+
+const SingleProduct = dynamic(() =>
+  import("@/components/singleproduct/SingleProduct").then((mod) => mod.default)
+);
 import { decodeHtmlEntities } from "@/utils/text";
 
 export const runtime = "edge";
