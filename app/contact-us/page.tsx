@@ -223,7 +223,7 @@ const ContactPage = () => {
               {status === "success" ? (
                 <p className="md:col-span-2 text-[14px] text-green-700 -mt-4">
                   Thanks for reaching out! We&apos;ve received your message and will
-                  respond shortly.
+                  respond ASAP.
                 </p>
               ) : null}
               {status === "error" ? (

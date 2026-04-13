@@ -21,9 +21,11 @@ import {
   type WordPressBlogPost,
 } from "@/utils/wordpress-blog";
 
-export const runtime = "edge";
 export const revalidate = 120;
-export const dynamicParams = true;
+export const dynamicParams = false;
+
+const POSTS_PER_PAGE = 100;
+const MAX_POST_PAGES = 20;
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -42,6 +44,35 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   } catch {
     return null;
   }
+}
+
+export async function generateStaticParams() {
+  const siteUrl = getWordPressBlogSiteUrl();
+  const slugs: string[] = [];
+
+  for (let page = 1; page <= MAX_POST_PAGES; page += 1) {
+    const endpoint = `${siteUrl}/wp-json/wp/v2/posts?per_page=${POSTS_PER_PAGE}&page=${page}&_fields=slug`;
+
+    try {
+      const response = await fetch(endpoint, { next: { revalidate } });
+      if (!response.ok) break;
+
+      const posts = (await response.json()) as Array<{ slug?: string }>;
+      if (!Array.isArray(posts) || posts.length === 0) break;
+
+      slugs.push(
+        ...posts
+          .map((post) => (post.slug || "").trim())
+          .filter((slug): slug is string => Boolean(slug))
+      );
+
+      if (posts.length < POSTS_PER_PAGE) break;
+    } catch {
+      break;
+    }
+  }
+
+  return Array.from(new Set(slugs)).map((slug) => ({ slug }));
 }
 
 async function getAuthor(authorId: number) {

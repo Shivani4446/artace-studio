@@ -6,8 +6,8 @@ const SingleProduct = dynamic(() =>
 );
 import { decodeHtmlEntities } from "@/utils/text";
 
-export const runtime = "edge";
-export const dynamicParams = true;
+export const revalidate = 120;
+export const dynamicParams = false;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -15,6 +15,8 @@ type SingleProductPageProps = {
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const RELATED_PRODUCTS_LIMIT = 4;
+const STORE_PRODUCTS_PER_PAGE = 100;
+const MAX_STORE_PRODUCT_PAGES = 20;
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const PRODUCT_INFORMATION_ATTRIBUTE_NAME = "Product Information";
 const PRODUCT_INFORMATION_KEY = "product_information";
@@ -181,11 +183,11 @@ const fetchStoreProducts = async (
   try {
     const apiBaseUrl = getApiBaseUrl();
     let response = await fetch(
-      `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
-      {
-        cache: "no-store",
-      }
-    );
+        `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
+        {
+          next: { revalidate },
+        }
+      );
 
     if (response.status === 404) {
       response = await fetch(
@@ -193,7 +195,7 @@ const fetchStoreProducts = async (
           `/wc/store/v1/products?${queryString}`
         )}`,
         {
-          cache: "no-store",
+          next: { revalidate },
         }
       );
     }
@@ -216,6 +218,28 @@ const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> =
     return null;
   }
 };
+
+export async function generateStaticParams() {
+  const slugs: string[] = [];
+
+  for (let page = 1; page <= MAX_STORE_PRODUCT_PAGES; page += 1) {
+    const products = await fetchStoreProducts(
+      `per_page=${STORE_PRODUCTS_PER_PAGE}&page=${page}`
+    );
+
+    if (products.length === 0) break;
+
+    slugs.push(
+      ...products
+        .map((product) => (product.slug || "").trim())
+        .filter((slug): slug is string => Boolean(slug))
+    );
+
+    if (products.length < STORE_PRODUCTS_PER_PAGE) break;
+  }
+
+  return Array.from(new Set(slugs)).map((slug) => ({ slug }));
+}
 
 const parseProductInformationText = (value: string) => {
   return value
@@ -424,7 +448,7 @@ const fetchProductInformationFromWooApi = async (productId: number) => {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
-      cache: "no-store",
+      next: { revalidate },
     });
 
     if (!response.ok) return [];
@@ -442,7 +466,7 @@ const fetchProductInformationFromWordPressApi = async (productId: number) => {
     const response = await fetch(
       `${siteUrl}/wp-json/wp/v2/product/${productId}?acf_format=standard&_fields=acf,meta`,
       {
-        cache: "no-store",
+        next: { revalidate },
       }
     );
 
@@ -463,7 +487,7 @@ const fetchProductInformationFromAcfApi = async (productId: number) => {
 
   for (const endpoint of acfEndpointCandidates) {
     try {
-      const response = await fetch(endpoint, { cache: "no-store" });
+      const response = await fetch(endpoint, { next: { revalidate } });
       if (!response.ok) continue;
 
       const payload = (await response.json()) as { acf?: Record<string, unknown> };
@@ -532,7 +556,7 @@ const fetchProductVariations = async (productId: number): Promise<VariationData[
         headers: {
           Authorization: `Basic ${basicToken}`,
         },
-        cache: "no-store",
+        next: { revalidate },
       }
     );
 
@@ -578,7 +602,7 @@ const fetchProductFAQ = async (productId: number): Promise<{ question: string; a
         headers: {
           Authorization: `Basic ${basicToken}`,
         },
-        cache: "no-store",
+        next: { revalidate },
       }
     );
 
