@@ -3,8 +3,14 @@ import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
 export const metadata: Metadata = {
-  title: "Cancellation Policy | Artace Studio",
-  description: "Cancellation policy and refund eligibility for commissioned artworks.",
+  title: "Cancellation Policy | Order Cancellation | Artace Studio",
+  description: "Artace Studio cancellation policy. Learn how to cancel orders and refund eligibility criteria.",
+  keywords: "cancellation policy, order cancellation, refund policy",
+  openGraph: {
+    title: "Cancellation Policy | Order Cancellation | Artace Studio",
+    description: "Our order cancellation policy.",
+    url: "https://artacestudio.com/cancellation-policy",
+  },
 };
 
 const INTRO_HTML = `

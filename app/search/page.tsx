@@ -1,5 +1,22 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import SearchClient from "./SearchClient";
+
+export const metadata: Metadata = {
+  title: "Search Art | Find Paintings | Artace Studio",
+  description: "Search for art and paintings at Artace Studio. Find canvas art, wall decor, and unique artworks. Browse our complete collection.",
+  keywords: "search art, find paintings, canvas art, wall art, search artworks",
+  openGraph: {
+    title: "Search Art | Find Paintings",
+    description: "Search and find your perfect painting.",
+    url: "https://artacestudio.com/search",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Search Art | Find Paintings",
+    description: "Search and find your perfect painting.",
+  },
+};
 
 const SearchPage = () => {
   return (

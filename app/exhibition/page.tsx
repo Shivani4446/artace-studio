@@ -4,9 +4,20 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Exhibition | Artace Studio",
-  description:
-    "Discover Artace Studio's exhibition journey across India and the world, with city-led showcases, collector storytelling, and original hand-painted works.",
+  title: "Online Art Exhibition | Virtual Gallery | Artace Studio",
+  description: "Explore Artace Studio's online art exhibition. View our virtual gallery showcasing curated paintings and contemporary artworks.",
+  keywords: "art exhibition, virtual gallery, online gallery, contemporary art, curated paintings",
+  openGraph: {
+    title: "Online Art Exhibition | Artace Studio",
+    description: "Explore our virtual gallery exhibition.",
+    url: "https://artacestudio.com/exhibition",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Online Art Exhibition | Artace Studio",
+    description: "Virtual gallery exhibition.",
+  },
 };
 
 const focusRegions = [

@@ -1,5 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Our Artists | Team | Artace Studio",
+  description: "Meet the talented artists behind Artace Studio. Explore profiles of our creative team and their unique art styles.",
+  keywords: "our artists, artist profiles, art team, painting artists",
+  openGraph: {
+    title: "Our Artists | Team | Artace Studio",
+    description: "Meet the talented artists behind our paintings.",
+    url: "https://artacestudio.com/team",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Our Artists | Team | Artace Studio",
+    description: "Meet our creative team.",
+  },
+};
 
 type TeamMember = {
   name: string;

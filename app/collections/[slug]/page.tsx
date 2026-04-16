@@ -300,8 +300,19 @@ export async function generateMetadata({ params }: CollectionPageProps) {
     .replace(/\b\w/g, (character) => character.toUpperCase());
 
   return {
-    title: `${readableSlug} | Artace Studio`,
-    description: `Browse the ${readableSlug} collection at Artace Studio.`,
+    title: `${readableSlug} Collection | Curated Paintings | Artace Studio`,
+    description: `Browse the ${readableSlug} collection at Artace Studio. Discover curated handcrafted paintings and unique artworks.`,
+    keywords: `${readableSlug.toLowerCase()} paintings, ${readableSlug.toLowerCase()} art, curated artworks, collection`,
+    openGraph: {
+      title: `${readableSlug} Collection | Artace Studio`,
+      description: `Browse the ${readableSlug} collection - curated handcrafted paintings.`,
+      url: `https://artacestudio.com/collections/${slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${readableSlug} Collection | Artace Studio`,
+      description: `Browse curated ${readableSlug.toLowerCase()} paintings.`,
+    },
   };
 }
 

@@ -3,8 +3,14 @@ import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
 export const metadata: Metadata = {
-  title: "Return Policy | Artace Studio",
-  description: "Return eligibility and process for artworks purchased from Artace Studio.",
+  title: "Return Policy | Exchange & Refunds | Artace Studio",
+  description: "Artace Studio return policy. Learn about our exchange and refund options for paintings. 7-day return window for unused items.",
+  keywords: "return policy, exchange policy, refund policy, money back guarantee",
+  openGraph: {
+    title: "Return Policy | Exchange & Refunds | Artace Studio",
+    description: "Our return and refund policy.",
+    url: "https://artacestudio.com/return-policy",
+  },
 };
 
 const INTRO_HTML = `

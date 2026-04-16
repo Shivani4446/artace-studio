@@ -1,6 +1,24 @@
 "use client";
 
+import type { Metadata } from "next";
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+
+export const metadata: Metadata = {
+  title: "Order Confirmed | Artace Studio",
+  description: "Your order has been confirmed. Thank you for purchasing Artace Studio paintings. Order details sent to email.",
+  keywords: "order confirmed, purchase complete, order success",
+  openGraph: {
+    title: "Order Confirmed | Artace Studio",
+    description: "Thank you for your purchase!",
+    url: "https://artacestudio.com/checkout/success",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Order Confirmed | Artace Studio",
+    description: "Thank you for your purchase!",
+  },
+  robots: "no-index",
+};
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { clearPendingCheckout } from "@/utils/checkout-client";

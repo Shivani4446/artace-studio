@@ -3,8 +3,14 @@ import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
 export const metadata: Metadata = {
-  title: "Terms of Use | Artace Studio",
-  description: "Terms and conditions governing the use of the Artace Studio website and services.",
+  title: "Terms of Use | Legal | Artace Studio",
+  description: "Terms of use for Artace Studio. Understand the conditions for using our website and purchasing artwork.",
+  keywords: "terms of use, legal, website terms, conditions",
+  openGraph: {
+    title: "Terms of Use | Legal | Artace Studio",
+    description: "Terms and conditions for using our site.",
+    url: "https://artacestudio.com/terms-of-use",
+  },
 };
 
 const INTRO_HTML = `

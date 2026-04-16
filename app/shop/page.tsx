@@ -1,5 +1,23 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import ShopCatalog from "@/components/shop/ShopCatalog";
+
+export const metadata: Metadata = {
+  title: "Shop Paintings | Buy Art Online | Artace Studio",
+  description: "Buy art online at Artace Studio - Browse canvas paintings, wall art, and original artworks. Free shipping on orders above ₹5000. Unique pieces for your space.",
+  keywords: "buy art online, canvas paintings for sale, wall art, paintings, art store, original artwork, buy paintings online",
+  openGraph: {
+    title: "Shop Paintings | Buy Art Online | Artace Studio",
+    description: "Buy art online - Browse canvas paintings, wall art, and original artworks.",
+    url: "https://artacestudio.com/shop",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Shop Paintings | Buy Art Online",
+    description: "Browse and buy unique canvas paintings online.",
+  },
+};
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 

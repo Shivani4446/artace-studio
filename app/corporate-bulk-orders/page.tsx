@@ -1,7 +1,24 @@
 import React from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import CorporateLeadForm from "@/components/corporate/CorporateLeadForm";
+
+export const metadata: Metadata = {
+  title: "Corporate Bulk Orders | Business Art Gifting | Artace Studio",
+  description: "Order paintings in bulk for corporate gifting. Perfect for office decoration, employee gifts, and business events. Special pricing available.",
+  keywords: "bulk art orders, corporate gifting, business art, office art, bulk painting orders",
+  openGraph: {
+    title: "Corporate Bulk Orders | Business Art Gifting | Artace Studio",
+    description: "Bulk orders for corporate gifting and office art.",
+    url: "https://artacestudio.com/corporate-bulk-orders",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Corporate Bulk Orders | Business Art Gifting",
+    description: "Art for corporate gifting and office decoration.",
+  },
+};
 import BulkOrderingProcess from "@/components/corporate/BulkOrderingProcess";
 import {
   BadgePercent,

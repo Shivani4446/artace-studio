@@ -846,10 +846,18 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
   return {
     title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
     description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
+    keywords: `${decodeHtmlEntities(product.name)}, paintings for sale, art, canvas art`,
     openGraph: {
       title: decodeHtmlEntities(product.name),
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
+      url: product.permalink,
       images: product.images?.[0]?.src ? [{ url: decodeHtmlEntities(product.images[0].src) }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
+      description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
+      images: product.images?.[0]?.src ? [decodeHtmlEntities(product.images[0].src)] : [],
     },
     other: {
       "schema": JSON.stringify(schema),

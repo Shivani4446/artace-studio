@@ -94,6 +94,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
     description: plainDescription,
+    keywords: `${plainTitle}, art blog, painting guide, art tutorial`,
+    openGraph: {
+      title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
+      description: plainDescription,
+      type: "article",
+      url: `https://artacestudio.com/blogs/${slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
+      description: plainDescription,
+    },
   };
 }
 

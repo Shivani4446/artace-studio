@@ -3,8 +3,14 @@ import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Artace Studio",
-  description: "How Artace Studio collects, uses, stores, and protects your personal information.",
+  title: "Privacy Policy | Data Protection | Artace Studio",
+  description: "Artace Studio privacy policy. Learn how we protect your data, handle payments securely, and respect your privacy.",
+  keywords: "privacy policy, data protection, GDPR, payment security",
+  openGraph: {
+    title: "Privacy Policy | Data Protection | Artace Studio",
+    description: "Our privacy and data protection policy.",
+    url: "https://artacestudio.com/privacy-policy",
+  },
 };
 
 const INTRO_HTML = `
