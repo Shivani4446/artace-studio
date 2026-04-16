@@ -18,11 +18,12 @@ const EXPLICIT_ALLOWED_BOTS = ["Google-Extended", "GPTBot", "ClaudeBot"] as cons
 const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
 
 const getBaseUrl = () => {
+  // For sitemap/site URL, prioritize WooCommerce site URL variables
   const raw =
-    process.env.SITE_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.WOOCOMMERCE_SITE_URL ||
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
+    process.env.SITE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
     DEFAULT_BASE_URL;
 
   return trimTrailingSlashes(raw.trim());
