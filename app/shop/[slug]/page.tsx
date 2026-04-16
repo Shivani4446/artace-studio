@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 const SingleProduct = dynamic(() =>
   import("@/components/singleproduct/SingleProduct").then((mod) => mod.default)
 );
-import { decodeHtmlEntities } from "@/utils/text";
+import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
+import { generateProductSchema } from "@/lib/schema";
 
 export const revalidate = 120;
 export const dynamicParams = false;
@@ -827,8 +828,34 @@ const getRelatedProductsForProduct = async (
     if (mergedProducts.length >= RELATED_PRODUCTS_LIMIT) break;
   }
 
-  return mergedProducts.slice(0, RELATED_PRODUCTS_LIMIT).map(toRelatedCard);
+return mergedProducts.slice(0, RELATED_PRODUCTS_LIMIT).map(toRelatedCard);
 };
+
+export async function generateMetadata({ params }: SingleProductPageProps) {
+  const { slug } = await params;
+  const product = await getSingleProduct(slug);
+
+  if (!product) {
+    return {
+      title: "Product Not Found | Artace Studio",
+    };
+  }
+
+  const schema = generateProductSchema(product);
+
+  return {
+    title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
+    description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
+    openGraph: {
+      title: decodeHtmlEntities(product.name),
+      description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
+      images: product.images?.[0]?.src ? [{ url: decodeHtmlEntities(product.images[0].src) }] : [],
+    },
+    other: {
+      "schema": JSON.stringify(schema),
+    },
+  };
+}
 
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { slug } = await params;
