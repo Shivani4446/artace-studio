@@ -1128,7 +1128,7 @@ const Navbar = () => {
                               <span className="relative h-10 w-10 overflow-hidden rounded-[10px] bg-[#f1f1f1]">
                                 <Image
                                   src={suggestion.image}
-                                  alt=""
+                                  alt={suggestion.name}
                                   fill
                                   sizes="40px"
                                   className="object-cover"

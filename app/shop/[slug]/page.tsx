@@ -118,6 +118,14 @@ type RelatedProductCard = {
   href?: string;
 };
 
+type ReadMoreCard = {
+  id: number | string;
+  category: string;
+  title: string;
+  image: string;
+  href?: string;
+};
+
 type WooV3ProductAttribute = {
   id: number;
   name: string;
@@ -802,6 +810,55 @@ const getFeaturedProducts = async () => {
   return fetchStoreProducts(`featured=true&per_page=${RELATED_PRODUCTS_LIMIT}`);
 };
 
+const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com";
+
+const getLatestBlogs = async (): Promise<ReadMoreCard[]> => {
+  try {
+    const siteUrl = DEFAULT_WORDPRESS_SITE_URL;
+    const response = await fetch(
+      `${siteUrl}/wp-json/wp/v2/posts?per_page=3&_embed`,
+      { next: { revalidate: 300 } }
+    );
+
+    if (!response.ok) {
+      console.log("[getLatestBlogs] Response not OK:", response.status);
+      return [];
+    }
+
+    const posts = (await response.json()) as Array<{
+      id: number;
+      title: { rendered: string };
+      slug: string;
+      _embedded?: {
+        "wp:featuredmedia"?: Array<{ source_url?: string }>;
+      };
+    }>;
+
+    if (!Array.isArray(posts) || posts.length === 0) {
+      console.log("[getLatestBlogs] No posts found");
+      return [];
+    }
+
+    console.log("[getLatestBlogs] Found posts:", posts.length, posts.map(p => ({ id: p.id, title: p.title?.rendered, hasMedia: !!p._embedded?.["wp:featuredmedia"]?.[0] })));
+
+    return posts.slice(0, 3).map((post) => {
+      const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
+      return {
+        id: post.id,
+        title: decodeHtmlEntities(
+          post.title.rendered.replace(/<[^>]*>/g, "").trim()
+        ),
+        category: "Blog",
+        image: featuredMedia?.source_url || "/journal-img.webp",
+        href: `/blogs/${post.slug}`,
+      };
+    });
+  } catch (error) {
+    console.log("[getLatestBlogs] Error:", error);
+    return [];
+  }
+};
+
 const getRelatedProductsForProduct = async (
   product: WooStoreProduct
 ): Promise<RelatedProductCard[]> => {
@@ -870,9 +927,10 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     return <SingleProduct initialProduct={null} relatedProducts={[]} />;
   }
 
-  const [productWithInformation, relatedProducts] = await Promise.all([
+  const [productWithInformation, relatedProducts, readMorePosts] = await Promise.all([
     getProductWithProductInformation(product),
     getRelatedProductsForProduct(product),
+    getLatestBlogs(),
   ]);
 
   const schema = generateProductSchema(product);
@@ -886,6 +944,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
       <SingleProduct
         initialProduct={productWithInformation}
         relatedProducts={relatedProducts}
+        readMorePosts={readMorePosts}
       />
     </>
   );

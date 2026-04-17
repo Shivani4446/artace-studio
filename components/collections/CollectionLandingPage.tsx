@@ -138,7 +138,7 @@ const buildCollectionCopy = (
 
   const fallback: CollectionCopy = {
     heroEyebrow: `Bring ${readableName} Home`,
-    heroTitle: `The Handcrafted ${readableName} Collection`,
+    heroTitle: `Handmade ${readableName} Canvas Paintings`,
     heroBody:
       description ||
       `Discover museum-quality ${lowerName} works handcrafted to bring more presence, character, and emotion into your space.`,

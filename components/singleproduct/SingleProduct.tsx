@@ -22,6 +22,24 @@ import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 
+const generateProductImageAlt = (
+  productName: string,
+  categoryName?: string,
+  attributes?: SingleProductAttribute[]
+): string => {
+  const baseName = productName || "Canvas Painting";
+  const category = categoryName || "";
+  const sizeOption = attributes?.find((attr) => /size|dimension/i.test(attr.name))?.options?.[0];
+  const mediumOption = attributes?.find((attr) => /medium|material/i.test(attr.name))?.options?.[0];
+
+  const parts = [baseName];
+  if (category) parts.push(category);
+  if (sizeOption) parts.push(sizeOption);
+  if (mediumOption) parts.push(mediumOption);
+
+  return parts.filter(Boolean).join(" - ");
+};
+
 const TAB_LABELS = [
   "About the Painting",
   "Specifications",
@@ -1285,7 +1303,11 @@ const SingleProduct = ({
                 <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
                   <Image
                     src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
-                    alt={selectedImage?.alt || stripHtml(product.name)}
+                    alt={generateProductImageAlt(
+                      product.name,
+                      product.categories[0]?.name,
+                      product.attributes
+                    )}
                     width={500}
                     height={500}
                     sizes="(max-width: 768px) 100vw, 500px"
@@ -1308,7 +1330,7 @@ const SingleProduct = ({
                     >
                       <Image
                         src={image.thumbnail || image.src}
-                        alt={image.alt}
+                        alt={image.alt || `${stripHtml(product.name)} - Image ${index + 1}`}
                         fill
                         sizes="62px"
                         className="object-cover"
