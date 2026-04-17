@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import HeroSection from "@/components/homepage/HeroSection";
 import ShopBestSellers from "@/components/homepage/ShopBestSellers";
 import DiscoverEssentials from "@/components/homepage/DiscoverEssentials";
@@ -8,9 +9,41 @@ import PromotionalBanner from "@/components/homepage/PromotionalBanner";
 import Testimonials from "@/components/homepage/Testimonials";
 import JournalSection from "@/components/homepage/JournalSection";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
+import FAQSection from "@/components/seo/FAQSection";
+import { buildSiteUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
-import { homepageSchema } from "./homepage-schema";
+import { homepageFaqs, homepageSchema } from "./homepage-schema";
+
+export const metadata: Metadata = {
+  title: "Handcrafted Canvas Paintings in India | Artace Studio",
+  description:
+    "Buy handcrafted canvas paintings online in India, including spiritual wall art, abstract canvases, and custom-made commissions for homes, offices, and gifting.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Handcrafted Canvas Paintings in India | Artace Studio",
+    description:
+      "Shop handcrafted canvas paintings online in India, from spiritual and abstract art to custom commissions designed for your space.",
+    url: "/",
+    images: [
+      {
+        url: buildSiteUrl("/artace-studio-home-page-og-image.webp"),
+        width: 1200,
+        height: 630,
+        alt: "Handcrafted canvas paintings from Artace Studio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Handcrafted Canvas Paintings in India | Artace Studio",
+    description:
+      "Discover original wall art, spiritual paintings, and custom canvas commissions from Artace Studio.",
+    images: [buildSiteUrl("/artace-studio-home-page-og-image.webp")],
+  },
+};
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
@@ -122,6 +155,13 @@ const Home = async () => {
       <Testimonials />
       <PromotionalBanner />
       <JournalSection />
+      <FAQSection
+        id="homepage-faqs"
+        eyebrow="Buyer Questions"
+        title="Questions Buyers Ask Before Ordering Handmade Art"
+        intro="These answers help search engines and AI assistants understand what Artace Studio offers, while giving buyers the practical detail they need before placing an order."
+        items={[...homepageFaqs]}
+      />
       <ArtistInvitation />
     </main>
   );

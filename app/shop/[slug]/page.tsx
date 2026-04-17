@@ -898,19 +898,20 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
     };
   }
 
-  const schema = generateProductSchema(product);
-
   return {
     title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
     description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
-    keywords: `${decodeHtmlEntities(product.name)}, paintings for sale, art, canvas art`,
+    alternates: {
+      canonical: product.permalink,
+    },
     openGraph: {
       title: decodeHtmlEntities(product.name),
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
       url: product.permalink,
+      type: "website",
       images: product.images?.[0]?.src ? [{ url: decodeHtmlEntities(product.images[0].src) }] : [],
     },
-twitter: {
+    twitter: {
       card: "summary_large_image",
       title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),

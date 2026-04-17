@@ -1,3 +1,26 @@
+export const homepageFaqs = [
+  {
+    question: "Can I buy handcrafted canvas paintings online from Artace Studio?",
+    answer:
+      "Yes. Artace Studio lets you buy handcrafted canvas paintings online across India, including ready-to-ship artworks and custom commissions tailored to your space.",
+  },
+  {
+    question: "Do you offer custom painting sizes and personalized commissions?",
+    answer:
+      "Yes. You can request custom sizes, color adjustments, and bespoke artwork concepts for living rooms, bedrooms, offices, gifting, and devotional spaces.",
+  },
+  {
+    question: "What types of paintings can I shop at Artace Studio?",
+    answer:
+      "You can explore spiritual paintings, Radha Krishna art, Buddha paintings, Ganapati artworks, abstract canvases, figurative work, landscapes, cityscapes, and tabletop pieces.",
+  },
+  {
+    question: "How do I choose the right painting for my wall?",
+    answer:
+      "Start with the room, wall size, and mood you want to create. Artace Studio also offers direct guidance for custom orders, placement, sizing, and style selection.",
+  },
+] as const;
+
 export const homepageSchema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -53,6 +76,19 @@ export const homepageSchema = {
       }
     },
     {
+      "@type": "WebPage",
+      "@id": "https://artacestudio.com/#webpage",
+      "url": "https://artacestudio.com",
+      "name": "Handcrafted Canvas Paintings in India | Artace Studio",
+      "description": "Buy handcrafted canvas paintings online in India. Discover original wall art, spiritual paintings, abstract artworks, and custom-made commissions from Artace Studio.",
+      "isPartOf": {
+        "@id": "https://artacestudio.com/#website"
+      },
+      "about": {
+        "@id": "https://artacestudio.com/#organization"
+      }
+    },
+    {
       "@type": "AggregateRating",
       "@id": "https://artacestudio.com/#rating",
       "itemReviewed": {
@@ -61,6 +97,18 @@ export const homepageSchema = {
       "ratingValue": "4.9",
       "bestRating": "5",
       "ratingCount": "6"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://artacestudio.com/#faq",
+      "mainEntity": homepageFaqs.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
+        }
+      }))
     },
     {
       "@type": "BreadcrumbList",

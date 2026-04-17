@@ -27,8 +27,9 @@ const HeroSection = () => {
                 <span className="block md:whitespace-nowrap">Bespoke to Your Vision</span>
               </h1>
               <p className="mt-4 max-w-xl text-[16px] leading-relaxed text-white/90 md:mt-5 md:text-[18px]">
-                Stop searching for the perfect piece. Experience the soul of authentic
-                art and co-create an original masterpiece with Artace Studio.
+                Buy handcrafted canvas paintings online in India, from spiritual wall art
+                and abstract statements to custom commissions shaped around your space,
+                palette, and story.
               </p>
               <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                 <Link

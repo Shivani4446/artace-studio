@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
+import { getSiteOrigin } from "@/lib/site";
 
-const DEFAULT_BASE_URL = "https://your-domain.com";
 const DISALLOWED_PATHS: string[] = [
   "/account",
   "/cart",
@@ -13,21 +13,17 @@ const DISALLOWED_PATHS: string[] = [
   "/reset-password",
   "/wishlist",
 ];
-const EXPLICIT_ALLOWED_BOTS = ["Google-Extended", "GPTBot", "ClaudeBot"] as const;
-
-const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
-
-const getBaseUrl = () => {
-  // For sitemap/site URL, prioritize WooCommerce site URL variables
-  const raw =
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    process.env.SITE_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    DEFAULT_BASE_URL;
-
-  return trimTrailingSlashes(raw.trim());
-};
+const EXPLICIT_ALLOWED_BOTS = [
+  "Googlebot",
+  "Bingbot",
+  "PerplexityBot",
+  "ChatGPT-User",
+  "GPTBot",
+  "ClaudeBot",
+  "anthropic-ai",
+  "Google-Extended",
+  "Applebot",
+] as const;
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -43,6 +39,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: DISALLOWED_PATHS,
       },
     ],
-    sitemap: `${getBaseUrl()}/sitemap.xml`,
+    sitemap: `${getSiteOrigin()}/sitemap.xml`,
   };
 }

@@ -595,14 +595,14 @@ const ShopCatalog = ({
       <section className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-12">
         <div className="mb-8 flex flex-col items-start gap-3 md:mb-10 md:gap-4">
           <h1 className="font-display text-[32px] leading-[1.05] text-[#1f1f1f] md:text-[52px] md:leading-none">
-            Handmade Canvas Paintings
+            Buy Handmade Paintings Online in India
           </h1>
           <p className="max-w-[1200px] text-[14px] leading-7 text-[#5f5a52] md:text-[18px] md:leading-8">
             <span className="block md:whitespace-nowrap">
-              Explore our collection of handmade canvas paintings and unique wall art crafted.
+              Explore handmade canvas paintings, spiritual wall art, and statement pieces curated for homes, offices, and gifting.
             </span>
             <span className="block md:whitespace-nowrap">
-              At Artace Studio, you&apos;ll find modern, abstract, contemporary, and custom canvas paintings designed to elevate any home or office space.
+              At Artace Studio, you&apos;ll find modern, abstract, devotional, and custom artworks designed for buyers who want original-looking art, not generic mass-market decor.
             </span>
           </p>
         </div>

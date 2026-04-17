@@ -4,6 +4,8 @@ import CollectionLandingPage, {
   type CollectionProductCard,
   type CollectionSuggestionCard,
 } from "@/components/collections/CollectionLandingPage";
+import { type FAQItem } from "@/components/seo/FAQSection";
+import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 
 export const revalidate = 60;
@@ -293,25 +295,73 @@ const getCategoryDescription = (categoryName: string, productCount: number) => {
   return `Explore ${productCount} handmade ${baseName.toLowerCase()} works curated for collectors who want a more guided category journey. This page opens with a stronger editorial narrative, surfaces the best-performing works first, then reveals the full collection with proof, advisory, and next-step discovery built in.`;
 };
 
+const toReadableCollectionName = (value: string) =>
+  decodeHtmlEntities(value)
+    .replace(/\bcollection\b/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+const getCollectionFaqs = (categoryName: string): FAQItem[] => {
+  const readableCollectionName = toReadableCollectionName(categoryName);
+  const shortName = readableCollectionName.replace(/\bpaintings?\b/gi, "").trim();
+  const lowerName = shortName.toLowerCase() || "collection";
+
+  return [
+    {
+      question: `Are these ${shortName || readableCollectionName} artworks handmade?`,
+      answer: `Artace Studio positions this ${lowerName} collection around handcrafted, premium-feel canvas art rather than generic wall decor, with each piece selected to feel more intentional and room-ready.`,
+    },
+    {
+      question: `Can I request a custom size or color direction for ${shortName || readableCollectionName}?`,
+      answer: `Yes. If you like the mood of a piece but need a different size, palette, or format for your wall, you can move into the custom-order flow and refine the artwork around your room requirements.`,
+    },
+    {
+      question: `How do I choose the right ${lowerName} painting for my space?`,
+      answer: `Start with wall width, room function, and the emotional tone you want the artwork to create. Then shortlist pieces by scale, subject, and finish, or speak with Artace Studio for direct guidance before ordering.`,
+    },
+    {
+      question: `Can these paintings work for gifting, devotional rooms, or statement walls?`,
+      answer: `Yes. Many buyers use Artace Studio paintings for living-room focal walls, bedrooms, offices, devotional spaces, and meaningful gifts where handmade presentation matters more than off-the-shelf decor.`,
+    },
+  ];
+};
+
 export async function generateMetadata({ params }: CollectionPageProps) {
   const { slug } = await params;
-  const readableSlug = decodeURIComponent(slug)
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (character) => character.toUpperCase());
+  const decodedSlug = decodeURIComponent(slug);
+  const categories = await fetchCategories();
+  const matchedCategory = categories?.find((category) => category.slug === decodedSlug);
+  const readableName = decodeHtmlEntities(
+    matchedCategory?.name ||
+      decodedSlug.replace(/-/g, " ").replace(/\b\w/g, (character) => character.toUpperCase())
+  );
+  const imageUrl = toAbsoluteImageUrl(matchedCategory?.image?.src);
+  const title = `${readableName} Online in India | Handmade Canvas Art | Artace Studio`;
+  const description = `Browse ${readableName.toLowerCase()} at Artace Studio. Explore handcrafted canvas art, premium wall decor, and custom-order options curated for collectors in India.`;
 
   return {
-    title: `${readableSlug} Collection | Curated Paintings | Artace Studio`,
-    description: `Browse the ${readableSlug} collection at Artace Studio. Discover curated handcrafted paintings and unique artworks.`,
-    keywords: `${readableSlug.toLowerCase()} paintings, ${readableSlug.toLowerCase()} art, curated artworks, collection`,
+    title,
+    description,
+    alternates: {
+      canonical: `/collections/${decodedSlug}`,
+    },
     openGraph: {
-      title: `${readableSlug} Collection | Artace Studio`,
-      description: `Browse the ${readableSlug} collection - curated handcrafted paintings.`,
-      url: `https://artacestudio.com/collections/${slug}`,
+      title,
+      description,
+      url: `/collections/${decodedSlug}`,
+      type: "website",
+      images: [
+        {
+          url: imageUrl,
+          alt: readableName,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${readableSlug} Collection | Artace Studio`,
-      description: `Browse curated ${readableSlug.toLowerCase()} paintings.`,
+      title,
+      description,
+      images: [imageUrl],
     },
   };
 }
@@ -393,18 +443,68 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
       productCount: category.count,
     }));
 
+  const faqItems = getCollectionFaqs(matchedCategory.name);
+  const collectionUrl = buildSiteUrl(`/collections/${decodedSlug}`);
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${collectionUrl}#webpage`,
+        url: collectionUrl,
+        name: `${decodeHtmlEntities(matchedCategory.name)} | Artace Studio`,
+        description: getCategoryDescription(matchedCategory.name, productCards.length),
+        isPartOf: {
+          "@id": `${buildSiteUrl("/")}#website`,
+        },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${collectionUrl}#itemlist`,
+        url: collectionUrl,
+        numberOfItems: productCards.length,
+        itemListElement: productCards.slice(0, 12).map((product, index) => ({
+          "@type": "ListItem",
+          position: index + 1,
+          url: buildSiteUrl(`/shop/${product.slug}`),
+          name: product.name,
+          image: toAbsoluteImageUrl(product.image),
+        })),
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${collectionUrl}#faq`,
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      },
+    ],
+  };
+
   return (
-    <CollectionLandingPage
-      categoryName={decodeHtmlEntities(matchedCategory.name)}
-      categorySlug={decodedSlug}
-      description={getCategoryDescription(matchedCategory.name, productCards.length)}
-      heroImage={heroImage}
-      heroImageAlt={heroImageAlt}
-      topProducts={topProducts}
-      products={productCards}
-      suggestions={suggestions}
-      stats={stats}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <CollectionLandingPage
+        categoryName={decodeHtmlEntities(matchedCategory.name)}
+        categorySlug={decodedSlug}
+        description={getCategoryDescription(matchedCategory.name, productCards.length)}
+        heroImage={heroImage}
+        heroImageAlt={heroImageAlt}
+        topProducts={topProducts}
+        products={productCards}
+        suggestions={suggestions}
+        stats={stats}
+        faqItems={faqItems}
+      />
+    </>
   );
 };
 

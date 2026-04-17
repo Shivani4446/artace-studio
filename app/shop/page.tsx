@@ -1,25 +1,41 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import FAQSection, { type FAQItem } from "@/components/seo/FAQSection";
 import ShopCatalog from "@/components/shop/ShopCatalog";
+import type { ShopProduct, SizeBucket } from "@/components/shop/types";
+import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
+import { decodeHtmlEntities } from "@/utils/text";
 
 export const metadata: Metadata = {
-  title: "Shop Paintings | Buy Art Online | Artace Studio",
-  description: "Buy art online at Artace Studio - Browse canvas paintings, wall art, and original artworks. Free shipping on orders above ₹5000. Unique pieces for your space.",
-  keywords: "buy art online, canvas paintings for sale, wall art, paintings, art store, original artwork, buy paintings online",
+  title: "Buy Handmade Paintings Online in India | Shop Artace Studio",
+  description:
+    "Shop handmade paintings online in India at Artace Studio. Browse canvas art, spiritual paintings, abstract wall decor, and custom-ready artworks for every room.",
+  alternates: {
+    canonical: "/shop",
+  },
   openGraph: {
-    title: "Shop Paintings | Buy Art Online | Artace Studio",
-    description: "Buy art online - Browse canvas paintings, wall art, and original artworks.",
-    url: "https://artacestudio.com/shop",
+    title: "Buy Handmade Paintings Online in India | Shop Artace Studio",
+    description:
+      "Browse handmade canvas paintings, spiritual wall art, abstract canvases, and custom-ready artworks at Artace Studio.",
+    url: "/shop",
     type: "website",
+    images: [
+      {
+        url: buildSiteUrl("/artace-studio-home-page-og-image.webp"),
+        width: 1200,
+        height: 630,
+        alt: "Handmade paintings online at Artace Studio",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shop Paintings | Buy Art Online",
-    description: "Browse and buy unique canvas paintings online.",
+    title: "Buy Handmade Paintings Online in India | Shop Artace Studio",
+    description:
+      "Browse handmade canvas paintings, spiritual wall art, and custom-ready artworks online.",
+    images: [buildSiteUrl("/artace-studio-home-page-og-image.webp")],
   },
 };
-import type { ShopProduct, SizeBucket } from "@/components/shop/types";
-import { decodeHtmlEntities } from "@/utils/text";
 
 export const revalidate = 60;
 
@@ -29,6 +45,29 @@ const MEDIUM_FILTER_OPTIONS = ["Acrylic", "Oil", "Watercolor"] as const;
 const MATERIAL_FILTER_OPTIONS = ["Canvas", "Paper"] as const;
 const PRODUCTS_PER_PAGE = 100;
 const MAX_PRODUCT_PAGES = 10;
+const SHOP_PAGE_URL = buildSiteUrl("/shop");
+const shopFaqs: FAQItem[] = [
+  {
+    question: "Can I buy handmade paintings online from Artace Studio?",
+    answer:
+      "Yes. The shop lets you browse and buy handmade paintings online in India across spiritual, abstract, figurative, landscape, and custom-friendly categories.",
+  },
+  {
+    question: "Do the shop paintings come in multiple sizes?",
+    answer:
+      "Many artworks are available in multiple sizes, and Artace Studio also supports custom size requests when you need a more precise wall fit.",
+  },
+  {
+    question: "Are these original handmade artworks or mass-produced prints?",
+    answer:
+      "Artace Studio focuses on handcrafted artwork and premium canvas pieces designed to feel more personal, textured, and collectible than generic mass-market wall decor.",
+  },
+  {
+    question: "How do I shortlist the right painting for my home or office?",
+    answer:
+      "Filter by mood, size, material, and category, then use the custom-order or consultation flow if you need help with placement, color matching, or commission planning.",
+  },
+];
 
 type WooStorePrices = {
   currency_code: string;
@@ -375,11 +414,70 @@ const ShopPage = async () => {
     loadError = error instanceof Error ? error.message : "Unable to load products.";
   }
 
+  const itemListElements = products.slice(0, 12).map((product, index) => ({
+    "@type": "ListItem",
+    position: index + 1,
+    url: buildSiteUrl(`/shop/${product.slug}`),
+    name: product.name,
+    image: toAbsoluteImageUrl(product.image),
+  }));
+
+  const shopSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${SHOP_PAGE_URL}#webpage`,
+        url: SHOP_PAGE_URL,
+        name: "Buy Handmade Paintings Online in India | Shop Artace Studio",
+        description:
+          "Browse handmade canvas paintings, spiritual wall art, abstract canvases, and custom-ready artworks at Artace Studio.",
+        isPartOf: {
+          "@id": `${buildSiteUrl("/")}#website`,
+        },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${SHOP_PAGE_URL}#itemlist`,
+        url: SHOP_PAGE_URL,
+        numberOfItems: products.length,
+        itemListElement: itemListElements,
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${SHOP_PAGE_URL}#faq`,
+        mainEntity: shopFaqs.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer,
+          },
+        })),
+      },
+    ],
+  };
+
   return (
-    <Suspense fallback={null}>
-      <ShopCatalog products={products} loadError={loadError} />
-    </Suspense>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(shopSchema) }}
+      />
+      <Suspense fallback={null}>
+        <ShopCatalog products={products} loadError={loadError} />
+      </Suspense>
+      <FAQSection
+        id="shop-faqs"
+        eyebrow="Shop FAQ"
+        title="Questions Buyers Ask Before They Buy Paintings Online"
+        intro="This section supports both commercial SEO and AI-answer retrieval by explaining how the catalog works, what buyers can expect, and how custom ordering fits into the shopping flow."
+        items={shopFaqs}
+        className="bg-[#fcfaf7] py-10 md:py-[90px]"
+      />
+    </>
   );
 };
 
 export default ShopPage;
+

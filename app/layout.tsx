@@ -12,6 +12,7 @@ import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
 import ProductImageProtection from "./product-image-protection";
 import PromotionModal from "@/components/ui/PromotionModal";
+import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,8 +38,55 @@ const sentient = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Artace Studio",
-  description: "Premium Canvas Paintings",
+  metadataBase: new URL(getSiteOrigin()),
+  title: "Handcrafted Canvas Paintings in India | Artace Studio",
+  description:
+    "Buy handcrafted canvas paintings online in India. Discover original wall art, spiritual paintings, abstract artworks, and custom-made commissions from Artace Studio.",
+  alternates: {
+    canonical: "/",
+  },
+  keywords: [
+    "handcrafted canvas paintings",
+    "buy paintings online india",
+    "custom canvas paintings",
+    "wall art india",
+    "artace studio",
+  ],
+  openGraph: {
+    title: "Handcrafted Canvas Paintings in India | Artace Studio",
+    description:
+      "Buy handcrafted canvas paintings online in India, from spiritual and abstract wall art to bespoke commissions for your home or office.",
+    url: "/",
+    siteName: "Artace Studio",
+    locale: "en_IN",
+    type: "website",
+    images: [
+      {
+        url: buildSiteUrl("/artace-studio-home-page-og-image.webp"),
+        width: 1200,
+        height: 630,
+        alt: "Handcrafted canvas paintings by Artace Studio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Handcrafted Canvas Paintings in India | Artace Studio",
+    description:
+      "Shop original handcrafted canvas paintings, spiritual wall art, and custom commissions from Artace Studio.",
+    images: [buildSiteUrl("/artace-studio-home-page-og-image.webp")],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: "/Artace-logo.svg",
     shortcut: "/Artace-logo.svg",

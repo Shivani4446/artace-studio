@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import CollectionEditorialLoop from "@/components/collections/CollectionEditorialLoop";
+import FAQSection, { type FAQItem } from "@/components/seo/FAQSection";
 import {
   getCollectionHeadline,
   getCollectionHref,
@@ -54,6 +55,7 @@ type CollectionLandingPageProps = {
   products: CollectionProductCard[];
   suggestions: CollectionSuggestionCard[];
   stats: Array<{ label: string; value: string }>;
+  faqItems: FAQItem[];
 };
 
 type CollectionCopy = {
@@ -654,6 +656,7 @@ const CollectionLandingPage = ({
   topProducts,
   products,
   suggestions,
+  faqItems,
 }: CollectionLandingPageProps) => {
   const theme = getCollectionTheme(categorySlug);
   const isBuddhaCollection = categorySlug === "buddha-paintings";
@@ -885,6 +888,15 @@ const CollectionLandingPage = ({
           </div>
         </div>
       </section>
+
+      <FAQSection
+        id="collection-faqs"
+        eyebrow="Collection FAQ"
+        title={`Questions Buyers Ask About ${collectionHeadline}`}
+        intro={`These answers help buyers compare fit, customization, delivery, and styling before they commit to a ${collectionHeadline.toLowerCase()} piece.`}
+        items={faqItems}
+        className="bg-[#fcfaf7] py-10 md:py-[90px]"
+      />
 
       <section className="py-10 md:py-[100px]">
         <div className="mx-auto max-w-[1440px] px-6 md:px-12">
