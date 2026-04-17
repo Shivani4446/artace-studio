@@ -8,7 +8,7 @@ import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateProductSchema } from "@/lib/schema";
 
 export const revalidate = 120;
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -859,9 +859,7 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
       images: product.images?.[0]?.src ? [decodeHtmlEntities(product.images[0].src)] : [],
     },
-    other: {
-      "schema": JSON.stringify(schema),
-    },
+    jsonLd: schema,
   };
 }
 
