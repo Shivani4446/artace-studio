@@ -853,13 +853,12 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
       url: product.permalink,
       images: product.images?.[0]?.src ? [{ url: decodeHtmlEntities(product.images[0].src) }] : [],
     },
-    twitter: {
+twitter: {
       card: "summary_large_image",
       title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
       images: product.images?.[0]?.src ? [decodeHtmlEntities(product.images[0].src)] : [],
     },
-    jsonLd: schema,
   };
 }
 
@@ -876,11 +875,19 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     getRelatedProductsForProduct(product),
   ]);
 
+  const schema = generateProductSchema(product);
+
   return (
-    <SingleProduct
-      initialProduct={productWithInformation}
-      relatedProducts={relatedProducts}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
+      <SingleProduct
+        initialProduct={productWithInformation}
+        relatedProducts={relatedProducts}
+      />
+    </>
   );
 };
 
