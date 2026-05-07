@@ -4,6 +4,15 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async redirects() {
+    return [
+      {
+        source: "/product/:slug",
+        destination: "/shop/:slug",
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

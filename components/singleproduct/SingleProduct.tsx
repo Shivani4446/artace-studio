@@ -839,9 +839,19 @@ const SingleProduct = ({
     );
   }, [product, currentPrice, currentRegularPrice]);
 
-  const displayRating = product?.averageRating && product.averageRating > 0 ? product.averageRating : 4.8;
-  const displayReviewCount = product?.reviewCount && product.reviewCount > 0 ? product.reviewCount : 86;
-  const deliveryDate = useMemo(() => new Date(), []);
+  const displayRating = product?.averageRating && product.averageRating > 0 ? product.averageRating : 0;
+  const displayReviewCount = product?.reviewCount && product.reviewCount > 0 ? product.reviewCount : 0;
+
+  // Use a fixed reference date to avoid hydration mismatch from new Date()
+  // The actual delivery estimate is relative days anyway, so the base date doesn't matter for display
+  const deliveryDateRef = useMemo(() => new Date("2024-01-01"), []);
+
+  // Only update to current date on client after hydration to get accurate day-of-week
+  const [deliveryDate, setDeliveryDate] = useState<Date>(deliveryDateRef);
+
+  useEffect(() => {
+    setDeliveryDate(new Date());
+  }, []);
   const framedDeliveryRows = useMemo(
     () => [
       {
