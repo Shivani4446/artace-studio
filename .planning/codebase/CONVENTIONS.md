@@ -1,13 +1,13 @@
-﻿# Code Conventions
+# Coding Conventions
 
-## Overview
-This document outlines the code conventions, patterns, and structural guidelines used in the Artace Studio codebase.
+**Analysis Date:** 2026-04-17
 
 ## Technology Stack
-- **Framework**: Next.js 16.1.4 (App Router with TypeScript)
+
+- **Framework**: Next.js 16.1.4 with React 19.2.3
 - **Styling**: Tailwind CSS 4 with @tailwindcss/postcss
-- **Language**: TypeScript (strict mode enabled)
-- **Linting**: ESLint 9 with eslint-config-next
+- **Language**: TypeScript 5 (strict mode enabled)
+- **Linting**: ESLint 9 with eslint-config-next/typescript
 - **Icons**: Lucide React 0.563.0
 
 ## File Structure
@@ -19,16 +19,13 @@ app/
 ├── page.tsx               # Homepage (uses (home) route group)
 ├── (home)/
 │   └── page.tsx
-│   └── homepage-schema.ts  # JSON-LD schema
 ├── shop/
 │   ├── page.tsx          # Shop catalog
 │   └── [slug]/
 │       └── page.tsx       # Single product page
-├── api/                   # API routes
-│   ├── auth/
-│   ├── checkout/
-│   ├── store/
-│   └── ...
+├── api/                   # API routes (auth, checkout, store)
+├── blog-test/
+├── rentals/
 └── [section]/
     └── page.tsx          # Route-based page
 ```
@@ -36,14 +33,14 @@ app/
 ### Components
 ```
 components/
-├── navbar.tsx             # Root components
+├── navbar.tsx             # Root navigation (1240+ lines)
 ├── footer.tsx
 ├── shop/
 │   ├── ShopCatalog.tsx   # 1225 lines
 │   └── types.ts
 ├── singleproduct/
 │   └── SingleProduct.tsx
-├── auth/
+├── auth/                  # Auth flow components
 │   ├── AuthSessionProvider.tsx
 │   ├── LoginForm.tsx
 │   ├── LoginPageShell.tsx
@@ -52,10 +49,9 @@ components/
 │   ├── ResetPasswordForm.tsx
 │   ├── ResetPasswordPageShell.tsx
 │   ├── ForgotPasswordForm.tsx
-│   ├── LogoutButton.tsx
-│   └── ...
+│   └── LogoutButton.tsx
 ├── cart/
-│   ├── CartProvider.tsx    # Context provider
+│   ├── CartProvider.tsx   # Context provider (183 lines)
 │   └── AddToCartButton.tsx
 ├── wishlist/
 │   └── WishlistProvider.tsx
@@ -66,7 +62,7 @@ components/
 │   ├── DashboardOrders.tsx
 │   ├── DashboardDetails.tsx
 │   └── AccountDetailsForm.tsx
-├── homepage/             # Feature-scoped
+├── homepage/              # Feature-scoped
 │   ├── HeroSection.tsx
 │   ├── ShopBestSellers.tsx
 │   ├── DiscoverEssentials.tsx
@@ -76,7 +72,6 @@ components/
 │   ├── ShopByArtist.tsx
 │   ├── TrueArtistrySection.tsx
 │   └── PromotionalBanner.tsx
-├── blog/
 ├── blogarchive/
 ├── singleblog/
 ├── article/
@@ -94,8 +89,8 @@ components/
 ```
 utils/
 ├── auth.ts               # 308 lines - WordPress JWT auth
-├── jwt.ts               # JWT verification
-├── wordpress-auth.ts   # WordPress API client
+├── jwt.ts                # JWT verification
+├── wordpress-auth.ts    # WordPress API client
 ├── woocommerce-checkout.ts
 ├── woocommerce-orders.ts
 ├── razorpay.ts
@@ -107,53 +102,67 @@ utils/
 └── search.ts
 ```
 
+### Schema Module
+```
+lib/schema/
+├── types.ts              # TypeScript interfaces
+├── product.ts           # Main product schema
+├── offer.ts             # Price/availability
+├── aggregate-rating.ts  # Star ratings
+├── review.ts            # Individual reviews
+└── breadcrumb.ts       # Navigation breadcrumbs
+```
+
 ## Naming Conventions
 
 ### Files
 - **Components**: PascalCase (e.g., `ShopCatalog.tsx`, `AddToCartButton.tsx`)
-- **Utilities**: kebab-case (e.g., `auth.ts`, `woocommerce-checkout.ts`)
-- **Types**: co-located with components or in `types.ts` files (e.g., `components/shop/types.ts`)
+- **Utilities**: camelCase (e.g., `auth.ts`, `gtm.ts`, `collections.ts`)
+- **Types**: co-located with components or in `types.ts` files
 - **API Routes**: kebab-case directories (e.g., `app/api/auth/login/route.ts`)
 
 ### Components
-- **React Components**: PascalCase
+- **React Components**: PascalCase (e.g., `Navbar`, `CartProvider`)
 - **Props Types**: `{ComponentName}Props` (e.g., `ShopCatalogProps`)
 - **Event Handlers**: `handle{Event}` (e.g., `handleSearchSubmit`)
+- **Custom Hooks**: `use{Noun}` (e.g., `useCart`, `useWishlist`, `useAuthSession`)
 
 ### Variables & Functions
-- **Variables**: camelCase
-- **Constants**: PascalCase for enum-like values, kebab-case for config objects
+- **Variables**: camelCase (e.g., `items`, `subtotal`, `isMobileMenuOpen`)
+- **Constants**: PascalCase for enum-like values
 - **Functions**: camelCase with action prefixes (`get`, `fetch`, `build`, `parse`, `normalize`)
+
+### Types
+- **TypeScript interfaces**: PascalCase (e.g., `CartProduct`, `CartItem`, `SearchSuggestion`)
+- **Type aliases**: PascalCase (e.g., `DesktopMenuId`, `MobileMenuLink`, `CartContextValue`)
 
 ## Code Patterns
 
 ### TypeScript Strict Mode
-- All strict checks enabled in `tsconfig.json`
-- Explicit return types on exported functions
-- Type guards for runtime checks
-
-```typescript
-// Example: Type guard pattern
-type ShopCatalogApiResponse = {
-  products?: ShopProduct[];
-  error?: string;
-};
-
-const isValidResponse = (data: unknown): data is ShopCatalogApiResponse => {
-  return typeof data === "object" && data !== null && "products" in data;
-};
+All strict checks enabled in `tsconfig.json`:
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "target": "ES2017"
+  }
+}
 ```
 
 ### Client/Server Components
-- Server Components default (no "use client")
-- Client Components marked with "use client" at file top
+- Server Components default (no "use client" directive)
+- Client Components marked with `"use client"` at file top
 - Route handlers in `app/api/*/route.ts`
 
 ### React Patterns
-- Context for global state (Cart, Wishlist, Auth)
-- Custom hooks in provider components
+- Context for global state (Cart, Wishlist, Auth Session)
+- Custom hooks co-located with provider components
 - Memoization with `useMemo` for expensive computations
-- Event cleanup with cleanup functions in `useEffect`
+- Event cleanup with cleanup functions in `useEffect` return
+- try/catch for JSON parsing with empty state returns
 
 ### CSS/Tailwind
 - Tailwind utility classes for styling
@@ -162,7 +171,6 @@ const isValidResponse = (data: unknown): data is ShopCatalogApiResponse => {
 - Conditional classes with template literals
 
 ```typescript
-// Example: Conditional classes
 className={`grid ${
   isSingleRowLayout
     ? "grid-cols-[42%_58%]"
@@ -170,23 +178,34 @@ className={`grid ${
 }`}
 ```
 
-### API Integration
-- WooCommerce Store API v1 for products
-- WooCommerce REST API v3 for admin operations
-- WordPress REST API for blog/content
-- JWT-based authentication with WordPress
+### Error Handling
 
-## Key Patterns
-
-### Data Fetching (Server Components)
+**Context providers throw if used outside:**
 ```typescript
-const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
-  const payload = await fetchStoreProducts(`slug=${encodeURIComponent(slug)}&per_page=1`);
-  return Array.isArray(payload) && payload.length > 0 ? payload[0] : null;
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
+  return context;
 };
 ```
 
-### Error Handling
+**try/catch for JSON parsing:**
+```typescript
+const parseStoredCart = (value: string | null): CartItem[] => {
+  if (!value) return [];
+  try {
+    const parsed = JSON.parse(value) as CartItem[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(...).map(...);
+  } catch {
+    return [];
+  }
+};
+```
+
+**Empty state returns:**
 ```typescript
 try {
   const response = await fetch(endpoint, { cache: "no-store" });
@@ -198,33 +217,70 @@ try {
 }
 ```
 
-### URL Resolution
-```typescript
-const getApiBaseUrl = () => {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_URL;
-  return apiBaseUrl.replace(/\/+$/, "");
-};
-```
-
-### Authentication Flow
-- JWT token stored in HTTP-only cookie (`artace_wp_session`)
-- 14-day max age
-- Local JWT verification when secret is configured
-- Fallback to WordPress user validation
+### API Integration
+- WooCommerce Store API v1 (`/wc/store/v1/products`) for products
+- WooCommerce REST API v3 (`/wc/v3/products/*`) for admin operations
+- WordPress REST API for blog/content
+- JWT-based authentication with WordPress
+- Google Tag Manager for tracking via utility functions
 
 ### State Management
 - React Context for: Cart, Wishlist, Auth Session
 - URL search params for catalog filters
 - Local component state for UI interactions
+- localStorage for persistence (Cart, Wishlist)
+
+## Import Organization
+
+**Order:**
+1. React imports: `useState`, `useEffect`, `useCallback`, `useMemo`, `useContext`, `useRef`, `createContext`, `React`
+2. Next.js imports: `Link`, `Image`, `useRouter` from `next/navigation`
+3. Third-party: `lucide-react` icons
+4. Internal components: `@/components/...`
+5. Internal utilities: `@/utils/...`
+
+**Path Aliases:**
+- `@/*` maps to project root: `"./*"`
+
+**Example from `components/navbar.tsx`:**
+```typescript
+import React, { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ArrowUpRight, Search, ShoppingCart, Heart, Menu, X, Plus, Minus, ... } from "lucide-react";
+import { useAuthSession } from "@/components/auth/AuthSessionProvider";
+import { useCart } from "@/components/cart/CartProvider";
+import { useWishlist } from "@/components/wishlist/WishlistProvider";
+import { collectionLinkItems, getCollectionHref } from "@/utils/collections";
+```
 
 ## ESLint Configuration
-- Uses `eslint-config-next` core-web-vitals preset
-- TypeScript rules from `eslint-config-next/typescript`
-- Ignores: `.next/`, `out/`, `build/`
+
+**Config in `eslint.config.mjs`:**
+```javascript
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+]);
+```
+
+- Uses `eslint-config-next/core-web-vitals` preset
+- Uses `eslint-config-next/typescript` for TypeScript rules
+- Ignores: `.next/`, `out/`, `build/`, `next-env.d.ts`
 
 ## Line Counts (Notable Files)
-- `components/shop/ShopCatalog.tsx`: 1225 lines
 - `components/navbar.tsx`: 1240+ lines
+- `components/shop/ShopCatalog.tsx`: 1225 lines
 - `app/shop/[slug]/page.tsx`: 826 lines
 - `utils/auth.ts`: 308 lines
-- `components/shop/types.ts`: 26 lines
+- `components/cart/CartProvider.tsx`: 183 lines
+
+---
+
+*Convention analysis: 2026-04-17*

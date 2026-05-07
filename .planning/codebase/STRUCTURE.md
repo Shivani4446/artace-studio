@@ -1,306 +1,117 @@
-﻿# Directory Structure
+# Codebase Structure
 
-## Root Level
+**Analysis Date:** 2026-04-17
 
-E:\ARTACE-STUDIOS\artace-studio\artace-studio\
-- package.json (30 lines) - Dependencies and scripts
-- tsconfig.json - TypeScript configuration
-- next.config.* - Next.js configuration
-- tailwind.config.* - Tailwind CSS 4 configuration
-- eslint.config.mjs - ESLint configuration
-- .env.local - Environment variables
-- .env.example - Environment template
-- .gitignore - Git exclusions
-- README.md - Project documentation
+## Directory Layout
 
-## App Directory (app/)
+```
+E:/ARTACE-STUDIOS/artace-studio/artace-studio/
+├── app/                    # Next.js App Router (pages, layouts, API)
+├── components/            # React components by feature
+├── utils/                 # Business logic and service adapters
+├── lib/                   # Shared services, schemas, route handlers
+├── public/                # Static assets
+├── supabase/              # Database schemas
+├── .planning/codebase/    # Documentation
+└── .agents/skills/        # Custom skills
+```
 
-Next.js 16 App Router structure with 60+ route files.
+## Directory Purposes
 
-### Route Groups
+**app/:**
+- Purpose: All routes - pages, layouts, API endpoints
+- Contains: 40+ page.tsx files, layout.tsx files, API route files
+- Key files: `app/(home)/page.tsx`, `app/shop/[slug]/page.tsx`, `app/layout.tsx`
 
-| Path | Description |
-|------|-------------|
-| app/(home)/ | Homepage route group |
-| app/shop/ | Shop catalog and products |
-| app/blogs/ | Blog archive and posts |
-| app/collections/ | Collection pages |
-| app/dashboard/ | User dashboard |
-| app/checkout/ | Checkout and success |
-| app/account/ | Account pages |
-| app/api/ | API routes |
+**components/:**
+- Purpose: React UI components organized by feature domain
+- Contains: ~55 component files in 15+ feature subdirectories
+- Key files: `navbar.tsx`, `footer.tsx`, `cart/CartProvider.tsx`
 
-### Pages (39 files)
+**utils/:**
+- Purpose: Business logic and external service integrations
+- Contains: 12 modules (auth, razorpay, woocommerce-checkout, etc.)
+- Key files: `auth.ts` (308 lines), `woocommerce-checkout.ts` (333 lines)
 
-| Page | File | Lines |
-|------|------|-------|
-| Homepage | (home)/page.tsx | 130 |
-| Shop Catalog | shop/page.tsx | - |
-| Product Detail | shop/[slug]/page.tsx | 826 |
-| Collections | collections/[slug]/page.tsx | - |
-| Blog Archive | blogs/page.tsx | - |
-| Single Blog | blogs/[slug]/page.tsx | - |
-| Cart | cart/page.tsx | - |
-| Checkout | checkout/page.tsx | - |
-| Checkout Success | checkout/success/page.tsx | - |
-| Wishlist | wishlist/page.tsx | - |
-| Search | search/page.tsx | - |
-| Custom Order | custom-order/page.tsx | - |
-| Corporate Bulk | corporate-bulk-orders/page.tsx | - |
-| Contact | contact-us/page.tsx | - |
-| Login | login/page.tsx | - |
-| Signup | signup/page.tsx | - |
-| Forgot Password | forgot-password/page.tsx | - |
-| Reset Password | reset-password/page.tsx | - |
-| Dashboard | dashboard/page.tsx | - |
-| Dashboard Orders | dashboard/orders/page.tsx | - |
-| Dashboard Profile | dashboard/profile/page.tsx | - |
-| Dashboard Details | dashboard/details/page.tsx | - |
-| About Us | about-us/page.tsx | - |
-| Team | team/page.tsx | - |
-| Exhibition | exhibition/page.tsx | - |
-| Privacy Policy | privacy-policy/page.tsx | - |
-| Terms of Use | terms-of-use/page.tsx | - |
-| Return Policy | return-policy/page.tsx | - |
-| Cancellation | cancellation-policy/page.tsx | - |
+**lib/:**
+- Purpose: Shared services, JSON-LD schema generation, API route handlers
+- Contains: search service, schema/ (product, offer, rating), api-route-handlers/
+- Key files: `search.ts` (202 lines), `schema/product.ts` (112 lines)
 
-### API Routes (20 files)
+## Key File Locations
 
-| Endpoint | File |
-|----------|------|
-| Auth - Login | api/auth/login/route.ts |
-| Auth - Register | api/auth/register/route.ts |
-| Auth - Session | api/auth/session/route.ts |
-| Auth - Logout | api/auth/logout/route.ts |
-| Auth - Forgot Password | api/auth/forgot-password/route.ts |
-| Auth - Reset Password | api/auth/reset-password/route.ts |
-| Checkout | api/checkout/route.ts |
-| Checkout - Verify | api/checkout/verify/route.ts |
-| Checkout - Status | api/checkout/status/route.ts |
-| Checkout - Coupon | api/checkout/coupon/route.ts |
-| Razorpay Webhook | api/razorpay/webhook/route.ts |
-| Products | api/store/products/route.ts |
-| Blogs | api/blogs/route.ts |
-| Search | api/search/route.ts |
-| Custom Order | api/custom-order/route.ts |
-| Corporate Leads | api/corporate-leads/route.ts |
-| Contact | api/contact/route.ts |
-| Upload Image | api/upload-image/route.ts |
-| Orders | api/orders/route.ts |
-| Account Profile | api/account/profile/route.ts |
+**Entry Points:**
+- Homepage: `app/(home)/page.tsx` - Main landing with category discovery
+- Product Detail: `app/shop/[slug]/page.tsx` - Product page with variations/FAQs (826 lines)
+- Checkout: `app/checkout/page.tsx` - Checkout flow initiation
+- Dashboard: `app/dashboard/page.tsx` - User account management
 
-### Layout Files
+**Configuration:**
+- Root Layout: `app/layout.tsx` - Providers and global layout (130 lines)
+- Tailwind: `tailwind.config.*` - CSS styling
+- Env vars: `.env.local` - WooCommerce, Razorpay, Supabase credentials
 
-- app/layout.tsx (130 lines) - Root layout with providers
-- app/dashboard/layout.tsx - Dashboard layout
-- app/globals.css - Global styles
-- app/robots.ts - Robots.txt
-- app/sitemap.ts - Sitemap
+**Core Logic:**
+- Auth: `utils/auth.ts` (308 lines) - WordPress JWT authentication
+- Payments: `utils/razorpay.ts` (200 lines) - Razorpay integration
+- Checkout: `utils/woocommerce-checkout.ts` (333 lines) - WooCommerce order management
+- Search: `lib/search.ts` (202 lines) - Unified product/blog search
 
-### Support Files
+**Testing:**
+- No formal test suite - linting only via `npm run lint`
 
-- app/fonts/ - Custom fonts (Sentient)
-- app/favicon.ico - Favicon
+## Naming Conventions
 
-## Components Directory (components/)
+**Files:**
+- Components: PascalCase (`HeroSection.tsx`, `CartProvider.tsx`)
+- Pages: kebab-case with route parameters (`[slug]/page.tsx`)
+- Utils: camelCase (`auth.ts`, `razorpay.ts`)
+- API Routes: kebab-case (`auth/login/route.ts`)
 
-~55 React component files organized by feature domain.
+**Directories:**
+- Feature folders: lowercase (`components/homepage/`, `components/cart/`)
+- API handlers: kebab-case (`lib/api-route-handlers/auth/login/route.ts`)
 
-### Homepage (9 files)
+## Where to Add New Code
 
-| Component | File |
-|-----------|------|
-| Hero Section | homepage/HeroSection.tsx |
-| Best Sellers | homepage/ShopBestSellers.tsx |
-| Discover Essentials | homepage/DiscoverEssentials.tsx |
-| True Artistry | homepage/TrueArtistrySection.tsx |
-| Shop by Artist | homepage/ShopByArtist.tsx |
-| Testimonials | homepage/Testimonials.tsx |
-| Promotional Banner | homepage/PromotionalBanner.tsx |
-| Journal Section | homepage/JournalSection.tsx |
-| Artist Invitation | homepage/ArtistInvitation.tsx |
+**New Feature:**
+- Primary code: `components/{feature-name}/`
+- API routes: `app/api/{feature}/route.ts`
+- Utilities: `utils/{feature}.ts`
 
-### Shop (2 files)
+**New Component/Module:**
+- UI components: `components/ui/`
+- Feature components: `components/{domain}/`
+- Shared logic: `lib/` or `utils/`
 
-| Component | File |
-|-----------|------|
-| Shop Catalog | shop/ShopCatalog.tsx |
-| Single Product | singleproduct/SingleProduct.tsx |
+**Utilities:**
+- Business logic: `utils/`
+- API handlers: `lib/api-route-handlers/`
+- Schema generation: `lib/schema/`
 
-### Blog (5 files)
+## Special Directories
 
-| Component | File |
-|-----------|------|
-| Blog Content | blog/BlogContentWithProducts.tsx |
-| Archive Catalog | blogarchive/BlogArchiveCatalog.tsx |
-| Archive Page Client | blogarchive/BlogArchivePageClient.tsx |
-| Archive Hero | blogarchive/Hero.tsx |
-| Archive Sections | blogarchive/Thirdsection.tsx, Secondsection.tsx |
+**app/(home)/:**
+- Purpose: Homepage route group (allows different root layout)
+- Generated: No
+- Committed: Yes
 
-### Single Blog (4 files)
+**app/api/:**
+- Purpose: All API endpoints (Edge runtime)
+- Generated: No
+- Committed: Yes
 
-| Component | File |
-|-----------|------|
-| Blog Content | singleblog/SingleBlogContent.tsx |
-| Blog Hero | singleblog/SingleBlogHero.tsx |
-| Blog Author | singleblog/SingleBlogAuthor.tsx |
-| Related Posts | singleblog/SingleBlogRelated.tsx |
+**lib/schema/:**
+- Purpose: JSON-LD structured data for SEO
+- Generated: No
+- Committed: Yes
 
-### Cart (3 files)
+**lib/api-route-handlers/:**
+- Purpose: Centralized route handler logic
+- Generated: No
+- Committed: Yes
 
-| Component | File |
-|-----------|------|
-| Cart Provider | cart/CartProvider.tsx (183 lines) |
-| Add to Cart Button | cart/AddToCartButton.tsx |
-
-### Wishlist (1 file)
-
-| Component | File |
-|-----------|------|
-| Wishlist Provider | wishlist/WishlistProvider.tsx |
-
-### Auth (7 files)
-
-| Component | File |
-|-----------|------|
-| Session Provider | auth/AuthSessionProvider.tsx (104 lines) |
-| Login Form | auth/LoginForm.tsx |
-| Login Page Shell | auth/LoginPageShell.tsx |
-| Signup Form | auth/SignupForm.tsx |
-| Signup Page Shell | auth/SignupPageShell.tsx |
-| Forgot Password | auth/ForgotPasswordForm.tsx |
-| Reset Password | auth/ResetPasswordForm.tsx, ResetPasswordPageShell.tsx |
-| Logout Button | auth/LogoutButton.tsx |
-
-### Account / Dashboard (7 files)
-
-| Component | File |
-|-----------|------|
-| Dashboard Shell | account/DashboardShell.tsx |
-| Dashboard Overview | account/DashboardOverview.tsx |
-| Dashboard Orders | account/DashboardOrders.tsx |
-| Dashboard Profile | account/DashboardProfile.tsx |
-| Dashboard Details | account/DashboardDetails.tsx |
-| Account Details Form | account/AccountDetailsForm.tsx |
-
-### Custom Order (2 files)
-
-| Component | File |
-|-----------|------|
-| Custom Order Form | custom-order/CustomOrderForm.tsx |
-| Image Upload | custom-order/ImageUpload.tsx |
-
-### Corporate (2 files)
-
-| Component | File |
-|-----------|------|
-| Lead Form | corporate/CorporateLeadForm.tsx |
-| Bulk Ordering Process | corporate/BulkOrderingProcess.tsx |
-
-### Collections (3 files)
-
-| Component | File |
-|-----------|------|
-| Collection Landing | collections/CollectionLandingPage.tsx |
-| Editorial Loop | collections/CollectionEditorialLoop.tsx |
-
-### About (6 files)
-
-| Component | File |
-|-----------|------|
-| About Hero | About/Abouthero.tsx |
-| Who Are We | About/AboutusWhoarewe.tsx |
-| Second Section | About/AboutusSecondsection.tsx |
-| Legacy | About/Legacy.tsx |
-| Our Commitment | About/OurCommitment.tsx |
-| Why Us | About/Whyus.tsx |
-
-### Article (2 files)
-
-| Component | File |
-|-----------|------|
-| Article Layout | article/ArticleLayout.tsx |
-| TOC Highlighter | article/ArticleTocHighlighter.tsx |
-
-### UI Components (3 files)
-
-| Component | File |
-|-----------|------|
-| Custom Dropdown | ui/CustomDropdown.tsx |
-| Promotion Modal | ui/PromotionModal.tsx |
-| Protected Image | ui/ProtectedImage.tsx |
-
-### Global Components
-
-| Component | File |
-|-----------|------|
-| Navbar | navbar.tsx (1200+ lines) |
-| Footer | footer.tsx |
-
-## Utils Directory (utils/)
-
-Business logic and service modules (~12 files).
-
-| File | Lines | Purpose |
-|------|-------|---------|
-| auth.ts | 308 | WordPress JWT authentication |
-| razorpay.ts | 200 | Payment gateway integration |
-| woocommerce-checkout.ts | 333 | WooCommerce order management |
-| wordpress-blog.ts | 247 | WordPress blog integration |
-| gtm.ts | 182 | Google Tag Manager tracking |
-| jwt.ts | - | JWT token handling |
-| wordpress-auth.ts | - | WP authentication helpers |
-| checkout-client.ts | - | Client-side checkout utilities |
-| woocommerce-orders.ts | - | Order fetching |
-| collections.ts | 84 | Collection data and utilities |
-| text.ts | - | Text processing utilities |
-
-## Lib Directory (lib/)
-
-Shared services (1 file).
-
-| File | Lines | Purpose |
-|------|-------|---------|
-| search.ts | 202 | Unified search service |
-
-## Supabase Directory (supabase/)
-
-| File | Description |
-|------|-------------|
-| custom_orders.sql | Database schema for custom orders |
-
-## Public Directory (public/)
-
-Static assets:
-- Images (webp, svg)
-- Fonts
-- Icons
-
-## Planning Directory (.planning/codebase/)
-
-Documentation files generated from codebase analysis:
-
-| File | Description |
-|------|-------------|
-| ARCHITECTURE.md | Application architecture patterns |
-| STRUCTURE.md | Directory structure documentation |
-| STACK.md | Tech stack overview |
-| TESTING.md | Testing approach |
-| CONVENTIONS.md | Code conventions |
-
-## Summary Statistics
-
-- Total route pages: 39
-- API routes: 20
-- Component files: ~55
-- Utility modules: 12
-- Total lines (key files): ~3000+
-
-## Key Observations
-
-1. Modular component organization by feature domain
-2. Heavy use of server components for data fetching
-3. Client state managed via React Context
-4. Edge runtime for all API routes
-5. Integration-heavy (WooCommerce, WordPress, Razorpay, Supabase)
-6. No formal test suite (linting only)
+**supabase/:**
+- Purpose: Database schema definitions
+- Generated: No
+- Committed: Yes

@@ -1,184 +1,176 @@
-﻿# Architecture Overview
+# Architecture
 
-## Application Architecture
+**Analysis Date:** 2026-04-17
 
-Artace Studio is a Next.js 16.1.4 e-commerce application built on the App Router paradigm. The architecture follows a modular, component-driven design with clear separation between presentation, business logic, and external integrations.
+## Pattern Overview
 
-## Architecture Patterns
+**Overall:** Next.js App Router with Hybrid Rendering and Component Composition
 
-### 1. Server-Side Rendering (SSR) with Edge Runtime
+**Key Characteristics:**
+- Server Components for data fetching (async/await in page components)
+- Client Components for interactivity (useState, useEffect)
+- API routes integrated within app directory using Route Handlers
+- Schema-first approach for SEO and structured data generation
+- Context providers for cross-cutting state management (auth, cart, wishlist)
 
-Pattern: Server Components + Edge Functions
+## Layers
 
-- Pages fetch data on the server using async components
-- API routes use Edge runtime for low-latency responses
-- Search, checkout, and auth routes execute on Edge
+**Presentation Layer:**
+- Purpose: Handles UI rendering and user interactions
+- Location: `app/` and `components/`
+- Contains: React components, page layouts, UI elements
+- Depends on: Business logic layer, data access layer, utility functions
+- Used by: End users via browser
 
-Files:
-- app/(home)/page.tsx (130 lines) - Homepage with category discovery
-- app/shop/[slug]/page.tsx (826 lines) - Product detail with variations/FAQs
-- app/api/search/route.ts (73 lines) - Edge search endpoint
-- app/api/checkout/route.ts (250 lines) - Edge checkout handler
+**Business Logic Layer:**
+- Purpose: Encapsulates application rules and workflows
+- Location: `lib/` directory and utility functions within components
+- Contains: API route handlers, schema generators, data processing functions
+- Depends on: Data access layer, external services (WooCommerce)
+- Used by: Presentation layer, API routes
 
-### 2. Client-Side State Management
+**Data Access Layer:**
+- Purpose: Manages communication with external data sources
+- Location: `app/api/` (API routes), `lib/api-route-handlers/`, `lib/schema/`
+- Contains: WooCommerce API clients, data fetchers, schema generators
+- Depends on: External APIs (WooCommerce REST/Store API, WordPress REST API)
+- Used by: Business logic layer, presentation layer
 
-Pattern: React Context + LocalStorage
-
-- CartProvider (components/cart/CartProvider.tsx, 183 lines) - Cart state with localStorage persistence
-- WishlistProvider (components/wishlist/WishlistProvider.tsx) - Wishlist state
-- AuthSessionProvider (components/auth/AuthSessionProvider.tsx, 104 lines) - User session state
-
-State Flow:
-User Action -> Context API -> Update State -> Sync to localStorage/API
-
-### 3. Service Layer Pattern
-
-Pattern: Utility modules as service adapters
-
-Services:
-- utils/auth.ts (308 lines) - WordPress JWT authentication
-- utils/razorpay.ts (200 lines) - Payment gateway integration
-- utils/woocommerce-checkout.ts (333 lines) - WooCommerce order management
-- lib/search.ts (202 lines) - Unified search across products/blogs/collections
+**Infrastructure Layer:**
+- Purpose: Provides foundational services and configurations
+- Location: `lib/` utilities, `next.config.ts`, middleware
+- Contains: Site utilities, authentication providers, configuration helpers
+- Depends on: External services (environment variables, third-party APIs)
+- Used by: All other layers
 
 ## Data Flow
 
-### Request Flow
+**[Product Detail Page Flow]:**
 
-User Request -> Next.js Edge/Server Function -> External APIs (WooCommerce, WordPress, Supabase) -> Response to Client
+1. **Request:** User navigates to `/shop/[slug]` (e.g., `/shop/handmade-painting`)
+2. **Route Resolution:** Next.js matches dynamic route `app/shop/[slug]/page.tsx`
+3. **Data Fetching:** Server Component executes `getSingleProduct()` to fetch from WooCommerce Store API
+4. **Enrichment:** Additional data fetched in parallel:
+   - Product variations (WooCommerce REST API)
+   - FAQs (WooCommerce REST API)
+   - Product information (multiple ACF/WooCommerce sources)
+   - Related products (WooCommerce Store API)
+   - Latest blog posts (WordPress REST API)
+5. **Schema Generation:** `generateProductSchema()` creates JSON-LD for SEO
+6. **Rendering:** Server Component renders HTML with embedded schema
+7. **Hydration:** Client-side React takes over for interactivity
+8. **Response:** Complete page delivered to browser
 
-### Checkout Flow
+**[Form Submission Flow (e.g., Contact Form)]:**
 
-1. User adds item to cart (CartProvider)
-2. User proceeds to checkout (/checkout)
-3. POST /api/checkout with cart items + address
-4. Server validates auth session
-5. Creates WooCommerce order
-6. Creates Razorpay payment order
-7. Returns Razorpay config to client
-8. Client completes payment
-9. POST /api/razorpay/webhook confirms payment
+1. **User Action:** Form submission in UI component
+2. **Client Handler:** Form validation and state update
+3. **API Call:** POST request to `app/api/contact/route.ts`
+4. **Processing:** API route handler validates and processes data
+5. **External Integration:** May send email via third-party service
+6. **Response:** Success/error returned to client
+7. **UI Update:** Component reflects submission status
 
-Key Files:
-- app/checkout/page.tsx - Checkout page
-- app/api/checkout/route.ts - Order creation
-- app/api/checkout/verify/route.ts - Payment verification
-- app/api/razorpay/webhook/route.ts - Payment webhook
-
-### Authentication Flow
-
-1. User submits credentials to /api/auth/login
-2. Server authenticates with WordPress JWT endpoint
-3. Returns access token in HTTP-only cookie (artace_wp_session)
-4. Client hydrates session via /api/auth/session
-5. Protected routes check session via AuthSessionProvider
-
-Key Files:
-- app/api/auth/login/route.ts - Login endpoint
-- app/api/auth/register/route.ts - Registration
-- app/api/auth/session/route.ts - Session retrieval
-- utils/auth.ts - Auth utilities
+**State Management:**
+- Primarily React state (useState, useReducer) at component level
+- Context providers for cross-cutting concerns:
+  - `CartProvider`: Shopping cart state
+  - `WishlistProvider`: User wishlist state
+  - `AuthSessionProvider`: Authentication state
+- Server-side state limited to request scope (no global state)
+- Client-side state managed within individual components or contexts
 
 ## Key Abstractions
 
-### 1. Collection System (utils/collections.ts, 84 lines)
+**[WooCommerce Abstraction]:**
+- Purpose: Encapsulates all WooCommerce API interactions
+- Examples: 
+  - `app/api-route-handlers/` - Route-specific API handlers
+  - `lib/schema/` - Schema generation abstractions
+  - Functions in `app/shop/[slug]/page.tsx` - Product data fetching
+- Pattern: Service functions that map internal data models to WooCommerce API responses
+- Centralized configuration via `getWooServerConfig()` and `getApiBaseUrl()`
 
-CollectionLinkItem -> getCollectionHref() -> /collections/{slug}
+**[Schema Abstraction]:**
+- Purpose: Generates structured data for SEO and rich snippets
+- Examples: `lib/schema/product.ts`, `lib/schema/offer.ts`, etc.
+- Pattern: Generator functions that accept product data and return JSON-LD objects
+- Used in: `generateMetadata()` in page components via `generateProductSchema()`
 
-Provides theme mapping and link generation for painting collections (Ganapati, Radha Krishna, Buddha, Landscapes).
+**[Utility Abstraction]:**
+- Purpose: Common functions reused across the application
+- Examples: `utils/text.ts` (HTML decoding, string manipulation)
+- Pattern: Pure functions with clear inputs/outputs, minimal side effects
+- Organization: Grouped by concern in `utils/` directory
 
-### 2. Search Service (lib/search.ts, 202 lines)
+## Entry Points
 
-fetchSearchResults(query, { productLimit, blogLimit })
-  -> WooCommerce Store API (products)
-  -> WordPress REST API (blogs)
-  -> Static collections/pages
-  -> Returns unified SearchProduct[], SearchBlogPost[]
+**[Root Layout]:**
+- Location: `app/layout.tsx`
+- Triggers: Every page request (root layout)
+- Responsibilities: 
+  - Provides global providers (Auth, Cart, Wishlist)
+  - Sets up metadata and SEO tags
+  - Loads global styles and fonts
+  - Wraps children with shared UI components (Navbar, Footer)
 
-### 3. Checkout Utilities (utils/woocommerce-checkout.ts, 333 lines)
+**[Page Routes]:**
+- Location: `app/*/page.tsx` (e.g., `app/(home)/page.tsx`, `app/shop/[slug]/page.tsx`)
+- Triggers: Navigation to specific URL path
+- Responsibilities:
+  - Fetch data required for the route
+  - Generate metadata (title, description, OpenGraph)
+  - Compose and render page-specific UI
+  - Handle route-specific logic (revalidation, dynamic params)
 
-- createWooCommerceOrder() - Create order via WC REST API
-- updateWooCommerceOrder() - Update order metadata
-- parseAmountToMinorUnits() - Convert to paise
-- sanitizeText() - Input validation
+**[API Routes]:**
+- Location: `app/api/*/route.ts` (e.g., `app/api/contact/route.ts`)
+- Triggers: HTTP requests to `/api/*` endpoints
+- Responsibilities:
+  - Process HTTP requests (GET, POST, etc.)
+  - Validate and sanitize input data
+  - Interact with external services or databases
+  - Return appropriate HTTP responses
+  - Handle errors and edge cases
 
-### 4. Payment Gateway (utils/razorpay.ts, 200 lines)
+**[Middleware]:**
+- Location: `middleware.ts`
+- Triggers: Every request before route resolution
+- Responsibilities:
+  - Request preprocessing (redirects, rewrites)
+  - Authentication/authorization checks
+  - Header manipulation
+  - Logging and monitoring
 
-- createRazorpayOrder() - Create payment order
-- verifyRazorpayPaymentSignature() - Client-side verification
-- verifyRazorpayWebhookSignature() - Server-side verification
+## Error Handling
 
-## External Integrations
+**Strategy:** Layered approach with boundary-specific handling
 
-Service | Purpose | API
---------|---------|-----
-WooCommerce | Product catalog, orders, payments | REST API v3 / Store API v1
-WordPress | Blog posts, authentication | REST API v2
-Razorpay | Payment processing | Orders API
-Supabase | Custom orders, image storage | Client SDK
-Google Tag Manager | Analytics tracking | Third-party script
+**Patterns:**
+- **API Routes:** Try/catch blocks returning appropriate HTTP status codes (400, 500) with JSON error responses
+- **Server Components:** Error boundaries via `try/catch` around data fetching, graceful degradation to empty states/fallbacks
+- **Client Components:** React error boundaries where applicable, console.error for development
+- **Validation:** Input validation at API layer with specific error messages
+- **External Services:** Fallback values and empty arrays when services fail (e.g., WooCommerce API downtime)
 
-## Security Patterns
+## Cross-Cutting Concerns
 
-Auth Cookie:
-- Name: artace_wp_session
-- HttpOnly: true
-- SameSite: lax
-- Secure: production only
-- Max-Age: 14 days
+**Logging:** 
+- Console.log statements in development for debugging
+- Third-party analytics (Google Tag Manager, Ahrefs, Facebook Pixel) in layout
+- No centralized logging infrastructure detected
 
-Input Sanitization (woocommerce-checkout.ts):
-- sanitizeText(value: unknown) -> string
-- ensurePositiveInt(value: unknown) -> number | null
+**Validation:**
+- Form validation in UI components (client-side)
+- API route validation (server-side)
+- WooCommerce data validation in fetchers
+- Zod or similar validation library not detected - manual validation patterns
 
-Edge Runtime Security:
-- All API routes use runtime = edge
-- WebCrypto for HMAC-SHA256 signatures
-- No server-side secrets exposed to client
+**Authentication:**
+- AuthSessionProvider context manages auth state
+- Protected routes check authentication status
+- WooCommerce API endpoints require consumer key/secret from environment
+- No detected authentication middleware for Next.js routes
 
-## Component Architecture
-
-Layout Components:
-- app/layout.tsx (130 lines) - Root layout with providers
-- components/navbar.tsx (1200+ lines) - Navigation with search/cart
-- components/footer.tsx - Site footer
-
-Feature Components (by domain):
-- Homepage: HeroSection, ShopBestSellers, DiscoverEssentials, Testimonials
-- Shop: ShopCatalog, SingleProduct
-- Blog: BlogArchiveCatalog, SingleBlogContent
-- Cart: CartProvider, AddToCartButton
-- Account: DashboardShell, DashboardOrders, DashboardProfile
-
-UI Components:
-- components/ui/CustomDropdown.tsx
-- components/ui/PromotionModal.tsx
-- components/ui/ProtectedImage.tsx
-
-## File Organization
-
-app/                    # Next.js App Router
-  (home)/              # Homepage route group
-  api/                 # API routes
-    auth/              # Authentication endpoints
-    checkout/          # Checkout flow
-    razorpay/          # Payment webhooks
-  shop/               # Product pages
-  blogs/              # Blog pages
-  dashboard/          # User dashboard
-  collections/        # Collection pages
-
-components/            # React components
-  homepage/           # Homepage sections
-  shop/               # Shop components
-  cart/               # Cart functionality
-  auth/               # Auth components
-  account/            # User dashboard
-
-utils/                 # Business logic
-  auth.ts             # Authentication
-  razorpay.ts         # Payments
-  woocommerce-checkout.ts  # E-commerce
-
-lib/                   # Shared services
-  search.ts           # Search service
+---
+*Architecture analysis: 2026-04-17*

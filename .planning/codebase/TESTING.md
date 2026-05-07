@@ -1,19 +1,19 @@
-﻿# Testing Approach
+# Testing Patterns
 
-## Overview
-This document outlines the testing approach for the Artace Studio codebase.
+**Analysis Date:** 2026-04-17
 
-## Current Testing Status
+## Test Framework
 
-**No formal test suite exists** in this codebase at the time of analysis.
+**Runner:**
+- Not configured - No test runner in `package.json`
+- No `jest.config.*`, `vitest.config.*`, or `playwright.config.*`
 
-The project does not include:
-- Unit tests (Jest, Vitest)
-- Integration tests
-- E2E tests (Playwright, Cypress)
-- Test configuration files
+**Assertion Library:** Not applicable (no tests)
 
-## Evidence
+**Run Commands:**
+```bash
+npm run lint    # Run ESLint only (no test commands in package.json)
+```
 
 ### Package.json Scripts
 ```json
@@ -27,15 +27,10 @@ The project does not include:
 }
 ```
 
-No test-related scripts are defined.
-
-### Test Files Search
-- `**/*.test.*` - No files found
-- `**/*.spec.*` - No files found
-- Test patterns like `__tests__/`, `*.test.ts`, `*.spec.ts` - Not present
+No test-related scripts defined.
 
 ### Dependencies
-Only production-relevant packages are installed:
+Only production packages installed:
 - `next: 16.1.4`
 - `react: 19.2.3`
 - `react-dom: 19.2.3`
@@ -43,61 +38,181 @@ Only production-relevant packages are installed:
 - `@tailwindcss/postcss: 4`
 - `@supabase/supabase-js: 2.100.1`
 - `typescript: 5`
+- `@next/third-parties: 16.1.4`
+- `lightningcss: 1.31.1`
 
-### ESLint Verification
-Code quality is currently maintained through ESLint only:
-```javascript
-// eslint.config.mjs
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  globalIgnores([...]),
-]);
+Dev dependencies:
+- `@types/node: 20`
+- `@types/react: 19`
+- `@types/react-dom: 19`
+- `@types/react: 19`
+- `eslint: 9`
+- `eslint-config-next: 16.1.4`
+- `@tailwindcss/postcss: 4`
+- `tailwindcss: 4`
+- `typescript: 5`
+
+## Test File Organization
+
+**Location:** Not detected - No test files in codebase
+
+**Search results:**
+- `**/*.test.ts` - No files found
+- `**/*.test.tsx` - No files found
+- `**/*.spec.ts` - No files found
+- `**/*.spec.tsx` - No files found
+
+**Structure:** None
+
+```
+# No test directory structure detected
 ```
 
-## Linting Only Approach
+## Test Structure
 
-The project relies entirely on:
-1. **ESLint** - Static analysis for code quality
-2. **TypeScript strict mode** - Compile-time type checking
-3. **Next.js build validation** - Build-time verification
+**Suite Organization:** Not applicable (no tests)
 
-### What's Checked
+**Patterns:** Not applicable
+
+## Mocking
+
+**Framework:** None configured
+
+**What to Mock:** Not applicable
+
+**What NOT to Mock:** Not applicable
+
+## Fixtures and Factories
+
+**Test Data:** Not applicable
+
+**Location:** Not applicable
+
+## Coverage
+
+**Requirements:** None enforced
+
+**View Coverage:** No test runner configured
+
+## Test Types
+
+**Unit Tests:** None implemented
+
+**Integration Tests:** None implemented
+
+**E2E Tests:** Not used
+
+## Common Patterns
+
+### Code Quality Without Tests
+The project relies on:
+1. `ESLint` (`npm run lint`) - catches syntax and style issues
+2. TypeScript strict mode - catches type errors at compile time
+3. `Next.js build` (`npm run build`) - validates routes and imports
+4. Manual browser testing for functional verification
+
+### What's Checked via ESLint
 - No unused variables
 - Type correctness
 - React hooks rules
 - Next.js best practices
 - Import/export validity
 
-## Recommendations
+### Linting Configuration
+```javascript
+// eslint.config.mjs
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
-If testing is desired, recommended additions:
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+]);
+```
 
-### 1. Unit Testing (Vitest)
+### TypeScript Configuration
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "target": "ES2017"
+  }
+}
+```
+
+## Known Code Quality Issues
+
+### Pre-existing Lint Errors
+Some files contain pre-existing lint issues:
+- `app/blog-test/page.tsx` - Has lint errors
+- `app/rentals/page.tsx` - Has lint errors
+
+### TypeScript Build Errors
+- Errors in `.next/dev/types/` - Related to API route type generation, not new features
+
+## Recommended Test Areas
+
+If testing is desired, recommended priority areas:
+
+### 1. Utilities (Pure Functions)
+- `utils/text.ts` - decodeHtmlEntities, stripHtmlAndDecode
+- `utils/gtm.ts` - GTM tracking functions
+- `utils/collections.ts` - Collection helpers
+
+### 2. Context Providers (State Logic)
+- `components/cart/CartProvider.tsx` - Cart state management
+- `components/wishlist/WishlistProvider.tsx` - Wishlist state management
+- `components/auth/AuthSessionProvider.tsx` - Auth session handling
+
+### 3. Components (UI)
+- `components/cart/AddToCartButton.tsx` - Cart interactions
+- `components/ui/CustomDropdown.tsx` - UI interactions
+
+### 4. API Routes (Response Handling)
+- Response validation in route handlers
+- Error case handling
+
+## Implementation Recommendations
+
+### Unit Testing (Vitest)
 ```bash
 npm install -D vitest @testing-library/react @testing-library/dom jsdom
 ```
 
-### 2. E2E Testing (Playwright)
+Add to `package.json`:
+```json
+{
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui"
+  }
+}
+```
+
+### E2E Testing (Playwright)
 ```bash
 npm install -D @playwright/test
 npx playwright install
 ```
 
-### 3. Test Structure
+### Test Structure
 ```
 tests/
 ├── unit/
 │   ├── utils/
+│   │   └── text.test.ts
 │   └── components/
+│       └── CartProvider.test.tsx
 ├── integration/
 └── e2e/
+    └── checkout.spec.ts
 ```
-
-### 4. Priority Test Areas
-- **Utilities**: Auth flow, JWT verification, text processing
-- **Components**: CartProvider, WishlistProvider, AddToCartButton
-- **API Routes**: Response handling, error cases
 
 ### CI Integration
 ```yaml
@@ -106,6 +221,6 @@ tests/
   run: npm run lint && npx tsc --noEmit
 ```
 
-## Note
+---
 
-This analysis reflects the codebase state as of the exploration date. Test files may be added after this document was created.
+*Testing analysis: 2026-04-17*
