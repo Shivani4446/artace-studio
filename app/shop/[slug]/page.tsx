@@ -1,5 +1,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
 
 const SingleProduct = dynamic(() =>
   import("@/components/singleproduct/SingleProduct").then((mod) => mod.default)
@@ -893,9 +894,7 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
   const product = await getSingleProduct(slug);
 
   if (!product) {
-    return {
-      title: "Product Not Found | Artace Studio",
-    };
+    notFound();
   }
 
   return {
@@ -925,7 +924,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const product = await getSingleProduct(slug);
 
   if (!product) {
-    return <SingleProduct initialProduct={null} relatedProducts={[]} />;
+    notFound();
   }
 
   const [productWithInformation, relatedProducts, readMorePosts] = await Promise.all([
