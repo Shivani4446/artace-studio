@@ -47,6 +47,7 @@ const TAB_LABELS = [
   "Delivery",
   "Packaging",
   "Returns",
+  "Reviews",
 ];
 
 const TAB_HELPER_TEXT: Record<string, string> = {
@@ -56,6 +57,7 @@ const TAB_HELPER_TEXT: Record<string, string> = {
   Delivery: "Estimated timelines by region",
   Packaging: "How we protect artwork in transit",
   Returns: "Return and exchange eligibility",
+  Reviews: "Share your experience with this artwork",
 };
 
 const WHY_ARTACE_POINTS = [
@@ -556,6 +558,171 @@ const ProductFAQs = ({ faqs }: { faqs: FAQItem[] }) => {
   );
 };
 
+const ProductReviewsForm = ({ productId }: { productId: number }) => {
+  const [reviewer, setReviewer] = useState("");
+  const [reviewerEmail, setReviewerEmail] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!reviewer.trim()) { setError("Please enter your name."); return; }
+    if (!reviewerEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reviewerEmail)) { setError("Please enter a valid email."); return; }
+    if (rating < 1) { setError("Please select a rating."); return; }
+    if (review.trim().length < 10) { setError("Review must be at least 10 characters."); return; }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          product_id: productId,
+          review: review.trim(),
+          reviewer: reviewer.trim(),
+          reviewer_email: reviewerEmail.trim(),
+          rating,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Submission failed.");
+      setSuccess(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div className="rounded-[12px] border border-[#d0e6c8] bg-[#f3f9ee] p-6 text-center">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#14AE5C]">
+          <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h4 className="font-display text-[22px] text-[#1f3a1a]">Thank You!</h4>
+        <p className="mt-2 text-[15px] leading-7 text-[#3a5c33]">
+          Your review has been submitted and will appear after moderation.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="rounded-[12px] border border-[#e4ded4] bg-[#faf8f4] p-4 md:p-6">
+        <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+          Write a Review
+        </p>
+        <p className="mt-1 text-[15px] text-[#595959] md:text-[17px]">
+          Share your thoughts to help other collectors.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label htmlFor="reviewer-name" className="block text-[14px] font-medium text-[#4f4b45]">
+            Name <span className="text-[#c0392b]">*</span>
+          </label>
+          <input
+            id="reviewer-name"
+            type="text"
+            value={reviewer}
+            onChange={(e) => setReviewer(e.target.value)}
+            placeholder="Your name"
+            className="mt-1 w-full rounded-[8px] border border-[#d7d2c9] bg-white px-3 py-2 text-[15px] text-[#313131] outline-none transition-colors focus:border-[#1f1f1f]"
+          />
+        </div>
+        <div>
+          <label htmlFor="reviewer-email" className="block text-[14px] font-medium text-[#4f4b45]">
+            Email <span className="text-[#c0392b]">*</span>
+          </label>
+          <input
+            id="reviewer-email"
+            type="email"
+            value={reviewerEmail}
+            onChange={(e) => setReviewerEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="mt-1 w-full rounded-[8px] border border-[#d7d2c9] bg-white px-3 py-2 text-[15px] text-[#313131] outline-none transition-colors focus:border-[#1f1f1f]"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-[14px] font-medium text-[#4f4b45]">
+            Rating <span className="text-[#c0392b]">*</span>
+          </label>
+          <div className="mt-1 flex gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => setRating(star)}
+                onMouseEnter={() => setHoverRating(star)}
+                onMouseLeave={() => setHoverRating(0)}
+                className="p-0.5 transition-transform hover:scale-110"
+              >
+                <Star
+                  className={`h-6 w-6 ${
+                    star <= (hoverRating || rating)
+                      ? "fill-[#be8f2b] text-[#be8f2b]"
+                      : "fill-none text-[#d7d2c9]"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="md:col-span-2">
+          <label htmlFor="review-text" className="block text-[14px] font-medium text-[#4f4b45]">
+            Your Review <span className="text-[#c0392b]">*</span>
+          </label>
+          <textarea
+            id="review-text"
+            rows={4}
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
+            placeholder="Tell others about your experience with this artwork..."
+            className="mt-1 w-full rounded-[8px] border border-[#d7d2c9] bg-white px-3 py-2 text-[15px] text-[#313131] outline-none transition-colors focus:border-[#1f1f1f] resize-y"
+          />
+        </div>
+
+        {error && (
+          <p className="md:col-span-2 text-[14px] text-[#c0392b]">{error}</p>
+        )}
+
+        <div className="md:col-span-2">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="inline-flex items-center gap-2 rounded-[8px] bg-[#1f1f1f] px-6 py-2.5 text-[14px] font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50"
+          >
+            {submitting ? (
+              <>
+                <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Submitting...
+              </>
+            ) : (
+              "Submit Review"
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
 const SingleProduct = ({
   initialProduct = null,
   relatedProducts = DEFAULT_RELATED_PRODUCTS,
@@ -580,6 +747,11 @@ const SingleProduct = ({
   } | null>(null);
   const [activeInfoTab, setActiveInfoTab] = useState(TAB_LABELS[0]);
   const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
+  const tabsRef = React.useRef<HTMLDivElement>(null);
+  const scrollToReviewsTab = () => {
+    setActiveInfoTab("Reviews");
+    tabsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
 
@@ -1279,6 +1451,10 @@ const SingleProduct = ({
       );
     }
 
+    if (activeInfoTab === "Reviews") {
+      return <ProductReviewsForm productId={product.id} />;
+    }
+
     return null;
   };
 
@@ -1363,9 +1539,13 @@ const SingleProduct = ({
                   <Star className="h-3 w-3 fill-[#be8f2b] text-[#be8f2b]" />
                   {displayRating.toFixed(1)}
                 </span>
-                <span className="rounded-full bg-[#e6edf8] px-2 py-1 text-[14px] font-medium text-[#365683]">
+                <button
+                  type="button"
+                  onClick={scrollToReviewsTab}
+                  className="rounded-full bg-[#e6edf8] px-2 py-1 text-[14px] font-medium text-[#365683] hover:bg-[#d6e0ef] transition-colors"
+                >
                   {displayReviewCount} Reviews
-                </span>
+                </button>
               </div>
 
               <div className="mt-6 font-inter">
@@ -1540,7 +1720,7 @@ const SingleProduct = ({
             </div>
           </div>
 
-          <div className="mt-7 hidden rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-3 md:mt-9 md:block md:p-6">
+          <div ref={tabsRef} className="mt-7 hidden rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-3 md:mt-9 md:block md:p-6">
             <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:grid md:gap-2 md:overflow-visible md:px-0 md:pb-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {TAB_LABELS.map((tab) => (
                 <button
