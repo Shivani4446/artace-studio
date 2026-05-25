@@ -6,6 +6,9 @@
 - **Backend**: Headless WooCommerce (REST API)
 - **Payments**: Razorpay
 
+
+
+
 ## Developer Commands
 
 | Command | Purpose |
