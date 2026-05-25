@@ -1101,7 +1101,7 @@ const SingleProduct = ({
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
             <article className="rounded-[12px] border border-[#e4ded4] bg-white p-4 md:p-6">
               <div
-                className="prose max-w-none text-[#4f4b45] prose-p:my-0 prose-p:mb-5 prose-p:text-[15px] prose-p:leading-7 prose-p:text-[#595959] md:prose-p:text-[18px] md:prose-p:leading-8 prose-headings:font-display prose-headings:text-[#313131] prose-h2:text-[24px] md:prose-h2:text-[30px] prose-h3:text-[20px] md:prose-h3:text-[24px] prose-strong:text-[#313131] prose-ul:my-4 prose-li:text-[15px] prose-li:leading-7 prose-li:text-[#595959] md:prose-li:text-[18px] md:prose-li:leading-8"
+                className="product-description-content"
                 dangerouslySetInnerHTML={{ __html: aboutPaintingHtml }}
               />
             </article>

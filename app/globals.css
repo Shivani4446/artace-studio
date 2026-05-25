@@ -235,6 +235,113 @@ img.protected-image {
   margin-top: 0;
 }
 
+/* Product description content — replaces Tailwind prose which isn't available in v4 */
+.product-description-content {
+  color: #4f4b45;
+}
+
+.product-description-content > * {
+  margin: 0;
+}
+
+.product-description-content > * + * {
+  margin-top: 0;
+}
+
+.product-description-content p {
+  margin-bottom: 1.25rem;
+  color: #595959;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+@media (min-width: 768px) {
+  .product-description-content p {
+    font-size: 18px;
+    line-height: 2;
+  }
+}
+
+.product-description-content h2,
+.product-description-content h3 {
+  font-family: var(--font-sentient), serif;
+  color: #313131;
+}
+
+.product-description-content h2 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 24px;
+}
+
+@media (min-width: 768px) {
+  .product-description-content h2 {
+    font-size: 30px;
+  }
+}
+
+.product-description-content h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
+  .product-description-content h3 {
+    font-size: 24px;
+  }
+}
+
+.product-description-content strong {
+  color: #313131;
+  font-weight: 600;
+}
+
+.product-description-content ul,
+.product-description-content ol {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+
+.product-description-content li {
+  color: #595959;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+@media (min-width: 768px) {
+  .product-description-content li {
+    font-size: 18px;
+    line-height: 2;
+  }
+}
+
+.product-description-content li + li {
+  margin-top: 0.35rem;
+}
+
+.product-description-content a {
+  color: #1f3f63;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.product-description-content blockquote {
+  margin: 1.2rem 0;
+  padding: 0.5rem 1rem;
+  border-left: 3px solid #d7d2c8;
+  background: #f9f7f2;
+  color: #4d4a44;
+}
+
+.product-description-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.2rem 0;
+}
+
 /* Single Blog Content Styles */
 .single-blog-content {
   color: #2f2e2a;
