@@ -1,6 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
+export const runtime = 'edge';
 
 const SingleProduct = dynamic(() =>
   import("@/components/singleproduct/SingleProduct").then((mod) => mod.default)
