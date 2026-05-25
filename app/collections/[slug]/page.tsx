@@ -7,7 +7,6 @@ import CollectionLandingPage, {
 import { type FAQItem } from "@/components/seo/FAQSection";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
-export const runtime = 'edge';
 export const revalidate = 60;
 export const dynamicParams = true;
 
