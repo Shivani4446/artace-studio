@@ -21,7 +21,6 @@ import {
 } from "@/utils/wordpress-blog";
 
 export const revalidate = 120;
-export const dynamicParams = false;
 
 const POSTS_PER_PAGE = 100;
 const MAX_POST_PAGES = 20;

@@ -125,6 +125,35 @@ async function getAllCategories() {
   return data as Array<{ slug?: string; date_modified?: string; date_modified_gmt?: string }>;
 }
 
+async function getAllBlogPosts() {
+  try {
+    const siteUrl = (
+      process.env.WORDPRESS_API_URL ||
+      process.env.WOOCOMMERCE_SITE_URL ||
+      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
+      "https://api.artacestudio.com"
+    ).replace(/\/+$/, "");
+
+    const posts: Array<{ slug?: string; modified?: string; date?: string }> = [];
+
+    for (let page = 1; page <= 20; page++) {
+      const res = await fetch(
+        `${siteUrl}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=slug,modified,date&status=publish`,
+        { next: { revalidate: 3600 } }
+      );
+      if (!res.ok) break;
+      const data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) break;
+      posts.push(...data);
+      if (data.length < 100) break;
+    }
+
+    return posts;
+  } catch {
+    return [];
+  }
+}
+
 const safeDate = (value: string | undefined) => {
   if (!value) return undefined;
   const parsed = new Date(value);
@@ -134,7 +163,11 @@ const safeDate = (value: string | undefined) => {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getBaseUrl();
 
-  const [products, categories] = await Promise.all([getAllProducts(), getAllCategories()]);
+  const [products, categories, blogPosts] = await Promise.all([
+    getAllProducts(),
+    getAllCategories(),
+    getAllBlogPosts(),
+  ]);
 
   return [
     {
@@ -193,6 +226,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           url: `${baseUrl}/collections/${encodeURIComponent(slug)}`,
           lastModified:
             safeDate(category.date_modified_gmt) || safeDate(category.date_modified) || new Date(),
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        };
+      })
+      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
+    ...blogPosts
+      .map((post): MetadataRoute.Sitemap[number] | null => {
+        const slug = (post.slug || "").trim();
+        if (!slug) return null;
+        return {
+          url: `${baseUrl}/blogs/${encodeURIComponent(slug)}`,
+          lastModified: safeDate(post.modified) || safeDate(post.date) || new Date(),
           changeFrequency: "weekly" as const,
           priority: 0.7,
         };
