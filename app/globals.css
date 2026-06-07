@@ -132,6 +132,10 @@ img.protected-image {
   line-height: 1.75;
 }
 
+.article-content p {
+  margin-block: 1.125rem;
+}
+
 .article-content strong {
   color: #1f2023;
   font-weight: 600;

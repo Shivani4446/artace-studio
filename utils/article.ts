@@ -191,7 +191,7 @@ export const htmlToArticleContent = (html: string) => {
   const usedIds = new Set<string>();
 
   const cleanedHtml = html.replace(
-    /<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi,
+    /<p>\s*<\/p>/gi,
     ""
   );
 
