@@ -20,10 +20,17 @@ import {
   type WordPressBlogPost,
 } from "@/utils/wordpress-blog";
 
+export const dynamicParams = true;
 export const revalidate = 120;
 
 const POSTS_PER_PAGE = 100;
 const MAX_POST_PAGES = 20;
+
+const WORDPRESS_HEADERS = {
+  Accept: "application/json",
+  "Content-Type": "application/json",
+  "User-Agent": "ArtaceStudio-Storefront/1.0",
+};
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -35,7 +42,10 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
 
   try {
-    const res = await fetch(endpoint, { next: { revalidate: 120 } });
+    const res = await fetch(endpoint, {
+      headers: WORDPRESS_HEADERS,
+      next: { revalidate: 120 },
+    });
     if (!res.ok) return null;
     const data = (await res.json()) as WordPressBlogPost[];
     return data[0] || null;
