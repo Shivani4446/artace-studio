@@ -5,6 +5,7 @@ import ShopCatalog from "@/components/shop/ShopCatalog";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
+export const runtime = 'edge';
 
 export const metadata: Metadata = {
   title: "Buy Handmade Paintings Online in India | Shop Artace Studio",
