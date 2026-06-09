@@ -158,6 +158,14 @@ img.protected-image {
   padding-left: 1.35rem;
 }
 
+.article-content ul {
+  list-style-type: disc;
+}
+
+.article-content ol {
+  list-style-type: decimal;
+}
+
 .article-content li + li {
   margin-top: 0.45rem;
 }
@@ -232,6 +240,44 @@ img.protected-image {
   margin-top: 0.6rem;
   font-size: 0.95rem;
   color: #6b6962;
+}
+
+/* Tables */
+.article-content figure.wp-block-table {
+  margin: 1.6rem 0;
+  overflow-x: auto;
+}
+
+.article-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.article-content table thead {
+  background: #f4f1ea;
+}
+
+.article-content table th,
+.article-content table td {
+  padding: 0.7rem 1rem;
+  border: 1px solid #d7d2c8;
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-content table th {
+  font-weight: 600;
+  color: #1c1d1f;
+}
+
+.article-content table td {
+  color: #3f3d37;
+}
+
+.article-content table tbody tr:nth-child(even) {
+  background: #faf9f6;
 }
 
 /* First H2 aligned to TOC */
