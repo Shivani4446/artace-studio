@@ -425,9 +425,11 @@ const ArticleLayout = async ({
 
     {/* FAQ Section */}
     {faqItems && faqItems.length > 0 && (
-      <div className="md:grid md:grid-cols-[248px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-16 max-w-[1440px] mx-auto px-6 md:px-12">
+      <div className="md:grid md:grid-cols-[248px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-16 max-w-[1440px] mx-auto px-6 md:px-10 lg:px-14">
         <div className="hidden md:block" />
-        <FaqAccordion items={faqItems} />
+        <div className="max-w-[760px]">
+          <FaqAccordion items={faqItems} />
+        </div>
       </div>
     )}
 
