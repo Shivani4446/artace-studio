@@ -17,6 +17,7 @@ import * as customOrderRoute from "@/lib/api-route-handlers/custom-order/route";
 import * as ordersRoute from "@/lib/api-route-handlers/orders/route";
 import * as razorpayWebhookRoute from "@/lib/api-route-handlers/razorpay/webhook/route";
 import * as rentalsRoute from "@/lib/api-route-handlers/rentals/route";
+import * as revalidateRoute from "@/lib/api-route-handlers/revalidate/route";
 import * as reviewsRoute from "@/lib/api-route-handlers/reviews/route";
 import * as searchRoute from "@/lib/api-route-handlers/search/route";
 import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/route";
@@ -84,6 +85,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   rentals: {
     POST: (request) => rentalsRoute.POST(request),
+  },
+  revalidate: {
+    POST: (request) => revalidateRoute.POST(request),
   },
   reviews: {
     POST: (request) => reviewsRoute.POST(request),
