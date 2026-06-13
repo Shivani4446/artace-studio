@@ -16,3 +16,4 @@ export { generateOfferSchema, generateAllOffersSchema } from "./offer";
 export { generateAggregateRatingSchema } from "./aggregate-rating";
 export { generateReviewsSchema } from "./review";
 export { generateBreadcrumbSchema } from "./breadcrumb";
+export { generateFaqSchema } from "./faq";

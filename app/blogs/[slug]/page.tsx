@@ -8,8 +8,10 @@ import {
   extractWooCommerceProductIds,
   extractWooCommerceProductSlugs,
   extractRankMathToc,
+  extractRankMathFaq,
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
+import { generateFaqSchema } from "@/lib/schema";
 import {
   fetchAllWordPressTags,
   getWordPressBlogSiteUrl,
@@ -126,8 +128,10 @@ const SingleBlogPage = async ({ params }: Props) => {
   const decodedContent = decodeHtmlEntities(post.content?.rendered ?? "");
   const { html: contentWithoutRankMathToc, toc: rankMathToc } =
     extractRankMathToc(decodedContent);
+  const { html: contentWithoutFaq, faqItems } =
+    extractRankMathFaq(contentWithoutRankMathToc);
   const { html: contentHtml, toc: fallbackToc } = htmlToArticleContent(
-    contentWithoutRankMathToc
+    contentWithoutFaq
   );
   const toc = rankMathToc.length > 0 ? rankMathToc : fallbackToc;
   const readTimeMinutes = estimateReadTimeMinutes(decodedContent);
@@ -153,8 +157,21 @@ const SingleBlogPage = async ({ params }: Props) => {
   const embeddedProductSlugs =
     extractWooCommerceProductSlugs(contentWithoutRankMathToc);
 
+  const faqSchema = generateFaqSchema(faqItems);
+
   return (
     <main>
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              ...faqSchema,
+            }),
+          }}
+        />
+      )}
       <ArticleLayout
         eyebrow="Our Philosophy: A Commitment to Creation"
         titleHtml={titleHtml}
@@ -167,6 +184,7 @@ const SingleBlogPage = async ({ params }: Props) => {
         tags={resolvedTags}
         embeddedProductIds={embeddedProductIds}
         embeddedProductSlugs={embeddedProductSlugs}
+        faqItems={faqItems}
       />
     </main>
   );

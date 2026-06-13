@@ -7,6 +7,8 @@ import ArticleTocHighlighter from "./ArticleTocHighlighter";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { decodeHtmlEntities } from "@/utils/text";
 import BlogContentWithProducts from "@/components/blog/BlogContentWithProducts";
+import FaqAccordion from "@/components/blog/FaqAccordion";
+import type { FaqItem } from "@/utils/article";
 
 const STOREFRONT_REVALIDATE_SECONDS = 60;
 
@@ -28,6 +30,7 @@ type Props = {
   tags?: string[];
   embeddedProductIds?: number[];
   embeddedProductSlugs?: string[];
+  faqItems?: FaqItem[];
 };
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
@@ -317,6 +320,7 @@ const ArticleLayout = async ({
   tags,
   embeddedProductIds,
   embeddedProductSlugs,
+  faqItems,
 }: Props) => {
   // Fetch embedded products by IDs and slugs (for when IDs aren't present in Woo markup)
   const embeddedProductsById =
@@ -418,6 +422,14 @@ const ArticleLayout = async ({
         </article>
       </div>
     </section>
+
+    {/* FAQ Section */}
+    {faqItems && faqItems.length > 0 && (
+      <div className="md:grid md:grid-cols-[248px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-16 max-w-[1440px] mx-auto px-6 md:px-12">
+        <div className="hidden md:block" />
+        <FaqAccordion items={faqItems} />
+      </div>
+    )}
 
     {/* Author Section */}
     {author && (

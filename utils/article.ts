@@ -416,6 +416,63 @@ const extractDivBlockByClass = (html: string, className: string) => {
 /**
  * Extracts RankMath TOC items (if present) and returns HTML without the TOC block.
  */
+export type FaqItem = {
+  question: string;
+  answer: string;
+};
+
+/**
+ * Extracts RankMath FAQ blocks from HTML and returns the FAQ items
+ * plus the HTML with the FAQ block stripped out.
+ */
+export const extractRankMathFaq = (html: string) => {
+  const block = extractDivBlockByClass(html, "rank-math-block");
+  if (!block) {
+    return { html, faqItems: [] as FaqItem[] };
+  }
+
+  const faqItems: FaqItem[] = [];
+  let searchStart = 0;
+
+  while (true) {
+    const itemOpenMatch = block.blockHtml.slice(searchStart).match(
+      /<div[^>]*class="[^"]*rank-math-list-item[^"]*"[^>]*>/i
+    );
+    if (!itemOpenMatch) break;
+
+    const itemStart = searchStart + (itemOpenMatch.index ?? 0);
+    const itemEnd = findMatchingCloseTag(block.blockHtml, "div", itemStart);
+    if (!itemEnd) break;
+
+    const itemHtml = block.blockHtml.slice(itemStart, itemEnd);
+
+    const questionMatch = itemHtml.match(
+      /<h3[^>]*class="[^"]*rank-math-question[^"]*"[^>]*>([\s\S]*?)<\/h3>/i
+    );
+    const answerMatch = itemHtml.match(
+      /<div[^>]*class="[^"]*rank-math-answer[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+    );
+
+    const question = questionMatch
+      ? stripHtmlAndDecode(questionMatch[1]).replace(/^Q:\s*/i, "").trim()
+      : "";
+    const answer = answerMatch
+      ? stripHtmlAndDecode(answerMatch[1]).trim()
+      : "";
+
+    if (question && answer) {
+      faqItems.push({ question, answer });
+    }
+
+    searchStart = itemEnd;
+  }
+
+  const cleanedHtml =
+    html.slice(0, block.startIndex) + html.slice(block.endIndex);
+
+  return { html: cleanedHtml, faqItems };
+};
+
 export const extractRankMathToc = (html: string) => {
   const block = extractDivBlockByClass(html, "rank-math-toc");
   if (!block) {
