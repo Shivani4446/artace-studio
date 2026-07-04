@@ -356,6 +356,66 @@ const buildCollectionCopy = (
     };
   }
 
+  if (categorySlug === "abstract-paintings") {
+    return {
+      ...fallback,
+      heroEyebrow: "Bring Bold Expression Home",
+      heroTitle: "Handcrafted Abstract Paintings for Modern Interiors",
+      heroBody:
+        "Make a statement with original, texture-rich abstract canvases. Each piece is built layer by layer with palette knife and brush — no prints, no reproductions, only one-of-a-kind originals.",
+      heroCta: "Commission Your Abstract Piece",
+      heroSecondaryCta: "Explore the Abstract Collection",
+      overviewTitle: "Original Abstraction, Handmade for Your Wall.",
+      overviewBody:
+        "In a world of flat digital prints, true abstract art stands apart. Our artists build each canvas through deliberate layering — blending oil and acrylic, working with palette knives and brushes to create depth, movement, and physical texture you can see and feel. Whether you want a calm tonal piece or a bold colour statement, every painting is an original collaboration. You choose the scale, palette, and direction; we bring it to life on premium canvas.",
+      featuredHeading: "Shop Best Abstract Paintings",
+      galleryTitle: "The Abstract Gallery: Texture, Colour, Composition",
+      galleryBody:
+        "Browse our handcrafted abstract canvases below. From soft neutrals to vibrant compositions, each piece is a unique original created by our studio artists.",
+      editorialTitle: "Beyond the Canvas: The Making of Abstract Art",
+      editorialItems: [
+        {
+          title: "The Creative Process",
+          body: "Abstract painting at Artace begins with mood and material. Our artists work intuitively — building texture with palette knives, layering translucent washes over opaque grounds, and pulling colour across the canvas in deliberate gestures. No two pieces are alike.",
+        },
+        {
+          title: "Texture & Materiality",
+          body: "We use heavy-body acrylics and artist-grade oils on premium cotton canvas. The result is a surface you want to touch — raised impasto passages, smooth glazed areas, and the subtle interplay of matte and gloss that changes with the light in your room.",
+        },
+        {
+          title: "The Artace Guarantee",
+          body: "You are not buying a print. You are commissioning an original artwork, with our artists working to your preferred palette and scale. We share progress images, and only ship once you approve the final piece.",
+        },
+      ],
+      testimonialTitle: "Homes Transformed by Abstract Art",
+      testimonialItems: [
+        {
+          quote:
+            "I wanted something bold for my living room but couldn't find anything original. Artace created a large abstract in blues and golds that completely changed the space. The texture is incredible — everyone thinks it's from a gallery.",
+          name: "Ananya P.",
+          location: "Mumbai",
+        },
+        {
+          quote:
+            "We needed a calm, tonal piece for our bedroom. The team suggested a warm neutral abstract with subtle texture. It arrived perfectly stretched and the quality is museum-grade. Couldn't be happier.",
+          name: "Vikram & Neha S.",
+          location: "Delhi",
+        },
+      ],
+      urgencyTitle: "See an abstract piece you love?",
+      urgencyBody:
+        "Secure an original handmade abstract canvas today, or let one inspire a bespoke commission tailored to your palette, scale, and wall.",
+      urgencyCta: "Order Your Abstract Painting Today",
+      advisoryTitle: "Find Your Perfect Abstract",
+      advisoryBody:
+        "Not sure whether to go bold or neutral? Unsure which scale works for your wall? Our complimentary art advisory service helps you refine palette, size, and composition before you commit — completely free.",
+      advisoryCta: "Book Your Free Design Consultation",
+      heroVectorSrc: "/museum-vector.svg",
+      heroBannerImage: "/abstract-collection-bg.webp",
+      heroVectorOnly: true,
+    };
+  }
+
   if (categorySlug === "landscapes-cityscapes-paintings") {
     return {
       ...fallback,

@@ -15,6 +15,7 @@ const COLLECTION_LINK_ITEMS: CollectionLinkItem[] = [
   { name: "Ganapati Painting", categorySlug: "ganapati-paintings" },
   { name: "Radha Krishna", categorySlug: "radha-krishna-paintings" },
   { name: "Buddha Paintings", categorySlug: "buddha-paintings" },
+  { name: "Abstract Paintings", categorySlug: "abstract-paintings" },
   {
     name: "Landscape & Cityscape",
     categorySlug: "landscapes-cityscapes-paintings",
@@ -42,6 +43,13 @@ const COLLECTION_THEME_MAP: Record<string, CollectionTheme> = {
     accentStrong: "#43351C",
     panel: "#F5F0E3",
     vector: ["#76643D", "#C5AF76", "#EEE5CF"],
+  },
+  "abstract-paintings": {
+    accent: "#5A6C8A",
+    accentSoft: "#D5DFEE",
+    accentStrong: "#2A364A",
+    panel: "#F0F3F8",
+    vector: ["#5A6C8A", "#A8BCD4", "#E6EDF5"],
   },
   "figurative-paintings": {
     accent: "#6F5C75",

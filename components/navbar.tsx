@@ -60,6 +60,7 @@ const collectionDescriptions: Record<string, string> = {
   "ganapati-paintings": "Auspicious canvases for prosperity and new beginnings.",
   "radha-krishna-paintings": "Devotional paintings centered on love and harmony.",
   "buddha-paintings": "Meditative works that bring stillness indoors.",
+  "abstract-paintings": "Texture-rich contemporary canvases for modern, layered interiors.",
   "landscapes-cityscapes-paintings": "Expansive horizons and urban scenes with atmosphere.",
   "figurative-paintings": "Portrait-led storytelling with warmth and presence.",
 };
