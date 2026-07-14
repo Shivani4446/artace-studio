@@ -756,7 +756,7 @@ const SingleProduct = ({
   const [customHeight, setCustomHeight] = useState("");
 
   const sizeOptions = useMemo(() => {
-    if (!product) return ["16x20", "20x30", "30x40"];
+    if (!product) return [];
     const sizeOptionsFromAttributes = uniqueSizeOptions(
       product.attributes
         .filter((attribute) => /size|dimension/i.test(attribute.name))
@@ -773,11 +773,10 @@ const SingleProduct = ({
           .map((attribute) => attribute.value)
       )
     );
-    if (sizeOptionsFromVariations.length > 0) {
-      return sizeOptionsFromVariations;
-    }
 
-    return ["16x20", "20x30", "30x40"];
+    // Only sizes actually configured on this product in WordPress are shown here —
+    // never a hardcoded placeholder set.
+    return sizeOptionsFromVariations;
   }, [product]);
 
   const productInformationItems = useMemo(() => {
@@ -1573,6 +1572,7 @@ const SingleProduct = ({
                 </p>
               )}
 
+              {sizeOptions.length > 0 && (
               <div className="mt-6 md:mt-[30px]">
                 <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Size</p>
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -1603,6 +1603,7 @@ const SingleProduct = ({
                   ))}
                 </div>
               </div>
+              )}
 
               {product.sku && (
                 <p className="mt-6 text-[14px] text-[#595959] md:mt-[30px] md:text-[16px]">

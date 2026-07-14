@@ -3,10 +3,15 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 export const runtime = "edge";
 
+const CONTENT_TYPE_LISTING_PATHS: Record<string, string> = {
+  product: "/shop",
+  post: "/blogs",
+};
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
-    const { secret, slug, tag } = body;
+    const { secret, slug, tag, type } = body;
 
     const expectedSecret =
       process.env.REVALIDATION_SECRET || process.env.RAZORPAY_WEBHOOK_SECRET;
@@ -15,11 +20,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
     }
 
+    // Defaults to "post" so existing blog-only callers keep working unchanged.
+    const listingPath = CONTENT_TYPE_LISTING_PATHS[type] ?? CONTENT_TYPE_LISTING_PATHS.post;
+    const detailPrefix = listingPath;
+
     const revalidated: string[] = [];
 
     if (slug) {
-      revalidatePath(`/blogs/${slug}`);
-      revalidated.push(`/blogs/${slug}`);
+      revalidatePath(`${detailPrefix}/${slug}`);
+      revalidated.push(`${detailPrefix}/${slug}`);
     }
 
     if (tag) {
@@ -27,10 +36,8 @@ export async function POST(request: NextRequest) {
       revalidated.push(`tag:${tag}`);
     }
 
-    if (!slug && !tag) {
-      revalidatePath("/blogs");
-      revalidated.push("/blogs");
-    }
+    revalidatePath(listingPath);
+    revalidated.push(listingPath);
 
     return NextResponse.json({
       revalidated,

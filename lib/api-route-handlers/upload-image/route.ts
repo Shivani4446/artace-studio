@@ -15,8 +15,6 @@ const SUPABASE_SERVICE_ROLE_KEY =
   process.env["Anon Key"] ||
   "";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp", "image/heic", "image/heif"];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -27,6 +25,8 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
   try {
     const formData = await request.formData();

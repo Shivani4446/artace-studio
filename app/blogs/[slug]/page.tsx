@@ -35,15 +35,14 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-async function getPost(slug: string): Promise<WordPressBlogPost | null> {
-  const siteUrl = getWordPressBlogSiteUrl();
-  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
-  const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
-
+async function fetchPost(
+  endpoint: string,
+  cacheOptions: RequestInit
+): Promise<WordPressBlogPost | null> {
   try {
     const res = await fetch(endpoint, {
       headers: WORDPRESS_HEADERS,
-      next: { revalidate: 120 },
+      ...cacheOptions,
     });
     if (!res.ok) return null;
     const data = (await res.json()) as WordPressBlogPost[];
@@ -51,6 +50,20 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   } catch {
     return null;
   }
+}
+
+async function getPost(slug: string): Promise<WordPressBlogPost | null> {
+  const siteUrl = getWordPressBlogSiteUrl();
+  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
+  const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
+
+  const cachedPost = await fetchPost(endpoint, { next: { revalidate: 120 } });
+  if (cachedPost) return cachedPost;
+
+  // A cached miss can mean the post was only just published and the ISR cache
+  // (or WordPress-side edge cache) hasn't picked it up yet. Re-check live before
+  // giving up, so we don't lock in a false 404 for the revalidate window.
+  return fetchPost(endpoint, { cache: "no-store" });
 }
 
 export async function generateStaticParams() {

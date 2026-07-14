@@ -157,13 +157,12 @@ const getApiBaseUrl = () => {
 };
 
 const getWooServerConfig = () => {
-  const siteUrl =
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    DEFAULT_WOOCOMMERCE_SITE_URL;
-
+  // Reuse the same host resolution as the public Store API. WOOCOMMERCE_SITE_URL
+  // is commonly set to the storefront domain (e.g. artacestudio.com), which has no
+  // /wp-json route — the WordPress/WooCommerce REST API always lives at the host
+  // resolved by getApiBaseUrl() (WOOCOMMERCE_REST_URL / api.artacestudio.com).
   return {
-    siteUrl: siteUrl.replace(/\/+$/, ""),
+    siteUrl: getApiBaseUrl(),
     consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY,
     consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET,
   };
@@ -187,15 +186,14 @@ const parseWooCommerceDecimalPrice = (rawValue: string | undefined): number | nu
 };
 
 const fetchStoreProducts = async (
-  queryString: string
+  queryString: string,
+  cacheOptions: RequestInit = { next: { revalidate } }
 ): Promise<WooStoreProduct[]> => {
   try {
     const apiBaseUrl = getApiBaseUrl();
     let response = await fetch(
         `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
-        {
-          next: { revalidate },
-        }
+        cacheOptions
       );
 
     if (response.status === 404) {
@@ -203,9 +201,7 @@ const fetchStoreProducts = async (
         `${apiBaseUrl}/?rest_route=${encodeURIComponent(
           `/wc/store/v1/products?${queryString}`
         )}`,
-        {
-          next: { revalidate },
-        }
+        cacheOptions
       );
     }
 
@@ -219,10 +215,15 @@ const fetchStoreProducts = async (
 
 const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
   try {
-    const payload = await fetchStoreProducts(
-      `slug=${encodeURIComponent(slug)}&per_page=1`
-    );
-    return Array.isArray(payload) && payload.length > 0 ? payload[0] : null;
+    const query = `slug=${encodeURIComponent(slug)}&per_page=1`;
+    const cachedPayload = await fetchStoreProducts(query);
+    if (cachedPayload.length > 0) return cachedPayload[0];
+
+    // A cached miss can mean the product was only just published (WooCommerce/CDN
+    // propagation lag) or the ISR cache hasn't picked it up yet. Re-check live
+    // before giving up, so we don't lock in a false 404 for the revalidate window.
+    const freshPayload = await fetchStoreProducts(query, { cache: "no-store" });
+    return freshPayload.length > 0 ? freshPayload[0] : null;
   } catch {
     return null;
   }
@@ -685,6 +686,59 @@ const fetchProductFAQ = async (productId: number): Promise<{ question: string; a
   }
 };
 
+const DERIVED_SIZE_ATTRIBUTE_ID = -2;
+
+// Some products don't carry a proper WooCommerce "Size" attribute — the dimensions
+// live as ACF fields (width_inches/height_inches or size_in_centimetres) instead,
+// which end up as plain text lines inside the merged "Product Information" items
+// (e.g. "Width Inches: 24"). Recover a real, single per-product size from those
+// lines so the size selector always reflects actual WordPress data instead of
+// falling back to a fabricated placeholder.
+const deriveSizeFromInformationItems = (items: string[]): string | null => {
+  const findValue = (labelPattern: RegExp): string | null => {
+    for (const item of items) {
+      const match = item.match(labelPattern);
+      if (match) return match[1].trim();
+    }
+    return null;
+  };
+
+  const widthRaw = findValue(/width\s*inches?\s*:\s*(.+)/i);
+  const heightRaw = findValue(/height\s*inches?\s*:\s*(.+)/i);
+
+  if (widthRaw && heightRaw) {
+    const width = Number(widthRaw.replace(/[^0-9.]/g, ""));
+    const height = Number(heightRaw.replace(/[^0-9.]/g, ""));
+    if (Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0) {
+      return `${width}x${height} Inches`;
+    }
+  }
+
+  const sizeCmRaw = findValue(/size\s*in\s*centimetres?\s*:\s*(.+)/i);
+  return sizeCmRaw || null;
+};
+
+const hasExplicitSizeAttribute = (product: WooStoreProduct) =>
+  (product.attributes ?? []).some((attribute) => /size|dimension/i.test(attribute.name));
+
+const withDerivedSizeAttribute = (
+  product: WooStoreProduct,
+  informationItems: string[]
+): WooStoreProduct => {
+  if (hasExplicitSizeAttribute(product)) return product;
+
+  const derivedSize = deriveSizeFromInformationItems(informationItems);
+  if (!derivedSize) return product;
+
+  return {
+    ...product,
+    attributes: [
+      ...(product.attributes ?? []),
+      { id: DERIVED_SIZE_ATTRIBUTE_ID, name: "Size", options: [derivedSize] },
+    ],
+  };
+};
+
 const mergeProductInformationIntoProduct = (
   product: WooStoreProduct,
   informationItems: string[]
@@ -715,7 +769,10 @@ const getProductWithProductInformation = async (product: WooStoreProduct) => {
 
   if (existingInformationItems.length > 0) {
     const [variations, faqs] = await Promise.all([variationsPromise, faqPromise]);
-    const productWithExtras = { ...product, variations, faqs };
+    const productWithExtras = withDerivedSizeAttribute(
+      { ...product, variations, faqs },
+      existingInformationItems
+    );
     return mergeProductInformationIntoProduct(productWithExtras, existingInformationItems);
   }
 
@@ -734,7 +791,10 @@ const getProductWithProductInformation = async (product: WooStoreProduct) => {
     ...wordPressApiInformationItems,
   ]);
 
-  const productWithExtras = { ...product, variations, faqs };
+  const productWithExtras = withDerivedSizeAttribute(
+    { ...product, variations, faqs },
+    mergedInformationItems
+  );
   return mergeProductInformationIntoProduct(productWithExtras, mergedInformationItems);
 };
 
