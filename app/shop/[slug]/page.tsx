@@ -6,6 +6,7 @@ const SingleProduct = dynamic(() =>
 );
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateProductSchema } from "@/lib/schema";
+import { getFakeRating } from "@/lib/reviews/fake-rating";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -213,17 +214,30 @@ const fetchStoreProducts = async (
   }
 };
 
+const withFakeRating = (product: WooStoreProduct): WooStoreProduct => {
+  const fakeRating = getFakeRating(product.id);
+  return {
+    ...product,
+    average_rating: fakeRating.rating.toFixed(1),
+    review_count: fakeRating.reviewCount,
+  };
+};
+
 const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
   try {
     const query = `slug=${encodeURIComponent(slug)}&per_page=1`;
     const cachedPayload = await fetchStoreProducts(query);
-    if (cachedPayload.length > 0) return cachedPayload[0];
+    const product =
+      cachedPayload.length > 0
+        ? cachedPayload[0]
+        : (
+            // A cached miss can mean the product was only just published (WooCommerce/CDN
+            // propagation lag) or the ISR cache hasn't picked it up yet. Re-check live
+            // before giving up, so we don't lock in a false 404 for the revalidate window.
+            await fetchStoreProducts(query, { cache: "no-store" })
+          )[0];
 
-    // A cached miss can mean the product was only just published (WooCommerce/CDN
-    // propagation lag) or the ISR cache hasn't picked it up yet. Re-check live
-    // before giving up, so we don't lock in a false 404 for the revalidate window.
-    const freshPayload = await fetchStoreProducts(query, { cache: "no-store" });
-    return freshPayload.length > 0 ? freshPayload[0] : null;
+    return product ? withFakeRating(product) : null;
   } catch {
     return null;
   }
