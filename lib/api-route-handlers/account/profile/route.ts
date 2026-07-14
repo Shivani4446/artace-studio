@@ -5,7 +5,6 @@ import {
   updateWordPressProfile,
 } from "@/utils/wordpress-auth";
 
-export const runtime = "edge";
 
 const unauthorizedResponse = () =>
   NextResponse.json({ message: "Unauthorized" }, { status: 401 });

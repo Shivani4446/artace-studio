@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requestWordPressPasswordReset } from "@/utils/wordpress-auth";
 
-export const runtime = "edge";
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as {

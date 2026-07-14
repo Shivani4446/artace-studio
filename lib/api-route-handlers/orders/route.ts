@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
 import { fetchWooCommerceOrdersForToken } from "@/utils/woocommerce-orders";
 
-export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const session = await getAuthSessionFromRequest(request);

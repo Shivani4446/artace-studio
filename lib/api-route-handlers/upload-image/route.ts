@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-export const runtime = "edge";
 
 const SUPABASE_URL =
   process.env.SUPABASE_URL ||

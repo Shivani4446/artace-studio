@@ -7,7 +7,6 @@ import {
   normalizeWordPressBlogPosts,
 } from "@/utils/wordpress-blog";
 
-export const runtime = "edge";
 
 export async function GET() {
   try {

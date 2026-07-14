@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
 
-export const runtime = "edge";
 
 type WooCouponPayload = {
   id?: unknown;
