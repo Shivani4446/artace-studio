@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 
+export const runtime = "edge";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";

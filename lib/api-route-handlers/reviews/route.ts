@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
 
 const toBasicAuthToken = (username: string, password: string) => {
   const raw = `${username}:${password}`;

@@ -23,6 +23,7 @@ import * as searchRoute from "@/lib/api-route-handlers/search/route";
 import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/route";
 import * as uploadImageRoute from "@/lib/api-route-handlers/upload-image/route";
 
+export const runtime = "edge";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS" | "HEAD";
 type MethodHandler = (request: NextRequest) => Promise<Response> | Response;

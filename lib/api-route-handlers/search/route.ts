@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchSearchResults } from "@/lib/search";
 
+export const runtime = "edge";
 
 type Suggestion = {
   id: string;

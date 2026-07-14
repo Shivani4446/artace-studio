@@ -8,6 +8,7 @@ import {
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
 
+export const runtime = "edge";
 
 type RazorpayEntityWithNotes = {
   id?: unknown;

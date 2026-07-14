@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "edge";
 
 type ContactPayload = {
   firstName: string;

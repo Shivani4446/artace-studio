@@ -11,6 +11,7 @@ import {
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
 
+export const runtime = "edge";
 
 type CheckoutLineItemInput = {
   productId: number;

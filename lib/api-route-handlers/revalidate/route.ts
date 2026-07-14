@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 
+export const runtime = "edge";
 
 const CONTENT_TYPE_LISTING_PATHS: Record<string, string> = {
   product: "/shop",
