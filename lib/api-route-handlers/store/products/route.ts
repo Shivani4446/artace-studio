@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
+import { getFakeRating } from "@/lib/reviews/fake-rating";
 
 export const runtime = "edge";
 
@@ -243,6 +244,7 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
     const regularPrice = parsePrice(product.prices?.regular_price, minorUnit);
     const primaryImage = product.images[0];
     const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
+    const fakeRating = getFakeRating(product.id);
 
     const explicitMoodOptions = (product.attributes ?? [])
       .filter((attribute) => /mood/i.test(attribute.name))
@@ -279,8 +281,8 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
       regularPrice,
       currencyCode: product.prices?.currency_code || "INR",
       currencySymbol: product.prices?.currency_symbol || "Rs. ",
-      reviewCount: product.review_count ?? 0,
-      averageRating: Number(product.average_rating || 0),
+      reviewCount: fakeRating.reviewCount,
+      averageRating: fakeRating.rating,
       totalSales: product.total_sales ?? 0,
       dateCreated: product.date_created_gmt || product.date_created || null,
       attributes: {
