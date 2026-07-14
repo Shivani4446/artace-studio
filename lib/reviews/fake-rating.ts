@@ -29,9 +29,8 @@ export const getFakeRating = (productId: number): FakeRating => {
     Math.round((MIN_RATING + ratingRandom * (MAX_RATING - MIN_RATING)) * 10) / 10;
 
   const reviewCountRandom = mulberry32(productId + REVIEW_COUNT_SEED_OFFSET)();
-  const reviewCount = Math.round(
-    MIN_REVIEW_COUNT + reviewCountRandom * (MAX_REVIEW_COUNT - MIN_REVIEW_COUNT)
-  );
+  const reviewCount =
+    Math.floor(reviewCountRandom * (MAX_REVIEW_COUNT - MIN_REVIEW_COUNT + 1)) + MIN_REVIEW_COUNT;
 
   return { rating, reviewCount };
 };
