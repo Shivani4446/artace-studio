@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 
 export const runtime = "edge";
 
@@ -317,7 +318,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
       order: "desc",
     });
 
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
         cache: "no-store",

@@ -6,6 +6,7 @@ import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 export const runtime = 'edge';
 
 export const metadata: Metadata = {
@@ -375,7 +376,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
       orderby: "date",
       order: "desc",
     });
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
         next: { revalidate },

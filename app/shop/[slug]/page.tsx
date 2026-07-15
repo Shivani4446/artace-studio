@@ -7,6 +7,7 @@ const SingleProduct = dynamic(() =>
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateProductSchema } from "@/lib/schema";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 
 export const revalidate = 120;
 export const dynamicParams = true;
@@ -192,13 +193,13 @@ const fetchStoreProducts = async (
 ): Promise<WooStoreProduct[]> => {
   try {
     const apiBaseUrl = getApiBaseUrl();
-    let response = await fetch(
+    let response = await fetchWithRetry(
         `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
         cacheOptions
       );
 
     if (response.status === 404) {
-      response = await fetch(
+      response = await fetchWithRetry(
         `${apiBaseUrl}/?rest_route=${encodeURIComponent(
           `/wc/store/v1/products?${queryString}`
         )}`,

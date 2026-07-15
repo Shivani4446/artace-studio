@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Pins the project root explicitly. Without this, Turbopack's automatic
+  // root inference can pick up the stray, unrelated package-lock.json that
+  // sits one directory above this project and misresolve the Next.js
+  // package entirely, crashing every route with a Turbopack panic.
+  turbopack: {
+    root: __dirname,
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

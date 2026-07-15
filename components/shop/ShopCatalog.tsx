@@ -1052,6 +1052,9 @@ const ShopCatalog = ({
                               isSingleRowLayout ? "aspect-[4/5] h-full" : "aspect-[4/5] sm:aspect-square"
                             }`}
                           >
+                            <span className="absolute left-2 top-2 z-20 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-[#595959] shadow-sm sm:left-3 sm:top-3 sm:text-[12px]">
+                              Customizable
+                            </span>
                             <Image
                               src={product.image}
                               alt={product.imageAlt || product.name}

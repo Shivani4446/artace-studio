@@ -747,6 +747,9 @@ const SingleProduct = ({
   } | null>(null);
   const [activeInfoTab, setActiveInfoTab] = useState(TAB_LABELS[0]);
   const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isDescriptionTruncatable, setIsDescriptionTruncatable] = useState(false);
+  const descriptionRef = React.useRef<HTMLParagraphElement>(null);
   const tabsRef = React.useRef<HTMLDivElement>(null);
   const scrollToReviewsTab = () => {
     setActiveInfoTab("Reviews");
@@ -754,6 +757,12 @@ const SingleProduct = ({
   };
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
+
+  useEffect(() => {
+    const element = descriptionRef.current;
+    if (!element) return;
+    setIsDescriptionTruncatable(element.scrollHeight > element.clientHeight + 1);
+  }, [product?.shortDescription]);
 
   const sizeOptions = useMemo(() => {
     if (!product) return [];
@@ -1527,15 +1536,18 @@ const SingleProduct = ({
             </div>
 
             <div>
-              <h1 className="font-display text-[24px] leading-[1.22] text-[#24211d] md:text-[28px] md:leading-[1.2]">
+              <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
+                Customizable
+              </span>
+              <h1 className="mt-3 font-display text-[24px] leading-[1.22] text-[#24211d] md:text-[28px] md:leading-[1.2]">
                 {product.name}
               </h1>
               <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
                 <span className="text-[16px] text-[#313131] underline underline-offset-2 md:text-[18px]">
-                  {artistName}
+                  By {artistName}
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#f0e3bc] px-2 py-1 text-[14px] font-medium text-[#5f4a18]">
-                  <Star className="h-3 w-3 fill-[#be8f2b] text-[#be8f2b]" />
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#E3F7EC] px-2 py-1 text-[14px] font-medium text-[#14AE5C]">
+                  <Star className="h-3 w-3 fill-[#14AE5C] text-[#14AE5C]" />
                   {displayRating.toFixed(1)}
                 </span>
                 <button
@@ -1565,12 +1577,6 @@ const SingleProduct = ({
                 </div>
                 <p className="mt-2 text-[14px] text-[#595959] md:text-[16px]">Inclusive of all taxes</p>
               </div>
-
-              {product.shortDescription && (
-                <p className="mt-6 max-w-2xl text-[15px] leading-7 text-[#313131] md:mt-[30px] md:text-[18px] md:leading-8">
-                  {stripHtml(product.shortDescription)}
-                </p>
-              )}
 
               {sizeOptions.length > 0 && (
               <div className="mt-6 md:mt-[30px]">
@@ -1603,6 +1609,28 @@ const SingleProduct = ({
                   ))}
                 </div>
               </div>
+              )}
+
+              {product.shortDescription && (
+                <div className="mt-6 max-w-2xl md:mt-[30px]">
+                  <p
+                    ref={descriptionRef}
+                    className={`text-[15px] leading-7 text-[#313131] md:text-[18px] md:leading-8 ${
+                      isDescriptionExpanded ? "" : "line-clamp-2"
+                    }`}
+                  >
+                    {stripHtml(product.shortDescription)}
+                  </p>
+                  {(isDescriptionTruncatable || isDescriptionExpanded) && (
+                    <button
+                      type="button"
+                      onClick={() => setIsDescriptionExpanded((prev) => !prev)}
+                      className="mt-1 text-[14px] font-medium text-[#3A4980] underline underline-offset-2 hover:text-[#2c3866] md:text-[16px]"
+                    >
+                      {isDescriptionExpanded ? "Read less" : "Read more"}
+                    </button>
+                  )}
+                </div>
               )}
 
               {product.sku && (
