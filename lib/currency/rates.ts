@@ -42,7 +42,7 @@ export async function getExchangeRates(): Promise<ExchangeRates | null> {
     for (const code of REQUIRED_CURRENCIES) {
       if (code === "INR") continue;
       const rate = payload.rates[code];
-      if (typeof rate !== "number" || !Number.isFinite(rate)) return null;
+      if (typeof rate !== "number" || !Number.isFinite(rate) || rate <= 0) return null;
       rates[code] = rate;
     }
 
