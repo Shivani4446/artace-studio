@@ -163,7 +163,7 @@ fbq('track', 'PageView');`
                 aria-label="Order on WhatsApp"
                 className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 transition-transform hover:scale-[1.03] md:bottom-6 md:right-6"
               >
-                <span className="hidden rounded-full bg-white px-3 py-1.5 text-[13px] font-medium text-[#14AE5C] shadow-[0_8px_24px_rgba(0,0,0,0.12)] sm:inline-block">
+                <span className="hidden rounded-full bg-white px-3 py-1.5 text-[13px] font-medium text-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] sm:inline-block">
                   Order on WhatsApp
                 </span>
                 <Image
