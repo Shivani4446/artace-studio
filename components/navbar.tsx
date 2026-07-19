@@ -25,6 +25,7 @@ import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import LogoutButton from "@/components/auth/LogoutButton";
+import CurrencyDropdown from "@/components/currency/CurrencyDropdown";
 import {
   collectionLinkItems,
   getCollectionHref,
@@ -839,6 +840,8 @@ const Navbar = () => {
                   )}
               </div>
             </div>
+
+            <CurrencyDropdown />
 
             <Link
               href="/wishlist"
