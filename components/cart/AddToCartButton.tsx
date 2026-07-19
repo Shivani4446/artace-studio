@@ -12,6 +12,7 @@ type AddToCartButtonProps = {
   image: string;
   subtitle?: string;
   price?: number;
+  quantity?: number;
   className?: string;
 };
 
@@ -23,6 +24,7 @@ const AddToCartButton = ({
   image,
   subtitle,
   price,
+  quantity,
   className = "",
 }: AddToCartButtonProps) => {
   const { addItem } = useCart();
@@ -31,15 +33,18 @@ const AddToCartButton = ({
     <button
       type="button"
       onClick={() =>
-        addItem({
-          id,
-          woocommerceProductId,
-          woocommerceVariationId,
-          title,
-          image,
-          subtitle,
-          price,
-        })
+        addItem(
+          {
+            id,
+            woocommerceProductId,
+            woocommerceVariationId,
+            title,
+            image,
+            subtitle,
+            price,
+          },
+          quantity
+        )
       }
       className={`inline-flex items-center gap-2 border border-[#2c2c2c]/30 px-3 py-1.5 text-[12px] font-medium uppercase tracking-[0.06em] text-[#2c2c2c] transition-colors hover:bg-[#2c2c2c] hover:text-white ${className}`}
     >

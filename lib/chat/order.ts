@@ -171,7 +171,8 @@ export async function executePlaceCodOrder(
     }
 
     return { success: true, orderNumber: order.orderNumber, total: order.total };
-  } catch {
+  } catch (error) {
+    console.error("[chat/order] createWooCommerceOrder failed:", error);
     return {
       error:
         "The order could not be created right now. Tell the user to try again shortly or use regular checkout.",

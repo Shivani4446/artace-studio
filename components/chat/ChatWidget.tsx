@@ -99,7 +99,12 @@ const ChatWidget = () => {
 
         for (const chunk of chunks) {
           if (!chunk.startsWith("data: ")) continue;
-          const payload = JSON.parse(chunk.slice(6)) as StreamPayload;
+          let payload: StreamPayload;
+          try {
+            payload = JSON.parse(chunk.slice(6)) as StreamPayload;
+          } catch {
+            continue;
+          }
 
           if (payload.type === "delta") {
             assistantText += payload.text;
@@ -173,6 +178,7 @@ const ChatWidget = () => {
                       image={action.image}
                       subtitle={action.subtitle}
                       price={action.price}
+                      quantity={action.quantity}
                     />
                   </div>
                 ))}

@@ -8,6 +8,7 @@ const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const getStoreApiBaseUrl = () =>
   (
     process.env.WOOCOMMERCE_REST_URL ||
+    process.env.WORDPRESS_API_URL ||
     process.env.WOOCOMMERCE_SITE_URL ||
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
     DEFAULT_WOOCOMMERCE_SITE_URL
