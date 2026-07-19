@@ -50,8 +50,6 @@ const bucketRank: Record<SizeBucket, number> = {
   XL: 4,
 };
 
-const formatNumber = (value: number) => value.toLocaleString("en-IN");
-
 const toTitleCase = (value: string) =>
   value
     .trim()
@@ -732,13 +730,13 @@ const ShopCatalog = ({
                     <div className="rounded-[12px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
                       <p className="text-[10px] text-[#7b7468]">Min Price</p>
                       <p className="mt-1 text-sm font-semibold text-[#1f1f1f]">
-                        Rs. {formatNumber(priceMin)}
+                        {currency.formatPrice(priceMin)}
                       </p>
                     </div>
                     <div className="rounded-[12px] border border-[#1f1f1f]/14 bg-transparent px-3 py-2">
                       <p className="text-[10px] text-[#7b7468]">Max Price</p>
                       <p className="mt-1 text-sm font-semibold text-[#1f1f1f]">
-                        Rs. {formatNumber(priceMax)}
+                        {currency.formatPrice(priceMax)}
                       </p>
                     </div>
                   </div>
@@ -1089,7 +1087,7 @@ const ShopCatalog = ({
                               >
                                 {product.price !== null
                                   ? currency.formatPrice(product.price)
-                                  : null}
+                                  : "Price On Request"}
                               </span>
                             </div>
 
