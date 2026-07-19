@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -407,23 +408,6 @@ const normalizeSingleProductData = (
   return product;
 };
 
-const formatPrice = (
-  value: number | null,
-  currencyCode: string,
-  currencySymbol: string
-) => {
-  if (value === null) return null;
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
-  }
-};
-
 const getOrdinalSuffix = (day: number) => {
   const mod10 = day % 10;
   const mod100 = day % 100;
@@ -733,6 +717,7 @@ const SingleProduct = ({
 }: SingleProductProps) => {
   const { addItem } = useCart();
   const { addItem: addWishlistItem, isInWishlist } = useWishlist();
+  const currency = useCurrency();
   const product = useMemo(
     () => normalizeSingleProductData(initialProduct),
     [initialProduct]
@@ -973,12 +958,10 @@ const SingleProduct = ({
 
   const formattedCustomCalculatedPrice = useMemo(() => {
     if (!product) return null;
-    return formatPrice(
-      customCalculatedPrice,
-      product.currencyCode,
-      product.currencySymbol
-    );
-  }, [customCalculatedPrice, product]);
+    return customCalculatedPrice !== null
+      ? currency.formatPrice(customCalculatedPrice)
+      : null;
+  }, [customCalculatedPrice, product, currency]);
 
   const selectedImage = useMemo(() => {
     if (!product) return null;
@@ -994,18 +977,14 @@ const SingleProduct = ({
   }, [activeImageIndex, product]);
 
   const formattedPrice = useMemo(() => {
-    if (!product) return null;
-    return formatPrice(currentPrice, product.currencyCode, product.currencySymbol);
-  }, [product, currentPrice]);
+    if (!product || currentPrice === null) return null;
+    return currency.formatPrice(currentPrice);
+  }, [product, currentPrice, currency]);
 
   const formattedRegularPrice = useMemo(() => {
-    if (!product) return null;
-    return formatPrice(
-      currentRegularPrice,
-      product.currencyCode,
-      product.currencySymbol
-    );
-  }, [product, currentRegularPrice]);
+    if (!product || currentRegularPrice === null) return null;
+    return currency.formatPrice(currentRegularPrice);
+  }, [product, currentRegularPrice, currency]);
 
   const discountPercentage = useMemo(() => {
     if (!product || currentRegularPrice === null || currentPrice === null) {
