@@ -13,25 +13,22 @@ type RawLineItem = {
   quantity?: unknown;
 };
 
-export async function executePlaceCodOrder(
-  args: Record<string, unknown>,
-  request: NextRequest
-): Promise<{ error: string } | { success: true; orderNumber: string; total: string }> {
-  const session = await getAuthSessionFromRequest(request);
-  if (!session?.accessToken) {
-    return {
-      error:
-        "The user is not signed in. Tell them they need to sign in before a Cash on Delivery order can be placed.",
-    };
-  }
-
-  const customerId = ensurePositiveInt(session.user.id);
-  if (!customerId) {
-    return {
-      error: "The user's account session is invalid. Ask them to sign in again.",
-    };
-  }
-
+export function validateCodOrderFields(
+  args: Record<string, unknown>
+):
+  | { error: string }
+  | {
+      firstName: string;
+      lastName: string;
+      phone: string;
+      address1: string;
+      address2: string;
+      city: string;
+      state: string;
+      postcode: string;
+      customerNote: string;
+      lineItems: { product_id: number; quantity: number; variation_id?: number }[];
+    } {
   const firstName = sanitizeText(args.firstName);
   const lastName = sanitizeText(args.lastName);
   const phone = sanitizeText(args.phone);
@@ -41,7 +38,6 @@ export async function executePlaceCodOrder(
   const state = sanitizeText(args.state);
   const postcode = sanitizeText(args.postcode);
   const customerNote = sanitizeText(args.customerNote);
-  const email = sanitizeText(session.user.email);
 
   if (!firstName || !lastName || !phone || !address1 || !city || !state || !postcode) {
     return {
@@ -75,6 +71,65 @@ export async function executePlaceCodOrder(
         "No valid products were specified. Ask the user which product(s) and quantities they want to order.",
     };
   }
+
+  return {
+    firstName,
+    lastName,
+    phone,
+    address1,
+    address2,
+    city,
+    state,
+    postcode,
+    customerNote,
+    lineItems,
+  };
+}
+
+export async function executePlaceCodOrder(
+  args: Record<string, unknown>,
+  request: NextRequest
+): Promise<{ error: string } | { success: true; orderNumber: string; total: string }> {
+  const session = await getAuthSessionFromRequest(request);
+  if (!session?.accessToken) {
+    return {
+      error:
+        "The user is not signed in. Tell them they need to sign in before a Cash on Delivery order can be placed.",
+    };
+  }
+
+  const customerId = ensurePositiveInt(session.user.id);
+  if (!customerId) {
+    return {
+      error: "The user's account session is invalid. Ask them to sign in again.",
+    };
+  }
+
+  const email = sanitizeText(session.user.email);
+  if (!email) {
+    return {
+      error:
+        "The user's account has no email on file. Ask them to add one before placing an order, or use regular checkout.",
+    };
+  }
+
+  const fieldsResult = validateCodOrderFields(args);
+  if ("error" in fieldsResult) {
+    return fieldsResult;
+  }
+
+  const {
+    firstName,
+    lastName,
+    phone,
+    address1,
+    address2,
+    city,
+    state,
+    postcode,
+    customerNote,
+    lineItems,
+  } = fieldsResult;
 
   try {
     const order = await createWooCommerceOrder({
