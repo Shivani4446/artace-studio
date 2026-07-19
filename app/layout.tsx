@@ -11,6 +11,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
 import ProductImageProtection from "./product-image-protection";
+import ChatWidget from "@/components/chat/ChatWidget";
 import PromotionModal from "@/components/ui/PromotionModal";
 import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
@@ -156,6 +157,7 @@ fbq('track', 'PageView');`
               <Navbar />
               {children}
               <Footer />
+              <ChatWidget />
               <Link
                 href="https://wa.me/9657609102"
                 target="_blank"
