@@ -19,11 +19,8 @@ import {
   type WordPressBlogPost,
 } from "@/utils/wordpress-blog";
 
-export const dynamicParams = true;
+export const runtime = 'edge';
 export const revalidate = 120;
-
-const POSTS_PER_PAGE = 100;
-const MAX_POST_PAGES = 20;
 
 const WORDPRESS_HEADERS = {
   Accept: "application/json",
@@ -64,35 +61,6 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   // (or WordPress-side edge cache) hasn't picked it up yet. Re-check live before
   // giving up, so we don't lock in a false 404 for the revalidate window.
   return fetchPost(endpoint, { cache: "no-store" });
-}
-
-export async function generateStaticParams() {
-  const siteUrl = getWordPressBlogSiteUrl();
-  const slugs: string[] = [];
-
-  for (let page = 1; page <= MAX_POST_PAGES; page += 1) {
-    const endpoint = `${siteUrl}/wp-json/wp/v2/posts?per_page=${POSTS_PER_PAGE}&page=${page}&_fields=slug`;
-
-    try {
-      const response = await fetch(endpoint, { next: { revalidate } });
-      if (!response.ok) break;
-
-      const posts = (await response.json()) as Array<{ slug?: string }>;
-      if (!Array.isArray(posts) || posts.length === 0) break;
-
-      slugs.push(
-        ...posts
-          .map((post) => (post.slug || "").trim())
-          .filter((slug): slug is string => Boolean(slug))
-      );
-
-      if (posts.length < POSTS_PER_PAGE) break;
-    } catch {
-      break;
-    }
-  }
-
-  return Array.from(new Set(slugs)).map((slug) => ({ slug }));
 }
 
 async function getAuthor(authorId: number) {

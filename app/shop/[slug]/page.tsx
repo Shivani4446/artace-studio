@@ -9,8 +9,8 @@ import { generateProductSchema } from "@/lib/schema";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 
+export const runtime = 'edge';
 export const revalidate = 120;
-export const dynamicParams = true;
 
 type SingleProductPageProps = {
   params: Promise<{ slug: string }>;
@@ -18,8 +18,6 @@ type SingleProductPageProps = {
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const RELATED_PRODUCTS_LIMIT = 4;
-const STORE_PRODUCTS_PER_PAGE = 100;
-const MAX_STORE_PRODUCT_PAGES = 20;
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const PRODUCT_INFORMATION_ATTRIBUTE_NAME = "Product Information";
 const PRODUCT_INFORMATION_KEY = "product_information";
@@ -243,28 +241,6 @@ const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> =
     return null;
   }
 };
-
-export async function generateStaticParams() {
-  const slugs: string[] = [];
-
-  for (let page = 1; page <= MAX_STORE_PRODUCT_PAGES; page += 1) {
-    const products = await fetchStoreProducts(
-      `per_page=${STORE_PRODUCTS_PER_PAGE}&page=${page}`
-    );
-
-    if (products.length === 0) break;
-
-    slugs.push(
-      ...products
-        .map((product) => (product.slug || "").trim())
-        .filter((slug): slug is string => Boolean(slug))
-    );
-
-    if (products.length < STORE_PRODUCTS_PER_PAGE) break;
-  }
-
-  return Array.from(new Set(slugs)).map((slug) => ({ slug }));
-}
 
 const parseProductInformationText = (value: string) => {
   return value
