@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -16,6 +17,10 @@ import {
   getCollectionHref,
   getCollectionTheme,
 } from "@/utils/collections";
+import { getExchangeRates } from "@/lib/currency/rates";
+import { formatConvertedPrice } from "@/lib/currency/convert";
+import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
+import type { CurrencyCode, ExchangeRates } from "@/lib/currency/types";
 
 type CollectionProductCard = {
   id: number;
@@ -90,24 +95,6 @@ type CollectionCopy = {
 
 const CAL_LINK = "https://cal.com/artace-studio";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
-
-const formatPrice = (
-  value: number | null,
-  currencyCode: string,
-  currencySymbol: string
-) => {
-  if (value === null) return "Price on Request";
-
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
-  }
-};
 
 const toBaseCollectionName = (value: string) => {
   return value
@@ -583,9 +570,13 @@ const HeroArtworkComposition = ({
 const FeaturedProductCard = ({
   product,
   categoryLabel,
+  selectedCurrency,
+  exchangeRates,
 }: {
   product: CollectionProductCard;
   categoryLabel: string;
+  selectedCurrency: CurrencyCode;
+  exchangeRates: ExchangeRates | null;
 }) => {
   const productSubtitle = buildProductSubtitle(product);
 
@@ -617,7 +608,9 @@ const FeaturedProductCard = ({
             {productSubtitle}
           </p>
           <p className="mt-1 text-[14px] text-[#2c2c2c] sm:text-[16px]">
-            {formatPrice(product.price, product.currencyCode, product.currencySymbol)}
+            {product.price !== null
+              ? formatConvertedPrice(product.price, selectedCurrency, exchangeRates)
+              : null}
           </p>
         </div>
       </div>
@@ -707,7 +700,7 @@ const TestimonialCard = ({
   );
 };
 
-const CollectionLandingPage = ({
+const CollectionLandingPage = async ({
   categoryName,
   categorySlug,
   description,
@@ -718,6 +711,12 @@ const CollectionLandingPage = ({
   suggestions,
   faqItems,
 }: CollectionLandingPageProps) => {
+  const cookieStore = await cookies();
+  const selectedCurrency = parseCurrencyCode(
+    cookieStore.get(CURRENCY_COOKIE_NAME)?.value
+  );
+  const exchangeRates = await getExchangeRates();
+
   const theme = getCollectionTheme(categorySlug);
   const isBuddhaCollection = categorySlug === "buddha-paintings";
   const isRadhaKrishnaCollection = categorySlug === "radha-krishna-paintings";
@@ -743,10 +742,10 @@ const CollectionLandingPage = ({
     (product) => product.price !== null
   );
   const startingAtLabel = lowestPriceProduct
-    ? `Starting from ${formatPrice(
-        lowestPriceProduct.price,
-        lowestPriceProduct.currencyCode,
-        lowestPriceProduct.currencySymbol
+    ? `Starting from ${formatConvertedPrice(
+        lowestPriceProduct.price ?? 0,
+        selectedCurrency,
+        exchangeRates
       )}`
     : "Starting from Price on Request";
 
@@ -903,6 +902,8 @@ const CollectionLandingPage = ({
                 key={product.id}
                 product={product}
                 categoryLabel={baseCollectionName}
+                selectedCurrency={selectedCurrency}
+                exchangeRates={exchangeRates}
               />
             ))}
           </div>

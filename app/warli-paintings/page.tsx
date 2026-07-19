@@ -2,10 +2,14 @@ import React from "react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ArrowRight, Palette, Heart, Leaf, Sparkles, Globe2 } from "lucide-react";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import { getExchangeRates } from "@/lib/currency/rates";
+import { formatConvertedPrice } from "@/lib/currency/convert";
+import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
 
 export const metadata: Metadata = {
   title: "Warli Paintings Online | Handcrafted Tribal Art | Artace Studio",
@@ -132,20 +136,6 @@ const fetchWarliProducts = async (): Promise<WarliProductCard[]> => {
   }
 };
 
-const formatPrice = (value: number | null, currencyCode: string, currencySymbol: string) => {
-  if (value === null) return "Price on Request";
-
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
-  }
-};
-
 const whyWarliItems = [
   {
     icon: Palette,
@@ -180,6 +170,12 @@ const whyWarliItems = [
 ];
 
 const WarliPage = async () => {
+  const cookieStore = await cookies();
+  const selectedCurrency = parseCurrencyCode(
+    cookieStore.get(CURRENCY_COOKIE_NAME)?.value
+  );
+  const exchangeRates = await getExchangeRates();
+
   const products = await fetchWarliProducts();
   const featuredProducts = products.slice(0, 4);
 
@@ -412,7 +408,9 @@ const WarliPage = async () => {
                           {product.name}
                         </h3>
                         <p className="text-[14px] text-[#5b5b5b] sm:text-[15px] md:text-[16px]">
-                          {formatPrice(product.price, product.currencyCode, product.currencySymbol)}
+                          {product.price !== null
+                            ? formatConvertedPrice(product.price, selectedCurrency, exchangeRates)
+                            : null}
                         </p>
                       </div>
                     </div>

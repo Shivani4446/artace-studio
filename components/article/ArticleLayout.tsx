@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { ArrowRight } from "lucide-react";
 import type { TocItem } from "@/utils/article";
 import ArticleTocHighlighter from "./ArticleTocHighlighter";
@@ -9,6 +10,9 @@ import { decodeHtmlEntities } from "@/utils/text";
 import BlogContentWithProducts from "@/components/blog/BlogContentWithProducts";
 import FaqAccordion from "@/components/blog/FaqAccordion";
 import type { FaqItem } from "@/utils/article";
+import { getExchangeRates } from "@/lib/currency/rates";
+import { formatConvertedPrice } from "@/lib/currency/convert";
+import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
 
 const STOREFRONT_REVALIDATE_SECONDS = 60;
 
@@ -322,6 +326,12 @@ const ArticleLayout = async ({
   embeddedProductSlugs,
   faqItems,
 }: Props) => {
+  const cookieStore = await cookies();
+  const selectedCurrency = parseCurrencyCode(
+    cookieStore.get(CURRENCY_COOKIE_NAME)?.value
+  );
+  const exchangeRates = await getExchangeRates();
+
   // Fetch embedded products by IDs and slugs (for when IDs aren't present in Woo markup)
   const embeddedProductsById =
     embeddedProductIds && embeddedProductIds.length > 0
@@ -516,11 +526,7 @@ const ArticleLayout = async ({
                     </p>
                     {typeof product.price === "number" && (
                       <p className="font-inter text-[16px] text-white mt-2">
-                        {new Intl.NumberFormat("en-IN", {
-                          style: "currency",
-                          currency: product.prices?.currency_code ?? "INR",
-                          maximumFractionDigits: 0,
-                        }).format(product.price)}
+                        {formatConvertedPrice(product.price, selectedCurrency, exchangeRates)}
                       </p>
                     )}
                   </div>
