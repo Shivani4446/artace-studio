@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 
 type ShopCatalogProps = {
@@ -47,23 +48,6 @@ const bucketRank: Record<SizeBucket, number> = {
   Medium: 2,
   Large: 3,
   XL: 4,
-};
-
-const formatPrice = (
-  value: number | null,
-  currencyCode: string,
-  currencySymbol: string
-) => {
-  if (value === null) return "Price On Request";
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
-  }
 };
 
 const formatNumber = (value: number) => value.toLocaleString("en-IN");
@@ -220,6 +204,7 @@ const ShopCatalog = ({
   products: initialProducts,
   loadError: initialLoadError = null,
 }: ShopCatalogProps) => {
+  const currency = useCurrency();
   const [catalogProducts, setCatalogProducts] = useState<ShopProduct[]>(initialProducts);
   const [catalogLoadError, setCatalogLoadError] = useState<string | null>(
     initialLoadError
@@ -1094,21 +1079,17 @@ const ShopCatalog = ({
                                   <span
                                     className={`${cardTypography.regularPrice} text-[#7a7368] line-through`}
                                   >
-                                    {formatPrice(
-                                      product.regularPrice,
-                                      product.currencyCode,
-                                      product.currencySymbol
-                                    )}
+                                    {product.regularPrice !== null
+                                      ? currency.formatPrice(product.regularPrice)
+                                      : null}
                                   </span>
                                 )}
                               <span
                                 className={`${cardTypography.price} font-semibold leading-none text-[#27231f]`}
                               >
-                                {formatPrice(
-                                  product.price,
-                                  product.currencyCode,
-                                  product.currencySymbol
-                                )}
+                                {product.price !== null
+                                  ? currency.formatPrice(product.price)
+                                  : null}
                               </span>
                             </div>
 

@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import AddToCartButton from "@/components/cart/AddToCartButton";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 
 type ProductData = {
   id: number;
@@ -39,23 +40,6 @@ const parseMinorUnitAmount = (
   if (!Number.isFinite(numericValue)) return null;
   const resolvedMinorUnit = typeof minorUnit === "number" ? minorUnit : 2;
   return numericValue / 10 ** resolvedMinorUnit;
-};
-
-const formatPrice = (
-  value: number | null,
-  currencyCode: string,
-  currencySymbol: string
-) => {
-  if (value === null) return "Price On Request";
-  try {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(value);
-  } catch {
-    return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
-  }
 };
 
 const resolveProductPricing = (product: ProductData) => {
@@ -103,6 +87,7 @@ const BlogProductCard = ({
   product: ProductData;
   layout: "single" | "grid";
 }) => {
+  const currency = useCurrency();
   const pricing = resolveProductPricing(product);
   const isSingleRowLayout = layout === "single";
 
@@ -177,21 +162,17 @@ const BlogProductCard = ({
                 <span
                   className={`${CARD_TYPOGRAPHY.regularPrice} text-[#7a7368] line-through`}
                 >
-                  {formatPrice(
-                    pricing.regularPrice,
-                    pricing.currencyCode,
-                    pricing.currencySymbol
-                  )}
+                  {typeof pricing.regularPrice === "number"
+                    ? currency.formatPrice(pricing.regularPrice)
+                    : "Price On Request"}
                 </span>
               )}
             <span
               className={`${CARD_TYPOGRAPHY.price} font-semibold leading-none text-[#27231f]`}
             >
-              {formatPrice(
-                pricing.resolvedPrice ?? null,
-                pricing.currencyCode,
-                pricing.currencySymbol
-              )}
+              {typeof pricing.resolvedPrice === "number"
+                ? currency.formatPrice(pricing.resolvedPrice)
+                : "Price On Request"}
             </span>
           </div>
 

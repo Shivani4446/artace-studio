@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, Lock, Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 
 const getCheckoutProductId = (
   id: number | string,
@@ -24,6 +25,7 @@ const getCheckoutProductId = (
 
 export default function CartPageClient() {
   const { status: authStatus } = useAuthSession();
+  const currency = useCurrency();
   const {
     items,
     itemCount,
@@ -106,7 +108,7 @@ export default function CartPageClient() {
                     <p className="mt-1 text-sm text-[#666]">{item.subtitle}</p>
                   )}
                   <p className="mt-2 font-medium text-[#222]">
-                    INR {(item.price || 0).toLocaleString("en-IN")}
+                    {currency.formatPrice(item.price || 0)}
                   </p>
                 </div>
 
@@ -144,7 +146,7 @@ export default function CartPageClient() {
 
               <div className="text-left sm:min-w-[120px] sm:text-right">
                 <p className="font-display text-xl text-[#222]">
-                  INR {((item.price || 0) * item.quantity).toLocaleString("en-IN")}
+                  {currency.formatPrice((item.price || 0) * item.quantity)}
                 </p>
               </div>
             </div>
@@ -166,7 +168,7 @@ export default function CartPageClient() {
             <div className="flex items-center justify-between">
               <span className="text-[#666]">Subtotal</span>
               <span className="font-medium text-[#222]">
-                INR {subtotal.toLocaleString("en-IN")}
+                {currency.formatPrice(subtotal)}
               </span>
             </div>
             <p className="mt-3 text-sm leading-6 text-[#666]">

@@ -4,19 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Heart, ShoppingBag, Trash2 } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
-
-const formatPrice = (value?: number) => {
-  if (typeof value !== "number") return null;
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(value);
-};
 
 const WishlistPageClient = () => {
   const { addItem } = useCart();
+  const currency = useCurrency();
   const { items, itemCount, removeItem, clearWishlist } = useWishlist();
 
   if (items.length === 0) {
@@ -65,7 +58,8 @@ const WishlistPageClient = () => {
 
       <div className="space-y-6">
         {items.map((item) => {
-          const formattedPrice = formatPrice(item.price);
+          const formattedPrice =
+            typeof item.price === "number" ? currency.formatPrice(item.price) : null;
 
           return (
             <article
