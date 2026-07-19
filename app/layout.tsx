@@ -13,10 +13,8 @@ import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
 import ProductImageProtection from "./product-image-protection";
 import PromotionModal from "@/components/ui/PromotionModal";
 import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
-import { cookies } from "next/headers";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
-import { getExchangeRates } from "@/lib/currency/rates";
-import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
+import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -98,17 +96,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
-  const cookieStore = await cookies();
-  const initialCurrency = parseCurrencyCode(
-    cookieStore.get(CURRENCY_COOKIE_NAME)?.value
-  );
-  const initialRates = await getExchangeRates();
 
   return (
     <html lang="en">
@@ -155,7 +148,7 @@ fbq('track', 'PageView');`
           <GoogleTagManager gtmId={gtmId} />
         ) : null}
         <AuthSessionProvider>
-          <CurrencyProvider initialCurrency={initialCurrency} initialRates={initialRates}>
+          <CurrencyProvider initialCurrency={DEFAULT_CURRENCY} initialRates={null}>
           <CartProvider>
             <WishlistProvider>
               <PromotionModal />

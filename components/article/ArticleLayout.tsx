@@ -12,7 +12,7 @@ import FaqAccordion from "@/components/blog/FaqAccordion";
 import type { FaqItem } from "@/utils/article";
 import { getExchangeRates } from "@/lib/currency/rates";
 import { formatConvertedPrice } from "@/lib/currency/convert";
-import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
+import { CURRENCY_COOKIE_NAME, DEFAULT_CURRENCY, parseCurrencyCode } from "@/lib/currency/cookie";
 
 const STOREFRONT_REVALIDATE_SECONDS = 60;
 
@@ -326,11 +326,18 @@ const ArticleLayout = async ({
   embeddedProductSlugs,
   faqItems,
 }: Props) => {
-  const cookieStore = await cookies();
-  const selectedCurrency = parseCurrencyCode(
-    cookieStore.get(CURRENCY_COOKIE_NAME)?.value
-  );
-  const exchangeRates = await getExchangeRates();
+  // Only read the currency cookie / fetch rates when this article actually
+  // embeds a product — cookies() is a Next.js Dynamic API, and calling it
+  // unconditionally would force every page using ArticleLayout (including
+  // plain legal pages with no pricing at all) into dynamic rendering.
+  const hasEmbeddedProducts =
+    (embeddedProductIds && embeddedProductIds.length > 0) ||
+    (embeddedProductSlugs && embeddedProductSlugs.length > 0);
+
+  const selectedCurrency = hasEmbeddedProducts
+    ? parseCurrencyCode((await cookies()).get(CURRENCY_COOKIE_NAME)?.value)
+    : DEFAULT_CURRENCY;
+  const exchangeRates = hasEmbeddedProducts ? await getExchangeRates() : null;
 
   // Fetch embedded products by IDs and slugs (for when IDs aren't present in Woo markup)
   const embeddedProductsById =

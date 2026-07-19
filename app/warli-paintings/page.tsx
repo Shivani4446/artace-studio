@@ -11,6 +11,8 @@ import { getExchangeRates } from "@/lib/currency/rates";
 import { formatConvertedPrice } from "@/lib/currency/convert";
 import { CURRENCY_COOKIE_NAME, parseCurrencyCode } from "@/lib/currency/cookie";
 
+export const runtime = 'edge';
+
 export const metadata: Metadata = {
   title: "Warli Paintings Online | Handcrafted Tribal Art | Artace Studio",
   description:
