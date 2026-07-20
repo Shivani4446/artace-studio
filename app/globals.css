@@ -479,3 +479,31 @@ img.protected-image {
 .animate-chat-message-in {
   animation: chat-message-in 0.25s ease-out;
 }
+
+@keyframes chat-teaser-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-chat-teaser-in {
+  animation: chat-teaser-in 0.3s ease-out;
+}
+
+@keyframes chat-teaser-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-chat-teaser-fade {
+  animation: chat-teaser-fade 0.3s ease-in;
+}
