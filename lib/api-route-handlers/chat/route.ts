@@ -22,7 +22,11 @@ export const runtime = "edge";
 const MAX_TOOL_ITERATIONS = 4;
 const MAX_HISTORY_MESSAGES = 10;
 
-type IncomingMessage = { role?: unknown; content?: unknown };
+type IncomingMessage = {
+  role?: unknown;
+  content?: unknown;
+  image?: { mimeType?: unknown; data?: unknown };
+};
 
 type CartSuggestion = {
   productId: number;
@@ -39,21 +43,35 @@ const FALLBACK_MESSAGE =
 
 const encoder = new TextEncoder();
 
-const sanitizeHistory = (
-  messages: unknown
-): { role: "user" | "assistant"; content: string }[] => {
+type SanitizedMessage = {
+  role: "user" | "assistant";
+  content: string;
+  image?: { mimeType: string; data: string };
+};
+
+const sanitizeHistory = (messages: unknown): SanitizedMessage[] => {
   if (!Array.isArray(messages)) return [];
 
   return messages
     .slice(-MAX_HISTORY_MESSAGES)
     .map((item) => item as IncomingMessage)
-    .filter(
-      (item): item is { role: "user" | "assistant"; content: string } =>
-        (item.role === "user" || item.role === "assistant") &&
-        typeof item.content === "string" &&
-        item.content.trim().length > 0
-    )
-    .map((item) => ({ role: item.role, content: item.content.trim() }));
+    .map((item): SanitizedMessage | null => {
+      const role = item.role === "user" || item.role === "assistant" ? item.role : null;
+      if (!role) return null;
+
+      const content = typeof item.content === "string" ? item.content.trim() : "";
+      const image =
+        item.image &&
+        typeof item.image.mimeType === "string" &&
+        typeof item.image.data === "string"
+          ? { mimeType: item.image.mimeType, data: item.image.data }
+          : undefined;
+
+      if (!content && !image) return null;
+
+      return { role, content, image };
+    })
+    .filter((item): item is SanitizedMessage => item !== null);
 };
 
 // Tool-call arguments arrive as model-generated JSON — some models emit
@@ -139,10 +157,14 @@ export async function POST(request: NextRequest) {
   }
 
   const history = sanitizeHistory(body.messages);
-  const contents: Content[] = history.map((item) => ({
-    role: item.role === "assistant" ? "model" : "user",
-    parts: [{ text: item.content }],
-  }));
+  const contents: Content[] = history.map((item) => {
+    const parts: Part[] = [];
+    if (item.content) parts.push({ text: item.content });
+    if (item.image) {
+      parts.push({ inlineData: { mimeType: item.image.mimeType, data: item.image.data } });
+    }
+    return { role: item.role === "assistant" ? "model" : "user", parts };
+  });
   const systemInstruction = buildSystemPrompt();
   const pendingActions: CartSuggestion[] = [];
 

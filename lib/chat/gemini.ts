@@ -9,6 +9,7 @@ export type FunctionCall = {
 
 export type Part =
   | { text: string }
+  | { inlineData: { mimeType: string; data: string } }
   | { functionCall: FunctionCall }
   | { functionResponse: { name: string; response: Record<string, unknown> } };
 
@@ -107,7 +108,9 @@ export async function runGeminiChat(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: systemInstruction }] },
+        systemInstruction: systemInstruction
+          ? { parts: [{ text: systemInstruction }] }
+          : undefined,
         contents,
         tools:
           functionDeclarations.length > 0
