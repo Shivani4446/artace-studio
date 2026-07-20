@@ -1,6 +1,12 @@
 // lib/api-route-handlers/chat/route.ts
 import { NextRequest } from "next/server";
-import { runWorkersAiChat, type ChatMessage } from "@/lib/chat/workers-ai";
+import {
+  runGeminiChat,
+  extractText,
+  extractFunctionCalls,
+  type Content,
+  type Part,
+} from "@/lib/chat/gemini";
 import {
   CHAT_TOOLS,
   executeSearchProducts,
@@ -33,7 +39,9 @@ const FALLBACK_MESSAGE =
 
 const encoder = new TextEncoder();
 
-const sanitizeHistory = (messages: unknown): ChatMessage[] => {
+const sanitizeHistory = (
+  messages: unknown
+): { role: "user" | "assistant"; content: string }[] => {
   if (!Array.isArray(messages)) return [];
 
   return messages
@@ -48,42 +56,35 @@ const sanitizeHistory = (messages: unknown): ChatMessage[] => {
     .map((item) => ({ role: item.role, content: item.content.trim() }));
 };
 
+// Tool-call arguments arrive as model-generated JSON — some models emit
+// numeric fields as strings (e.g. "6" instead of 6), so coerce via Number()
+// rather than requiring typeof === "number".
+const toOptionalNumber = (value: unknown) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
 const runToolCall = async (
   name: string,
-  rawArgs: string,
+  args: Record<string, unknown>,
   request: NextRequest,
   pendingActions: CartSuggestion[]
-): Promise<string> => {
-  let args: Record<string, unknown> = {};
-  try {
-    args = rawArgs ? (JSON.parse(rawArgs) as Record<string, unknown>) : {};
-  } catch {
-    return JSON.stringify({ error: "Invalid tool arguments." });
-  }
-
+): Promise<Record<string, unknown>> => {
   switch (name) {
     case "search_products":
-      return JSON.stringify(await executeSearchProducts(args));
+      return executeSearchProducts(args);
     case "get_product_details":
-      return JSON.stringify(await executeGetProductDetails(args));
+      return executeGetProductDetails(args);
     case "get_policy":
-      return JSON.stringify(await executeGetPolicy(args));
+      return executeGetPolicy(args);
     case "search_blog":
-      return JSON.stringify(await executeSearchBlog(args));
+      return executeSearchBlog(args);
     case "suggest_add_to_cart": {
-      // Tool arguments are model-generated JSON — some models emit numeric
-      // fields as strings (e.g. "6" instead of 6), so coerce via Number()
-      // rather than requiring typeof === "number".
-      const toOptionalNumber = (value: unknown) => {
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : undefined;
-      };
-
       const productId = toOptionalNumber(args.productId);
       const title = typeof args.title === "string" ? args.title : "";
       const image = typeof args.image === "string" ? args.image : "";
       if (!productId || !title || !image) {
-        return JSON.stringify({ error: "Missing required fields for suggest_add_to_cart." });
+        return { error: "Missing required fields for suggest_add_to_cart." };
       }
       pendingActions.push({
         productId,
@@ -94,12 +95,12 @@ const runToolCall = async (
         price: toOptionalNumber(args.price),
         quantity: toOptionalNumber(args.quantity) ?? 1,
       });
-      return JSON.stringify({ shown: true });
+      return { shown: true };
     }
     case "place_cod_order":
-      return JSON.stringify(await executePlaceCodOrder(args, request));
+      return executePlaceCodOrder(args, request);
     default:
-      return JSON.stringify({ error: `Unknown tool: ${name}` });
+      return { error: `Unknown tool: ${name}` };
   }
 };
 
@@ -138,45 +139,44 @@ export async function POST(request: NextRequest) {
   }
 
   const history = sanitizeHistory(body.messages);
-  const messages: ChatMessage[] = [{ role: "system", content: buildSystemPrompt() }, ...history];
+  const contents: Content[] = history.map((item) => ({
+    role: item.role === "assistant" ? "model" : "user",
+    parts: [{ text: item.content }],
+  }));
+  const systemInstruction = buildSystemPrompt();
   const pendingActions: CartSuggestion[] = [];
 
   try {
-    let finalMessage: ChatMessage | null = null;
+    let finalText: string | null = null;
 
     for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
-      const { message } = await runWorkersAiChat(messages, CHAT_TOOLS);
+      const { content } = await runGeminiChat(contents, systemInstruction, CHAT_TOOLS);
+      const functionCalls = extractFunctionCalls(content);
 
-      if (!message.tool_calls || message.tool_calls.length === 0) {
-        finalMessage = message;
+      if (functionCalls.length === 0) {
+        finalText = extractText(content);
         break;
       }
 
-      messages.push(message);
+      contents.push(content);
 
-      for (const toolCall of message.tool_calls) {
-        const result = await runToolCall(
-          toolCall.function.name,
-          toolCall.function.arguments,
-          request,
-          pendingActions
-        );
-        messages.push({
-          role: "tool",
-          tool_call_id: toolCall.id,
-          name: toolCall.function.name,
-          content: result,
+      const responseParts: Part[] = [];
+      for (const call of functionCalls) {
+        const result = await runToolCall(call.name, call.args, request, pendingActions);
+        responseParts.push({
+          functionResponse: { name: call.name, response: result },
         });
       }
+      contents.push({ role: "user", parts: responseParts });
     }
 
     const responseText =
-      finalMessage?.content?.trim() ||
+      finalText?.trim() ||
       "I wasn't able to finish that — could you try rephrasing your question?";
 
     return sseResponse(streamText(responseText, pendingActions));
   } catch {
-    // Every failure (Workers AI quota, network, or an unexpected bug in the
+    // Every failure (Gemini API error, network, or an unexpected bug in the
     // tool loop) shows the same fallback message — see Global Constraints.
     return sseResponse(streamText(FALLBACK_MESSAGE, []));
   }

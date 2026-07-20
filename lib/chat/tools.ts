@@ -1,7 +1,7 @@
 // lib/chat/tools.ts
 import { fetchSearchResults } from "@/lib/search";
 import { getPolicyContent } from "@/lib/chat/policy-content";
-import type { ToolDefinition } from "@/lib/chat/workers-ai";
+import type { FunctionDeclaration } from "@/lib/chat/gemini";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
@@ -23,162 +23,144 @@ const parseLimit = (value: unknown, fallback: number, max: number) => {
   return Math.min(Math.max(Math.floor(parsed), 1), max);
 };
 
-export const CHAT_TOOLS: ToolDefinition[] = [
+export const CHAT_TOOLS: FunctionDeclaration[] = [
   {
-    type: "function",
-    function: {
-      name: "search_products",
-      description:
-        "Search the store's product catalog by keyword. Use this whenever the user asks about paintings, art styles, subjects, or wants recommendations.",
-      parameters: {
-        type: "object",
-        properties: {
-          query: {
-            type: "string",
-            description: "Search keywords, e.g. 'blue abstract painting'",
-          },
-          limit: {
-            type: "number",
-            description: "Max results to return (default 6, max 12)",
-          },
+    name: "search_products",
+    description:
+      "Search the store's product catalog by keyword. Use this whenever the user asks about paintings, art styles, subjects, or wants recommendations.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        query: {
+          type: "STRING",
+          description: "Search keywords, e.g. 'blue abstract painting'",
         },
-        required: ["query"],
+        limit: {
+          type: "NUMBER",
+          description: "Max results to return (default 6, max 12)",
+        },
       },
+      required: ["query"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_product_details",
-      description:
-        "Get full details (price, description, stock status) for one specific product by its URL slug. Call this after search_products has identified the exact product the user is asking about.",
-      parameters: {
-        type: "object",
-        properties: {
-          slug: {
-            type: "string",
-            description: "The product's URL slug, from search_products results.",
-          },
+    name: "get_product_details",
+    description:
+      "Get full details (price, description, stock status) for one specific product by its URL slug. Call this after search_products has identified the exact product the user is asking about.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        slug: {
+          type: "STRING",
+          description: "The product's URL slug, from search_products results.",
         },
-        required: ["slug"],
       },
+      required: ["slug"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "get_policy",
-      description:
-        "Get the store's official policy text for returns, order cancellation, privacy, or terms of use. Use this instead of guessing policy details.",
-      parameters: {
-        type: "object",
-        properties: {
-          policy: {
-            type: "string",
-            enum: ["returns", "cancellation", "privacy", "terms"],
-            description: "Which policy to retrieve.",
-          },
+    name: "get_policy",
+    description:
+      "Get the store's official policy text for returns, order cancellation, privacy, or terms of use. Use this instead of guessing policy details.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        policy: {
+          type: "STRING",
+          enum: ["returns", "cancellation", "privacy", "terms"],
+          description: "Which policy to retrieve.",
         },
-        required: ["policy"],
       },
+      required: ["policy"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "search_blog",
-      description:
-        "Search the store's blog/journal posts (care instructions, artist stories, etc.) by keyword.",
-      parameters: {
-        type: "object",
-        properties: {
-          query: { type: "string", description: "Search keywords." },
-          limit: {
-            type: "number",
-            description: "Max results to return (default 4, max 8)",
-          },
+    name: "search_blog",
+    description:
+      "Search the store's blog/journal posts (care instructions, artist stories, etc.) by keyword.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        query: { type: "STRING", description: "Search keywords." },
+        limit: {
+          type: "NUMBER",
+          description: "Max results to return (default 4, max 8)",
         },
-        required: ["query"],
       },
+      required: ["query"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "suggest_add_to_cart",
-      description:
-        "Suggest adding a specific product to the user's cart so they can complete checkout with card/UPI payment. Only call this after get_product_details has confirmed the product is in stock. Does not place an order by itself — it shows the user a button to click.",
-      parameters: {
-        type: "object",
-        properties: {
-          productId: {
-            type: "number",
-            description: "WooCommerce product id, from get_product_details.",
-          },
-          variationId: {
-            type: "number",
-            description:
-              "WooCommerce variation id, if the user picked a specific size/variant.",
-          },
-          title: { type: "string", description: "Product title to display on the button." },
-          image: { type: "string", description: "Product image URL to display." },
-          subtitle: {
-            type: "string",
-            description: "Short subtitle, e.g. size/material.",
-          },
-          price: {
-            type: "number",
-            description: "Price in INR (major units, e.g. 4999.00).",
-          },
-          quantity: { type: "number", description: "Quantity to add (default 1)." },
+    name: "suggest_add_to_cart",
+    description:
+      "Suggest adding a specific product to the user's cart so they can complete checkout with card/UPI payment. Only call this after get_product_details has confirmed the product is in stock. Does not place an order by itself — it shows the user a button to click.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        productId: {
+          type: "NUMBER",
+          description: "WooCommerce product id, from get_product_details.",
         },
-        required: ["productId", "title", "image"],
+        variationId: {
+          type: "NUMBER",
+          description:
+            "WooCommerce variation id, if the user picked a specific size/variant.",
+        },
+        title: { type: "STRING", description: "Product title to display on the button." },
+        image: { type: "STRING", description: "Product image URL to display." },
+        subtitle: {
+          type: "STRING",
+          description: "Short subtitle, e.g. size/material.",
+        },
+        price: {
+          type: "NUMBER",
+          description: "Price in INR (major units, e.g. 4999.00).",
+        },
+        quantity: { type: "NUMBER", description: "Quantity to add (default 1)." },
       },
+      required: ["productId", "title", "image"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "place_cod_order",
-      description:
-        "Place a real Cash on Delivery order for the logged-in user. Only call this once you have confirmed all of: the user's first name, last name, phone number, full address (address1, city, state, postcode), and the exact product(s)/quantities they want, with the user's explicit confirmation to place the order. Never call this with guessed or incomplete details — ask the user for anything missing first.",
-      parameters: {
-        type: "object",
-        properties: {
-          firstName: { type: "string" },
-          lastName: { type: "string" },
-          phone: { type: "string" },
-          address1: { type: "string" },
-          address2: { type: "string" },
-          city: { type: "string" },
-          state: { type: "string" },
-          postcode: { type: "string" },
-          customerNote: { type: "string", description: "Optional note for the order." },
-          lineItems: {
-            type: "array",
-            description: "Products to order.",
-            items: {
-              type: "object",
-              properties: {
-                productId: { type: "number" },
-                variationId: { type: "number" },
-                quantity: { type: "number" },
-              },
-              required: ["productId", "quantity"],
+    name: "place_cod_order",
+    description:
+      "Place a real Cash on Delivery order for the logged-in user. Only call this once you have confirmed all of: the user's first name, last name, phone number, full address (address1, city, state, postcode), and the exact product(s)/quantities they want, with the user's explicit confirmation to place the order. Never call this with guessed or incomplete details — ask the user for anything missing first.",
+    parameters: {
+      type: "OBJECT",
+      properties: {
+        firstName: { type: "STRING" },
+        lastName: { type: "STRING" },
+        phone: { type: "STRING" },
+        address1: { type: "STRING" },
+        address2: { type: "STRING" },
+        city: { type: "STRING" },
+        state: { type: "STRING" },
+        postcode: { type: "STRING" },
+        customerNote: { type: "STRING", description: "Optional note for the order." },
+        lineItems: {
+          type: "ARRAY",
+          description: "Products to order.",
+          items: {
+            type: "OBJECT",
+            properties: {
+              productId: { type: "NUMBER" },
+              variationId: { type: "NUMBER" },
+              quantity: { type: "NUMBER" },
             },
+            required: ["productId", "quantity"],
           },
         },
-        required: [
-          "firstName",
-          "lastName",
-          "phone",
-          "address1",
-          "city",
-          "state",
-          "postcode",
-          "lineItems",
-        ],
       },
+      required: [
+        "firstName",
+        "lastName",
+        "phone",
+        "address1",
+        "city",
+        "state",
+        "postcode",
+        "lineItems",
+      ],
     },
   },
 ];
