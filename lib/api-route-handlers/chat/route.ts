@@ -71,7 +71,15 @@ const runToolCall = async (
     case "search_blog":
       return JSON.stringify(await executeSearchBlog(args));
     case "suggest_add_to_cart": {
-      const productId = Number(args.productId);
+      // Tool arguments are model-generated JSON — some models emit numeric
+      // fields as strings (e.g. "6" instead of 6), so coerce via Number()
+      // rather than requiring typeof === "number".
+      const toOptionalNumber = (value: unknown) => {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : undefined;
+      };
+
+      const productId = toOptionalNumber(args.productId);
       const title = typeof args.title === "string" ? args.title : "";
       const image = typeof args.image === "string" ? args.image : "";
       if (!productId || !title || !image) {
@@ -79,12 +87,12 @@ const runToolCall = async (
       }
       pendingActions.push({
         productId,
-        variationId: typeof args.variationId === "number" ? args.variationId : undefined,
+        variationId: toOptionalNumber(args.variationId),
         title,
         image,
         subtitle: typeof args.subtitle === "string" ? args.subtitle : undefined,
-        price: typeof args.price === "number" ? args.price : undefined,
-        quantity: typeof args.quantity === "number" ? args.quantity : 1,
+        price: toOptionalNumber(args.price),
+        quantity: toOptionalNumber(args.quantity) ?? 1,
       });
       return JSON.stringify({ shown: true });
     }

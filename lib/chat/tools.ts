@@ -14,6 +14,15 @@ const getStoreApiBaseUrl = () =>
     DEFAULT_WOOCOMMERCE_SITE_URL
   ).replace(/\/+$/, "");
 
+// Tool-call arguments arrive as model-generated JSON — some models emit
+// numeric fields as strings (e.g. `"6"` instead of `6`), so coerce via
+// Number() rather than requiring typeof === "number".
+const parseLimit = (value: unknown, fallback: number, max: number) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(Math.max(Math.floor(parsed), 1), max);
+};
+
 export const CHAT_TOOLS: ToolDefinition[] = [
   {
     type: "function",
@@ -176,8 +185,7 @@ export const CHAT_TOOLS: ToolDefinition[] = [
 
 export async function executeSearchProducts(args: Record<string, unknown>) {
   const query = typeof args.query === "string" ? args.query.trim() : "";
-  const limit =
-    typeof args.limit === "number" ? Math.min(Math.max(Math.floor(args.limit), 1), 12) : 6;
+  const limit = parseLimit(args.limit, 6, 12);
 
   if (!query) return { error: "A search query is required." };
 
@@ -254,8 +262,7 @@ export async function executeGetPolicy(args: Record<string, unknown>) {
 
 export async function executeSearchBlog(args: Record<string, unknown>) {
   const query = typeof args.query === "string" ? args.query.trim() : "";
-  const limit =
-    typeof args.limit === "number" ? Math.min(Math.max(Math.floor(args.limit), 1), 8) : 4;
+  const limit = parseLimit(args.limit, 4, 8);
 
   if (!query) return { error: "A search query is required." };
 

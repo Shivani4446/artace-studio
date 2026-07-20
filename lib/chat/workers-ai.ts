@@ -39,7 +39,13 @@ type WorkersAiChatCompletion = {
   }>;
 };
 
-const DEFAULT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+// llama-3.3-70b-instruct-fp8-fast was the original choice but proved
+// unreliable in multi-turn tool calling on Workers AI's hosted endpoint — it
+// would re-issue the same tool call indefinitely instead of using the
+// returned result to answer (verified: never resolved within 4 iterations
+// on repeated live testing). llama-4-scout correctly consumes tool results
+// and produces grounded final answers.
+const DEFAULT_MODEL = "@cf/meta/llama-4-scout-17b-16e-instruct";
 
 const getWorkersAiConfig = () => {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
@@ -92,6 +98,18 @@ export async function runWorkersAiChat(
 ): Promise<{ message: ChatMessage; finishReason: string }> {
   const { url, apiToken, model } = getWorkersAiConfig();
 
+  // Cloudflare's Workers AI chat-completions endpoint rejects `content: null`
+  // on assistant messages (HTTP 400, schema validation error) even though a
+  // tool-calling assistant turn legitimately has no text — the true OpenAI
+  // API accepts null there, Workers AI's validator does not. Coerce to an
+  // empty string only on the outgoing wire payload; internal ChatMessage
+  // values keep `content: string | null` since a tool-call-only message
+  // genuinely has no text.
+  const wireMessages = messages.map((message) => ({
+    ...message,
+    content: message.content ?? "",
+  }));
+
   let response: Response;
   try {
     response = await fetch(url, {
@@ -102,7 +120,7 @@ export async function runWorkersAiChat(
       },
       body: JSON.stringify({
         model,
-        messages,
+        messages: wireMessages,
         tools: tools.length > 0 ? tools : undefined,
         tool_choice: tools.length > 0 ? "auto" : undefined,
         stream: false,
