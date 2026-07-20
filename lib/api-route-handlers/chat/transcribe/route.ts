@@ -14,6 +14,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
   }
 
+  if (typeof body !== "object" || body === null) {
+    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+  }
+
   const mimeType = typeof body.mimeType === "string" ? body.mimeType : "";
   const data = typeof body.data === "string" ? body.data : "";
 
