@@ -22,7 +22,12 @@ const ChatNewsTab = () => {
     let cancelled = false;
 
     fetch("/api/blogs")
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Request failed");
+        }
+        return response.json();
+      })
       .then((payload: BlogsResponse) => {
         if (cancelled) return;
         const sorted = [...(payload.posts || [])].sort((a, b) => {
