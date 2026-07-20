@@ -166,6 +166,7 @@ const ChatInputBar = ({ disabled, onSend }: Props) => {
 
         <button
           type="button"
+          onPointerDown={(event) => event.stopPropagation()}
           onClick={() => setIsEmojiOpen((current) => !current)}
           aria-label="Add emoji"
           className="text-[#65635d] hover:text-[#1f1f1f]"
