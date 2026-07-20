@@ -51,7 +51,14 @@ const getGeminiConfig = () => {
   };
 };
 
-export class GeminiApiError extends Error {}
+export class GeminiApiError extends Error {
+  status?: number;
+
+  constructor(message: string, status?: number) {
+    super(message);
+    this.status = status;
+  }
+}
 
 // Pulled out as a standalone function so it can be unit-tested with a
 // fixture payload, without making a real network call.
@@ -128,7 +135,7 @@ export async function runGeminiChat(
   }
 
   if (!response.ok) {
-    throw new GeminiApiError(`Gemini request failed (${response.status}).`);
+    throw new GeminiApiError(`Gemini request failed (${response.status}).`, response.status);
   }
 
   const payload = (await response.json()) as GeminiGenerateContentResponse;

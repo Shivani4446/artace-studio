@@ -4,11 +4,19 @@ import {
   runGeminiChat,
   extractText,
   extractFunctionCalls,
+  GeminiApiError,
   type Content,
   type Part,
 } from "@/lib/chat/gemini";
 import {
+  runMistralChat,
+  type MistralMessage,
+  type MistralContentPart,
+  type MistralRole,
+} from "@/lib/chat/mistral";
+import {
   CHAT_TOOLS,
+  MISTRAL_CHAT_TOOLS,
   executeSearchProducts,
   executeGetProductDetails,
   executeGetPolicy,
@@ -155,6 +163,121 @@ const sseResponse = (stream: ReadableStream) =>
     },
   });
 
+const buildGeminiContents = (history: SanitizedMessage[]): Content[] =>
+  history.map((item) => {
+    const parts: Part[] = [];
+    if (item.content) parts.push({ text: item.content });
+    if (item.image) {
+      parts.push({ inlineData: { mimeType: item.image.mimeType, data: item.image.data } });
+    }
+    return { role: item.role === "assistant" ? "model" : "user", parts };
+  });
+
+const buildMistralMessages = (
+  history: SanitizedMessage[],
+  systemInstruction: string
+): MistralMessage[] => {
+  const messages: MistralMessage[] = [];
+  if (systemInstruction) {
+    messages.push({ role: "system", content: systemInstruction });
+  }
+
+  for (const item of history) {
+    const role: MistralRole = item.role === "assistant" ? "assistant" : "user";
+    if (item.image) {
+      const parts: MistralContentPart[] = [];
+      if (item.content) parts.push({ type: "text", text: item.content });
+      parts.push({
+        type: "image_url",
+        image_url: `data:${item.image.mimeType};base64,${item.image.data}`,
+      });
+      messages.push({ role, content: parts });
+    } else {
+      messages.push({ role, content: item.content });
+    }
+  }
+
+  return messages;
+};
+
+// Tracks whether any tool has executed yet during this request, across
+// whichever provider is currently handling it. Some tools have real side
+// effects (place_cod_order places an actual order) — if Gemini fails
+// mid-loop after a tool already ran, we must NOT restart the whole
+// conversation on Mistral, since it could re-decide to call the same
+// tool again and double it up. Falling back is only safe before the
+// first tool call of the request.
+type ToolCallTracker = { count: number };
+
+const runGeminiToolLoop = async (
+  contents: Content[],
+  systemInstruction: string,
+  request: NextRequest,
+  pendingActions: CartSuggestion[],
+  tracker: ToolCallTracker
+): Promise<string | null> => {
+  for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
+    const { content } = await runGeminiChat(contents, systemInstruction, CHAT_TOOLS);
+    const functionCalls = extractFunctionCalls(content);
+
+    if (functionCalls.length === 0) {
+      return extractText(content);
+    }
+
+    contents.push(content);
+
+    const responseParts: Part[] = [];
+    for (const call of functionCalls) {
+      const result = await runToolCall(call.name, call.args, request, pendingActions);
+      tracker.count += 1;
+      responseParts.push({
+        functionResponse: { name: call.name, response: result },
+      });
+    }
+    contents.push({ role: "user", parts: responseParts });
+  }
+
+  return null;
+};
+
+const runMistralToolLoop = async (
+  messages: MistralMessage[],
+  request: NextRequest,
+  pendingActions: CartSuggestion[],
+  tracker: ToolCallTracker
+): Promise<string | null> => {
+  for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
+    const message = await runMistralChat(messages, MISTRAL_CHAT_TOOLS);
+    const toolCalls = message.tool_calls || [];
+
+    if (toolCalls.length === 0) {
+      return typeof message.content === "string" ? message.content : "";
+    }
+
+    messages.push(message);
+
+    for (const call of toolCalls) {
+      let args: Record<string, unknown> = {};
+      try {
+        args = JSON.parse(call.function.arguments || "{}") as Record<string, unknown>;
+      } catch {
+        args = {};
+      }
+
+      const result = await runToolCall(call.function.name, args, request, pendingActions);
+      tracker.count += 1;
+      messages.push({
+        role: "tool",
+        tool_call_id: call.id,
+        name: call.function.name,
+        content: JSON.stringify(result),
+      });
+    }
+  }
+
+  return null;
+};
+
 export async function POST(request: NextRequest) {
   let body: { messages?: unknown };
   try {
@@ -164,39 +287,29 @@ export async function POST(request: NextRequest) {
   }
 
   const history = sanitizeHistory(body.messages);
-  const contents: Content[] = history.map((item) => {
-    const parts: Part[] = [];
-    if (item.content) parts.push({ text: item.content });
-    if (item.image) {
-      parts.push({ inlineData: { mimeType: item.image.mimeType, data: item.image.data } });
-    }
-    return { role: item.role === "assistant" ? "model" : "user", parts };
-  });
   const systemInstruction = buildSystemPrompt();
   const pendingActions: CartSuggestion[] = [];
+  const tracker: ToolCallTracker = { count: 0 };
 
   try {
-    let finalText: string | null = null;
+    let finalText: string | null;
 
-    for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
-      const { content } = await runGeminiChat(contents, systemInstruction, CHAT_TOOLS);
-      const functionCalls = extractFunctionCalls(content);
-
-      if (functionCalls.length === 0) {
-        finalText = extractText(content);
-        break;
+    try {
+      const contents = buildGeminiContents(history);
+      finalText = await runGeminiToolLoop(
+        contents,
+        systemInstruction,
+        request,
+        pendingActions,
+        tracker
+      );
+    } catch (error) {
+      if (error instanceof GeminiApiError && error.status === 429 && tracker.count === 0) {
+        const messages = buildMistralMessages(history, systemInstruction);
+        finalText = await runMistralToolLoop(messages, request, pendingActions, tracker);
+      } else {
+        throw error;
       }
-
-      contents.push(content);
-
-      const responseParts: Part[] = [];
-      for (const call of functionCalls) {
-        const result = await runToolCall(call.name, call.args, request, pendingActions);
-        responseParts.push({
-          functionResponse: { name: call.name, response: result },
-        });
-      }
-      contents.push({ role: "user", parts: responseParts });
     }
 
     const responseText =
@@ -205,8 +318,9 @@ export async function POST(request: NextRequest) {
 
     return sseResponse(streamText(responseText, pendingActions));
   } catch {
-    // Every failure (Gemini API error, network, or an unexpected bug in the
-    // tool loop) shows the same fallback message — see Global Constraints.
+    // Every failure (both providers' API errors, network, or an unexpected
+    // bug in the tool loop) shows the same fallback message — see Global
+    // Constraints.
     return sseResponse(streamText(FALLBACK_MESSAGE, []));
   }
 }

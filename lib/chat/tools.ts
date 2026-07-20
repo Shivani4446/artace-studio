@@ -2,6 +2,7 @@
 import { fetchSearchResults } from "@/lib/search";
 import { getPolicyContent } from "@/lib/chat/policy-content";
 import type { FunctionDeclaration } from "@/lib/chat/gemini";
+import type { MistralToolDef } from "@/lib/chat/mistral";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
@@ -164,6 +165,40 @@ export const CHAT_TOOLS: FunctionDeclaration[] = [
     },
   },
 ];
+
+// Mistral (and OpenAI-compatible APIs generally) use standard lowercase
+// JSON-schema type keywords, while Gemini's function-declaration schema
+// uses uppercase ("OBJECT", "STRING", ...). Deriving Mistral's tool list
+// from CHAT_TOOLS instead of hand-duplicating it keeps one source of truth
+// for both providers' tool definitions.
+const lowerSchemaTypes = (schema: Record<string, unknown>): Record<string, unknown> => {
+  const result: Record<string, unknown> = { ...schema };
+
+  if (typeof result.type === "string") {
+    result.type = result.type.toLowerCase();
+  }
+  if (result.properties && typeof result.properties === "object") {
+    result.properties = Object.fromEntries(
+      Object.entries(result.properties as Record<string, Record<string, unknown>>).map(
+        ([key, value]) => [key, lowerSchemaTypes(value)]
+      )
+    );
+  }
+  if (result.items && typeof result.items === "object") {
+    result.items = lowerSchemaTypes(result.items as Record<string, unknown>);
+  }
+
+  return result;
+};
+
+export const MISTRAL_CHAT_TOOLS: MistralToolDef[] = CHAT_TOOLS.map((tool) => ({
+  type: "function",
+  function: {
+    name: tool.name,
+    description: tool.description,
+    parameters: lowerSchemaTypes(tool.parameters),
+  },
+}));
 
 export async function executeSearchProducts(args: Record<string, unknown>) {
   const query = typeof args.query === "string" ? args.query.trim() : "";

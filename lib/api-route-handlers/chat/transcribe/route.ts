@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { runGeminiChat, extractText } from "@/lib/chat/gemini";
+import { runGeminiChat, extractText, GeminiApiError } from "@/lib/chat/gemini";
+import { runMistralTranscription } from "@/lib/chat/mistral";
 
 export const runtime = "edge";
 
@@ -57,7 +58,16 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json({ text: extractText(content).trim() });
-  } catch {
+  } catch (error) {
+    if (error instanceof GeminiApiError && error.status === 429) {
+      try {
+        const text = await runMistralTranscription(mimeType, data);
+        return NextResponse.json({ text: text.trim() });
+      } catch {
+        // fall through to the shared error response below
+      }
+    }
+
     return NextResponse.json(
       { error: "Could not transcribe that right now." },
       { status: 502 }
