@@ -29,7 +29,7 @@ const ChatWidget = () => {
   };
 
   const panelSizeClass = isExpanded
-    ? "h-[640px] w-[400px] md:w-[460px]"
+    ? "h-[520px] w-[calc(100vw-2.5rem)] md:w-[640px]"
     : "h-[520px] w-[340px] md:w-[380px]";
 
   return (
