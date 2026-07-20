@@ -8,6 +8,7 @@ import * as authResetPasswordRoute from "@/lib/api-route-handlers/auth/reset-pas
 import * as authSessionRoute from "@/lib/api-route-handlers/auth/session/route";
 import * as blogsRoute from "@/lib/api-route-handlers/blogs/route";
 import * as chatRoute from "@/lib/api-route-handlers/chat/route";
+import * as chatTranscribeRoute from "@/lib/api-route-handlers/chat/transcribe/route";
 import * as checkoutCouponRoute from "@/lib/api-route-handlers/checkout/coupon/route";
 import * as checkoutStatusRoute from "@/lib/api-route-handlers/checkout/status/route";
 import * as checkoutVerifyRoute from "@/lib/api-route-handlers/checkout/verify/route";
@@ -72,6 +73,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   chat: {
     POST: (request) => chatRoute.POST(request),
+  },
+  "chat/transcribe": {
+    POST: (request) => chatTranscribeRoute.POST(request),
   },
   contact: {
     POST: (request) => contactRoute.POST(request),
