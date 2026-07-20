@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ImagePlus, Mic, Send, Smile, Square, X } from "lucide-react";
 import ChatEmojiPicker from "./ChatEmojiPicker";
@@ -38,6 +38,19 @@ const ChatInputBar = ({ disabled, onSend }: Props) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const activeStreamRef = useRef<MediaStream | null>(null);
+
+  const disabledRef = useRef(disabled);
+  disabledRef.current = disabled;
+
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+      }
+      activeStreamRef.current?.getTracks().forEach((track) => track.stop());
+    };
+  }, []);
 
   const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -85,6 +98,7 @@ const ChatInputBar = ({ disabled, onSend }: Props) => {
     setAudioError("");
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      activeStreamRef.current = stream;
       const recorder = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
@@ -105,7 +119,9 @@ const ChatInputBar = ({ disabled, onSend }: Props) => {
           });
           const payload = (await response.json()) as { text?: string; error?: string };
           if (payload.text?.trim()) {
-            onSend(payload.text.trim());
+            if (!disabledRef.current) {
+              onSend(payload.text.trim());
+            }
           } else if (payload.error) {
             setAudioError(payload.error);
           } else {
@@ -193,7 +209,7 @@ const ChatInputBar = ({ disabled, onSend }: Props) => {
         <button
           type="button"
           onClick={isRecording ? stopRecording : startRecording}
-          disabled={isTranscribing}
+          disabled={isTranscribing || disabled}
           aria-label={isRecording ? "Stop recording" : "Record a voice message"}
           className={`${isRecording ? "text-red-600" : "text-[#65635d] hover:text-[#1f1f1f]"} disabled:opacity-40`}
         >
