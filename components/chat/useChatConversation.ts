@@ -49,15 +49,17 @@ const loadHistory = (): ChatMessage[] => {
 export function useChatConversation() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const hydratedRef = useRef(false);
+  const skipPersistRef = useRef(true);
 
   useEffect(() => {
     setMessages(loadHistory());
-    hydratedRef.current = true;
   }, []);
 
   useEffect(() => {
-    if (!hydratedRef.current) return;
+    if (skipPersistRef.current) {
+      skipPersistRef.current = false;
+      return;
+    }
     if (typeof window === "undefined") return;
     window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
   }, [messages]);
