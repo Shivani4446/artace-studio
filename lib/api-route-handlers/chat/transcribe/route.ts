@@ -6,6 +6,12 @@ export const runtime = "edge";
 const TRANSCRIBE_INSTRUCTION =
   "Transcribe the following audio exactly as spoken. Output only the transcription text, with no extra commentary, quotes, or labels. If the audio is silent or unintelligible, output an empty string.";
 
+// Audio encodes less efficiently than a static image, so this ceiling is
+// more generous than the /api/chat image guard, while still bounding
+// worst-case cost against the metered Gemini API for requests that bypass
+// the client's own recording-length limits (e.g. direct HTTP calls).
+const MAX_AUDIO_DATA_CHARS = 15_000_000;
+
 export async function POST(request: NextRequest) {
   let body: { mimeType?: unknown; data?: unknown };
   try {
@@ -25,6 +31,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: "Missing audio mimeType or data." },
       { status: 400 }
+    );
+  }
+
+  if (data.length > MAX_AUDIO_DATA_CHARS) {
+    return NextResponse.json(
+      { error: "That recording is too large." },
+      { status: 413 }
     );
   }
 

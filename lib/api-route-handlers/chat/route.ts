@@ -49,6 +49,12 @@ type SanitizedMessage = {
   image?: { mimeType: string; data: string };
 };
 
+// Base64 inflates raw bytes by ~4/3, so the client's 4MB image cap becomes
+// ~5.33M base64 characters. This ceiling gives headroom above that while
+// still bounding worst-case cost against the metered Gemini API for
+// requests that bypass the client entirely (e.g. direct HTTP calls).
+const MAX_IMAGE_DATA_CHARS = 7_000_000;
+
 const sanitizeHistory = (messages: unknown): SanitizedMessage[] => {
   if (!Array.isArray(messages)) return [];
 
@@ -63,7 +69,8 @@ const sanitizeHistory = (messages: unknown): SanitizedMessage[] => {
       const image =
         item.image &&
         typeof item.image.mimeType === "string" &&
-        typeof item.image.data === "string"
+        typeof item.image.data === "string" &&
+        item.image.data.length <= MAX_IMAGE_DATA_CHARS
           ? { mimeType: item.image.mimeType, data: item.image.data }
           : undefined;
 
