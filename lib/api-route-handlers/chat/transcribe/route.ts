@@ -63,9 +63,11 @@ export async function POST(request: NextRequest) {
       try {
         const text = await runMistralTranscription(mimeType, data);
         return NextResponse.json({ text: text.trim() });
-      } catch {
-        // fall through to the shared error response below
+      } catch (mistralError) {
+        console.error("Transcribe fallback failed:", mistralError);
       }
+    } else {
+      console.error("Transcribe request failed:", error);
     }
 
     return NextResponse.json(

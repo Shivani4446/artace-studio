@@ -317,10 +317,12 @@ export async function POST(request: NextRequest) {
       "I wasn't able to finish that — could you try rephrasing your question?";
 
     return sseResponse(streamText(responseText, pendingActions));
-  } catch {
+  } catch (error) {
     // Every failure (both providers' API errors, network, or an unexpected
-    // bug in the tool loop) shows the same fallback message — see Global
-    // Constraints.
+    // bug in the tool loop) shows the same fallback message to the user —
+    // see Global Constraints — but the real cause is logged server-side so
+    // it's visible in Cloudflare's function logs instead of vanishing.
+    console.error("Chat request failed:", error);
     return sseResponse(streamText(FALLBACK_MESSAGE, []));
   }
 }
