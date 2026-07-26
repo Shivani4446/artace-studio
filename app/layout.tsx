@@ -13,6 +13,7 @@ import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
 import ProductImageProtection from "./product-image-protection";
 import ChatWidget from "@/components/chat/ChatWidget";
 import PromotionModal from "@/components/ui/PromotionModal";
+import PromotionBar from "@/components/ui/PromotionBar";
 import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
 import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
@@ -154,7 +155,10 @@ fbq('track', 'PageView');`
             <WishlistProvider>
               <PromotionModal />
               <ProductImageProtection />
-              <Navbar />
+              <div className="sticky top-0 z-[60]">
+                <PromotionBar />
+                <Navbar />
+              </div>
               {children}
               <Footer />
               <ChatWidget />

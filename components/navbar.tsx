@@ -715,7 +715,7 @@ const Navbar = () => {
   return (
     <>
       <nav
-        className="sticky top-0 z-[60] border-b border-[#d8d3ca] bg-white"
+        className="border-b border-[#d8d3ca] bg-white"
         onMouseLeave={closeDesktopMenu}
       >
         <div className="mx-auto flex h-[88px] max-w-[1440px] items-center justify-between px-6 md:h-[102px] md:px-12">
@@ -1087,7 +1087,7 @@ const Navbar = () => {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="absolute left-0 top-full w-full max-h-[calc(100dvh-88px)] border-b border-gray-100 bg-white px-6 py-6 overflow-y-auto shadow-xl lg:hidden md:max-h-[calc(100dvh-102px)]">
+          <div className="absolute left-0 top-full w-full max-h-[calc(100dvh-124px)] border-b border-gray-100 bg-white px-6 py-6 overflow-y-auto shadow-xl lg:hidden md:max-h-[calc(100dvh-138px)]">
             <div className="flex flex-col gap-6">
               <div className="flex items-center bg-[#f2f2f2] rounded-full px-4 py-3 w-full">
                 <Search className="w-5 h-5 text-[#555555] mr-3" />

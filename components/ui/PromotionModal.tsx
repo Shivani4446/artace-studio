@@ -8,7 +8,7 @@ const PromotionModal = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const COUPON_CODE = "ARTACE10";
+  const COUPON_CODE = "BAPPA";
 
   useEffect(() => {
     // Check if the user has already seen or closed the modal in this session
@@ -69,8 +69,8 @@ const PromotionModal = () => {
         {/* Image Side */}
         <div className="relative h-48 w-full shrink-0 sm:h-auto sm:w-[45%]">
           <Image
-            src="/buddha-lifestyle.webp"
-            alt="Hand-painted Buddha canvas artwork in a modern living space"
+            src="/images/bappa-1.webp"
+            alt="Hand-painted Ganesha canvas artwork for Ganesh Chaturthi"
             fill
             priority
             className="object-cover"
@@ -82,18 +82,18 @@ const PromotionModal = () => {
         <div className="flex w-full flex-col justify-center p-8 text-[#1a1a1a] sm:p-12">
           <div className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37]/10 px-3 py-1 text-[12px] font-bold uppercase tracking-widest text-[#D4AF37]">
             <Sparkles className="h-3.5 w-3.5" />
-            Special Collector&apos;s Offer
+            Ganesh Chaturthi Special
           </div>
 
           <h2 className="mt-6 font-display text-[32px] leading-[1.1] text-[#1A1A1A] sm:text-[42px]">
-            Own Your First <br />
-            <span className="text-[#D4AF37]">Masterpiece.</span>
+            Bring Home <br />
+            <span className="text-[#D4AF37]">Bappa&apos;s Blessings.</span>
           </h2>
 
           <p className="mt-6 text-[16px] leading-relaxed text-[#555555] sm:text-[18px]">
-            Elevate your space with authentic, hand-painted canvas art. Unlock an 
-            <span className="font-semibold text-[#1a1a1a]"> additional 10% discount </span> 
-            at checkout for your first order.
+            This Ganesh Chaturthi, celebrate with a flat
+            <span className="font-semibold text-[#1a1a1a]"> 20% off every order </span>
+            — plus a complimentary gift with your purchase, on us.
           </p>
 
           <div className="mt-8">
@@ -122,11 +122,11 @@ const PromotionModal = () => {
             onClick={handleClose}
             className="mt-8 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98]"
           >
-            Claim My Discount & Shop Now
+            Claim My 20% Off & Shop Now
           </button>
 
           <p className="mt-4 text-center text-[12px] text-[#999999]">
-            Valid for a limited time only. Free Pan-India Shipping.
+            Ganesh Chaturthi sale, live now through 14th September. Free Pan-India Shipping.
           </p>
         </div>
       </div>
