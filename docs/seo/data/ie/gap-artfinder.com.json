@@ -1,0 +1,233 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "zee gallery",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "video",
+        "people_also_ask",
+        "images",
+        "bads",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 39,
+      "url": "https://www.artfinder.com/artist/zhang-lee/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra wall art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 59,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "www art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 80,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 6,
+      "url": "https://www.artfinder.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wrapping artwork",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://sellers.artfinder.com/article/529-how-should-i-package-my-artworks",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "words related to art and design",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 26,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://www.artfinder.com/blog/post/art-terms-az/?srsltid=AfmBOoqaatJZsf3I1lZKz1ESWO3VemRA3FtpMawyQ8d5y_NVfuIKaCRC",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wood sculpture for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "images",
+        "bads",
+        "related_searches"
+      ],
+      "position": 9,
+      "url": "https://www.artfinder.com/art/product_category-sculpture/sculpture-sculpture-wood/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wood abstract sculpture",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 12,
+      "url": "https://www.artfinder.com/art/product_category-sculpture/sculpture-sculpture-wood/subject-abstract-conceptual/style-abstract-organic/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wolf art",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.98,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "bads",
+        "related_searches"
+      ],
+      "position": 19,
+      "url": "https://www.artfinder.com/art/q-wolf/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wolf and badger jewellery",
+      "volume": 10,
+      "cpc": 0.22,
+      "competition": 1,
+      "difficulty": 15,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "sitelinks",
+        "video",
+        "people_also_ask",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 2,
+      "url": "https://www.artfinder.com/blog/post/bcorpmonth-wolfandbadger/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "william blake what is poetry",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 28,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 10,
+      "url": "https://www.artfinder.com/blog/post/who-is-william-blake/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

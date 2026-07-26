@@ -1,0 +1,234 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "šinko",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 11,
+      "url": "https://www.singulart.com/en/artist/sabina-%C5%A1inko-14825",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zurich art gallery guide",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 17,
+      "url": "https://www.singulart.com/en/art-galleries/switzerland/zurich-14979",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zurich art gallery",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.75,
+      "difficulty": 34,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 9,
+      "url": "https://www.singulart.com/en/art-galleries/switzerland/zurich-14979",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoë buckman",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 20,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "knowledge_graph",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 62,
+      "url": "https://www.singulart.com/en/artist/zo%C3%AB-buckman-52967",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoe paul",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 70,
+      "url": "https://www.singulart.com/en/artist/zo%C3%AB-paul-46065",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoe feldman design",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.06,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 30,
+      "url": "https://www.singulart.com/blog/en/2020/11/13/interview-with-interior-designer-zoe-feldman/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoe buckman art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 23,
+      "url": "https://www.singulart.com/en/artist/zo%C3%AB-buckman-52967",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra painting for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "bads",
+        "related_searches"
+      ],
+      "position": 8,
+      "url": "https://www.singulart.com/en/painting/zebra",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zdzisław beksiński gallery",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 39,
+      "url": "https://www.singulart.com/en/artist/zdzislaw-beksinski-36749",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zdzisław beksiński artwork",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0.08,
+      "difficulty": 29,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "knowledge_graph",
+        "tads",
+        "bads",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 45,
+      "url": "https://www.singulart.com/en/artist/zdzislaw-beksinski-36749",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

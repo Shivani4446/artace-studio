@@ -1,0 +1,238 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "zoe buckman",
+      "volume": 480,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 20,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "twitter",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 68,
+      "url": "https://www.singulart.com/en/artist/zo%C3%AB-buckman-52967",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zentrum paul klee",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.28,
+      "difficulty": 38,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "sitelinks",
+        "people_also_ask",
+        "images",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 6,
+      "url": "https://www.singulart.com/blog/en/2023/11/08/paul-klee-famous-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zdzislaw beksinski",
+      "volume": 110,
+      "cpc": 0,
+      "competition": 0.04,
+      "difficulty": 33,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 51,
+      "url": "https://www.singulart.com/en/artist/zdzislaw-beksinski-36749",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yue minjun",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 22,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "related_searches"
+      ],
+      "position": 33,
+      "url": "https://www.singulart.com/en/artist/yue-minjun-36535",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "youth culture today",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 23,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 46,
+      "url": "https://www.singulart.com/blog/en/2020/05/08/the-importance-of-capturing-youth-culture-to-define-an-era/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "youth culture history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://www.singulart.com/blog/en/2020/05/08/the-importance-of-capturing-youth-culture-to-define-an-era/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "youth culture definition",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 22,
+      "url": "https://www.singulart.com/blog/en/2020/05/08/the-importance-of-capturing-youth-culture-to-define-an-era/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "youth culture",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 36,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 23,
+      "url": "https://www.singulart.com/blog/en/2020/05/08/the-importance-of-capturing-youth-culture-to-define-an-era/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "young irish artists",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.48,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 61,
+      "url": "https://www.singulart.com/en/artists/painters/irish",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yoko ono cut piece",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 26,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://www.singulart.com/blog/en/2024/06/03/cut-piece-by-yoko-ono/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

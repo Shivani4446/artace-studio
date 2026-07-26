@@ -1,11 +1,15 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import SearchClient from "./SearchClient";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Search Art | Find Paintings | Artace Studio",
   description: "Search for art and paintings at Artace Studio. Find canvas art, wall decor, and unique artworks. Browse our complete collection.",
   keywords: "search art, find paintings, canvas art, wall art, search artworks",
+  alternates: {
+    canonical: buildSiteUrl("/search"),
+  },
   openGraph: {
     title: "Search Art | Find Paintings",
     description: "Search and find your perfect painting.",

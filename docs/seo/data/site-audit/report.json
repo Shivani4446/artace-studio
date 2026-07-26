@@ -1,0 +1,845 @@
+{
+  "total_pages": 154,
+  "total_warnings": 173,
+  "total_errors": 322,
+  "total_passed": 102,
+  "total_notices": 160,
+  "is_finished": true,
+  "domain_props": {
+    "dt": 2,
+    "domain": "artacestudio.com",
+    "domains": "47",
+    "expdate": "2026-11-14",
+    "updated": "2026-07-26 09:29:12",
+    "backlinks": "66",
+    "all_checked": true,
+    "index_google": "393"
+  },
+  "sections": [
+    {
+      "uid": "security_v2",
+      "name": "Security",
+      "props": {
+        "no_https": {
+          "code": "no_https",
+          "status": "error",
+          "name": "No HTTPS encryption",
+          "value": 0
+        },
+        "sitemap_http": {
+          "code": "sitemap_http",
+          "status": "warning",
+          "name": "HTTP URLs in XML sitemap",
+          "value": 0
+        },
+        "canonical_to_http": {
+          "code": "canonical_to_http",
+          "status": "warning",
+          "name": "rel=\"canonical\" from HTTPS to HTTP",
+          "value": 0
+        },
+        "mixed_content": {
+          "code": "mixed_content",
+          "status": "error",
+          "name": "Mixed content",
+          "value": 0
+        },
+        "old_protocol": {
+          "code": "old_protocol",
+          "status": "error",
+          "name": "Outdated security protocol version",
+          "value": 0
+        },
+        "cert_name": {
+          "code": "cert_name",
+          "status": "error",
+          "name": "Certificate name mismatch",
+          "value": 0
+        },
+        "outdated_encryption": {
+          "code": "outdated_encryption",
+          "status": "error",
+          "name": "Outdated encryption algorithm",
+          "value": 0
+        },
+        "cert_exp": {
+          "code": "cert_exp",
+          "status": "warning",
+          "name": "Security certificate expires soon",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "crawling_v2",
+      "name": "Crawling & Indexing",
+      "props": {
+        "http4xx": {
+          "code": "http4xx",
+          "status": "error",
+          "name": "4XX HTTP Status Codes",
+          "value": 2
+        },
+        "http5xx": {
+          "code": "http5xx",
+          "status": "error",
+          "name": "5XX HTTP Status Codes",
+          "value": 82
+        },
+        "timeout": {
+          "code": "timeout",
+          "status": "error",
+          "name": "Timed out",
+          "value": 0
+        },
+        "canonical4xx": {
+          "code": "canonical4xx",
+          "status": "error",
+          "name": "Canonical URL with a 4XX Status Code",
+          "value": 0
+        },
+        "canonical5xx": {
+          "code": "canonical5xx",
+          "status": "error",
+          "name": "Canonical URL with a 5XX Status Code",
+          "value": 0
+        },
+        "canonical3xx": {
+          "code": "canonical3xx",
+          "status": "error",
+          "name": "Canonical URL with a 3XX Status Code",
+          "value": 0
+        },
+        "canonical_chain": {
+          "code": "canonical_chain",
+          "status": "error",
+          "name": "Canonical chain",
+          "value": 0
+        },
+        "blocked_by_noindex": {
+          "code": "blocked_by_noindex",
+          "status": "notice",
+          "name": "Blocked by noindex",
+          "value": 0
+        },
+        "both_noindex": {
+          "code": "both_noindex",
+          "status": "notice",
+          "name": "HTML and HTTP header contain noindex",
+          "value": 0
+        },
+        "blocked_by_xrobots": {
+          "code": "blocked_by_xrobots",
+          "status": "notice",
+          "name": "Blocked by X-Robots-Tag",
+          "value": 0
+        },
+        "blocked_by_nofollow": {
+          "code": "blocked_by_nofollow",
+          "status": "notice",
+          "name": "Blocked by nofollow",
+          "value": 0
+        },
+        "both_nofollow": {
+          "code": "both_nofollow",
+          "status": "notice",
+          "name": "HTML and HTTP header contain nofollow",
+          "value": 0
+        },
+        "blocked_by_robots": {
+          "code": "blocked_by_robots",
+          "status": "notice",
+          "name": "Blocked by robots.txt",
+          "value": 5
+        },
+        "no_robots": {
+          "code": "no_robots",
+          "status": "notice",
+          "name": "Robots.txt file not found",
+          "value": 0
+        },
+        "robots_has_too_many_redirects": {
+          "code": "robots_has_too_many_redirects",
+          "status": "error",
+          "name": "Robots.txt either has too many redirects or a redirect loop",
+          "value": 0
+        },
+        "robots_not_accessible": {
+          "code": "robots_not_accessible",
+          "status": "error",
+          "name": "Robots.txt is not accessible",
+          "value": 0
+        },
+        "robots_has_errors": {
+          "code": "robots_has_errors",
+          "status": "error",
+          "name": "Robots.txt is not valid",
+          "value": 0
+        },
+        "robots_disallow_crawling": {
+          "code": "robots_disallow_crawling",
+          "status": "notice",
+          "name": "Robots.txt is set to disallow crawling",
+          "value": 0
+        },
+        "long_url": {
+          "code": "long_url",
+          "status": "notice",
+          "name": "URL too long",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "redirects_v2",
+      "name": "Redirects",
+      "props": {
+        "redirect45xx": {
+          "code": "redirect45xx",
+          "status": "error",
+          "name": "Redirect to 4xx or 5xx",
+          "value": 0
+        },
+        "redirect_loop": {
+          "code": "redirect_loop",
+          "status": "error",
+          "name": "Redirect loop",
+          "value": 0
+        },
+        "redirect_chain": {
+          "code": "redirect_chain",
+          "status": "error",
+          "name": "Redirect chain",
+          "value": 0
+        },
+        "meta_refresh": {
+          "code": "meta_refresh",
+          "status": "error",
+          "name": "Meta refresh redirect",
+          "value": 0
+        },
+        "redirect3xx": {
+          "code": "redirect3xx",
+          "status": "warning",
+          "name": "3ХХ HTTP status code",
+          "value": 0
+        },
+        "redirect_temporary": {
+          "code": "redirect_temporary",
+          "status": "warning",
+          "name": "302, 303, 307 temporary redirects",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "sitemaps_v2",
+      "name": "Sitemap",
+      "props": {
+        "sitemap_4xx": {
+          "code": "sitemap_4xx",
+          "status": "error",
+          "name": "4XX pages in XML sitemap",
+          "value": 1
+        },
+        "sitemap5xx": {
+          "code": "sitemap5xx",
+          "status": "error",
+          "name": "5XX pages in XML sitemap",
+          "value": 82
+        },
+        "sitemap_3xx": {
+          "code": "sitemap_3xx",
+          "status": "warning",
+          "name": "3XX redirects in XML sitemap",
+          "value": 0
+        },
+        "sitemap_pages_timed_out": {
+          "code": "sitemap_pages_timed_out",
+          "status": "error",
+          "name": "Sitemap pages timed out",
+          "value": 0
+        },
+        "sitemap_noindex": {
+          "code": "sitemap_noindex",
+          "status": "error",
+          "name": "Noindex pages in XML sitemap",
+          "value": 83
+        },
+        "sitemap_non_canonical": {
+          "code": "sitemap_non_canonical",
+          "status": "error",
+          "name": "Non-canonical pages in XML sitemap",
+          "value": 40
+        },
+        "sitemap_big": {
+          "code": "sitemap_big",
+          "status": "error",
+          "name": "XML sitemap is too large",
+          "value": 0
+        },
+        "sitemap_missing": {
+          "code": "sitemap_missing",
+          "status": "warning",
+          "name": "XML sitemap missing",
+          "value": 0
+        },
+        "sitemap_no_robots": {
+          "code": "sitemap_no_robots",
+          "status": "notice",
+          "name": "XML sitemap not found in robots.txt file",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "metatags_v2",
+      "name": "Meta Tags",
+      "props": {
+        "title_missing": {
+          "code": "title_missing",
+          "status": "error",
+          "name": "Title tag missing",
+          "value": 0
+        },
+        "title_multiple": {
+          "code": "title_multiple",
+          "status": "error",
+          "name": "Multiple title tags",
+          "value": 0
+        },
+        "title_duplicate": {
+          "code": "title_duplicate",
+          "status": "error",
+          "name": "URLs with duplicate page titles",
+          "value": 0
+        },
+        "title_long": {
+          "code": "title_long",
+          "status": "notice",
+          "name": "Title too long",
+          "value": 8
+        },
+        "title_short": {
+          "code": "title_short",
+          "status": "notice",
+          "name": "Title too short",
+          "value": 0
+        },
+        "description_missing": {
+          "code": "description_missing",
+          "status": "warning",
+          "name": "Description missing",
+          "value": 0
+        },
+        "description_multiple": {
+          "code": "description_multiple",
+          "status": "warning",
+          "name": "Multiple description tags",
+          "value": 0
+        },
+        "description_duplicate": {
+          "code": "description_duplicate",
+          "status": "notice",
+          "name": "Duplicate description",
+          "value": 0
+        },
+        "description_long": {
+          "code": "description_long",
+          "status": "notice",
+          "name": "Description too long",
+          "value": 4
+        }
+      }
+    },
+    {
+      "uid": "content_v2",
+      "name": "Content",
+      "props": {
+        "duplicate_content": {
+          "code": "duplicate_content",
+          "status": "error",
+          "name": "Duplicate content",
+          "value": 0
+        },
+        "canonical_multiple": {
+          "code": "canonical_multiple",
+          "status": "error",
+          "name": "Multiple rel=\"canonical\"",
+          "value": 0
+        },
+        "no_trailing_slashes": {
+          "code": "no_trailing_slashes",
+          "status": "error",
+          "name": "No trailing slashes",
+          "value": 0
+        },
+        "double_slash_url": {
+          "code": "double_slash_url",
+          "status": "error",
+          "name": "URLs with double slash",
+          "value": 0
+        },
+        "no_www_redirect": {
+          "code": "no_www_redirect",
+          "status": "warning",
+          "name": "No WWW redirect",
+          "value": 1
+        },
+        "h1_missing": {
+          "code": "h1_missing",
+          "status": "warning",
+          "name": "H1 tag missing",
+          "value": 0
+        },
+        "h1_empty": {
+          "code": "h1_empty",
+          "status": "warning",
+          "name": "H1 tag empty",
+          "value": 0
+        },
+        "h1_multiple": {
+          "code": "h1_multiple",
+          "status": "notice",
+          "name": "Multiple H1 tags",
+          "value": 0
+        },
+        "h1_duplicate": {
+          "code": "h1_duplicate",
+          "status": "notice",
+          "name": "Duplicate H1",
+          "value": 0
+        },
+        "same_title_h1": {
+          "code": "same_title_h1",
+          "status": "notice",
+          "name": "Identical Title and H1 tags",
+          "value": 0
+        },
+        "h1_long": {
+          "code": "h1_long",
+          "status": "notice",
+          "name": "H1 tag too long",
+          "value": 0
+        },
+        "images3xx": {
+          "code": "images3xx",
+          "status": "error",
+          "name": "3XX images",
+          "value": 0
+        },
+        "images4xx": {
+          "code": "images4xx",
+          "status": "error",
+          "name": "4XX images (Not Found)",
+          "value": 32
+        },
+        "images5xx": {
+          "code": "images5xx",
+          "status": "error",
+          "name": "5XX images (Loading Failed)",
+          "value": 0
+        },
+        "image_no_alt": {
+          "code": "image_no_alt",
+          "status": "warning",
+          "name": "Alt text missing",
+          "value": 65
+        },
+        "image_big": {
+          "code": "image_big",
+          "status": "warning",
+          "name": "Image too big",
+          "value": 24
+        }
+      }
+    },
+    {
+      "uid": "localization",
+      "name": "Localization",
+      "props": {
+        "hreflang_invalid": {
+          "code": "hreflang_invalid",
+          "status": "error",
+          "name": "Invalid language code",
+          "value": 0
+        },
+        "hreflang_different": {
+          "code": "hreflang_different",
+          "status": "warning",
+          "name": "Hreflang and HTML lang do not match",
+          "value": 0
+        },
+        "hreflang_duplicates": {
+          "code": "hreflang_duplicates",
+          "status": "error",
+          "name": "Language duplicates in hreflang",
+          "value": 0
+        },
+        "hreflang_multiple": {
+          "code": "hreflang_multiple",
+          "status": "notice",
+          "name": "Multiple language codes for one page",
+          "value": 0
+        },
+        "hreflang_non_canonical": {
+          "code": "hreflang_non_canonical",
+          "status": "error",
+          "name": "Hreflang to non-canonical",
+          "value": 0
+        },
+        "hreflang345xx": {
+          "code": "hreflang345xx",
+          "status": "error",
+          "name": "Hreflang to 3XX, 4XX or 5XX",
+          "value": 0
+        },
+        "hreflang_return": {
+          "code": "hreflang_return",
+          "status": "error",
+          "name": "Confirmation (return) links missing on hreflang pages",
+          "value": 0
+        },
+        "hreflang_no_self": {
+          "code": "hreflang_no_self",
+          "status": "error",
+          "name": "Hreflang page doesn't link out to itself",
+          "value": 0
+        },
+        "hreflang_xdefault": {
+          "code": "hreflang_xdefault",
+          "status": "warning",
+          "name": "X-default hreflang attribute missing",
+          "value": 0
+        },
+        "invalid_lang": {
+          "code": "invalid_lang",
+          "status": "notice",
+          "name": "Invalid HTML lang",
+          "value": 0
+        },
+        "lang_missing": {
+          "code": "lang_missing",
+          "status": "notice",
+          "name": "HTML lang missing",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "speed_performance_v2",
+      "name": "Speed & Performance",
+      "props": {
+        "loading_speed": {
+          "code": "loading_speed",
+          "status": "warning",
+          "name": "Slow page loading speed",
+          "value": 16
+        },
+        "lighthouse_speed_index": {
+          "code": "lighthouse_speed_index",
+          "status": "warning",
+          "name": "Speed Index",
+          "value": 0
+        },
+        "chrome_ux_lcp": {
+          "code": "chrome_ux_lcp",
+          "status": "warning",
+          "name": "Largest Contentful Paint (LCP) in real-world conditions",
+          "value": 0
+        },
+        "lighthouse_lcp": {
+          "code": "lighthouse_lcp",
+          "status": "warning",
+          "name": "Largest Contentful Paint (LCP) in a lab environment",
+          "value": 1
+        },
+        "chrome_ux_cls": {
+          "code": "chrome_ux_cls",
+          "status": "warning",
+          "name": "Cumulative Layout Shift (CLS) in real-world conditions",
+          "value": 0
+        },
+        "lighthouse_cls": {
+          "code": "lighthouse_cls",
+          "status": "warning",
+          "name": "Cumulative Layout Shift (CLS) in a lab environment",
+          "value": 0
+        },
+        "chrome_ux_fcp": {
+          "code": "chrome_ux_fcp",
+          "status": "warning",
+          "name": "First Contentful Paint (FCP) in real-world conditions",
+          "value": 0
+        },
+        "lighthouse_fcp": {
+          "code": "lighthouse_fcp",
+          "status": "warning",
+          "name": "First Contentful Paint (FCP) in a lab environment",
+          "value": 0
+        },
+        "chrome_ux_inp": {
+          "code": "chrome_ux_inp",
+          "status": "warning",
+          "name": "Interaction to Next Paint (INP) in real-world conditions",
+          "value": 0
+        },
+        "lighthouse_tti": {
+          "code": "lighthouse_tti",
+          "status": "warning",
+          "name": "Time to Interactive (TTI)",
+          "value": 1
+        },
+        "lighthouse_tbt": {
+          "code": "lighthouse_tbt",
+          "status": "warning",
+          "name": "Total Blocking Time (TBT)",
+          "value": 0
+        },
+        "too_big": {
+          "code": "too_big",
+          "status": "warning",
+          "name": "HTML size too big",
+          "value": 0
+        },
+        "uncompressed": {
+          "code": "uncompressed",
+          "status": "notice",
+          "name": "Uncompressed content",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "js",
+      "name": "JavaScript",
+      "props": {
+        "js45xx": {
+          "code": "js45xx",
+          "status": "error",
+          "name": "4XX or 5XX JavaScript file",
+          "value": 0
+        },
+        "js3xx": {
+          "code": "js3xx",
+          "status": "error",
+          "name": "3XX JavaScript file",
+          "value": 0
+        },
+        "extjs345xx": {
+          "code": "extjs345xx",
+          "status": "error",
+          "name": "External JavaScript with 3XX, 4XX or 5XX",
+          "value": 0
+        },
+        "js_big": {
+          "code": "js_big",
+          "status": "notice",
+          "name": "JavaScript too big",
+          "value": 0
+        },
+        "js_uncompressed": {
+          "code": "js_uncompressed",
+          "status": "notice",
+          "name": "JavaScript not compressed",
+          "value": 0
+        },
+        "js_not_min": {
+          "code": "js_not_min",
+          "status": "notice",
+          "name": "JavaScript not minified",
+          "value": 0
+        },
+        "js_not_cached": {
+          "code": "js_not_cached",
+          "status": "notice",
+          "name": "JavaScript not cached",
+          "value": 0
+        },
+        "js_many": {
+          "code": "js_many",
+          "status": "notice",
+          "name": "Too many JavaScript files",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "css",
+      "name": "CSS",
+      "props": {
+        "css45xx": {
+          "code": "css45xx",
+          "status": "error",
+          "name": "4XX or 5XX CSS file",
+          "value": 0
+        },
+        "css3xx": {
+          "code": "css3xx",
+          "status": "warning",
+          "name": "3XX CSS file",
+          "value": 0
+        },
+        "extcss345xx": {
+          "code": "extcss345xx",
+          "status": "error",
+          "name": "External CSS files with 3XX, 4XX or 5XX",
+          "value": 0
+        },
+        "css_big": {
+          "code": "css_big",
+          "status": "notice",
+          "name": "CSS too big",
+          "value": 0
+        },
+        "css_uncompressed": {
+          "code": "css_uncompressed",
+          "status": "notice",
+          "name": "CSS not compressed",
+          "value": 0
+        },
+        "css_not_min": {
+          "code": "css_not_min",
+          "status": "notice",
+          "name": "CSS not minified",
+          "value": 0
+        },
+        "css_not_cached": {
+          "code": "css_not_cached",
+          "status": "notice",
+          "name": "CSS not cached",
+          "value": 0
+        },
+        "css_many": {
+          "code": "css_many",
+          "status": "notice",
+          "name": "Too many CSS files",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "links_v2",
+      "name": "Links",
+      "props": {
+        "no_inlinks": {
+          "code": "no_inlinks",
+          "status": "error",
+          "name": "No inbound links",
+          "value": 0
+        },
+        "less_inlink": {
+          "code": "less_inlink",
+          "status": "notice",
+          "name": "One inbound internal link",
+          "value": 3
+        },
+        "links3xx": {
+          "code": "links3xx",
+          "status": "warning",
+          "name": "Internal links to 3XX redirect pages",
+          "value": 0
+        },
+        "links_nofollow": {
+          "code": "links_nofollow",
+          "status": "notice",
+          "name": "Nofollow internal links",
+          "value": 0
+        },
+        "links_no_anchor": {
+          "code": "links_no_anchor",
+          "status": "notice",
+          "name": "Internal links missing anchor",
+          "value": 10
+        },
+        "extlinks3xx": {
+          "code": "extlinks3xx",
+          "status": "notice",
+          "name": "External links to 3XX",
+          "value": 0
+        },
+        "extlinks4xx": {
+          "code": "extlinks4xx",
+          "status": "warning",
+          "name": "External links to 4XX",
+          "value": 65
+        },
+        "extlinks5xx": {
+          "code": "extlinks5xx",
+          "status": "warning",
+          "name": "External links to 5XX",
+          "value": 0
+        },
+        "extlinks_timeout": {
+          "code": "extlinks_timeout",
+          "status": "notice",
+          "name": "External links Timed out",
+          "value": 65
+        },
+        "extlinks_nofollow": {
+          "code": "extlinks_nofollow",
+          "status": "notice",
+          "name": "Nofollow external links",
+          "value": 0
+        },
+        "extlinks_no_anchor": {
+          "code": "extlinks_no_anchor",
+          "status": "notice",
+          "name": "External links missing anchor",
+          "value": 65
+        }
+      }
+    },
+    {
+      "uid": "mobile",
+      "name": "Mobile Optimization",
+      "props": {
+        "viewport_missing": {
+          "code": "viewport_missing",
+          "status": "error",
+          "name": "Viewport meta tag missing",
+          "value": 0
+        },
+        "viewport_device_width": {
+          "code": "viewport_device_width",
+          "status": "warning",
+          "name": "Fixed width value in viewport meta tag",
+          "value": 0
+        }
+      }
+    },
+    {
+      "uid": "other_v2",
+      "name": "Other",
+      "props": {
+        "no_favicon": {
+          "code": "no_favicon",
+          "status": "warning",
+          "name": "Favicon missing",
+          "value": 0
+        },
+        "twitter_missing": {
+          "code": "twitter_missing",
+          "status": "notice",
+          "name": "X (ex-Twitter) Card tag missing",
+          "value": 0
+        },
+        "plugins": {
+          "code": "plugins",
+          "status": "warning",
+          "name": "Use of incompatible plugins",
+          "value": 0
+        }
+      }
+    }
+  ],
+  "score_percent": 70,
+  "weighted_score_percent": 70,
+  "screenshot": null,
+  "audit_time": "2026-07-26 09:31:56",
+  "chromeux": {
+    "mobile": [],
+    "desktop": []
+  },
+  "version": "2.0"
+}

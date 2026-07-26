@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { buildSiteUrl } from "@/lib/site";
 
 export function generateMetadata(): Promise<Metadata> {
   return Promise.resolve({
     title: "My Wishlist | Saved Artworks | Artace Studio",
     description: "View your saved favorite artworks. Keep track of paintings you love and want to buy later.",
     keywords: "wishlist, saved artworks, favorites, saved art",
+    alternates: {
+      canonical: buildSiteUrl("/wishlist"),
+    },
     openGraph: {
       title: "My Wishlist | Saved Artworks | Artace Studio",
       description: "View your saved favorite artworks.",

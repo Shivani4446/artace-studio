@@ -1,0 +1,18 @@
+
+> artace-studio@0.1.0 dev
+> next dev -p 3001
+
+   ▲ Next.js 15.5.2
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.1.7:3001
+   - Environments: .env.local
+
+ ✓ Starting...
+ ⚠ You are using an experimental edge runtime, the API might change.
+ ✓ Ready in 3.1s
+ ○ Compiling / ...
+(node:14448) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ Compiled / in 3.7s (1744 modules)
+ GET / 200 in 5343ms
+[?25h

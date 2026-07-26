@@ -1,0 +1,245 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "buddha painting feng shui",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 4,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "ørnulf opdahl",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "knowledge_graph",
+        "find_results_on",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 31,
+      "url": "https://www.singulart.com/en/artist/ornulf-opdahl-45807",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "édouard vuillard artwork",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0.44,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 42,
+      "url": "https://www.singulart.com/en/artist/%C3%A9douard-vuillard-48952",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwickers gallery halifax",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "people_also_ask",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 11,
+      "url": "https://www.singulart.com/en/art-galleries/canada/nova-scotia/dartmouth/zwicker-apos-s-gallery-14039",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwicker's gallery halifax",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "images",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 7,
+      "url": "https://www.singulart.com/en/art-galleries/canada/nova-scotia/dartmouth/zwicker-apos-s-gallery-14039",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwelethu mthethwa paintings",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images"
+      ],
+      "position": 13,
+      "url": "https://www.singulart.com/en/artist/zwelethu-mthethwa-45250",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwelethu mthethwa artworks",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "image_in_block"
+      ],
+      "position": 15,
+      "url": "https://www.singulart.com/en/artist/zwelethu-mthethwa-45250",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwelethu mthethwa artist",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 58,
+      "url": "https://www.singulart.com/en/artist/zwelethu-mthethwa-45250",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwart wit foto",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 47,
+      "url": "https://www.singulart.com/nl/fotografie/zwart-wit",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zvi ehrman",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "image_in_block"
+      ],
+      "position": 42,
+      "url": "https://www.singulart.com/en/collection/artworks-inspired-by-bob-carlos-clarke-19128",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zvi adler",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "image_in_block"
+      ],
+      "position": 16,
+      "url": "https://www.singulart.com/en/artworks/zvi-adler-hungarian-israeli-large-landscape-painting-of-judean-hills-jerusalem-israel-2025145",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

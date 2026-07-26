@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Return Policy | Exchange & Refunds | Artace Studio",
   description: "Artace Studio return policy. Learn about our exchange and refund options for paintings. 7-day return window for unused items.",
   keywords: "return policy, exchange policy, refund policy, money back guarantee",
+  alternates: {
+    canonical: buildSiteUrl("/return-policy"),
+  },
   openGraph: {
     title: "Return Policy | Exchange & Refunds | Artace Studio",
     description: "Our return and refund policy.",

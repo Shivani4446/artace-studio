@@ -16,6 +16,8 @@ const REQUIRED_CURRENCIES: CurrencyCode[] = [
   "AUD",
   "CAD",
   "GBP",
+  "EUR",
+  "NZD",
 ];
 
 // Returns null on any failure (network error, bad response, missing currency

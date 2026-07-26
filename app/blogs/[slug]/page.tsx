@@ -12,6 +12,7 @@ import {
 } from "@/utils/article";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateFaqSchema } from "@/lib/schema";
+import { buildSiteUrl } from "@/lib/site";
 import {
   fetchAllWordPressTags,
   getWordPressBlogSiteUrl,
@@ -79,15 +80,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const plainTitle = stripHtmlAndDecode(post?.title?.rendered ?? "");
   const plainDescription = stripHtmlAndDecode(post?.excerpt?.rendered ?? "");
 
+  const postUrl = buildSiteUrl(`/blogs/${slug}`);
+
   return {
     title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
     description: plainDescription,
     keywords: `${plainTitle}, art blog, painting guide, art tutorial`,
+    alternates: {
+      canonical: postUrl,
+    },
     openGraph: {
       title: plainTitle ? `${plainTitle} | Artace Studio` : "Blog | Artace Studio",
       description: plainDescription,
       type: "article",
-      url: `https://artacestudio.com/blogs/${slug}`,
+      url: postUrl,
     },
     twitter: {
       card: "summary_large_image",

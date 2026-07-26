@@ -363,7 +363,6 @@ export default function RentalsPage() {
             alt="Art rental hero background"
             fill
             priority
-            quality={90}
             className="object-cover object-center"
             sizes="100vw"
           />

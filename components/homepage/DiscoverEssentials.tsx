@@ -136,8 +136,12 @@ const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
     <section className="w-full bg-[#efeeec] py-12 md:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         <h2 className="font-display text-[34px] leading-[1.04] tracking-tight text-[#2f2f2f] sm:text-[42px] md:text-[52px]">
-          Discover Our Collections
+          Explore Our Collections, Radha Krishna, Abstract, Buddha & Beyond
         </h2>
+        <p className="mt-4 max-w-2xl font-inter text-[16px] leading-[1.6] text-[#5b5b5b] md:text-[18px]">
+          From the divine to the abstract, every collection at Artace Studio is
+          handcrafted in-house, no two canvases are ever the same.
+        </p>
 
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:mt-10 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
           <Link

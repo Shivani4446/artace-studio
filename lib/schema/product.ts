@@ -61,6 +61,8 @@ export function generateProductSchema(
     (meta) => meta.key === "gtin" || meta.key === "ean" || meta.key === "upc"
   )?.value as string | undefined;
 
+  const productUrl = `${baseUrl}/shop/${product.slug}`;
+
   const productSchema: Record<string, unknown> = {
     "@type": "Product",
     "name": decodeHtmlEntities(product.name),
@@ -71,7 +73,7 @@ export function generateProductSchema(
       "@type": "Brand",
       "name": DEFAULT_BRAND,
     },
-    "offers": generateAllOffersSchema(product),
+    "offers": generateAllOffersSchema(product, productUrl),
   };
 
   if (gtin) {
@@ -101,7 +103,7 @@ export function generateProductSchema(
   const breadcrumb = generateBreadcrumbSchema(
     product.categories || [],
     decodeHtmlEntities(product.name),
-    product.permalink,
+    productUrl,
     baseUrl
   );
 

@@ -1,0 +1,345 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "what is watercolor used for",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 41,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "sitelinks",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 77,
+      "url": "https://artacestudio.com/what-is-watercolor-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art origin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 38,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 11,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "periods of indian art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 76,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "learn warli art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 76,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "indian art painting styles",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 67,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "李放",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.saatchiart.com/lifang",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "李 放",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.saatchiart.com/lifang",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "موقع الفن",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 50,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "images",
+        "related_searches"
+      ],
+      "position": 14,
+      "url": "https://www.saatchiart.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "сountry",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches"
+      ],
+      "position": 14,
+      "url": "https://www.saatchiart.com/en-au/art/Painting-Sountry-winter/1697251/8044732/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "сhanel",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 44,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "sitelinks",
+        "people_also_ask",
+        "images",
+        "bads"
+      ],
+      "position": 13,
+      "url": "https://www.saatchiart.com/art/Photography-Morning-with-hanel-Limited-Edition-of-10/1319669/6528989/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "şahmeran",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.11,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 4,
+      "url": "https://www.saatchiart.com/en-au/art/Painting-Sahmeran/1219774/7783623/view",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "zyl art frames",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 4,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "sitelinks",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 61,
+      "url": "https://www.saatchiart.com/en-no/print/Drawing-Nguni/309376/4622829/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zulu tribal art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://www.saatchiart.com/art/Painting-Zulu-tribe-girls-from-South-Africa-during-the-reed-dance/1802763/8907394/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zulu print",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.18,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 51,
+      "url": "https://www.saatchiart.com/en-ca/authentication/register?redirect_url=https%3A%2F%2Fwww.saatchiart.com%2Fen-ca%2Fart%2FPainting-Zulu-teen-in-traditional-attire%2F2072469%2F9729521%2Fview",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zorn palette paintings",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 9,
+      "url": "https://www.saatchiart.com/en-au/paintings/zorn-palette/feature",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

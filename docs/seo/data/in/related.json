@@ -1,0 +1,1366 @@
+[
+  {
+    "seed": "ganesha canvas painting",
+    "total": 154,
+    "keywords": [
+      {
+        "keyword": "ganesha painting",
+        "cpc": 0.01,
+        "difficulty": 85,
+        "volume": 9900,
+        "competition": 0.38,
+        "serp_features": [
+          "images",
+          "shopping_results",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 11,
+        "intents": [
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesha paintings",
+        "cpc": 0.01,
+        "difficulty": 75,
+        "volume": 2400,
+        "competition": 0.38,
+        "serp_features": [
+          "images",
+          "shopping_results",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art ganesha",
+        "cpc": 0.05,
+        "difficulty": 75,
+        "volume": 1500,
+        "competition": 0.52,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesha art",
+        "cpc": 0.05,
+        "difficulty": 79,
+        "volume": 1500,
+        "competition": 0.52,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 20,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesh wall art",
+        "cpc": 0.01,
+        "difficulty": 13,
+        "volume": 590,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesha wall art",
+        "cpc": 0.01,
+        "difficulty": 13,
+        "volume": 590,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern ganesha",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 590,
+        "competition": 0.68,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganpati wall art",
+        "cpc": 0.01,
+        "difficulty": 13,
+        "volume": 590,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganapati painting",
+        "cpc": 0,
+        "difficulty": 12,
+        "volume": 590,
+        "competition": 0.18,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 26,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganapati wall art",
+        "cpc": 0.01,
+        "difficulty": 13,
+        "volume": 590,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganapathi wall art",
+        "cpc": 0.01,
+        "difficulty": 12,
+        "volume": 590,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganapati art",
+        "cpc": 0.03,
+        "difficulty": 11,
+        "volume": 480,
+        "competition": 0.95,
+        "serp_features": [
+          "reviews",
+          "video",
+          "tads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganpati modern art",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 480,
+        "competition": 0.36,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "vinayaka drawing images",
+        "cpc": 0,
+        "difficulty": 12,
+        "volume": 480,
+        "competition": 0,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "shree ganesh painting",
+        "cpc": 0,
+        "difficulty": 14,
+        "volume": 480,
+        "competition": 0.14,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 22,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern art of ganesha",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 480,
+        "competition": 0.36,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "vinayagar painting",
+        "cpc": 0,
+        "difficulty": 15,
+        "volume": 480,
+        "competition": 0.16,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "canvas ganesha painting",
+        "cpc": 0,
+        "difficulty": 14,
+        "volume": 480,
+        "competition": 0.41,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 37,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract ganesha painting",
+        "cpc": 0.02,
+        "difficulty": 10,
+        "volume": 440,
+        "competition": 0.36,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern ganesha paintings",
+        "cpc": 0.01,
+        "difficulty": 9,
+        "volume": 440,
+        "competition": 0.47,
+        "serp_features": [
+          "reviews",
+          "images",
+          "shopping_results",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 8,
+        "intents": [
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesha abstract painting",
+        "cpc": 0.02,
+        "difficulty": 11,
+        "volume": 440,
+        "competition": 0.36,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern ganesha painting",
+        "cpc": 0.01,
+        "difficulty": 8,
+        "volume": 440,
+        "competition": 0.47,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on"
+        ],
+        "relevance": 24,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesha art gallery",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 390,
+        "competition": 0.02,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "gmb",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "vinayaka painting",
+        "cpc": 0,
+        "difficulty": 13,
+        "volume": 390,
+        "competition": 0.05,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 22,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesh chaturthi painting",
+        "cpc": 0,
+        "difficulty": 11,
+        "volume": 390,
+        "competition": 0,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesh chaturthi paintings",
+        "cpc": 0,
+        "difficulty": 14,
+        "volume": 390,
+        "competition": 0,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ganesh art",
+        "cpc": 0.05,
+        "difficulty": 12,
+        "volume": 370,
+        "competition": 0.52,
+        "serp_features": [
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 14,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "cute ganesha paintings",
+        "cpc": 0,
+        "difficulty": 11,
+        "volume": 320,
+        "competition": 0.06,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "simple ganesha painting",
+        "cpc": 0,
+        "difficulty": 11,
+        "volume": 320,
+        "competition": 0.07,
+        "serp_features": [
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "lord ganesha paintings art",
+        "cpc": 0,
+        "difficulty": 16,
+        "volume": 320,
+        "competition": 0.42,
+        "serp_features": [
+          "reviews",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "canvas painting for bedroom",
+    "total": 1510,
+    "keywords": [
+      {
+        "keyword": "wall painting",
+        "cpc": 0.01,
+        "difficulty": 88,
+        "volume": 110000,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "canvas painting",
+        "cpc": 0.01,
+        "difficulty": 90,
+        "volume": 90500,
+        "competition": 0.56,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings",
+        "cpc": 0.15,
+        "difficulty": 87,
+        "volume": 40500,
+        "competition": 0.37,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art on wall",
+        "cpc": 0.03,
+        "difficulty": 80,
+        "volume": 22200,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "gmb",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "canvas painting ideas",
+        "cpc": 0.05,
+        "difficulty": 92,
+        "volume": 18100,
+        "competition": 0.05,
+        "serp_features": [
+          "featured_snippets",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "canvas paintings",
+        "cpc": 0.01,
+        "difficulty": 88,
+        "volume": 18100,
+        "competition": 0.56,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork",
+        "cpc": 0.12,
+        "difficulty": 82,
+        "volume": 8000,
+        "competition": 0.26,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall painting for bedroom",
+        "cpc": 0.02,
+        "difficulty": 74,
+        "volume": 6600,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art painting",
+        "cpc": 0.08,
+        "difficulty": 76,
+        "volume": 6600,
+        "competition": 0.33,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting on wall",
+        "cpc": 0.01,
+        "difficulty": 81,
+        "volume": 6600,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall paintings",
+        "cpc": 0.01,
+        "difficulty": 76,
+        "volume": 6600,
+        "competition": 0.98,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 14,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for living room",
+        "cpc": 0.02,
+        "difficulty": 72,
+        "volume": 5700,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting designs",
+        "cpc": 0.12,
+        "difficulty": 75,
+        "volume": 5400,
+        "competition": 0.09,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting for wall",
+        "cpc": 0.01,
+        "difficulty": 70,
+        "volume": 5400,
+        "competition": 0.99,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings for living room",
+        "cpc": 0.02,
+        "difficulty": 74,
+        "volume": 4400,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall painting for living room",
+        "cpc": 0.02,
+        "difficulty": 78,
+        "volume": 4400,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 14,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall art for living room",
+        "cpc": 0.01,
+        "difficulty": 76,
+        "volume": 3600,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "room wall painting",
+        "cpc": 0.03,
+        "difficulty": 76,
+        "volume": 3600,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall picture",
+        "cpc": 0.01,
+        "difficulty": 86,
+        "volume": 3200,
+        "competition": 0.91,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting art",
+        "cpc": 0.12,
+        "difficulty": 84,
+        "volume": 3200,
+        "competition": 0.38,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting for home",
+        "cpc": 0.24,
+        "difficulty": 70,
+        "volume": 2900,
+        "competition": 0.54,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting canvas",
+        "cpc": 0.01,
+        "difficulty": 79,
+        "volume": 2400,
+        "competition": 0.9,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall art",
+        "cpc": 0.03,
+        "difficulty": 74,
+        "volume": 1800,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall art designs",
+        "cpc": 0.02,
+        "difficulty": 88,
+        "volume": 1600,
+        "competition": 0.95,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "bads",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall paintings for bedroom",
+        "cpc": 0.02,
+        "difficulty": 68,
+        "volume": 1600,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 29,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting wall",
+        "cpc": 0.18,
+        "difficulty": 78,
+        "volume": 1600,
+        "competition": 0.57,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall pictures",
+        "cpc": 0.01,
+        "difficulty": 87,
+        "volume": 1100,
+        "competition": 0.91,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings for home",
+        "cpc": 0.24,
+        "difficulty": 69,
+        "volume": 1100,
+        "competition": 0.54,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "design wall painting",
+        "cpc": 0.14,
+        "difficulty": 20,
+        "volume": 920,
+        "competition": 0.71,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "canvas paintings images",
+        "cpc": 0.04,
+        "difficulty": 14,
+        "volume": 880,
+        "competition": 0.13,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "pooja room paintings",
+    "total": 11,
+    "keywords": [
+      {
+        "keyword": "pooja wallpaper",
+        "cpc": 0.03,
+        "difficulty": 8,
+        "volume": 590,
+        "competition": 0.54,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "temple paint design",
+        "cpc": 0,
+        "difficulty": 11,
+        "volume": 590,
+        "competition": 0,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room background design",
+        "cpc": 0,
+        "difficulty": 10,
+        "volume": 590,
+        "competition": 0.36,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "temple wall painting design",
+        "cpc": 0,
+        "difficulty": 11,
+        "volume": 480,
+        "competition": 0,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room wall paint",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 390,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on"
+        ],
+        "relevance": 37,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room wall colour",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 320,
+        "competition": 0,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 23,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room wallpaper texture",
+        "cpc": 0,
+        "difficulty": 8,
+        "volume": 260,
+        "competition": 0.43,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room painting",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 210,
+        "competition": 0.14,
+        "serp_features": [
+          "images",
+          "shopping_results",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 16,
+        "intents": [
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room paint color",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 170,
+        "competition": 0,
+        "serp_features": [
+          "images",
+          "shopping_results",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 6,
+        "intents": [
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room colors",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 10,
+        "competition": 0,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "pooja room design in wall",
+        "cpc": 0.14,
+        "difficulty": 10,
+        "volume": 10,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  }
+]

@@ -1,0 +1,85 @@
+[
+  {
+    "is_data_found": true,
+    "keyword": "original abstract art for sale",
+    "volume": 10,
+    "cpc": 0,
+    "difficulty": 26,
+    "intents": [
+      "L",
+      "T"
+    ],
+    "competition": 0,
+    "history_trend": {
+      "2025-08-01": 10,
+      "2025-09-01": 10,
+      "2025-10-01": 10,
+      "2025-11-01": 10,
+      "2025-12-01": 10,
+      "2026-01-01": 10,
+      "2026-02-01": 10,
+      "2026-03-01": 10,
+      "2026-04-01": 10,
+      "2026-05-01": 10,
+      "2026-06-01": 10,
+      "2026-07-01": 10
+    }
+  },
+  {
+    "keyword": "investment art original paintings",
+    "is_data_found": false
+  },
+  {
+    "keyword": "handcrafted canvas art",
+    "is_data_found": false
+  },
+  {
+    "keyword": "custom portrait painting commission",
+    "is_data_found": false
+  },
+  {
+    "keyword": "custom canvas painting commission",
+    "is_data_found": false
+  },
+  {
+    "keyword": "contemporary indian art for sale",
+    "is_data_found": false
+  },
+  {
+    "keyword": "commission a painting online",
+    "is_data_found": false
+  },
+  {
+    "is_data_found": true,
+    "keyword": "buy original paintings online",
+    "volume": 10,
+    "cpc": 0,
+    "difficulty": 62,
+    "intents": [
+      "I"
+    ],
+    "competition": 0,
+    "history_trend": {
+      "2025-08-01": 10,
+      "2025-09-01": 10,
+      "2025-10-01": 10,
+      "2025-11-01": 10,
+      "2025-12-01": 10,
+      "2026-01-01": 10,
+      "2026-02-01": 10,
+      "2026-03-01": 10,
+      "2026-04-01": 10,
+      "2026-05-01": 10,
+      "2026-06-01": 10,
+      "2026-07-01": 10
+    }
+  },
+  {
+    "keyword": "bespoke wall art commission",
+    "is_data_found": false
+  },
+  {
+    "keyword": "art collector gift original painting",
+    "is_data_found": false
+  }
+]

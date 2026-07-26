@@ -1,0 +1,38 @@
+[
+  {
+    "seed": "ganesha canvas painting",
+    "total": 1,
+    "keywords": [
+      {
+        "keyword": "how to paint ganesha on a canvas",
+        "cpc": 0,
+        "difficulty": 12,
+        "volume": 10,
+        "competition": 0,
+        "serp_features": [
+          "featured_snippets",
+          "reviews",
+          "people_also_ask",
+          "images",
+          "related_searches",
+          "image_in_block",
+          "places_sites_products"
+        ],
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "canvas painting for bedroom",
+    "total": 0,
+    "keywords": []
+  },
+  {
+    "seed": "pooja room paintings",
+    "total": 0,
+    "keywords": []
+  }
+]

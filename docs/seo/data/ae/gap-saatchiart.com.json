@@ -1,0 +1,434 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "what is watercolor",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 52,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "knowledge_graph",
+        "related_searches"
+      ],
+      "position": 57,
+      "url": "https://artacestudio.com/what-is-watercolor-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is the meaning of warli",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 96,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is modern contemporary art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 38,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 91,
+      "url": "https://artacestudio.com/modern-contemporary-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is mixed media in art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 54,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 84,
+      "url": "https://artacestudio.com/what-is-mixed-media-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli painting origin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 65,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli painting history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 68,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art information",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 66,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 7,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.13,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 24,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "is buddha painting good for home",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 8,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "पोटू",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images"
+      ],
+      "position": 96,
+      "url": "https://www.saatchiart.com/en-in/art/Drawing-potu/1287511/9479461/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "موقع رسم اون لاين",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 51,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 52,
+      "url": "https://www.saatchiart.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "موقع art",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.23,
+      "difficulty": 81,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 24,
+      "url": "https://www.saatchiart.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "مواقع الفن",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 49,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 15,
+      "url": "https://www.saatchiart.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "مانديلا ارت",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.43,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches"
+      ],
+      "position": 44,
+      "url": "https://www.saatchiart.com/en-sa/paintings/nelson-mandela/feature",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "صورة للبيع",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.53,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 16,
+      "url": "https://www.saatchiart.com/photography",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "صور للحاسوب",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 35,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 95,
+      "url": "https://www.saatchiart.com/art/Photography-10/1074817/4201637/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "صور للبيع",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.53,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 58,
+      "url": "https://www.saatchiart.com/photography",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "صور للاب توب",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.07,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 7,
+      "url": "https://www.saatchiart.com/art/Painting/1074817/4201572/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "صور لسطح المكتب",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 23,
+      "url": "https://www.saatchiart.com/art/Mixed-Media/1074817/4201539/view",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

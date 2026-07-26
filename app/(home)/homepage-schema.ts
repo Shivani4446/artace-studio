@@ -19,6 +19,21 @@ export const homepageFaqs = [
     answer:
       "Start with the room, wall size, and mood you want to create. Artace Studio also offers direct guidance for custom orders, placement, sizing, and style selection.",
   },
+  {
+    question: "How much does a custom painting cost?",
+    answer:
+      "Bespoke commissions at Artace Studio typically start from ₹15,500, depending on size, medium, and detail. Every quote follows a personal consultation, so pricing always reflects your specific vision.",
+  },
+  {
+    question: "How long does delivery take?",
+    answer:
+      "Ready-to-ship pieces are delivered within 5-7 days. Custom commissions follow our five-phase journey and are typically completed within 3-4 weeks, with milestone updates throughout.",
+  },
+  {
+    question: "Do you ship across India and internationally?",
+    answer:
+      "Yes. Artace Studio ships pan-India and to collectors abroad, including the USA, Canada, UAE, and Australia, with secure, white-glove packaging for every piece.",
+  },
 ] as const;
 
 export const homepageSchema = {

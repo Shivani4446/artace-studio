@@ -1,0 +1,28 @@
+[
+  {
+    "seed": "original abstract art for sale",
+    "total": 0,
+    "keywords": []
+  },
+  {
+    "seed": "contemporary indian art for sale",
+    "total": 0,
+    "keywords": []
+  },
+  {
+    "seed": "commission a painting online",
+    "total": 1,
+    "keywords": [
+      {
+        "keyword": "where can i commission a painting online",
+        "cpc": 0,
+        "difficulty": 0,
+        "volume": 0,
+        "competition": 0,
+        "serp_features": [],
+        "intents": [],
+        "history_trend": null
+      }
+    ]
+  }
+]

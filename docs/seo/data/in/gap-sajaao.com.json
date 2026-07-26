@@ -1,0 +1,443 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "where is warli art from",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 61,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is warli painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 54,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is warli art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 64,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is painting in art",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 50,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 75,
+      "url": "https://artacestudio.com/what-makes-a-painting-a-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is abstract painting",
+      "volume": 10,
+      "cpc": 0.51,
+      "competition": 0.02,
+      "difficulty": 56,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 86,
+      "url": "https://artacestudio.com/what-are-abstract-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli painting origin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 64,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli culture",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 97,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art origin",
+      "volume": 260,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 53,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art information",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 41,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 46,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "waterfall wall art",
+      "volume": 50,
+      "cpc": 0.02,
+      "competition": 1,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 29,
+      "url": "https://sajaao.com/collections/waterfall",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "waterfall canvas art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.54,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 35,
+      "url": "https://sajaao.com/collections/waterfall",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "waterfall canvas",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 29,
+      "url": "https://sajaao.com/collections/waterfall",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "vitthal rakhumai painting",
+      "volume": 320,
+      "cpc": 0,
+      "competition": 0.03,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 6,
+      "url": "https://sajaao.com/collections/vitthal",
+      "price": 0,
+      "traffic": 3
+    },
+    {
+      "keyword": "vighnaraja",
+      "volume": 480,
+      "cpc": 0,
+      "competition": 0.05,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "gmb",
+        "sge",
+        "related_searches"
+      ],
+      "position": 25,
+      "url": "https://sajaao.com/products/vighnaraja",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "traditional indian paintings online",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "related_searches"
+      ],
+      "position": 68,
+      "url": "https://sajaao.com/collections/indian-culture",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "traditional hand painting",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.36,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 53,
+      "url": "https://sajaao.com/collections/indian-culture",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "shiva paintings sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "bads",
+        "related_searches"
+      ],
+      "position": 30,
+      "url": "https://sajaao.com/collections/shiva",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "peacock paintings for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.95,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 34,
+      "url": "https://sajaao.com/collections/peacock",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "paintings in pune",
+      "volume": 40,
+      "cpc": 0.09,
+      "competition": 0.56,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "related_searches"
+      ],
+      "position": 10,
+      "url": "https://sajaao.com/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

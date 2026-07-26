@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
 
 const TrueArtistrySection = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -17,10 +18,18 @@ const TrueArtistrySection = () => {
     });
   }, []);
 
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section className="w-full bg-[#f7f6f3] py-14 md:py-20">
       <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-8 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
-        <div className="max-w-2xl">
+        <motion.div
+          initial={shouldReduceMotion ? undefined : { opacity: 0, y: 20 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5 }}
+          className="max-w-2xl"
+        >
           <h2 className="font-display text-[34px] leading-[1.08] text-[#222222] sm:text-[40px] md:text-[52px]">
             True Artistry. No Compromises.
           </h2>
@@ -32,7 +41,7 @@ const TrueArtistrySection = () => {
             that bring texture, depth, and life to your walls. Don&apos;t just
             decorate your home-invest in a piece of your own story.
           </p>
-        </div>
+        </motion.div>
 
         <div className="relative w-full max-w-[340px] justify-self-center sm:max-w-[420px] lg:max-w-[460px] lg:justify-self-end">
           <div className="pointer-events-none absolute -left-56 -top-14 z-20 hidden md:block">

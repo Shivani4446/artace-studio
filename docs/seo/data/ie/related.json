@@ -1,0 +1,634 @@
+[
+  {
+    "seed": "original abstract art for sale",
+    "total": 735,
+    "keywords": [
+      {
+        "keyword": "art",
+        "cpc": 0.34,
+        "difficulty": 62,
+        "volume": 6600,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "gallery dublin",
+        "cpc": 0.28,
+        "difficulty": 73,
+        "volume": 3100,
+        "competition": 0.23,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall art",
+        "cpc": 0.36,
+        "difficulty": 54,
+        "volume": 1900,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art gallery",
+        "cpc": 0.5,
+        "difficulty": 68,
+        "volume": 1600,
+        "competition": 0.17,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "tads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings",
+        "cpc": 0.68,
+        "difficulty": 63,
+        "volume": 1600,
+        "competition": 1,
+        "serp_features": [
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "irish artist",
+        "cpc": 0.22,
+        "difficulty": 27,
+        "volume": 810,
+        "competition": 0.77,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall prints",
+        "cpc": 0.39,
+        "difficulty": 18,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "arts prints",
+        "cpc": 0.39,
+        "difficulty": 26,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "irish prints",
+        "cpc": 0.27,
+        "difficulty": 24,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "irish print",
+        "cpc": 0.27,
+        "difficulty": 23,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "knowledge_graph",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork prints",
+        "cpc": 0.39,
+        "difficulty": 17,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artsy prints",
+        "cpc": 0.39,
+        "difficulty": 15,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "gallery of modern art dublin",
+        "cpc": 0.71,
+        "difficulty": 71,
+        "volume": 590,
+        "competition": 0.42,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art & prints",
+        "cpc": 0.39,
+        "difficulty": 17,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "prints dublin",
+        "cpc": 0.78,
+        "difficulty": 31,
+        "volume": 540,
+        "competition": 0.96,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art shop dublin",
+        "cpc": 0.36,
+        "difficulty": 40,
+        "volume": 480,
+        "competition": 0.4,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting",
+        "cpc": 0.36,
+        "difficulty": 37,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art shops dublin",
+        "cpc": 0.36,
+        "difficulty": 40,
+        "volume": 480,
+        "competition": 0.4,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract paintings",
+        "cpc": 0.36,
+        "difficulty": 42,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art exhibitions dublin",
+        "cpc": 0.2,
+        "difficulty": 58,
+        "volume": 480,
+        "competition": 0.11,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "tads",
+          "bads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art paintings",
+        "cpc": 0.36,
+        "difficulty": 37,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 28,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art prints ireland",
+        "cpc": 0.27,
+        "difficulty": 25,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "oil paintings",
+        "cpc": 0.35,
+        "difficulty": 29,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting art abstract",
+        "cpc": 0.36,
+        "difficulty": 39,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "bads",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art prints of ireland",
+        "cpc": 0.27,
+        "difficulty": 29,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "irish art prints",
+        "cpc": 0.27,
+        "difficulty": 27,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art abstract paintings",
+        "cpc": 0.36,
+        "difficulty": 44,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "irish artwork prints",
+        "cpc": 0.27,
+        "difficulty": 27,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads"
+        ],
+        "relevance": 15,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "ireland artwork prints",
+        "cpc": 0.27,
+        "difficulty": 25,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "knowledge_graph",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork",
+        "cpc": 0.37,
+        "difficulty": 44,
+        "volume": 390,
+        "competition": 1,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "buy original paintings online",
+    "total": 0,
+    "keywords": []
+  },
+  {
+    "seed": "custom canvas painting commission",
+    "total": 0,
+    "keywords": []
+  }
+]

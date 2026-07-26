@@ -1,11 +1,15 @@
 import React from "react";
 import { Metadata } from "next";
 import CustomOrderForm from "@/components/custom-order/CustomOrderForm";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Custom Paintings | Commissioned Artwork | Artace Studio",
   description: "Order custom paintings commissioned specifically for you. Work with our artists to create unique bespoke artwork for your space.",
   keywords: "custom paintings, commissioned artwork, bespoke art, custom canvas art, made to order paintings",
+  alternates: {
+    canonical: buildSiteUrl("/custom-order"),
+  },
   openGraph: {
     title: "Custom Paintings | Commissioned Artwork | Artace Studio",
     description: "Order bespoke commissioned paintings for your space.",

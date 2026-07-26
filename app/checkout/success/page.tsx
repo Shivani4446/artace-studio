@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { buildSiteUrl } from "@/lib/site";
 
 export function generateMetadata(): Promise<Metadata> {
   return Promise.resolve({
     title: "Order Confirmed | Artace Studio",
     description: "Your order has been confirmed. Thank you for purchasing Artace Studio paintings. Order details sent to email.",
     keywords: "order confirmed, purchase complete, order success",
+    alternates: {
+      canonical: buildSiteUrl("/checkout/success"),
+    },
     openGraph: {
       title: "Order Confirmed | Artace Studio",
       description: "Thank you for your purchase!",

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Cancellation Policy | Order Cancellation | Artace Studio",
   description: "Artace Studio cancellation policy. Learn how to cancel orders and refund eligibility criteria.",
   keywords: "cancellation policy, order cancellation, refund policy",
+  alternates: {
+    canonical: buildSiteUrl("/cancellation-policy"),
+  },
   openGraph: {
     title: "Cancellation Policy | Order Cancellation | Artace Studio",
     description: "Our order cancellation policy.",

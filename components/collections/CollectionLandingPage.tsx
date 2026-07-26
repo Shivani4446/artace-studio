@@ -464,6 +464,65 @@ const buildCollectionCopy = (
     };
   }
 
+  if (categorySlug === "vastu-paintings") {
+    return {
+      ...fallback,
+      heroEyebrow: "Balance, Blessings, Beauty",
+      heroTitle: "Vastu-Conscious Paintings for Home & Pooja Room",
+      heroBody:
+        "Bring harmony into every room with hand-painted canvas art chosen for auspicious direction, color, and subject. From the pooja room to the living room, every Artace Studio piece is 100% original — never a printed poster.",
+      heroCta: "Order Your Vastu Painting",
+      heroSecondaryCta: "View the Collection",
+      overviewTitle: "Art That Honors Your Home's Energy.",
+      overviewBody:
+        "Vastu Shastra teaches that the right painting, in the right place, can shift the energy of an entire room. At Artace Studio, our artists hand-paint every Vastu-conscious canvas — devotional deities for the pooja room, flowing water or rising-sun motifs for the living room, calming palettes for the bedroom — using real oil and acrylic on premium canvas, never a factory print. Give your walls art that's both beautiful and intentional.",
+      featuredHeading: "Shop Best Vastu & Pooja Room Paintings",
+      galleryTitle: "The Vastu Collection: Find the Right Piece for Every Room",
+      galleryBody:
+        "Browse hand-painted canvases chosen for their Vastu significance — from pooja room devotional art to living room and bedroom pieces meant to invite calm, prosperity, and positive energy.",
+      editorialTitle: "Why Choose Artace Studio for Vastu-Conscious Art?",
+      editorialIntro: "Here's what makes our Vastu and pooja room paintings different:",
+      editorialItems: [
+        {
+          title: "Guided by Vastu Principles",
+          body: "We help you choose subject, direction, and placement — devotional pieces for the pooja room's East or Northeast wall, calming motifs for the bedroom, prosperity themes for the living room's North wall — so your art supports the energy you want in each space.",
+        },
+        {
+          title: "100% Real Canvas & Colors",
+          body: "No printed posters. Every piece is hand-painted in oil or acrylic on premium canvas, so the texture, depth, and brushwork stay visible and vivid for years.",
+        },
+        {
+          title: "You Approve Before We Ship",
+          body: "For custom Vastu pieces, we share progress photos at every stage. Your painting ships only after you've seen and approved the final artwork.",
+        },
+        {
+          title: "The Thoughtful Housewarming Gift",
+          body: "A Vastu-conscious painting is a meaningful Griha Pravesh or festival gift — a blessing the family keeps on their wall for years.",
+        },
+      ],
+      testimonialTitle: "Homes We've Helped Bring Into Balance",
+      testimonialItems: [
+        {
+          quote:
+            "We wanted our pooja room to feel calm and sacred, not just decorated. Artace helped us pick the right size and palette for the space, and the finished piece feels like it belongs there.",
+          name: "Meera & Vikram S.",
+          location: "Pune",
+        },
+        {
+          quote:
+            "Our vastu consultant suggested a painting for the north wall of our living room. Artace matched the subject and colors perfectly — real brushwork, not a print.",
+          name: "Ankita R.",
+          location: "Bangalore",
+        },
+      ],
+      advisoryTitle: "Not Sure Which Direction or Subject Fits Your Space?",
+      advisoryBody:
+        "Tell us about your room, its direction, and what you're hoping to invite in — peace, prosperity, devotion — and our team will help you shortlist the right piece or commission a custom one, free of charge.",
+      advisoryCta: "Chat With Us on WhatsApp",
+      advisoryHref: "https://wa.me/9657609102",
+    };
+  }
+
   return fallback;
 };
 
@@ -830,7 +889,7 @@ const CollectionLandingPage = async ({
               alt={heroImageAlt || collectionHeadline}
               fill
               priority
-              sizes="100vw"
+              sizes="(min-width: 1440px) 1440px, 100vw"
               className="object-cover"
             />
           </div>

@@ -1,4 +1,15 @@
+import type { Metadata } from "next";
 import ForgotPasswordForm from "@/components/auth/ForgotPasswordForm";
+import { buildSiteUrl } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: "Forgot Password | Artace Studio",
+  description: "Reset your Artace Studio account password.",
+  alternates: {
+    canonical: buildSiteUrl("/forgot-password"),
+  },
+  robots: { index: false, follow: true },
+};
 
 export default function ForgotPasswordPage() {
   return (

@@ -1,0 +1,274 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "buddha painting feng shui",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 4,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "abstract masterpieces",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.67,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 59,
+      "url": "https://artacestudio.com/abstract-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "abstract art article",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "related_searches"
+      ],
+      "position": 83,
+      "url": "https://artacestudio.com/abstract-paintings/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "виктория brunt",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 50,
+      "url": "https://www.artfinder.com/artists-az/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zuzana petrova",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask"
+      ],
+      "position": 27,
+      "url": "https://www.artfinder.com/artist/oksana-petrova/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zule artist",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images"
+      ],
+      "position": 56,
+      "url": "https://www.artfinder.com/artists-az/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoran stock price",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches"
+      ],
+      "position": 99,
+      "url": "https://www.artfinder.com/artist/zoran-radonjic/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoocation",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "knowledge_graph",
+        "related_searches"
+      ],
+      "position": 11,
+      "url": "https://www.artfinder.com/product/zoocation/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoltan interiors",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "gmb",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 59,
+      "url": "https://www.artfinder.com/artist/zoltan-csomos/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoie lam",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "top_stories",
+        "images",
+        "image_in_block"
+      ],
+      "position": 2,
+      "url": "https://www.artfinder.com/artist/zoie-lam/",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "zoes norman",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://www.artfinder.com/blog/post/artist-interview-2024-zoe-norman/?srsltid=AfmBOopixeQy3wujbAjJdoFyRG65kVSy8lYLRGii4eVgzuCJTvkPHK-L",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoe's norman",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "sge"
+      ],
+      "position": 2,
+      "url": "https://www.artfinder.com/artist/zoeelizabethnorman/",
+      "price": 0,
+      "traffic": 2
+    },
+    {
+      "keyword": "zoe woolley",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "images"
+      ],
+      "position": 34,
+      "url": "https://www.artfinder.com/artist/eleanor-woolley/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

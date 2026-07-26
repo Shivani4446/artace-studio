@@ -1,0 +1,1204 @@
+[
+  {
+    "seed": "original abstract art for sale",
+    "total": 2202,
+    "keywords": [
+      {
+        "keyword": "abstract art",
+        "cpc": 0.38,
+        "difficulty": 59,
+        "volume": 9900,
+        "competition": 1,
+        "serp_features": [
+          "featured_snippets",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract wall art",
+        "cpc": 0.26,
+        "difficulty": 57,
+        "volume": 2900,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting",
+        "cpc": 0.38,
+        "difficulty": 64,
+        "volume": 2900,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for sale",
+        "cpc": 0.41,
+        "difficulty": 55,
+        "volume": 1900,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings for sale",
+        "cpc": 0.33,
+        "difficulty": 50,
+        "volume": 1600,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art sale",
+        "cpc": 0.46,
+        "difficulty": 55,
+        "volume": 1300,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork for sale",
+        "cpc": 0.41,
+        "difficulty": 55,
+        "volume": 1100,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork of",
+        "cpc": 1.66,
+        "difficulty": 60,
+        "volume": 1100,
+        "competition": 0.43,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art painting",
+        "cpc": 0.43,
+        "difficulty": 38,
+        "volume": 740,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "original art",
+        "cpc": 0.41,
+        "difficulty": 20,
+        "volume": 720,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art pieces",
+        "cpc": 0.49,
+        "difficulty": 36,
+        "volume": 610,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract drawings",
+        "cpc": 0,
+        "difficulty": 26,
+        "volume": 590,
+        "competition": 0.56,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract image",
+        "cpc": 0.39,
+        "difficulty": 33,
+        "volume": 590,
+        "competition": 0.76,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract images",
+        "cpc": 0.39,
+        "difficulty": 26,
+        "volume": 590,
+        "competition": 0.76,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art paintings for sale",
+        "cpc": 0.31,
+        "difficulty": 36,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists paintings",
+        "cpc": 0.5,
+        "difficulty": 29,
+        "volume": 590,
+        "competition": 0.74,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "buy artwork online",
+        "cpc": 0.72,
+        "difficulty": 52,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "buying art online",
+        "cpc": 0.72,
+        "difficulty": 47,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artist",
+        "cpc": 0.58,
+        "difficulty": 30,
+        "volume": 590,
+        "competition": 0.42,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting for sell",
+        "cpc": 0.31,
+        "difficulty": 30,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract wall art canvas",
+        "cpc": 0.25,
+        "difficulty": 9,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 14,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art pieces for sale",
+        "cpc": 0.31,
+        "difficulty": 39,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 11,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract canvas wall art",
+        "cpc": 0.25,
+        "difficulty": 10,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art painting for sale",
+        "cpc": 0.31,
+        "difficulty": 28,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for sell",
+        "cpc": 0.89,
+        "difficulty": 54,
+        "volume": 590,
+        "competition": 0.6,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "digital_complaints",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork for sell",
+        "cpc": 0.89,
+        "difficulty": 52,
+        "volume": 590,
+        "competition": 0.6,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "for sale painting",
+        "cpc": 0.31,
+        "difficulty": 26,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art purchase online",
+        "cpc": 0.72,
+        "difficulty": 60,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting artwork for sale",
+        "cpc": 0.31,
+        "difficulty": 39,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting sale",
+        "cpc": 0.35,
+        "difficulty": 26,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "buy original paintings online",
+    "total": 4641,
+    "keywords": [
+      {
+        "keyword": "art",
+        "cpc": 0.47,
+        "difficulty": 83,
+        "volume": 60500,
+        "competition": 0.78,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 13,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings",
+        "cpc": 0.65,
+        "difficulty": 88,
+        "volume": 14800,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork",
+        "cpc": 0.38,
+        "difficulty": 78,
+        "volume": 12100,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art work",
+        "cpc": 0.35,
+        "difficulty": 60,
+        "volume": 5400,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art price",
+        "cpc": 0.34,
+        "difficulty": 69,
+        "volume": 2900,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "sitelinks",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art prints uk",
+        "cpc": 0.38,
+        "difficulty": 55,
+        "volume": 2900,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art with pictures",
+        "cpc": 0.34,
+        "difficulty": 67,
+        "volume": 2400,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for sale",
+        "cpc": 0.41,
+        "difficulty": 55,
+        "volume": 1900,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 34,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings for sale",
+        "cpc": 0.33,
+        "difficulty": 50,
+        "volume": 1600,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 29,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists uk",
+        "cpc": 0.55,
+        "difficulty": 57,
+        "volume": 1500,
+        "competition": 0.08,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art sale",
+        "cpc": 0.46,
+        "difficulty": 55,
+        "volume": 1300,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art auction",
+        "cpc": 0.5,
+        "difficulty": 53,
+        "volume": 1100,
+        "competition": 0.91,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork for sale",
+        "cpc": 0.41,
+        "difficulty": 55,
+        "volume": 1100,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 31,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork of",
+        "cpc": 1.66,
+        "difficulty": 60,
+        "volume": 1100,
+        "competition": 0.43,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art piece",
+        "cpc": 0.47,
+        "difficulty": 41,
+        "volume": 910,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artworks",
+        "cpc": 0.38,
+        "difficulty": 38,
+        "volume": 880,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art images",
+        "cpc": 0.76,
+        "difficulty": 59,
+        "volume": 810,
+        "competition": 0.54,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art online",
+        "cpc": 0.61,
+        "difficulty": 67,
+        "volume": 810,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "buy art",
+        "cpc": 0.56,
+        "difficulty": 41,
+        "volume": 810,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 24,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "online art",
+        "cpc": 0.68,
+        "difficulty": 62,
+        "volume": 760,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art painting",
+        "cpc": 0.43,
+        "difficulty": 38,
+        "volume": 740,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images"
+        ],
+        "relevance": 18,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "original art",
+        "cpc": 0.41,
+        "difficulty": 20,
+        "volume": 720,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 33,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "the artwork",
+        "cpc": 1.1,
+        "difficulty": 36,
+        "volume": 660,
+        "competition": 0.02,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art pieces",
+        "cpc": 0.49,
+        "difficulty": 36,
+        "volume": 610,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art designs",
+        "cpc": 1.11,
+        "difficulty": 24,
+        "volume": 610,
+        "competition": 0.88,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art paintings for sale",
+        "cpc": 0.31,
+        "difficulty": 36,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 33,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artist paintings",
+        "cpc": 0.55,
+        "difficulty": 40,
+        "volume": 590,
+        "competition": 0.86,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists painting",
+        "cpc": 0.5,
+        "difficulty": 42,
+        "volume": 590,
+        "competition": 0.74,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists paintings",
+        "cpc": 0.5,
+        "difficulty": 29,
+        "volume": 590,
+        "competition": 0.74,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "buy art online",
+        "cpc": 0.72,
+        "difficulty": 52,
+        "volume": 590,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "shopping_results",
+          "related_searches"
+        ],
+        "relevance": 34,
+        "intents": [
+          "T"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "custom canvas painting commission",
+    "total": 0,
+    "keywords": []
+  }
+]

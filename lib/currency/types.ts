@@ -1,6 +1,6 @@
 // lib/currency/types.ts
 
-export type CurrencyCode = "INR" | "USD" | "AED" | "AUD" | "CAD" | "GBP";
+export type CurrencyCode = "INR" | "USD" | "AED" | "AUD" | "CAD" | "GBP" | "EUR" | "NZD";
 
 export type ExchangeRates = {
   base: "INR";

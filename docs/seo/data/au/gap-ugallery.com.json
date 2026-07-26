@@ -1,0 +1,426 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "what is watercolor used for",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 41,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "sitelinks",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 77,
+      "url": "https://artacestudio.com/what-is-watercolor-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art origin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 38,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 11,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "periods of indian art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 76,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "painting in indian culture",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.79,
+      "difficulty": 35,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 67,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "learn warli art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 76,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "indian art painting styles",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 67,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "indian art collectors",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 32,
+      "url": "https://artacestudio.com/indian-art-collectors-best-picked-artists/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "chhatrapati shivaji maharaj canvas painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://artacestudio.com/product/chhatrapati-shivaji-maharaj-painting-canvas-painting-24-x-36-in/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "your paintings website",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 46,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 37,
+      "url": "https://www.ugallery.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "writing an artist statement",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.15,
+      "difficulty": 39,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "bads",
+        "sge",
+        "related_searches",
+        "mads"
+      ],
+      "position": 33,
+      "url": "https://www.ugallery.com/blogs/selling-art-online/how-to-write-an-artist-statement",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "world oil painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 44,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 10,
+      "url": "https://www.ugallery.com/collections/oil-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "world best watercolor paintings",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.63,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 29,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wood to paint on",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 41,
+      "url": "https://www.ugallery.com/blogs/articles/faq-how-to-care-for-paintings-on-wood-panels",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wood panels for oil painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.87,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 57,
+      "url": "https://www.ugallery.com/blogs/articles/faq-how-to-care-for-paintings-on-wood-panels",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "winter scene paintings for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "T"
+      ],
+      "serp_features": [
+        "images",
+        "shopping_results"
+      ],
+      "position": 66,
+      "url": "https://www.ugallery.com/collections/landscape-artwork",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "winter landscape painting for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "related_searches"
+      ],
+      "position": 58,
+      "url": "https://www.ugallery.com/collections/expressionist-landscapes",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "window1",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 27,
+      "url": "https://www.ugallery.com/products/acrylic-painting-window1",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wild west art",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0.42,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "bads",
+        "related_searches"
+      ],
+      "position": 20,
+      "url": "https://www.ugallery.com/collections/western-artwork",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

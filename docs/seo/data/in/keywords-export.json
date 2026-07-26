@@ -1,0 +1,156 @@
+[
+  {
+    "is_data_found": true,
+    "keyword": "home decor paintings online",
+    "volume": 20,
+    "cpc": 0.08,
+    "difficulty": 28,
+    "intents": [
+      "C"
+    ],
+    "competition": 1,
+    "history_trend": {
+      "2025-08-01": 10,
+      "2025-09-01": 10,
+      "2025-10-01": 10,
+      "2025-11-01": 10,
+      "2025-12-01": 10,
+      "2026-01-01": 20,
+      "2026-02-01": 20,
+      "2026-03-01": 20,
+      "2026-04-01": 20,
+      "2026-05-01": 20,
+      "2026-06-01": 20,
+      "2026-07-01": 20
+    }
+  },
+  {
+    "is_data_found": true,
+    "keyword": "wall art for living room india",
+    "volume": 30,
+    "cpc": 0.07,
+    "difficulty": 19,
+    "intents": [
+      "C"
+    ],
+    "competition": 1,
+    "history_trend": {
+      "2025-12-01": 30,
+      "2026-01-01": 30,
+      "2026-02-01": 30,
+      "2026-03-01": 30,
+      "2026-04-01": 30,
+      "2026-05-01": 30,
+      "2026-06-01": 30,
+      "2026-07-01": 30
+    }
+  },
+  {
+    "is_data_found": true,
+    "keyword": "vastu paintings for home",
+    "volume": 170,
+    "cpc": 0.01,
+    "difficulty": 7,
+    "intents": [
+      "C"
+    ],
+    "competition": 0.93,
+    "history_trend": {
+      "2025-08-01": 140,
+      "2025-09-01": 140,
+      "2025-10-01": 140,
+      "2025-11-01": 140,
+      "2025-12-01": 140,
+      "2026-01-01": 140,
+      "2026-02-01": 140,
+      "2026-03-01": 140,
+      "2026-04-01": 140,
+      "2026-05-01": 140,
+      "2026-06-01": 140,
+      "2026-07-01": 170
+    }
+  },
+  {
+    "is_data_found": true,
+    "keyword": "ganesha canvas painting",
+    "volume": 2900,
+    "cpc": 0.01,
+    "difficulty": 79,
+    "intents": [
+      "I"
+    ],
+    "competition": 0.57,
+    "history_trend": {
+      "2025-08-01": 10,
+      "2025-09-01": 10,
+      "2025-10-01": 20,
+      "2025-11-01": 15,
+      "2025-12-01": 10,
+      "2026-01-01": 10,
+      "2026-02-01": 10,
+      "2026-03-01": 10,
+      "2026-04-01": 10,
+      "2026-05-01": 10,
+      "2026-06-01": 10,
+      "2026-07-01": 2900
+    }
+  },
+  {
+    "is_data_found": true,
+    "keyword": "canvas painting for bedroom",
+    "volume": 390,
+    "cpc": 0.01,
+    "difficulty": 11,
+    "intents": [
+      "I"
+    ],
+    "competition": 1,
+    "history_trend": {
+      "2025-08-01": 590,
+      "2025-09-01": 480,
+      "2025-10-01": 480,
+      "2025-11-01": 480,
+      "2025-12-01": 480,
+      "2026-01-01": 480,
+      "2026-02-01": 480,
+      "2026-03-01": 480,
+      "2026-04-01": 390,
+      "2026-05-01": 390,
+      "2026-06-01": 390,
+      "2026-07-01": 390
+    }
+  },
+  {
+    "keyword": "radha krishna painting for home",
+    "is_data_found": false
+  },
+  {
+    "is_data_found": true,
+    "keyword": "pooja room paintings",
+    "volume": 210,
+    "cpc": 0,
+    "difficulty": 9,
+    "intents": [
+      "I",
+      "N"
+    ],
+    "competition": 0.14,
+    "history_trend": {
+      "2026-05-01": 210,
+      "2026-06-01": 210,
+      "2026-07-01": 210
+    }
+  },
+  {
+    "keyword": "housewarming gift painting india",
+    "is_data_found": false
+  },
+  {
+    "keyword": "budget wall art india",
+    "is_data_found": false
+  },
+  {
+    "keyword": "affordable canvas paintings online india",
+    "is_data_found": false
+  }
+]

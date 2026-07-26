@@ -1,0 +1,281 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "buddha painting feng shui",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 4,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "abstract masterpieces",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.67,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 59,
+      "url": "https://artacestudio.com/abstract-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "abstract art article",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "related_searches"
+      ],
+      "position": 83,
+      "url": "https://artacestudio.com/abstract-paintings/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "youvalyou art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "related_searches"
+      ],
+      "position": 24,
+      "url": "https://www.ugallery.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "your artwork",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 41,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 45,
+      "url": "https://www.ugallery.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "your art online",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 45,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 47,
+      "url": "https://www.ugallery.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yi chen art",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images"
+      ],
+      "position": 31,
+      "url": "https://www.ugallery.com/pages/laura-yi-zhen-chen",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yelitza",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "digital_complaints"
+      ],
+      "position": 11,
+      "url": "https://www.ugallery.com/pages/yelitza-diaz",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yelena sidorova artist",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.ugallery.com/products/mixed-media-artwork-basket-of-joy",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yelena sidorova",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 2,
+      "url": "https://www.ugallery.com/products/mixed-media-artwork-bright-cheerful-night?srsltid=AfmBOorq1IWjjpUUDGIq8SiS1EsCYagWZ54dfW1eYxVeZHFxkYtKyPun",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "wynston",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "sge"
+      ],
+      "position": 74,
+      "url": "https://www.ugallery.com/pages/wynston-edun",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "www watercolour painting com",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 31,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "www ugallery com",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "sge",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://www.ugallery.com/",
+      "price": 0,
+      "traffic": 1
+    }
+  ]
+}

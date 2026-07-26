@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Our Artists | Team | Artace Studio",
   description: "Meet the talented artists behind Artace Studio. Explore profiles of our creative team and their unique art styles.",
   keywords: "our artists, artist profiles, art team, painting artists",
+  alternates: {
+    canonical: buildSiteUrl("/team"),
+  },
   openGraph: {
     title: "Our Artists | Team | Artace Studio",
     description: "Meet the talented artists behind our paintings.",

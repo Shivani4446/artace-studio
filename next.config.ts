@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         destination: "/shop/:slug",
         permanent: false,
       },
+      {
+        source: "/collections/mahadev-nandi-canvas-painting-shiva-devotional-wall-art",
+        destination: "/collections/mahadev-nandi-canvas-painting",
+        permanent: true,
+      },
     ];
   },
   images: {

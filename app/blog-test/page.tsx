@@ -1,6 +1,16 @@
 import React from "react";
+import type { Metadata } from "next";
+import { buildSiteUrl } from "@/lib/site";
 
 export const revalidate = 120;
+
+export const metadata: Metadata = {
+  title: "Blog Test | Artace Studio",
+  alternates: {
+    canonical: buildSiteUrl("/blog-test"),
+  },
+  robots: { index: false, follow: false },
+};
 
 type BlogPost = {
   id: number;

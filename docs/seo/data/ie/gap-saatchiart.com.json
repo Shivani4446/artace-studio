@@ -1,0 +1,216 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "李放",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video"
+      ],
+      "position": 5,
+      "url": "https://www.saatchiart.com/lifang",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yves klein blue",
+      "volume": 170,
+      "cpc": 0,
+      "competition": 0.31,
+      "difficulty": 36,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "knowledge_graph",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 17,
+      "url": "https://canvas.saatchiart.com/art/art-history-101/beyond-the-blue-the-legacy-of-yves-klein",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "yves klein",
+      "volume": 210,
+      "cpc": 0,
+      "competition": 0.23,
+      "difficulty": 57,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 19,
+      "url": "https://canvas.saatchiart.com/art/art-history-101/beyond-the-blue-the-legacy-of-yves-klein",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "youtube mp3 converter meme",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "digital_complaints",
+        "related_searches"
+      ],
+      "position": 81,
+      "url": "https://www.saatchiart.com/en-be/art/Painting-me-talking-about-youtubemp3converter/426928/8664555/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yoko ono art",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 37,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "knowledge_graph",
+        "related_searches"
+      ],
+      "position": 61,
+      "url": "https://www.saatchiart.com/en-ch/paintings/yoko-ono/feature",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yoko akino artist",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images"
+      ],
+      "position": 6,
+      "url": "https://www.saatchiart.com/en-ie/yokoakino",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yin yang art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.85,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "shopping_results",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 5,
+      "url": "https://www.saatchiart.com/paintings/yin-yang/feature",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yellow abstract art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 22,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 8,
+      "url": "https://www.saatchiart.com/paintings/yellow-abstract-art/feature",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yann tiersen whelans",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "sge"
+      ],
+      "position": 97,
+      "url": "https://www.saatchiart.com/print/Painting-Portrait-2/1153840/4621069/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "xxxxii",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "knowledge_graph",
+        "sge"
+      ],
+      "position": 7,
+      "url": "https://www.saatchiart.com/print/Drawing-Nude-XXXXII/511785/8830232/view",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

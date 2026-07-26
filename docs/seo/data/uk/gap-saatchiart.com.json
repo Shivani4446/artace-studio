@@ -1,0 +1,234 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "buddha painting feng shui",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 4,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 13,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "влад достоевский",
+      "volume": 0,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "image_in_block"
+      ],
+      "position": 65,
+      "url": "https://www.saatchiart.com/art/Drawing-Fyodor-Mixailovich-Dostoevskij/612046/1753793/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "óscar pulido",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "digital_complaints",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 14,
+      "url": "https://www.saatchiart.com/account/profile/2566311",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwiefka",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "digital_complaints",
+        "image_in_block"
+      ],
+      "position": 18,
+      "url": "https://www.saatchiart.com/annazwiefka",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "zwei girls",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "image_in_block"
+      ],
+      "position": 29,
+      "url": "https://www.saatchiart.com/paintings/two-girls/feature",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwam",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 48,
+      "url": "https://www.saatchiart.com/martvanzwam",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zwa chicago",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "images",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 17,
+      "url": "https://www.saatchiart.com/art/Drawing-Zwa/2091657/9795607/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zvi livni lithographs",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "image_in_block"
+      ],
+      "position": 68,
+      "url": "https://www.saatchiart.com/livniliat",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zvi livni artist",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "image_in_block"
+      ],
+      "position": 43,
+      "url": "https://www.saatchiart.com/livniliat",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zuzu org",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 26,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask"
+      ],
+      "position": 36,
+      "url": "https://www.saatchiart.com/art/Painting-Zuzu/691568/2957507/view",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zuzane",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.07,
+      "difficulty": 5,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "image_in_block"
+      ],
+      "position": 45,
+      "url": "https://www.saatchiart.com/print/Painting-No-boundaries-Violet-Abstract-painting-original-abstract-art-contemporary-art-Painting-by-Zuzane-Pera/1042462/4621204/view",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

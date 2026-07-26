@@ -35,6 +35,23 @@ const footerSections: FooterSection[] = [
     ],
   },
   {
+    title: "Shop by Room",
+    links: [
+      { label: "Bedroom", href: "/rooms/bedroom" },
+      { label: "Living Room", href: "/rooms/living-room" },
+      { label: "Dining Room", href: "/rooms/dining-room" },
+      { label: "Pooja Room", href: "/rooms/pooja-room" },
+    ],
+  },
+  {
+    title: "Shop Worldwide",
+    links: [
+      { label: "United Kingdom", href: "/original-abstract-art-for-sale-uk" },
+      { label: "Ireland", href: "/original-paintings-for-sale-ireland" },
+      { label: "New Zealand", href: "/original-abstract-art-for-sale-nz" },
+    ],
+  },
+  {
     title: "Resources",
     links: [
       { label: "Blogs", href: "/blogs" },
@@ -42,6 +59,7 @@ const footerSections: FooterSection[] = [
       { label: "About Us", href: "/about-us" },
       { label: "Team", href: "/team" },
       { label: "Painting Categories", href: "/shop" },
+      { label: "Warli Paintings", href: "/warli-paintings" },
     ],
   },
   {
@@ -90,7 +108,7 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden bg-[#050608] text-white">
       <div className="relative z-10 mx-auto max-w-[1440px] px-6 pb-32 pt-16 md:px-12 md:pt-20 lg:pb-36">
-        <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.55fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr_1fr]">
           <div className="lg:pr-8">
             <Link
               href="/"

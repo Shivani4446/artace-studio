@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Online Art Exhibition | Virtual Gallery | Artace Studio",
   description: "Explore Artace Studio's online art exhibition. View our virtual gallery showcasing curated paintings and contemporary artworks.",
   keywords: "art exhibition, virtual gallery, online gallery, contemporary art, curated paintings",
+  alternates: {
+    canonical: buildSiteUrl("/exhibition"),
+  },
   openGraph: {
     title: "Online Art Exhibition | Artace Studio",
     description: "Explore our virtual gallery exhibition.",

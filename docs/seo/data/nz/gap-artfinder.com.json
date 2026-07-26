@@ -1,0 +1,232 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "zebra print art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 48,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra painting on canvas",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 39,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra painting for wall",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 37,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra painting for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 8,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "bads",
+        "related_searches"
+      ],
+      "position": 12,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.5,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "bads",
+        "gmb",
+        "related_searches"
+      ],
+      "position": 19,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra artwork",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.71,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 16,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zebra art",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.71,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "bads",
+        "find_results_on",
+        "sge",
+        "related_searches"
+      ],
+      "position": 29,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zebra/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "young park",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "gmb",
+        "sge",
+        "related_searches"
+      ],
+      "position": 5,
+      "url": "https://www.artfinder.com/artist/youngpark/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "young artists",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 57,
+      "url": "https://www.artfinder.com/artist-charts/top-40-brand-new-artists/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "www art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 76,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 12,
+      "url": "https://www.artfinder.com/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

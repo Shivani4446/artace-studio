@@ -92,8 +92,22 @@ async function fetchWooJson<T>(path: string, params: Record<string, string | num
   }
 }
 
+type SitemapProduct = {
+  slug?: string;
+  date_modified?: string;
+  date_modified_gmt?: string;
+  categories?: Array<{ slug?: string }>;
+};
+
+type SitemapCategory = {
+  slug?: string;
+  name?: string;
+  date_modified?: string;
+  date_modified_gmt?: string;
+};
+
 async function getAllProducts() {
-  const products: Array<{ slug?: string; date_modified?: string; date_modified_gmt?: string }> = [];
+  const products: SitemapProduct[] = [];
   const perPage = 100;
 
   let page = 1;
@@ -108,9 +122,7 @@ async function getAllProducts() {
 
     if (!Array.isArray(data) || data.length === 0) break;
 
-    products.push(
-      ...(data as Array<{ slug?: string; date_modified?: string; date_modified_gmt?: string }>)
-    );
+    products.push(...(data as SitemapProduct[]));
 
     if (data.length < perPage) break;
     page += 1;
@@ -122,8 +134,20 @@ async function getAllProducts() {
 async function getAllCategories() {
   const data = await fetchWooJson<unknown>(`/wc/v3/products/categories`, { per_page: 100 });
   if (!Array.isArray(data)) return [];
-  return data as Array<{ slug?: string; date_modified?: string; date_modified_gmt?: string }>;
+  return data as SitemapCategory[];
 }
+
+// Same catch-all-category exclusion already applied to the homepage's
+// Discover Collections grid (app/(home)/page.tsx) — this category exists in
+// WooCommerce but was never meant to have its own public collection page.
+const EXCLUDED_CATEGORY_SLUGS = new Set(["all-canvas-paintings", "all-canvas-paintngs", "all-products"]);
+const EXCLUDED_CATEGORY_NAMES = new Set(["all canvas paintings", "all canvas paintngs"]);
+
+const isExcludedCatchAllCategory = (category: SitemapCategory) => {
+  const slug = (category.slug || "").trim().toLowerCase();
+  const name = (category.name || "").trim().toLowerCase();
+  return EXCLUDED_CATEGORY_SLUGS.has(slug) || EXCLUDED_CATEGORY_NAMES.has(name);
+};
 
 async function getAllBlogPosts() {
   try {
@@ -206,6 +230,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/warli-paintings`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/rooms/bedroom`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/rooms/living-room`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/rooms/dining-room`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/rooms/pooja-room`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/original-abstract-art-for-sale-uk`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/original-paintings-for-sale-ireland`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/original-abstract-art-for-sale-nz`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
     ...products
       .map((product): MetadataRoute.Sitemap[number] | null => {
         const slug = (product.slug || "").trim();
@@ -218,19 +290,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
       })
       .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
-    ...categories
-      .map((category): MetadataRoute.Sitemap[number] | null => {
-        const slug = (category.slug || "").trim();
-        if (!slug) return null;
-        return {
-          url: `${baseUrl}/collections/${encodeURIComponent(slug)}`,
-          lastModified:
-            safeDate(category.date_modified_gmt) || safeDate(category.date_modified) || new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        };
-      })
-      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
+    ...(() => {
+      // A category only gets a real /collections/[slug] page if at least one
+      // actual product carries that category slug — matches the same check
+      // app/collections/[slug]/page.tsx itself uses to decide notFound(), so
+      // the sitemap never lists a URL the page would 404 on (a category's own
+      // reported `count` can be stale, unlike this direct product cross-check).
+      const liveCategorySlugs = new Set(
+        products.flatMap((product) =>
+          (product.categories || [])
+            .map((category) => (category.slug || "").trim())
+            .filter(Boolean)
+        )
+      );
+
+      return categories
+        .filter((category) => !isExcludedCatchAllCategory(category))
+        .map((category): MetadataRoute.Sitemap[number] | null => {
+          const slug = (category.slug || "").trim();
+          if (!slug || !liveCategorySlugs.has(slug)) return null;
+          return {
+            url: `${baseUrl}/collections/${encodeURIComponent(slug)}`,
+            lastModified:
+              safeDate(category.date_modified_gmt) || safeDate(category.date_modified) || new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+          };
+        })
+        .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null);
+    })(),
     ...blogPosts
       .map((post): MetadataRoute.Sitemap[number] | null => {
         const slug = (post.slug || "").trim();

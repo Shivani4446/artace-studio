@@ -312,6 +312,22 @@ const getCollectionFaqs = (categoryName: string): FAQItem[] => {
   ];
 };
 
+// SEO-tuned title/description for collections where the generic template
+// leaves validated keyword volume on the table (see docs/seo/2026-07-21-international-keyword-research.md).
+// Collections not listed here keep the generic template below.
+const COLLECTION_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
+  "ganapati-paintings": {
+    title: "Ganesha Canvas Painting Online in India | Hand-Painted Ganpati Art | Artace Studio",
+    description:
+      "Shop hand-painted Ganesha canvas paintings online in India. Original Ganpati art for your home, pooja room, or office — 100% handcrafted, never printed, with custom sizing available.",
+  },
+  "vastu-paintings": {
+    title: "Vastu Paintings for Home & Pooja Room | Hand-Painted Canvas Art | Artace Studio",
+    description:
+      "Shop Vastu-compliant canvas paintings for your home and pooja room. Hand-painted wall art chosen for auspicious direction and placement, crafted to bring balance and positive energy to your space.",
+  },
+};
+
 export async function generateMetadata({ params }: CollectionPageProps) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
@@ -322,8 +338,12 @@ export async function generateMetadata({ params }: CollectionPageProps) {
       decodedSlug.replace(/-/g, " ").replace(/\b\w/g, (character) => character.toUpperCase())
   );
   const imageUrl = toAbsoluteImageUrl(matchedCategory?.image?.src);
-  const title = `${readableName} Online in India | Handmade Canvas Art | Artace Studio`;
-  const description = `Browse ${readableName.toLowerCase()} at Artace Studio. Explore handcrafted canvas art, premium wall decor, and custom-order options curated for collectors in India.`;
+  const seoOverride = COLLECTION_SEO_OVERRIDES[decodedSlug];
+  const title =
+    seoOverride?.title || `${readableName} Online in India | Handmade Canvas Art | Artace Studio`;
+  const description =
+    seoOverride?.description ||
+    `Browse ${readableName.toLowerCase()} at Artace Studio. Explore handcrafted canvas art, premium wall decor, and custom-order options curated for collectors in India.`;
 
   return {
     title,

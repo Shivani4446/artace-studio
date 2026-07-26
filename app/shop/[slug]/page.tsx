@@ -8,6 +8,7 @@ import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateProductSchema } from "@/lib/schema";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
+import { buildSiteUrl } from "@/lib/site";
 
 export const runtime = 'edge';
 export const revalidate = 120;
@@ -947,16 +948,18 @@ export async function generateMetadata({ params }: SingleProductPageProps) {
     notFound();
   }
 
+  const productUrl = buildSiteUrl(`/shop/${product.slug}`);
+
   return {
     title: `${decodeHtmlEntities(product.name)} | Artace Studio`,
     description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
     alternates: {
-      canonical: product.permalink,
+      canonical: productUrl,
     },
     openGraph: {
       title: decodeHtmlEntities(product.name),
       description: stripHtmlAndDecode(product.short_description || "").substring(0, 160),
-      url: product.permalink,
+      url: productUrl,
       type: "website",
       images: product.images?.[0]?.src ? [{ url: decodeHtmlEntities(product.images[0].src) }] : [],
     },

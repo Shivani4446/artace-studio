@@ -1,11 +1,15 @@
 import React from "react";
 import type { Metadata } from "next";
 import Abouthero from "@/components/About/Abouthero";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About Us | Our Story | Artace Studio",
   description: "Learn about Artace Studio - A Repository of Paintings. Discover our mission to bring unique handcrafted paintings to art lovers worldwide.",
   keywords: "about Artace Studio, our story, art gallery mission, painting gallery",
+  alternates: {
+    canonical: buildSiteUrl("/about-us"),
+  },
   openGraph: {
     title: "About Us | Our Story | Artace Studio",
     description: "Learn about Artace Studio and our mission.",

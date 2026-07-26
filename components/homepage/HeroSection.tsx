@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ShoppingCart } from "lucide-react";
+import HeroPriceAnchor from "./HeroPriceAnchor";
 
 const HeroSection = () => {
   return (
@@ -13,6 +14,7 @@ const HeroSection = () => {
             alt="Radha Krishna hero artwork background"
             fill
             priority
+            sizes="(max-width: 767px) 100vw, 56vw"
             className="object-cover object-center md:object-[84%_center]"
           />
           <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/55 to-black/95" />
@@ -31,6 +33,7 @@ const HeroSection = () => {
                 and abstract statements to custom commissions shaped around your space,
                 palette, and story.
               </p>
+              <HeroPriceAnchor />
               <div className="mt-7 flex w-full flex-col gap-3 sm:mt-8 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
                 <Link
                   href="/shop"

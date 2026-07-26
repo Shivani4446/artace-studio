@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | Data Protection | Artace Studio",
   description: "Artace Studio privacy policy. Learn how we protect your data, handle payments securely, and respect your privacy.",
   keywords: "privacy policy, data protection, GDPR, payment security",
+  alternates: {
+    canonical: buildSiteUrl("/privacy-policy"),
+  },
   openGraph: {
     title: "Privacy Policy | Data Protection | Artace Studio",
     description: "Our privacy and data protection policy.",

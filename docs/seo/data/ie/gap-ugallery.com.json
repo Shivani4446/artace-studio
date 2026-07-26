@@ -1,0 +1,225 @@
+{
+  "oursNotTheirs": [],
+  "theirsNotOurs": [
+    {
+      "keyword": "western art",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 40,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "bads",
+        "related_searches"
+      ],
+      "position": 55,
+      "url": "https://www.ugallery.com/collections/western-artwork",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour paintings of venice",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 2,
+      "url": "https://www.ugallery.com/products/watercolor-painting-sailing-through-venice-canals?srsltid=AfmBOorFEVbLDMlLeIE8bzizj2x6kxlgiP_Y2jJy4BsJOiEbR0ltt2uy",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour paintings for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "bads",
+        "related_searches"
+      ],
+      "position": 25,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour paintings famous",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0.45,
+      "difficulty": 18,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 49,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour paintings",
+      "volume": 480,
+      "cpc": 0.19,
+      "competition": 1,
+      "difficulty": 22,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "bads"
+      ],
+      "position": 45,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour painting images",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 42,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour painting for sale",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 1,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "T"
+      ],
+      "serp_features": [
+        "local_pack",
+        "reviews",
+        "video",
+        "images",
+        "bads",
+        "related_searches"
+      ],
+      "position": 31,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolour art",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.77,
+      "difficulty": 21,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "related_searches"
+      ],
+      "position": 48,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolors paintings",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 22,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "shopping_results",
+        "related_searches"
+      ],
+      "position": 33,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "watercolors art",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0.95,
+      "difficulty": 23,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "bads",
+        "find_results_on",
+        "related_searches"
+      ],
+      "position": 18,
+      "url": "https://www.ugallery.com/collections/watercolor-painting",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

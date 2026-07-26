@@ -3,11 +3,15 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import CorporateLeadForm from "@/components/corporate/CorporateLeadForm";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Corporate Bulk Orders | Business Art Gifting | Artace Studio",
   description: "Order paintings in bulk for corporate gifting. Perfect for office decoration, employee gifts, and business events. Special pricing available.",
   keywords: "bulk art orders, corporate gifting, business art, office art, bulk painting orders",
+  alternates: {
+    canonical: buildSiteUrl("/corporate-bulk-orders"),
+  },
   openGraph: {
     title: "Corporate Bulk Orders | Business Art Gifting | Artace Studio",
     description: "Bulk orders for corporate gifting and office art.",

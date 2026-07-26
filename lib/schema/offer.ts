@@ -10,10 +10,11 @@ const DEFAULT_CURRENCY = "INR";
 
 export interface OfferSchemaOptions {
   product: WooStoreProduct;
+  productUrl: string;
   variation?: VariationData;
 }
 
-export function generateOfferSchema({ product, variation }: OfferSchemaOptions) {
+export function generateOfferSchema({ product, productUrl, variation }: OfferSchemaOptions) {
   const price = variation?.price ?? parseFloat(product.prices.price);
   const regularPrice = variation?.regularPrice ?? parseFloat(product.prices.regular_price);
   const salePrice = variation?.salePrice ?? (product.prices.sale_price ? parseFloat(product.prices.sale_price) : null);
@@ -32,7 +33,7 @@ export function generateOfferSchema({ product, variation }: OfferSchemaOptions) 
     "price": price.toFixed(2),
     "priceCurrency": product.prices.currency_code || DEFAULT_CURRENCY,
     "availability": stockStatus,
-    "url": product.permalink,
+    "url": productUrl,
     "priceValidUntil": priceValidUntil.toISOString().split("T")[0],
     "itemCondition": "https://schema.org/NewCondition",
   };
@@ -59,12 +60,12 @@ export function generateOfferSchema({ product, variation }: OfferSchemaOptions) 
   return offerSchema;
 }
 
-export function generateAllOffersSchema(product: WooStoreProduct) {
+export function generateAllOffersSchema(product: WooStoreProduct, productUrl: string) {
   if (product.variations && product.variations.length > 0) {
     return product.variations.map((variation) =>
-      generateOfferSchema({ product, variation })
+      generateOfferSchema({ product, productUrl, variation })
     );
   }
 
-  return [generateOfferSchema({ product })];
+  return [generateOfferSchema({ product, productUrl })];
 }

@@ -1,0 +1,601 @@
+[
+  {
+    "seed": "original abstract art for sale",
+    "total": 356,
+    "keywords": [
+      {
+        "keyword": "artist nz",
+        "cpc": 0.14,
+        "difficulty": 46,
+        "volume": 2400,
+        "competition": 0.45,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art nz",
+        "cpc": 0.22,
+        "difficulty": 42,
+        "volume": 990,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract paintings",
+        "cpc": 0.26,
+        "difficulty": 44,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract design",
+        "cpc": 0,
+        "difficulty": 8,
+        "volume": 480,
+        "competition": 0.05,
+        "serp_features": [
+          "reviews",
+          "sitelinks",
+          "images",
+          "gmb",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art paintings",
+        "cpc": 0.26,
+        "difficulty": 43,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "nz art sale",
+        "cpc": 0.17,
+        "difficulty": 26,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "gmb"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting",
+        "cpc": 0.26,
+        "difficulty": 47,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "new zealand art for sale",
+        "cpc": 0.17,
+        "difficulty": 24,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "nz art for sale",
+        "cpc": 0.17,
+        "difficulty": 26,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for sale nz",
+        "cpc": 0.17,
+        "difficulty": 29,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "new zealand artwork for sale",
+        "cpc": 0.17,
+        "difficulty": 20,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art abstract paintings",
+        "cpc": 0.26,
+        "difficulty": 54,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 20,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art to buy nz",
+        "cpc": 0.17,
+        "difficulty": 30,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 10,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "nz artwork for sale",
+        "cpc": 0.17,
+        "difficulty": 22,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art sale nz",
+        "cpc": 0.17,
+        "difficulty": 22,
+        "volume": 480,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artists paintings",
+        "cpc": 0.26,
+        "difficulty": 35,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artist paintings",
+        "cpc": 0.26,
+        "difficulty": 34,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 21,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artwork paintings",
+        "cpc": 0.26,
+        "difficulty": 43,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artwork abstract paintings",
+        "cpc": 0.26,
+        "difficulty": 25,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video",
+          "digital_complaints",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting art abstract",
+        "cpc": 0.26,
+        "difficulty": 46,
+        "volume": 480,
+        "competition": 0.78,
+        "serp_features": [
+          "reviews",
+          "video"
+        ],
+        "relevance": 14,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art shop art",
+        "cpc": 0.07,
+        "difficulty": 36,
+        "volume": 480,
+        "competition": 0.56,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art of new zealand",
+        "cpc": 0.21,
+        "difficulty": 33,
+        "volume": 390,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "new zealand artworks",
+        "cpc": 0.21,
+        "difficulty": 18,
+        "volume": 390,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art",
+        "cpc": 0.25,
+        "difficulty": 40,
+        "volume": 290,
+        "competition": 0.67,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art for sale",
+        "cpc": 0.17,
+        "difficulty": 23,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art nz",
+        "cpc": 0.24,
+        "difficulty": 4,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "new zealand abstract art",
+        "cpc": 0.24,
+        "difficulty": 4,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting nz",
+        "cpc": 0.24,
+        "difficulty": 4,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "original art for sale nz",
+        "cpc": 0.14,
+        "difficulty": 19,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artworks for sale",
+        "cpc": 0.17,
+        "difficulty": 37,
+        "volume": 210,
+        "competition": 1,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "buy original paintings online",
+    "total": 0,
+    "keywords": []
+  },
+  {
+    "seed": "custom canvas painting commission",
+    "total": 0,
+    "keywords": []
+  }
+]

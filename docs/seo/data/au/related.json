@@ -1,0 +1,1779 @@
+[
+  {
+    "seed": "original abstract art for sale",
+    "total": 961,
+    "keywords": [
+      {
+        "keyword": "abstract art",
+        "cpc": 0.49,
+        "difficulty": 78,
+        "volume": 6600,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 41,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting",
+        "cpc": 0.47,
+        "difficulty": 81,
+        "volume": 1600,
+        "competition": 1,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 22,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "printable abstract art",
+        "cpc": 0.37,
+        "difficulty": 23,
+        "volume": 880,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 21,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract wall art",
+        "cpc": 0.39,
+        "difficulty": 11,
+        "volume": 610,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 25,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artists",
+        "cpc": 0.47,
+        "difficulty": 37,
+        "volume": 590,
+        "competition": 0.21,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract landscape art",
+        "cpc": 0.37,
+        "difficulty": 7,
+        "volume": 590,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art portraits",
+        "cpc": 0,
+        "difficulty": 16,
+        "volume": 590,
+        "competition": 0.55,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art landscape paintings",
+        "cpc": 0.37,
+        "difficulty": 8,
+        "volume": 590,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "landscape art abstract",
+        "cpc": 0.37,
+        "difficulty": 8,
+        "volume": 590,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "landscape abstract art paintings",
+        "cpc": 0.37,
+        "difficulty": 8,
+        "volume": 590,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings abstract art landscape",
+        "cpc": 0.37,
+        "difficulty": 9,
+        "volume": 590,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art portrait",
+        "cpc": 0,
+        "difficulty": 8,
+        "volume": 590,
+        "competition": 0.55,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract landscape",
+        "cpc": 0.33,
+        "difficulty": 7,
+        "volume": 480,
+        "competition": 0.94,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art for sale",
+        "cpc": 0.44,
+        "difficulty": 9,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 52,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art sales",
+        "cpc": 0.47,
+        "difficulty": 16,
+        "volume": 320,
+        "competition": 0.61,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 47,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract painting for sale",
+        "cpc": 0.37,
+        "difficulty": 18,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 52,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern abstract art",
+        "cpc": 0.47,
+        "difficulty": 29,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 31,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern abstract paintings",
+        "cpc": 0.47,
+        "difficulty": 21,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 30,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract art paintings for sale",
+        "cpc": 0.44,
+        "difficulty": 18,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 51,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract artwork for sale",
+        "cpc": 0.44,
+        "difficulty": 15,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 39,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art painting modern",
+        "cpc": 0.28,
+        "difficulty": 15,
+        "volume": 320,
+        "competition": 0.85,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern abstract artwork",
+        "cpc": 0.47,
+        "difficulty": 10,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 32,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern and abstract art",
+        "cpc": 0.47,
+        "difficulty": 28,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 28,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art abstract modern",
+        "cpc": 0.47,
+        "difficulty": 10,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 31,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract drawing",
+        "cpc": 0,
+        "difficulty": 33,
+        "volume": 320,
+        "competition": 0.31,
+        "serp_features": [
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "abstract drawings for sale",
+        "cpc": 0.44,
+        "difficulty": 15,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 56,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "modern abstract drawings",
+        "cpc": 0.47,
+        "difficulty": 21,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 26,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings for sale abstract",
+        "cpc": 0.44,
+        "difficulty": 15,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 57,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art modern abstract",
+        "cpc": 0.47,
+        "difficulty": 10,
+        "volume": 320,
+        "competition": 0.99,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 32,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art abstract for sale",
+        "cpc": 0.44,
+        "difficulty": 8,
+        "volume": 320,
+        "competition": 0.59,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images"
+        ],
+        "relevance": 41,
+        "intents": [
+          "L",
+          "T"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "contemporary indian art for sale",
+    "total": 299,
+    "keywords": [
+      {
+        "keyword": "art from india",
+        "cpc": 0.27,
+        "difficulty": 34,
+        "volume": 290,
+        "competition": 0.63,
+        "serp_features": [
+          "reviews",
+          "video",
+          "related_searches"
+        ],
+        "relevance": 24,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian art paintings",
+        "cpc": 0.18,
+        "difficulty": 21,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 21,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings of india",
+        "cpc": 0.18,
+        "difficulty": 28,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 11,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian art and paintings",
+        "cpc": 0.18,
+        "difficulty": 28,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 21,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian paintings and painters",
+        "cpc": 0.18,
+        "difficulty": 28,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting art india",
+        "cpc": 0.18,
+        "difficulty": 34,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting for india",
+        "cpc": 0.18,
+        "difficulty": 35,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 22,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings about india",
+        "cpc": 0.18,
+        "difficulty": 41,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 18,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings of indian",
+        "cpc": 0.18,
+        "difficulty": 17,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "sitelinks",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 13,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "paintings of indian painters",
+        "cpc": 0.18,
+        "difficulty": 21,
+        "volume": 170,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "hindu paintings",
+        "cpc": 0,
+        "difficulty": 19,
+        "volume": 170,
+        "competition": 0.26,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian paintings",
+        "cpc": 0.16,
+        "difficulty": 31,
+        "volume": 140,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian artwork",
+        "cpc": 0.24,
+        "difficulty": 28,
+        "volume": 140,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 19,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "painting purchase online",
+        "cpc": 0.53,
+        "difficulty": 45,
+        "volume": 140,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian wall art",
+        "cpc": 0.19,
+        "difficulty": 14,
+        "volume": 110,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 16,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian traditional art",
+        "cpc": 0,
+        "difficulty": 29,
+        "volume": 70,
+        "competition": 0.41,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 9,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "wall art india",
+        "cpc": 0.26,
+        "difficulty": 18,
+        "volume": 70,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 15,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous indian art",
+        "cpc": 0,
+        "difficulty": 27,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian art prints",
+        "cpc": 0.32,
+        "difficulty": 11,
+        "volume": 70,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous paintings of indian painters",
+        "cpc": 0,
+        "difficulty": 17,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous indian art paintings",
+        "cpc": 0,
+        "difficulty": 27,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "popular indian paintings",
+        "cpc": 0,
+        "difficulty": 17,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous indian paintings",
+        "cpc": 0,
+        "difficulty": 17,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "traditional indian art",
+        "cpc": 0,
+        "difficulty": 27,
+        "volume": 70,
+        "competition": 0.41,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 12,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous indian artists paintings",
+        "cpc": 0,
+        "difficulty": 8,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 8,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art prints india",
+        "cpc": 0.32,
+        "difficulty": 25,
+        "volume": 70,
+        "competition": 0.97,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian artists",
+        "cpc": 0,
+        "difficulty": 9,
+        "volume": 70,
+        "competition": 0.07,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 17,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "famous indian artworks",
+        "cpc": 0,
+        "difficulty": 17,
+        "volume": 70,
+        "competition": 0.48,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "find_results_on",
+          "related_searches"
+        ],
+        "relevance": 10,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian art",
+        "cpc": 0.27,
+        "difficulty": 28,
+        "volume": 50,
+        "competition": 0.63,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 21,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "indian wall hangings",
+        "cpc": 0.13,
+        "difficulty": 8,
+        "volume": 50,
+        "competition": 1,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "digital_complaints",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I",
+          "N"
+        ],
+        "history_trend": null
+      }
+    ]
+  },
+  {
+    "seed": "commission a painting online",
+    "total": 556,
+    "keywords": [
+      {
+        "keyword": "art commissions",
+        "cpc": 0.5,
+        "difficulty": 26,
+        "volume": 480,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "related_searches"
+        ],
+        "relevance": 33,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art gallery new york",
+        "cpc": 0.05,
+        "difficulty": 81,
+        "volume": 480,
+        "competition": 0.23,
+        "serp_features": [
+          "local_pack",
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "L",
+          "C"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commission",
+        "cpc": 0.5,
+        "difficulty": 22,
+        "volume": 480,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "bads",
+          "find_results_on",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 44,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commissioning",
+        "cpc": 0.5,
+        "difficulty": 8,
+        "volume": 480,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 37,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commission artworks",
+        "cpc": 0.5,
+        "difficulty": 17,
+        "volume": 480,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 47,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "american museum of art nyc",
+        "cpc": 0.05,
+        "difficulty": 82,
+        "volume": 390,
+        "competition": 0.28,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissions art",
+        "cpc": 0.68,
+        "difficulty": 31,
+        "volume": 320,
+        "competition": 0.7,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 33,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissioned art",
+        "cpc": 0.68,
+        "difficulty": 26,
+        "volume": 320,
+        "competition": 0.7,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 30,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissioned artwork",
+        "cpc": 0.68,
+        "difficulty": 26,
+        "volume": 320,
+        "competition": 0.7,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 32,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissioning art",
+        "cpc": 0.68,
+        "difficulty": 33,
+        "volume": 320,
+        "competition": 0.7,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 38,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissioning artwork",
+        "cpc": 0.68,
+        "difficulty": 34,
+        "volume": 320,
+        "competition": 0.7,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 29,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "sell art online",
+        "cpc": 0.76,
+        "difficulty": 28,
+        "volume": 260,
+        "competition": 0.49,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "sell artwork online",
+        "cpc": 0.76,
+        "difficulty": 20,
+        "volume": 260,
+        "competition": 0.49,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "selling paintings online",
+        "cpc": 0.76,
+        "difficulty": 15,
+        "volume": 260,
+        "competition": 0.49,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "selling artwork online",
+        "cpc": 0.7,
+        "difficulty": 21,
+        "volume": 260,
+        "competition": 0.39,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artist selling art online",
+        "cpc": 0.76,
+        "difficulty": 29,
+        "volume": 260,
+        "competition": 0.49,
+        "serp_features": [
+          "reviews",
+          "video",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commission artist",
+        "cpc": 0.73,
+        "difficulty": 27,
+        "volume": 170,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "knowledge_graph",
+          "bads",
+          "related_searches"
+        ],
+        "relevance": 39,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissioned artist",
+        "cpc": 0.73,
+        "difficulty": 33,
+        "volume": 170,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge"
+        ],
+        "relevance": 37,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists for commission",
+        "cpc": 0.73,
+        "difficulty": 22,
+        "volume": 170,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 32,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "artists commission",
+        "cpc": 0.73,
+        "difficulty": 7,
+        "volume": 170,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 38,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "commissionable artist",
+        "cpc": 0.73,
+        "difficulty": 31,
+        "volume": 170,
+        "competition": 0.5,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 35,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "my paintings",
+        "cpc": 0,
+        "difficulty": 49,
+        "volume": 140,
+        "competition": 0.04,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commissions website",
+        "cpc": 0.61,
+        "difficulty": 26,
+        "volume": 110,
+        "competition": 0.11,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 31,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commission sites",
+        "cpc": 0.61,
+        "difficulty": 27,
+        "volume": 110,
+        "competition": 0.11,
+        "serp_features": [
+          "reviews",
+          "video",
+          "bads",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 28,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "websites for art commissions",
+        "cpc": 0.61,
+        "difficulty": 23,
+        "volume": 110,
+        "competition": 0.11,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commission websites",
+        "cpc": 0.61,
+        "difficulty": 22,
+        "volume": 110,
+        "competition": 0.11,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "sge",
+          "related_searches",
+          "image_in_block"
+        ],
+        "relevance": 25,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "art commission site",
+        "cpc": 0.61,
+        "difficulty": 21,
+        "volume": 110,
+        "competition": 0.11,
+        "serp_features": [
+          "reviews",
+          "video",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 27,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "sell art online australia",
+        "cpc": 0.48,
+        "difficulty": 15,
+        "volume": 90,
+        "competition": 0.54,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "bads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "online art marketplace",
+        "cpc": 0.36,
+        "difficulty": 67,
+        "volume": 90,
+        "competition": 0.98,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "images",
+          "tads",
+          "sge",
+          "related_searches"
+        ],
+        "relevance": 6,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      },
+      {
+        "keyword": "sell artwork online australia",
+        "cpc": 0.48,
+        "difficulty": 23,
+        "volume": 90,
+        "competition": 0.54,
+        "serp_features": [
+          "reviews",
+          "video",
+          "people_also_ask",
+          "sge",
+          "related_searches",
+          "places_sites_products"
+        ],
+        "relevance": 7,
+        "intents": [
+          "I"
+        ],
+        "history_trend": null
+      }
+    ]
+  }
+]

@@ -10,6 +10,8 @@ export const SUPPORTED_CURRENCIES: CurrencyCode[] = [
   "AUD",
   "CAD",
   "GBP",
+  "EUR",
+  "NZD",
 ];
 
 export const DEFAULT_CURRENCY: CurrencyCode = "INR";

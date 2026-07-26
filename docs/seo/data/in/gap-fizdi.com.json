@@ -1,0 +1,439 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "where is warli art from",
+      "volume": 90,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches"
+      ],
+      "position": 61,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is painting in art",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 50,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 75,
+      "url": "https://artacestudio.com/what-makes-a-painting-a-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli culture",
+      "volume": 30,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 97,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art origin",
+      "volume": 260,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 17,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block",
+        "places_sites_products"
+      ],
+      "position": 53,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "top art collectors in india",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 33,
+      "url": "https://artacestudio.com/indian-art-collectors-best-picked-artists/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "raja ravi varma studio",
+      "volume": 40,
+      "cpc": 0,
+      "competition": 0.02,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "people_also_ask",
+        "images",
+        "sge",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 19,
+      "url": "https://artacestudio.com/raja-ravi-varma-more-than-just-a-artist/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "painting in a painting",
+      "volume": 10,
+      "cpc": 0.18,
+      "competition": 0.12,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "top_stories",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 39,
+      "url": "https://artacestudio.com/what-makes-a-painting-a-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "mixed arts",
+      "volume": 170,
+      "cpc": 0.15,
+      "competition": 0.02,
+      "difficulty": 50,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 87,
+      "url": "https://artacestudio.com/what-is-mixed-media-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "indian art forms from ancient to modern times",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "sge",
+        "related_searches",
+        "places_sites_products"
+      ],
+      "position": 70,
+      "url": "https://artacestudio.com/the-complete-guide-to-india-artwork-from-ancient-traditions/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "indian art collectors list",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 28,
+      "url": "https://artacestudio.com/indian-art-collectors-best-picked-artists/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "शंकर महाराज फोटो",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.fizdi.com/shankar-maharaj-art_1038_64484-handpainted-art-painting-22in-x-33in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "शंकर महाराज",
+      "volume": 500,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 7,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "video",
+        "images",
+        "gmb",
+        "sge",
+        "related_searches"
+      ],
+      "position": 6,
+      "url": "https://www.fizdi.com/shankar-maharaj-art_1038_64484-handpainted-art-painting-22in-x-33in/?srsltid=AfmBOopIHZkVfSpK72bn4Zlk9tokPbvgpNXUDco40if4A7Gbazi2FdKh",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "जाणता राजा फोटो",
+      "volume": 140,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches"
+      ],
+      "position": 1,
+      "url": "https://www.fizdi.com/shivaji-maharaj-janta-raja-art_5557_45962-handpainted-art-painting-38in-x-26in/",
+      "price": 0,
+      "traffic": 1
+    },
+    {
+      "keyword": "जनता राजा",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 63,
+      "url": "https://www.fizdi.com/shivaji-maharaj-janta-raja-art_5557_45962-handpainted-art-painting-38in-x-26in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "गणपाती फोटो",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.25,
+      "difficulty": 12,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.fizdi.com/dagadusheth-ganpati-art_1038_73882-handpainted-art-painting-24in-x-24in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zombie photographer",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "image_in_block"
+      ],
+      "position": 5,
+      "url": "https://www.fizdi.com/zombie-photographer-prt_1772-canvas-art-print-21in-x-29in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zodiac painting",
+      "volume": 50,
+      "cpc": 0,
+      "competition": 0.05,
+      "difficulty": 13,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 42,
+      "url": "https://www.fizdi.com/the-zodiac-art_6549_39672-handpainted-art-painting-21in-x-24in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zentangle wolf",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 12,
+      "url": "https://www.fizdi.com/zentangle-illustrations-of-wolf-art_5318_47038-handpainted-art-painting-5in-x-8in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zentangle painting",
+      "volume": 70,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 32,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 1,
+      "url": "https://www.fizdi.com/the-dolphin-with-zentangle-art-art_8016_60367-handpainted-art-painting-5in-x-8in/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zentangle mural",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "C"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "shopping_results",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 50,
+      "url": "https://www.fizdi.com/rainbow-zentangle-art_7890_55645-handpainted-art-painting-14in-x-14in/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

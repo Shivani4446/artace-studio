@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { buildSiteUrl } from "@/lib/site";
 
 export function generateMetadata(): Promise<Metadata> {
   return Promise.resolve({
     title: "Shopping Cart | Art Checkout | Artace Studio",
     description: "Review your selected artworks in your cart. Continue shopping or proceed to secure checkout to complete your purchase.",
     keywords: "shopping cart, art checkout, cart review, artwork cart",
+    alternates: {
+      canonical: buildSiteUrl("/cart"),
+    },
     openGraph: {
       title: "Shopping Cart | Art Checkout | Artace Studio",
       description: "Review your selected artworks in your cart.",

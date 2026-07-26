@@ -1,0 +1,436 @@
+{
+  "oursNotTheirs": [
+    {
+      "keyword": "what is watercolor",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 52,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "knowledge_graph",
+        "related_searches"
+      ],
+      "position": 57,
+      "url": "https://artacestudio.com/what-is-watercolor-painting/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is the meaning of warli",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 27,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 96,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is modern painting",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0.44,
+      "difficulty": 57,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 79,
+      "url": "https://artacestudio.com/modern-contemporary-paintings/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "what is mixed media in art",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 54,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 84,
+      "url": "https://artacestudio.com/what-is-mixed-media-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli painting origin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 25,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 65,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli painting history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 68,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art information",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 16,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 66,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art history",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 24,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 7,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "warli art",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.13,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "knowledge_graph",
+        "sge",
+        "related_searches"
+      ],
+      "position": 24,
+      "url": "https://artacestudio.com/warli-art/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "is buddha painting good for home",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "featured_snippets",
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 8,
+      "url": "https://artacestudio.com/how-buddha-paintings-impact-your-life/",
+      "price": 0,
+      "traffic": 0
+    }
+  ],
+  "theirsNotOurs": [
+    {
+      "keyword": "موقع art",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.23,
+      "difficulty": 81,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "video",
+        "people_also_ask",
+        "images",
+        "related_searches"
+      ],
+      "position": 46,
+      "url": "https://www.artfinder.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "مواقع الفن",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 49,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 35,
+      "url": "https://www.artfinder.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "لوحات فن",
+      "volume": 20,
+      "cpc": 0,
+      "competition": 0.63,
+      "difficulty": 6,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 77,
+      "url": "https://www.artfinder.com/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "ديكور جدران غرف نوم",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 10,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images"
+      ],
+      "position": 12,
+      "url": "https://www.artfinder.com/blog/post/bedroom-wall-decor-ideas/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "اقلاع western art tv",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 9,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "images",
+        "image_in_block"
+      ],
+      "position": 24,
+      "url": "https://www.artfinder.com/artist/paulcheng/about/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "сherry",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 14,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "images",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 34,
+      "url": "https://www.artfinder.com/product/herry-orchard-cbb63/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "оrange",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 64,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "images",
+        "related_searches"
+      ],
+      "position": 14,
+      "url": "https://www.artfinder.com/product/range-sunset/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "zoolz",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 47,
+      "total_sites": 0,
+      "intents": [
+        "L",
+        "N"
+      ],
+      "serp_features": [
+        "reviews",
+        "sitelinks",
+        "gmb",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 73,
+      "url": "https://www.artfinder.com/art/product_category-painting/q-zoolz%20cloud%20storage%20instant%20vault%20and%201.5tb/page-36/",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "your order was shipped",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 19,
+      "total_sites": 0,
+      "intents": [
+        "I"
+      ],
+      "serp_features": [
+        "reviews",
+        "people_also_ask",
+        "images"
+      ],
+      "position": 79,
+      "url": "https://sellers.artfinder.com/article/811-how-do-i-mark-my-order-as-shipped",
+      "price": 0,
+      "traffic": 0
+    },
+    {
+      "keyword": "yaskin",
+      "volume": 10,
+      "cpc": 0,
+      "competition": 0,
+      "difficulty": 11,
+      "total_sites": 0,
+      "intents": [
+        "I",
+        "N"
+      ],
+      "serp_features": [
+        "people_also_ask",
+        "knowledge_graph",
+        "digital_complaints",
+        "sge",
+        "related_searches",
+        "image_in_block"
+      ],
+      "position": 39,
+      "url": "https://www.artfinder.com/artist/max-yaskin/",
+      "price": 0,
+      "traffic": 0
+    }
+  ]
+}

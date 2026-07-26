@@ -8,6 +8,8 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   AUD: "A$",
   CAD: "C$",
   GBP: "£",
+  EUR: "€",
+  NZD: "NZ$",
 };
 
 const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
@@ -17,6 +19,8 @@ const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
   AUD: "en-AU",
   CAD: "en-CA",
   GBP: "en-GB",
+  EUR: "en-IE",
+  NZD: "en-NZ",
 };
 
 const formatInInr = (amountInInr: number): string =>

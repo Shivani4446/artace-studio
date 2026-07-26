@@ -346,8 +346,8 @@ git commit -m "Add bulk keyword export script and pull data for all 11 regions"
 - Create: `scripts/seo-research/02-expansion.mjs`
 
 **Interfaces:**
-- Consumes: `seRankingRequest`, `getCreditsRemaining` from `./lib/client.mjs`; `saveJson` from `./lib/fs-helpers.mjs`; `INDIA_REGION`, `TIER1_REGIONS` from `./lib/config.mjs`; reads `docs/seo/data/<region-code>/keywords-export.json` written by Task 3.
-- Produces: `docs/seo/data/<region-code>/related.json`, `docs/seo/data/<region-code>/questions.json`, `docs/seo/data/<region-code>/longtail.json` for India + the 5 Tier 1 regions (6 regions × 3 files = 18 files). Each file is an array of `{ seed, total, keywords }` objects, one per expanded seed keyword.
+- Consumes: `seRankingRequest`, `getCreditsRemaining` from `./lib/client.mjs`; `saveJson` from `./lib/fs-helpers.mjs`; `INDIA_REGION`, `TIER1_REGIONS`, `INDIA_SEEDS`, `INTERNATIONAL_SEEDS` from `./lib/config.mjs`; reads `docs/seo/data/<region-code>/keywords-export.json` written by Task 3.
+- Produces: `docs/seo/data/<region-code>/related.json`, `docs/seo/data/<region-code>/questions.json`, `docs/seo/data/<region-code>/longtail.json` for India + the 5 Tier 1 regions (6 regions × 3 files = 18 files). Each file is an array of `{ seed, total, keywords }` objects, one per expanded seed keyword. `topSeedKeywords(regionCode, seedList)` prefers keywords with tracked volume data but falls back to the persona seed list's own order so every region gets `TOP_N_SEEDS` (3) seeds even where Task 3 found sparse/no volume data (observed for `ae`, `ie`, `nz`).
 
 - [ ] **Step 1: Write `scripts/seo-research/02-expansion.mjs`**
 
@@ -357,21 +357,35 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { seRankingRequest, getCreditsRemaining } from "./lib/client.mjs";
 import { saveJson } from "./lib/fs-helpers.mjs";
-import { INDIA_REGION, TIER1_REGIONS } from "./lib/config.mjs";
+import {
+  INDIA_REGION,
+  TIER1_REGIONS,
+  INDIA_SEEDS,
+  INTERNATIONAL_SEEDS,
+} from "./lib/config.mjs";
 
 const EXPANSION_REGIONS = [INDIA_REGION, ...TIER1_REGIONS];
 const TOP_N_SEEDS = 3;
 const RESULT_LIMIT = 30;
 const DATA_ROOT = path.resolve(import.meta.dirname, "../../docs/seo/data");
 
-async function topSeedKeywords(regionCode) {
+// Task 3's live pull showed several regions (e.g. ae, ie, nz) have few or zero
+// seed keywords with is_data_found: true in SE-Ranking's regional database for
+// these specific phrases. That doesn't mean the related/questions/longtail
+// endpoints have nothing to offer for that seed — those endpoints look up
+// expansion keywords for the phrase directly, independent of whether the
+// phrase's own volume was indexed. So: prefer seeds with tracked data (best
+// signal of relevance), but fall back to the original persona seed list's
+// order to fill out TOP_N_SEEDS rather than leaving a region with zero seeds.
+async function topSeedKeywords(regionCode, seedList) {
   const filePath = path.join(DATA_ROOT, regionCode, "keywords-export.json");
   const raw = JSON.parse(await readFile(filePath, "utf8"));
-  return raw
+  const withData = raw
     .filter((entry) => entry.is_data_found)
     .sort((a, b) => b.volume - a.volume)
-    .slice(0, TOP_N_SEEDS)
     .map((entry) => entry.keyword);
+  const fallback = seedList.filter((keyword) => !withData.includes(keyword));
+  return [...withData, ...fallback].slice(0, TOP_N_SEEDS);
 }
 
 async function run() {
@@ -379,7 +393,8 @@ async function run() {
   console.log(`Credits before: ${before}`);
 
   for (const region of EXPANSION_REGIONS) {
-    const seedKeywords = await topSeedKeywords(region.code);
+    const seedList = region.code === "in" ? INDIA_SEEDS : INTERNATIONAL_SEEDS;
+    const seedKeywords = await topSeedKeywords(region.code, seedList);
     console.log(`${region.name}: expanding on ${seedKeywords.join(", ")}`);
 
     for (const endpoint of ["related", "questions", "longtail"]) {
@@ -436,8 +451,8 @@ git commit -m "Add keyword expansion script and pull related/question/longtail d
 - Create: `scripts/seo-research/03-tier2-longtail.mjs`
 
 **Interfaces:**
-- Consumes: `seRankingRequest`, `getCreditsRemaining` from `./lib/client.mjs`; `saveJson` from `./lib/fs-helpers.mjs`; `TIER2_REGIONS` from `./lib/config.mjs`; reads `docs/seo/data/<region-code>/keywords-export.json` written by Task 3.
-- Produces: `docs/seo/data/<region-code>/longtail.json` for the 5 Tier 2 regions, same shape as Task 4's longtail output (`{ seed, total, keywords }[]`).
+- Consumes: `seRankingRequest`, `getCreditsRemaining` from `./lib/client.mjs`; `saveJson` from `./lib/fs-helpers.mjs`; `TIER2_REGIONS`, `INTERNATIONAL_SEEDS` from `./lib/config.mjs`; reads `docs/seo/data/<region-code>/keywords-export.json` written by Task 3.
+- Produces: `docs/seo/data/<region-code>/longtail.json` for the 5 Tier 2 regions, same shape as Task 4's longtail output (`{ seed, total, keywords }[]`). Same fallback behavior as Task 4's `topSeedKeywords` (observed sparse/no volume data for `nl`, `my`, `ph`).
 
 - [ ] **Step 1: Write `scripts/seo-research/03-tier2-longtail.mjs`**
 
@@ -447,20 +462,27 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { seRankingRequest, getCreditsRemaining } from "./lib/client.mjs";
 import { saveJson } from "./lib/fs-helpers.mjs";
-import { TIER2_REGIONS } from "./lib/config.mjs";
+import { TIER2_REGIONS, INTERNATIONAL_SEEDS } from "./lib/config.mjs";
 
 const TOP_N_SEEDS = 2;
 const RESULT_LIMIT = 30;
 const DATA_ROOT = path.resolve(import.meta.dirname, "../../docs/seo/data");
 
-async function topSeedKeywords(regionCode) {
+// Same fallback rationale as Task 4's topSeedKeywords: Task 3's live pull
+// showed some regions (e.g. nl, my, ph) have few or zero seeds with tracked
+// volume data, but the longtail endpoint can still return real expansion
+// keywords for a seed phrase independent of whether SE-Ranking indexed that
+// phrase's own volume in this region. Prefer seeds with data, fall back to
+// the persona list's own order to avoid leaving a region with zero seeds.
+async function topSeedKeywords(regionCode, seedList) {
   const filePath = path.join(DATA_ROOT, regionCode, "keywords-export.json");
   const raw = JSON.parse(await readFile(filePath, "utf8"));
-  return raw
+  const withData = raw
     .filter((entry) => entry.is_data_found)
     .sort((a, b) => b.volume - a.volume)
-    .slice(0, TOP_N_SEEDS)
     .map((entry) => entry.keyword);
+  const fallback = seedList.filter((keyword) => !withData.includes(keyword));
+  return [...withData, ...fallback].slice(0, TOP_N_SEEDS);
 }
 
 async function run() {
@@ -468,7 +490,7 @@ async function run() {
   console.log(`Credits before: ${before}`);
 
   for (const region of TIER2_REGIONS) {
-    const seedKeywords = await topSeedKeywords(region.code);
+    const seedKeywords = await topSeedKeywords(region.code, INTERNATIONAL_SEEDS);
     console.log(`${region.name}: longtail on ${seedKeywords.join(", ")}`);
 
     const results = [];
@@ -530,6 +552,8 @@ git commit -m "Add Tier 2 longtail script and pull data for Singapore, Germany, 
 
 ```javascript
 // scripts/seo-research/04-competitor-gap.mjs
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { seRankingRequest, getCreditsRemaining } from "./lib/client.mjs";
 import { saveJson } from "./lib/fs-helpers.mjs";
 import {
@@ -539,6 +563,16 @@ import {
   INTERNATIONAL_COMPETITORS,
   OUR_DOMAIN,
 } from "./lib/config.mjs";
+
+const DATA_ROOT = path.resolve(import.meta.dirname, "../../docs/seo/data");
+
+// Resumable: an earlier run may have already pulled some region/competitor
+// pairs (e.g. the user stopped it partway through to conserve API credits).
+// Skip any pair whose output file already exists on disk instead of
+// re-fetching and re-spending credits on data we already have.
+function alreadyHave(regionCode, competitor) {
+  return existsSync(path.join(DATA_ROOT, regionCode, `gap-${competitor}.json`));
+}
 
 async function fetchGapBothDirections(region, competitor) {
   const oursNotTheirs = await seRankingRequest("/v1/domain/keywords/comparison", {
@@ -556,6 +590,10 @@ async function run() {
 
   for (const competitor of INTERNATIONAL_COMPETITORS) {
     for (const region of TIER1_REGIONS) {
+      if (alreadyHave(region.code, competitor)) {
+        console.log(`${region.name} vs ${competitor}: already have data, skipping`);
+        continue;
+      }
       console.log(`${region.name} vs ${competitor}...`);
       const data = await fetchGapBothDirections(region, competitor);
       const savedTo = await saveJson(`${region.code}/gap-${competitor}.json`, data);
@@ -564,6 +602,10 @@ async function run() {
   }
 
   for (const competitor of INDIA_COMPETITORS) {
+    if (alreadyHave(INDIA_REGION.code, competitor)) {
+      console.log(`India vs ${competitor}: already have data, skipping`);
+      continue;
+    }
     console.log(`India vs ${competitor}...`);
     const data = await fetchGapBothDirections(INDIA_REGION, competitor);
     const savedTo = await saveJson(`in/gap-${competitor}.json`, data);
@@ -586,7 +628,7 @@ run().catch((error) => {
 node --env-file=.env.local scripts/seo-research/04-competitor-gap.mjs
 ```
 
-Expected: 22 "saved ->" lines total (20 for Tier 1 × international competitors, 2 for India × India competitors), ending with a credits-used line around 4,400 credits (22 pairs × 2 directions × 100 credits).
+Expected: a "skipping" line for each of the 9 pairs already pulled in the first pass, then "saved ->" lines for the remaining 13 pairs, ending with a credits-used line around 2,600 credits (13 pairs × 2 directions × 100 credits) rather than the original 4,400 estimate, since the 9 already-done pairs cost nothing to skip.
 
 - [ ] **Step 3: Spot-check one output file**
 

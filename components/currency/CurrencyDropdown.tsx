@@ -12,6 +12,8 @@ const CURRENCY_OPTIONS: { code: CurrencyCode; label: string }[] = [
   { code: "AUD", label: "AUD" },
   { code: "CAD", label: "CAD" },
   { code: "GBP", label: "GBP" },
+  { code: "EUR", label: "EUR" },
+  { code: "NZD", label: "NZD" },
 ];
 
 const CurrencyDropdown = () => {

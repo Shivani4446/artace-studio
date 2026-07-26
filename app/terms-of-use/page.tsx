@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import { markdownToHtmlWithToc } from "@/utils/article";
+import { buildSiteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms of Use | Legal | Artace Studio",
   description: "Terms of use for Artace Studio. Understand the conditions for using our website and purchasing artwork.",
   keywords: "terms of use, legal, website terms, conditions",
+  alternates: {
+    canonical: buildSiteUrl("/terms-of-use"),
+  },
   openGraph: {
     title: "Terms of Use | Legal | Artace Studio",
     description: "Terms and conditions for using our site.",

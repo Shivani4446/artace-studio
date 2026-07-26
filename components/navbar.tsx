@@ -55,6 +55,18 @@ const resourceLinks = [
     href: "/blogs",
     description: "Ideas on styling art, gifting, collecting, and choosing the right piece.",
   },
+  {
+    name: "Warli Paintings",
+    href: "/warli-paintings",
+    description: "Handcrafted tribal art rooted in a 2,500-year-old Maharashtrian folk tradition.",
+  },
+];
+
+const roomLinks = [
+  { name: "Bedroom", href: "/rooms/bedroom" },
+  { name: "Living Room", href: "/rooms/living-room" },
+  { name: "Dining Room", href: "/rooms/dining-room" },
+  { name: "Pooja Room", href: "/rooms/pooja-room" },
 ];
 
 const collectionDescriptions: Record<string, string> = {
@@ -176,7 +188,7 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }, { name: "Art Rentals", href: "/rentals" }],
+    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }, { name: "Art Rentals", href: "/rentals" }, ...roomLinks],
   },
   {
     name: "Resources",
@@ -557,6 +569,24 @@ const Navbar = () => {
                   </div>
                 </Link>
               ))}
+            </div>
+
+            <div className="mt-2 border-t border-[#ebe5dc] pt-4">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
+                Shop by Room
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4">
+                {roomLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={closeDesktopMenu}
+                    className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
