@@ -18,6 +18,8 @@ import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
 import { homepageFaqs, homepageSchema } from "./homepage-schema";
 
+export const runtime = "edge";
+
 export const metadata: Metadata = {
   title: "Handcrafted Canvas Paintings in India | Artace Studio",
   description:
