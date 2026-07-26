@@ -1,10 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Inter } from "next/font/google";
 import { ArrowRight } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
-import { decodeHtmlEntities } from "@/utils/text";
 
 // Font Configuration
 const playfair = Playfair_Display({
@@ -19,55 +20,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
-const FEATURED_PRODUCTS_LIMIT = 4;
-const STOREFRONT_REVALIDATE_SECONDS = 60;
-
-type WooStorePrices = {
-  currency_code: string;
-  currency_symbol: string;
-  currency_minor_unit: number;
-  price: string;
-  regular_price: string;
-  sale_price: string;
-};
-
-type WooStoreImage = {
-  id: number;
-  src: string;
-  alt?: string;
-  thumbnail?: string;
-};
-
-type WooStoreCategory = {
-  id: number;
-  name: string;
-  slug: string;
-};
-
-type WooStoreAttributeTerm = {
-  id: number;
-  name: string;
-  slug: string;
-};
-
-type WooStoreAttribute = {
-  id: number;
-  name: string;
-  terms?: WooStoreAttributeTerm[];
-  options?: string[];
-};
-
-type WooStoreProduct = {
-  id: number;
-  slug: string;
-  name: string;
-  images: WooStoreImage[];
-  categories: WooStoreCategory[];
-  attributes?: WooStoreAttribute[];
-  prices: WooStorePrices;
-};
 
 type FeaturedProductCard = {
   id: number;
@@ -81,94 +34,30 @@ type FeaturedProductCard = {
   price: number | null;
 };
 
-const parseMinorUnitPrice = (
-  rawValue: string | undefined,
-  minorUnit: number
-): number | null => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
-};
+const ShopBestsellers = () => {
+  const [products, setProducts] = useState<FeaturedProductCard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-const getAttributeOptions = (attribute: WooStoreAttribute) => {
-  const optionsFromList = attribute.options ?? [];
-  const optionsFromTerms = (attribute.terms ?? []).map((term) => term.name);
-  return Array.from(
-    new Set(
-      [...optionsFromList, ...optionsFromTerms]
-        .map((value) => decodeHtmlEntities(value).trim())
-        .filter(Boolean)
-    )
-  );
-};
+  useEffect(() => {
+    let isActive = true;
 
-const getSizesLabel = (attributes: WooStoreAttribute[] | undefined) => {
-  const sizeOptions = (attributes ?? [])
-    .filter((attribute) => /size|dimension/i.test(attribute.name))
-    .flatMap(getAttributeOptions);
+    fetch("/api/homepage/highlights")
+      .then((response) => (response.ok ? response.json() : { featuredProducts: [] }))
+      .then((data: { featuredProducts?: FeaturedProductCard[] }) => {
+        if (!isActive) return;
+        setProducts(data.featuredProducts ?? []);
+      })
+      .catch(() => {
+        if (isActive) setProducts([]);
+      })
+      .finally(() => {
+        if (isActive) setIsLoading(false);
+      });
 
-  const uniqueSizeOptions = Array.from(new Set(sizeOptions));
-  if (uniqueSizeOptions.length === 0) return "Custom Sizes";
-  return `${uniqueSizeOptions.length} Size${uniqueSizeOptions.length === 1 ? "" : "s"}`;
-};
-
-const normalizeFeaturedProducts = (
-  products: WooStoreProduct[]
-): FeaturedProductCard[] => {
-  return products.slice(0, FEATURED_PRODUCTS_LIMIT).map((product) => {
-    const minorUnit = product.prices?.currency_minor_unit ?? 2;
-    const primaryImage = product.images?.[0];
-    const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
-    const title = decodeHtmlEntities(product.name);
-    const categoryLabel = decodeHtmlEntities(
-      product.categories?.[0]?.name || "Handmade Painting"
-    );
-    const sizesLabel = getSizesLabel(product.attributes);
-    const subtitle = `Handmade Painting | ${sizesLabel} | Acrylic Colors on Canvas`;
-
-    return {
-      id: product.id,
-      slug: product.slug,
-      title,
-      sizesLabel,
-      image: imageUrl,
-      alt: decodeHtmlEntities(primaryImage?.alt || title),
-      categoryLabel,
-      subtitle,
-      price: parseMinorUnitPrice(product.prices?.price, minorUnit),
+    return () => {
+      isActive = false;
     };
-  });
-};
-
-const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
-  try {
-    const apiBaseUrl =
-      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
-    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
-
-    const response = await fetch(
-      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?featured=true&per_page=${FEATURED_PRODUCTS_LIMIT}&orderby=date&order=desc`,
-      {
-        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
-      }
-    );
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const payload = (await response.json()) as WooStoreProduct[];
-    if (!Array.isArray(payload)) return [];
-
-    return normalizeFeaturedProducts(payload);
-  } catch {
-    return [];
-  }
-};
-
-const ShopBestsellers = async () => {
-  const products = await getFeaturedProducts();
+  }, []);
 
   return (
     <section
@@ -198,7 +87,15 @@ const ShopBestsellers = async () => {
 
         {/* Product Grid */}
         <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4 lg:gap-y-12">
-          {products.length === 0 ? (
+          {isLoading ? (
+            Array.from({ length: 4 }, (_, index) => (
+              <div key={`bestseller-skeleton-${index}`} className="flex flex-col gap-3">
+                <div className="aspect-square w-full animate-pulse rounded-[10px] bg-gray-200 sm:rounded-[12px]" />
+                <div className="h-3 w-2/3 animate-pulse rounded bg-gray-200" />
+                <div className="h-4 w-4/5 animate-pulse rounded bg-gray-200" />
+              </div>
+            ))
+          ) : products.length === 0 ? (
             <p className="font-inter col-span-full text-sm text-[#666666]">
               No featured products available right now.
             </p>

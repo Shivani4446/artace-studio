@@ -141,65 +141,8 @@ const getDiscoverCategories = async (): Promise<DiscoverCategoryCard[]> => {
   }
 };
 
-const JOURNEY_COLLAGE_IMAGE_COUNT = 4;
-
-type WooStoreProductImage = {
-  id: number;
-  src: string;
-  alt?: string;
-  name?: string;
-};
-
-type WooStoreProductSummary = {
-  id: number;
-  name: string;
-  images: WooStoreProductImage[];
-};
-
-type JourneyCollageImage = {
-  src: string;
-  alt: string;
-};
-
-const getJourneyCollageImages = async (): Promise<JourneyCollageImage[]> => {
-  try {
-    const apiBaseUrl =
-      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
-    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
-
-    const response = await fetch(
-      `${normalizedBaseUrl}/wp-json/wc/store/v1/products?orderby=popularity&order=desc&per_page=${JOURNEY_COLLAGE_IMAGE_COUNT}`,
-      {
-        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
-      }
-    );
-
-    if (!response.ok) return [];
-
-    const payload = (await response.json()) as WooStoreProductSummary[];
-    if (!Array.isArray(payload)) return [];
-
-    return payload
-      .filter((product) => product.images?.[0]?.src)
-      .slice(0, JOURNEY_COLLAGE_IMAGE_COUNT)
-      .map((product) => {
-        const primaryImage = product.images[0];
-        const title = decodeHtmlEntities(product.name);
-        return {
-          src: primaryImage.src,
-          alt: decodeHtmlEntities(primaryImage.alt || primaryImage.name || title),
-        };
-      });
-  } catch {
-    return [];
-  }
-};
-
 const Home = async () => {
-  const [discoverCategories, journeyCollageImages] = await Promise.all([
-    getDiscoverCategories(),
-    getJourneyCollageImages(),
-  ]);
+  const discoverCategories = await getDiscoverCategories();
 
   return (
     <main className="min-h-screen">
@@ -210,7 +153,7 @@ const Home = async () => {
       <HeroSection />
       <TrustBar />
       <ShopBestSellers />
-      <ArtaceJourney collageImages={journeyCollageImages} />
+      <ArtaceJourney />
       <ShopByRoom />
       <DiscoverEssentials categories={discoverCategories} />
       <TrueArtistrySection />

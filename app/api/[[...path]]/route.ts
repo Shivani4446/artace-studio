@@ -17,6 +17,7 @@ import * as contactRoute from "@/lib/api-route-handlers/contact/route";
 import * as corporateLeadsRoute from "@/lib/api-route-handlers/corporate-leads/route";
 import * as currencyRatesRoute from "@/lib/api-route-handlers/currency/rates/route";
 import * as customOrderRoute from "@/lib/api-route-handlers/custom-order/route";
+import * as homepageHighlightsRoute from "@/lib/api-route-handlers/homepage/highlights/route";
 import * as ordersRoute from "@/lib/api-route-handlers/orders/route";
 import * as razorpayWebhookRoute from "@/lib/api-route-handlers/razorpay/webhook/route";
 import * as rentalsRoute from "@/lib/api-route-handlers/rentals/route";
@@ -88,6 +89,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "custom-order": {
     POST: (request) => customOrderRoute.POST(request),
+  },
+  "homepage/highlights": {
+    GET: () => homepageHighlightsRoute.GET(),
   },
   orders: {
     GET: (request) => ordersRoute.GET(request),

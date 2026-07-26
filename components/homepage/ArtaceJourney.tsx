@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
@@ -41,10 +41,6 @@ type CollageImage = {
   alt: string;
 };
 
-type ArtaceJourneyProps = {
-  collageImages?: CollageImage[];
-};
-
 // Fixed placement/rotation/size per collage slot — deliberately scattered,
 // not a grid, so it reads as a curated gallery wall rather than a product
 // carousel. Requires at least 4 images; slots beyond the 4th are unused.
@@ -55,9 +51,28 @@ const COLLAGE_SLOTS = [
   { className: "bottom-[4%] right-[4%] z-0 w-[36%] rotate-[-6deg]", aspect: "aspect-square" },
 ] as const;
 
-const ArtaceJourney = ({ collageImages = [] }: ArtaceJourneyProps) => {
+const ArtaceJourney = () => {
+  const [collageImages, setCollageImages] = useState<CollageImage[]>([]);
   const timelineRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    let isActive = true;
+
+    fetch("/api/homepage/highlights")
+      .then((response) => (response.ok ? response.json() : { collageImages: [] }))
+      .then((data: { collageImages?: CollageImage[] }) => {
+        if (!isActive) return;
+        setCollageImages(data.collageImages ?? []);
+      })
+      .catch(() => {
+        if (isActive) setCollageImages([]);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
   const { scrollYProgress } = useScroll({
     target: timelineRef,
     offset: ["start 0.8", "end 0.5"],
