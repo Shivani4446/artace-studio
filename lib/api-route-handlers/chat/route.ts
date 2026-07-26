@@ -21,7 +21,10 @@ import {
   executeGetProductDetails,
   executeGetPolicy,
   executeSearchBlog,
+  toProductCards,
+  toProductCardFromDetail,
 } from "@/lib/chat/tools";
+import type { ChatProductCardData } from "@/lib/chat/types";
 import { executePlaceCodOrder } from "@/lib/chat/order";
 import { buildSystemPrompt } from "@/lib/chat/system-prompt";
 
@@ -44,6 +47,15 @@ type CartSuggestion = {
   subtitle?: string;
   price?: number;
   quantity?: number;
+};
+
+const upsertProductCard = (pending: ChatProductCardData[], card: ChatProductCardData) => {
+  const index = pending.findIndex((existing) => existing.id === card.id);
+  if (index === -1) {
+    pending.push(card);
+  } else {
+    pending[index] = card;
+  }
 };
 
 const FALLBACK_MESSAGE =
@@ -101,13 +113,23 @@ const runToolCall = async (
   name: string,
   args: Record<string, unknown>,
   request: NextRequest,
-  pendingActions: CartSuggestion[]
+  pendingActions: CartSuggestion[],
+  pendingProducts: ChatProductCardData[]
 ): Promise<Record<string, unknown>> => {
   switch (name) {
-    case "search_products":
-      return executeSearchProducts(args);
-    case "get_product_details":
-      return executeGetProductDetails(args);
+    case "search_products": {
+      const result = await executeSearchProducts(args);
+      for (const card of toProductCards(result)) {
+        upsertProductCard(pendingProducts, card);
+      }
+      return result;
+    }
+    case "get_product_details": {
+      const result = await executeGetProductDetails(args);
+      const card = toProductCardFromDetail(result);
+      if (card) upsertProductCard(pendingProducts, card);
+      return result;
+    }
     case "get_policy":
       return executeGetPolicy(args);
     case "search_blog":
@@ -137,7 +159,7 @@ const runToolCall = async (
   }
 };
 
-const streamText = (text: string, actions: CartSuggestion[]) =>
+const streamText = (text: string, actions: CartSuggestion[], products: ChatProductCardData[]) =>
   new ReadableStream({
     start(controller) {
       const words = text.split(/(\s+)/);
@@ -148,7 +170,7 @@ const streamText = (text: string, actions: CartSuggestion[]) =>
         );
       }
       controller.enqueue(
-        encoder.encode(`data: ${JSON.stringify({ type: "done", actions })}\n\n`)
+        encoder.encode(`data: ${JSON.stringify({ type: "done", actions, products })}\n\n`)
       );
       controller.close();
     },
@@ -214,6 +236,7 @@ const runGeminiToolLoop = async (
   systemInstruction: string,
   request: NextRequest,
   pendingActions: CartSuggestion[],
+  pendingProducts: ChatProductCardData[],
   tracker: ToolCallTracker
 ): Promise<string | null> => {
   for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
@@ -228,7 +251,7 @@ const runGeminiToolLoop = async (
 
     const responseParts: Part[] = [];
     for (const call of functionCalls) {
-      const result = await runToolCall(call.name, call.args, request, pendingActions);
+      const result = await runToolCall(call.name, call.args, request, pendingActions, pendingProducts);
       tracker.count += 1;
       responseParts.push({
         functionResponse: { name: call.name, response: result },
@@ -244,6 +267,7 @@ const runMistralToolLoop = async (
   messages: MistralMessage[],
   request: NextRequest,
   pendingActions: CartSuggestion[],
+  pendingProducts: ChatProductCardData[],
   tracker: ToolCallTracker
 ): Promise<string | null> => {
   for (let iteration = 0; iteration < MAX_TOOL_ITERATIONS; iteration += 1) {
@@ -264,7 +288,7 @@ const runMistralToolLoop = async (
         args = {};
       }
 
-      const result = await runToolCall(call.function.name, args, request, pendingActions);
+      const result = await runToolCall(call.function.name, args, request, pendingActions, pendingProducts);
       tracker.count += 1;
       messages.push({
         role: "tool",
@@ -289,6 +313,7 @@ export async function POST(request: NextRequest) {
   const history = sanitizeHistory(body.messages);
   const systemInstruction = buildSystemPrompt();
   const pendingActions: CartSuggestion[] = [];
+  const pendingProducts: ChatProductCardData[] = [];
   const tracker: ToolCallTracker = { count: 0 };
 
   try {
@@ -301,12 +326,13 @@ export async function POST(request: NextRequest) {
         systemInstruction,
         request,
         pendingActions,
+        pendingProducts,
         tracker
       );
     } catch (error) {
       if (error instanceof GeminiApiError && error.status === 429 && tracker.count === 0) {
         const messages = buildMistralMessages(history, systemInstruction);
-        finalText = await runMistralToolLoop(messages, request, pendingActions, tracker);
+        finalText = await runMistralToolLoop(messages, request, pendingActions, pendingProducts, tracker);
       } else {
         throw error;
       }
@@ -316,13 +342,13 @@ export async function POST(request: NextRequest) {
       finalText?.trim() ||
       "I wasn't able to finish that — could you try rephrasing your question?";
 
-    return sseResponse(streamText(responseText, pendingActions));
+    return sseResponse(streamText(responseText, pendingActions, pendingProducts));
   } catch (error) {
     // Every failure (both providers' API errors, network, or an unexpected
     // bug in the tool loop) shows the same fallback message to the user —
     // see Global Constraints — but the real cause is logged server-side so
     // it's visible in Cloudflare's function logs instead of vanishing.
     console.error("Chat request failed:", error);
-    return sseResponse(streamText(FALLBACK_MESSAGE, []));
+    return sseResponse(streamText(FALLBACK_MESSAGE, [], []));
   }
 }

@@ -6,6 +6,8 @@ export type SearchProduct = {
   name: string;
   slug: string;
   image?: string;
+  price?: number | null;
+  currencySymbol?: string;
 };
 
 export type SearchBlogPost = {
@@ -139,14 +141,23 @@ export async function fetchSearchResults(
       name?: string;
       slug?: string;
       images?: Array<{ src?: string }>;
+      prices?: { price?: string; currency_minor_unit?: number; currency_symbol?: string };
     }>;
     products = (payload || [])
-      .map((item) => ({
-        id: item.id ?? 0,
-        name: decodeHtmlEntities(item.name || ""),
-        slug: item.slug || "",
-        image: item.images?.[0]?.src,
-      }))
+      .map((item) => {
+        const minorUnit = item.prices?.currency_minor_unit ?? 2;
+        const rawPrice = Number(item.prices?.price);
+        const price =
+          Number.isFinite(rawPrice) && minorUnit >= 0 ? rawPrice / 10 ** minorUnit : null;
+        return {
+          id: item.id ?? 0,
+          name: decodeHtmlEntities(item.name || ""),
+          slug: item.slug || "",
+          image: item.images?.[0]?.src,
+          price,
+          currencySymbol: item.prices?.currency_symbol || "₹",
+        };
+      })
       .filter((item) => item.id && item.slug);
   }
 
@@ -156,14 +167,21 @@ export async function fetchSearchResults(
       name?: string;
       slug?: string;
       images?: Array<{ src?: string }>;
+      price?: string | number;
     }>;
     const wooProducts = (payload || [])
-      .map((item) => ({
-        id: item.id ?? 0,
-        name: decodeHtmlEntities(item.name || ""),
-        slug: item.slug || "",
-        image: item.images?.[0]?.src,
-      }))
+      .map((item) => {
+        const rawPrice = Number(item.price);
+        const hasPrice = item.price !== undefined && item.price !== "" && Number.isFinite(rawPrice);
+        return {
+          id: item.id ?? 0,
+          name: decodeHtmlEntities(item.name || ""),
+          slug: item.slug || "",
+          image: item.images?.[0]?.src,
+          price: hasPrice ? rawPrice : null,
+          currencySymbol: "₹",
+        };
+      })
       .filter((item) => item.id && item.slug);
 
     const merged = new Map<string, SearchProduct>();
@@ -174,8 +192,13 @@ export async function fetchSearchResults(
       const existing = merged.get(item.slug);
       if (!existing) {
         merged.set(item.slug, item);
-      } else if (!existing.image && item.image) {
-        merged.set(item.slug, { ...existing, image: item.image });
+      } else {
+        merged.set(item.slug, {
+          ...existing,
+          image: existing.image || item.image,
+          price: existing.price ?? item.price,
+          currencySymbol: existing.currencySymbol || item.currencySymbol,
+        });
       }
     }
     products = Array.from(merged.values());

@@ -59,7 +59,7 @@ const ContactPageClient = () => {
         <section className="pt-32">
           <div className="flex flex-col md:flex-row justify-between items-end gap-12">
             <div className="max-w-2xl">
-              <h1 className="text-[80px] font-serif mb-[32px] text-[#222] whitespace-nowrap">
+              <h1 className="text-[40px] sm:text-[56px] md:text-[80px] font-serif mb-[32px] text-[#222] whitespace-nowrap">
                 Contact Us
               </h1>
               <p className="text-[#666] leading-relaxed text-[15px]">
@@ -83,7 +83,7 @@ const ContactPageClient = () => {
 
         {/* --- GENERAL ENQUIRIES --- */}
         <section className="py-20 flex flex-col md:flex-row gap-27">
-          <h2 className="text-[52px] font-serif text-[#222] whitespace-nowrap flex-shrink-0">General enquiries</h2>
+          <h2 className="text-[24px] sm:text-[36px] md:text-[52px] font-serif text-[#222] whitespace-nowrap flex-shrink-0">General enquiries</h2>
           <div className="flex-grow flex flex-col md:flex-row gap-10 md:gap-16">
             <div className="space-y-1 flex-1">
               <p className="text-[18px] text-[#595959] mb-2">
@@ -113,7 +113,7 @@ const ContactPageClient = () => {
             <p className="text-[18px] text-[#595959] mb-2">
               Contact Form
             </p>
-            <h2 className="text-[52px] font-serif text-[#313131]">
+            <h2 className="text-[28px] sm:text-[40px] md:text-[52px] font-serif text-[#313131]">
               Send Us a Message
             </h2>
           </div>

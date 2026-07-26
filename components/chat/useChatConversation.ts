@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { ChatProductCardData } from "@/lib/chat/types";
 
 export type CartSuggestion = {
   productId: number;
@@ -17,11 +18,12 @@ export type ChatMessage = {
   content: string;
   timestamp: number;
   actions?: CartSuggestion[];
+  products?: ChatProductCardData[];
 };
 
 type StreamPayload =
   | { type: "delta"; text: string }
-  | { type: "done"; actions: CartSuggestion[] };
+  | { type: "done"; actions: CartSuggestion[]; products: ChatProductCardData[] };
 
 type ImageAttachment = { mimeType: string; data: string };
 
@@ -147,6 +149,7 @@ export function useChatConversation() {
                   ...updated[lastIndex],
                   content: assistantText,
                   actions: payload.actions,
+                  products: payload.products,
                 };
                 return updated;
               });

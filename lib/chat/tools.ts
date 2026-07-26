@@ -3,6 +3,7 @@ import { fetchSearchResults } from "@/lib/search";
 import { getPolicyContent } from "@/lib/chat/policy-content";
 import type { FunctionDeclaration } from "@/lib/chat/gemini";
 import type { MistralToolDef } from "@/lib/chat/mistral";
+import type { ChatProductCardData } from "@/lib/chat/types";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
@@ -214,6 +215,8 @@ export async function executeSearchProducts(args: Record<string, unknown>) {
         name: product.name,
         slug: product.slug,
         image: product.image,
+        price: product.price ?? null,
+        currencySymbol: product.currencySymbol,
       })),
     };
   } catch {
@@ -227,6 +230,7 @@ type WooStoreProductDetail = {
   name: string;
   short_description: string;
   stock_status: string;
+  images?: Array<{ src?: string }>;
   prices: { price: string; currency_minor_unit: number; currency_symbol: string };
 };
 
@@ -257,6 +261,7 @@ export async function executeGetProductDetails(args: Record<string, unknown>) {
       slug: product.slug,
       name: product.name,
       description: (product.short_description || "").replace(/<[^>]*>/g, " ").trim(),
+      image: product.images?.[0]?.src || "",
       price,
       currencySymbol: product.prices?.currency_symbol || "₹",
       inStock: product.stock_status === "instock",
@@ -295,4 +300,65 @@ export async function executeSearchBlog(args: Record<string, unknown>) {
   } catch {
     return { error: "Could not search blog posts right now." };
   }
+}
+
+export const CARD_DISPLAY_LIMIT = 4;
+
+type SearchProductsResult = {
+  products?: Array<{
+    id?: number;
+    name?: string;
+    slug?: string;
+    image?: string;
+    price?: number | null;
+    currencySymbol?: string;
+  }>;
+};
+
+export function toProductCards(result: Record<string, unknown>): ChatProductCardData[] {
+  const { products } = result as SearchProductsResult;
+  if (!Array.isArray(products)) return [];
+
+  const cards: ChatProductCardData[] = [];
+  for (const item of products.slice(0, CARD_DISPLAY_LIMIT)) {
+    if (typeof item.id !== "number" || typeof item.name !== "string" || typeof item.slug !== "string") {
+      continue;
+    }
+    cards.push({
+      id: item.id,
+      slug: item.slug,
+      name: item.name,
+      image: item.image || "",
+      price: typeof item.price === "number" ? item.price : null,
+      currencySymbol: item.currencySymbol,
+    });
+  }
+  return cards;
+}
+
+type ProductDetailResult = {
+  id?: number;
+  slug?: string;
+  name?: string;
+  image?: string;
+  price?: number | null;
+  currencySymbol?: string;
+  inStock?: boolean;
+};
+
+export function toProductCardFromDetail(result: Record<string, unknown>): ChatProductCardData | null {
+  const detail = result as ProductDetailResult;
+  if (typeof detail.id !== "number" || typeof detail.slug !== "string" || typeof detail.name !== "string") {
+    return null;
+  }
+
+  return {
+    id: detail.id,
+    slug: detail.slug,
+    name: detail.name,
+    image: detail.image || "",
+    price: typeof detail.price === "number" ? detail.price : null,
+    currencySymbol: detail.currencySymbol,
+    inStock: detail.inStock,
+  };
 }

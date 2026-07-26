@@ -428,6 +428,9 @@ export default function CustomOrderForm() {
                     className="border-b border-gray-200 pb-3"
                   />
                   <div className="border-b border-gray-200 pb-3">
+                    <label className="mb-2 block text-sm font-medium text-[#1a1a1a]">
+                      Number of Paintings
+                    </label>
                     <input
                       type="number"
                       placeholder="Number of paintings"

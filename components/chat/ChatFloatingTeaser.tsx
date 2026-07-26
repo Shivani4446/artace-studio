@@ -39,7 +39,7 @@ const ChatFloatingTeaser = ({ onOpen }: Props) => {
   return (
     <div className="flex items-center gap-2">
       {!isDismissed && (
-        <div className="animate-chat-teaser-in flex items-center gap-2 rounded-full border border-[#1f1f1f]/10 bg-white px-3 py-2 text-[12px] font-medium text-[#1f1f1f] shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+        <div className="animate-chat-teaser-in hidden items-center gap-2 rounded-full border border-[#1f1f1f]/10 bg-white px-3 py-2 text-[12px] font-medium text-[#1f1f1f] shadow-[0_8px_24px_rgba(0,0,0,0.12)] sm:flex">
           <span key={index} className="animate-chat-teaser-fade">
             {TEASER_MESSAGES[index]}
           </span>

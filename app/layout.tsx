@@ -178,7 +178,7 @@ fbq('track', 'PageView');`
                   aria-hidden="true"
                   width={62}
                   height={62}
-                  className="h-[62px] w-[62px] object-contain"
+                  className="h-[52px] w-[52px] object-contain sm:h-[62px] sm:w-[62px]"
                 />
               </Link>
             </WishlistProvider>
