@@ -6,7 +6,6 @@ export const runtime = "edge";
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const FEATURED_PRODUCTS_LIMIT = 4;
-const JOURNEY_COLLAGE_IMAGE_COUNT = 4;
 const STOREFRONT_REVALIDATE_SECONDS = 60;
 
 type WooStorePrices = {
@@ -64,11 +63,6 @@ export type FeaturedProductCard = {
   categoryLabel: string;
   subtitle: string;
   price: number | null;
-};
-
-export type HomepageCollageImage = {
-  src: string;
-  alt: string;
 };
 
 const getApiBaseUrl = () => {
@@ -158,46 +152,12 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
   }
 };
 
-const getJourneyCollageImages = async (): Promise<HomepageCollageImage[]> => {
-  try {
-    const apiBaseUrl = getApiBaseUrl();
-    const response = await fetch(
-      `${apiBaseUrl}/wp-json/wc/store/v1/products?orderby=popularity&order=desc&per_page=${JOURNEY_COLLAGE_IMAGE_COUNT}`,
-      {
-        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
-      }
-    );
-
-    if (!response.ok) return [];
-
-    const payload = (await response.json()) as WooStoreProduct[];
-    if (!Array.isArray(payload)) return [];
-
-    return payload
-      .filter((product) => product.images?.[0]?.src)
-      .slice(0, JOURNEY_COLLAGE_IMAGE_COUNT)
-      .map((product) => {
-        const primaryImage = product.images[0];
-        const title = decodeHtmlEntities(product.name);
-        return {
-          src: primaryImage.src,
-          alt: decodeHtmlEntities(primaryImage.alt || primaryImage.name || title),
-        };
-      });
-  } catch {
-    return [];
-  }
-};
-
 export async function GET() {
   try {
-    const [featuredProducts, collageImages] = await Promise.all([
-      getFeaturedProducts(),
-      getJourneyCollageImages(),
-    ]);
+    const featuredProducts = await getFeaturedProducts();
 
     return NextResponse.json(
-      { featuredProducts, collageImages },
+      { featuredProducts },
       {
         headers: {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
@@ -209,7 +169,7 @@ export async function GET() {
       error instanceof Error ? error.message : "Unable to load homepage highlights.";
 
     return NextResponse.json(
-      { featuredProducts: [], collageImages: [], error: message },
+      { featuredProducts: [], error: message },
       {
         status: 500,
         headers: {

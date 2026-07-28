@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
@@ -36,55 +36,20 @@ const JOURNEY_STEPS = [
 
 const CAL_LINK = "https://cal.com/artace-studio";
 
-type CollageImage = {
-  src: string;
-  alt: string;
-};
-
-// Fixed placement/rotation/size per collage slot — deliberately scattered,
-// not a grid, so it reads as a curated gallery wall rather than a product
-// carousel. Requires at least 4 images; slots beyond the 4th are unused.
-const COLLAGE_SLOTS = [
-  { className: "left-0 top-0 z-10 w-[56%] rotate-[-4deg]", aspect: "aspect-[4/5]" },
-  { className: "right-0 top-[6%] z-20 w-[42%] rotate-[5deg]", aspect: "aspect-square" },
-  { className: "bottom-0 left-[10%] z-30 w-[46%] rotate-[3deg]", aspect: "aspect-[3/4]" },
-  { className: "bottom-[4%] right-[4%] z-0 w-[36%] rotate-[-6deg]", aspect: "aspect-square" },
-] as const;
-
 const ArtaceJourney = () => {
-  const [collageImages, setCollageImages] = useState<CollageImage[]>([]);
   const timelineRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    let isActive = true;
-
-    fetch("/api/homepage/highlights")
-      .then((response) => (response.ok ? response.json() : { collageImages: [] }))
-      .then((data: { collageImages?: CollageImage[] }) => {
-        if (!isActive) return;
-        setCollageImages(data.collageImages ?? []);
-      })
-      .catch(() => {
-        if (isActive) setCollageImages([]);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, []);
   const { scrollYProgress } = useScroll({
     target: timelineRef,
     offset: ["start 0.8", "end 0.5"],
   });
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  const hasCollage = collageImages.length >= 4;
-
   return (
-    <section className="w-full bg-[#efeeec] py-14 md:py-24">
-      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 items-start gap-10 px-6 md:px-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
-        <div>
+    <section className="w-full bg-[#efeeec]">
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
+        <div className="py-14 md:py-24">
           <div className="max-w-2xl">
             <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:text-[52px]">
               A Masterpiece Made With You, Not Just For You
@@ -147,31 +112,21 @@ const ArtaceJourney = () => {
           </Link>
         </div>
 
-        {hasCollage && (
-          <div className="relative mx-auto h-[360px] w-full max-w-[420px] justify-self-center sm:h-[440px] sm:max-w-[480px] lg:h-[560px] lg:max-w-none lg:justify-self-end">
-            {COLLAGE_SLOTS.map((slot, index) => {
-              const image = collageImages[index];
-              return (
-                <motion.div
-                  key={image.src}
-                  initial={shouldReduceMotion ? undefined : { opacity: 0, scale: 0.92 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.4 }}
-                  transition={{ duration: 0.5, delay: index * 0.12 }}
-                  className={`absolute overflow-hidden rounded-2xl shadow-xl ring-4 ring-white/80 ${slot.className} ${slot.aspect}`}
-                >
-                  <Image
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1023px) 45vw, 22vw"
-                  />
-                </motion.div>
-              );
-            })}
-          </div>
-        )}
+        <motion.div
+          initial={shouldReduceMotion ? undefined : { opacity: 0 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5 }}
+          className="relative h-[320px] w-full sm:h-[420px] lg:h-auto"
+        >
+          <Image
+            src="/masterpiece-image.webp"
+            alt="A large framed painting of a golden-hour ocean wave displayed in a gallery-style room"
+            fill
+            className="object-contain"
+            sizes="(max-width: 1023px) 100vw, 45vw"
+          />
+        </motion.div>
       </div>
     </section>
   );
