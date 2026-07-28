@@ -8,18 +8,23 @@ const HeroSection = () => {
   return (
     <section className="relative isolate w-full overflow-hidden bg-black">
       <div className="relative h-[88vh] min-h-[560px] w-full bg-black md:h-[92vh] md:min-h-[620px]">
-        <div className="absolute inset-x-0 bottom-0 h-[48%] md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[56%]">
-          <Image
-            src="/radha-krishna-hero-bg.webp"
-            alt="Radha Krishna hero artwork background"
-            fill
-            priority
-            sizes="(max-width: 767px) 100vw, 56vw"
-            className="object-cover object-center md:object-[84%_center]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-l from-transparent via-black/55 to-black/95" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-transparent md:hidden" />
-        </div>
+        <Image
+          src="/hero-section-mobile-bg.webp"
+          alt="Gallery wall of handcrafted canvas paintings featuring Ganesha, Buddha, Shiva, and Radha Krishna in a modern living room"
+          fill
+          priority
+          sizes="100vw"
+          className="block object-cover object-center md:hidden"
+        />
+        <Image
+          src="/hero-section-bg.webp"
+          alt="Gallery wall of handcrafted canvas paintings featuring Ganesha, Buddha, Shiva, and Radha Krishna in a modern living room"
+          fill
+          priority
+          sizes="100vw"
+          className="hidden object-cover object-center md:block"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent md:hidden" />
 
         <div className="relative z-10 h-full w-full">
           <div className="mx-auto flex h-full w-full max-w-[1440px] items-start px-6 pb-10 pt-16 md:items-center md:px-12 md:pb-0 md:pt-0">
