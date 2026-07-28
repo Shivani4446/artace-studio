@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
 type FAQItem = {
   question: string;
   answer: string;
@@ -20,6 +25,8 @@ const FAQSection = ({
   id,
   className = "bg-[#f4f2ee] py-10 md:py-[90px]",
 }: FAQSectionProps) => {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   if (items.length === 0) return null;
 
   return (
@@ -40,19 +47,43 @@ const FAQSection = ({
         </div>
 
         <div className="mt-8 grid gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
-          {items.map((item) => (
-            <article
-              key={item.question}
-              className="rounded-[14px] border border-[#1f1f1f]/10 bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.04)] md:p-6"
-            >
-              <h3 className="font-display text-[22px] leading-[1.2] text-[#1f1f1f] md:text-[26px]">
-                {item.question}
-              </h3>
-              <p className="mt-3 text-[15px] leading-7 text-[#4f4b45] md:text-[16px]">
-                {item.answer}
-              </p>
-            </article>
-          ))}
+          {items.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <article
+                key={item.question}
+                className="rounded-[14px] border border-[#1f1f1f]/10 bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.04)] md:p-6"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center justify-between gap-3 text-left md:cursor-default"
+                >
+                  <h3 className="font-display text-[22px] leading-[1.2] text-[#1f1f1f] md:text-[26px]">
+                    {item.question}
+                  </h3>
+                  <ChevronDown
+                    className={`h-5 w-5 shrink-0 text-[#1f1f1f]/50 transition-transform duration-300 md:hidden ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                    strokeWidth={1.75}
+                  />
+                </button>
+                <div
+                  className={`grid transition-[grid-template-rows] duration-300 ease-in-out md:grid-rows-[1fr] ${
+                    isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="pt-3 text-[15px] leading-7 text-[#4f4b45] md:text-[16px]">
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

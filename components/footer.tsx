@@ -58,7 +58,7 @@ const footerSections: FooterSection[] = [
       { label: "Exhibition", href: "/exhibition" },
       { label: "About Us", href: "/about-us" },
       { label: "Team", href: "/team" },
-      { label: "Painting Categories", href: "/shop" },
+      { label: "Painting Categories", href: "/collections" },
       { label: "Warli Paintings", href: "/warli-paintings" },
     ],
   },
