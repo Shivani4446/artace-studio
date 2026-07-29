@@ -45,6 +45,10 @@ p {
   font-family: var(--font-sentient), serif;
 }
 
+.font-samora-display {
+  font-family: var(--font-fraunces), serif;
+}
+
 /* Prevent image copying and dragging */
 /* Disable right-click on images */
 img {

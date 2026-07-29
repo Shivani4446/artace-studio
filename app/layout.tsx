@@ -2,18 +2,11 @@ import type { Metadata } from "next";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
-import Image from "next/image";
-import Link from "next/link";
 import "./globals.css";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
 import { CartProvider } from "@/components/cart/CartProvider";
 import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
 import AuthSessionProvider from "@/components/auth/AuthSessionProvider";
-import ProductImageProtection from "./product-image-protection";
-import ChatWidget from "@/components/chat/ChatWidget";
-import PromotionModal from "@/components/ui/PromotionModal";
-import PromotionBar from "@/components/ui/PromotionBar";
+import SiteChrome from "@/components/chrome/SiteChrome";
 import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
 import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
@@ -153,34 +146,7 @@ fbq('track', 'PageView');`
           <CurrencyProvider initialCurrency={DEFAULT_CURRENCY} initialRates={null}>
           <CartProvider>
             <WishlistProvider>
-              <PromotionModal />
-              <ProductImageProtection />
-              <div className="sticky top-0 z-[60]">
-                <PromotionBar />
-                <Navbar />
-              </div>
-              {children}
-              <Footer />
-              <ChatWidget />
-              <Link
-                href="https://wa.me/9657609102"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Order on WhatsApp"
-                className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 transition-transform hover:scale-[1.03] md:bottom-6 md:right-6"
-              >
-                <span className="hidden rounded-full bg-white px-3 py-1.5 text-[13px] font-medium text-black shadow-[0_8px_24px_rgba(0,0,0,0.12)] sm:inline-block">
-                  Order on WhatsApp
-                </span>
-                <Image
-                  src="/whatsapp-icon.svg"
-                  alt=""
-                  aria-hidden="true"
-                  width={62}
-                  height={62}
-                  className="h-[52px] w-[52px] object-contain sm:h-[62px] sm:w-[62px]"
-                />
-              </Link>
+              <SiteChrome>{children}</SiteChrome>
             </WishlistProvider>
           </CartProvider>
           </CurrencyProvider>
