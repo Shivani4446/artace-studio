@@ -10,7 +10,7 @@ import TrueArtistrySection from "@/components/homepage/TrueArtistrySection";
 import AboutUsPanel from "@/components/homepage/AboutUsPanel";
 import Testimonials from "@/components/homepage/Testimonials";
 import DesignTogetherPanel from "@/components/homepage/DesignTogetherPanel";
-import JournalSection from "@/components/homepage/JournalSection";
+import SamoraSpotlight from "@/components/homepage/SamoraSpotlight";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
 import FAQSection from "@/components/seo/FAQSection";
 import { buildSiteUrl } from "@/lib/site";
@@ -160,7 +160,7 @@ const Home = async () => {
       <AboutUsPanel />
       <Testimonials />
       <DesignTogetherPanel />
-      <JournalSection />
+      <SamoraSpotlight />
       <FAQSection
         id="homepage-faqs"
         eyebrow="Buyer Questions"

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Shop", href: "/samora/shop" },
@@ -45,7 +45,14 @@ const SamoraNavbar = () => {
           ))}
         </nav>
 
-        <div className="hidden items-center md:flex">
+        <div className="hidden items-center gap-3 md:flex">
+          <Link
+            href="https://artacestudio.com"
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#2b2420]/20 px-4 py-2.5 text-[13.5px] font-medium text-[#2b2420] transition-colors hover:border-[#2b2420]/40"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
+            Artace Studio
+          </Link>
           <Link
             href={WHATSAPP_HREF}
             target="_blank"
@@ -82,15 +89,24 @@ const SamoraNavbar = () => {
               </Link>
             ))}
           </nav>
-          <Link
-            href={WHATSAPP_HREF}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c1683d] px-5 py-3 text-[14px] font-medium text-white"
-          >
-            Get in Touch
-            <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
-          </Link>
+          <div className="mt-4 flex flex-col gap-3">
+            <Link
+              href="https://artacestudio.com"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-[#2b2420]/20 px-5 py-3 text-[14px] font-medium text-[#2b2420]"
+            >
+              <ArrowLeft className="h-4 w-4" strokeWidth={2} />
+              Back to Artace Studio
+            </Link>
+            <Link
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#c1683d] px-5 py-3 text-[14px] font-medium text-white"
+            >
+              Get in Touch
+              <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
+            </Link>
+          </div>
         </div>
       ) : null}
     </header>
