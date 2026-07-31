@@ -23,6 +23,7 @@ const EXPLICIT_ALLOWED_BOTS = [
   "anthropic-ai",
   "Google-Extended",
   "Applebot",
+  "AhrefsBot",
 ] as const;
 
 export default function robots(): MetadataRoute.Robots {
