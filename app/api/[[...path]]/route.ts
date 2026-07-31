@@ -10,6 +10,7 @@ import * as blogsRoute from "@/lib/api-route-handlers/blogs/route";
 import * as chatRoute from "@/lib/api-route-handlers/chat/route";
 import * as chatTranscribeRoute from "@/lib/api-route-handlers/chat/transcribe/route";
 import * as checkoutCouponRoute from "@/lib/api-route-handlers/checkout/coupon/route";
+import * as checkoutPincodeRoute from "@/lib/api-route-handlers/checkout/pincode/route";
 import * as checkoutStatusRoute from "@/lib/api-route-handlers/checkout/status/route";
 import * as checkoutVerifyRoute from "@/lib/api-route-handlers/checkout/verify/route";
 import * as checkoutRoute from "@/lib/api-route-handlers/checkout/route";
@@ -66,6 +67,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   "checkout/coupon": {
     GET: (request) => checkoutCouponRoute.GET(request),
   },
+  "checkout/pincode": {
+    GET: (request) => checkoutPincodeRoute.GET(request),
+  },
   "checkout/status": {
     GET: (request) => checkoutStatusRoute.GET(request),
   },
@@ -106,6 +110,7 @@ const ROUTES: Record<string, RouteHandlers> = {
     POST: (request) => revalidateRoute.POST(request),
   },
   reviews: {
+    GET: (request) => reviewsRoute.GET(request),
     POST: (request) => reviewsRoute.POST(request),
   },
   search: {

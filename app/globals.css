@@ -478,6 +478,31 @@ img.protected-image {
   margin-top: 0.9rem;
 }
 
+.samora-product-content h2,
+.samora-product-content h3,
+.samora-product-content h4 {
+  font-family: var(--font-fraunces), serif;
+  color: #2b2420;
+  letter-spacing: -0.01em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.25rem;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.samora-product-content h2:first-child {
+  margin-top: 0;
+}
+
+.samora-product-content h3 {
+  font-size: 18px;
+}
+
+.samora-product-content p,
+.samora-product-content li {
+  color: #5c5344;
+}
+
 .samora-product-content strong {
   color: #2b2420;
   font-weight: 600;

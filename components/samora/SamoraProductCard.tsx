@@ -13,6 +13,8 @@ export type SamoraProduct = {
   price: number | null;
   regularPrice: number | null;
   currencySymbol: string;
+  categories: { name: string; slug: string }[];
+  attributes: { name: string; options: string[] }[];
 };
 
 const SamoraProductCard = ({ product }: { product: SamoraProduct }) => {

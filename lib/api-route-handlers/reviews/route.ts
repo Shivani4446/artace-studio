@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
 
@@ -20,8 +20,79 @@ type ReviewPayload = {
   rating: number;
 };
 
+type WooReview = {
+  id: number;
+  date_created: string;
+  review: string;
+  reviewer: string;
+  rating: number;
+  verified: boolean;
+};
+
 const sanitizeString = (value: unknown) =>
   typeof value === "string" ? value.trim() : "";
+
+const getWooConfig = () => {
+  // WOOCOMMERCE_SITE_URL is commonly the storefront domain (artacestudio.com),
+  // which has no /wp-json route — the actual REST API lives at
+  // WOOCOMMERCE_REST_URL (api.artacestudio.com) when that's set separately.
+  const fallbackUrl =
+    process.env.WOOCOMMERCE_SITE_URL ||
+    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
+    "https://api.artacestudio.com/";
+  const siteUrl = (process.env.WOOCOMMERCE_REST_URL || fallbackUrl).replace(/\/+$/, "");
+
+  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
+  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
+
+  return { siteUrl, consumerKey, consumerSecret };
+};
+
+export async function GET(request: NextRequest) {
+  const productId = Number(request.nextUrl.searchParams.get("product_id"));
+  if (!Number.isFinite(productId) || productId <= 0) {
+    return NextResponse.json({ error: "Invalid product ID." }, { status: 400 });
+  }
+
+  const { siteUrl, consumerKey, consumerSecret } = getWooConfig();
+  if (!consumerKey || !consumerSecret) {
+    return NextResponse.json({ error: "Server configuration error." }, { status: 500 });
+  }
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const wooResponse = await fetch(
+      `${siteUrl}/wp-json/wc/v3/products/reviews?product=${productId}&status=approved&per_page=50&orderby=date&order=desc`,
+      {
+        headers: { Authorization: `Basic ${basicToken}` },
+        next: { revalidate: 120 },
+      }
+    );
+
+    if (!wooResponse.ok) {
+      return NextResponse.json({ error: "Failed to load reviews." }, { status: wooResponse.status });
+    }
+
+    const reviews = (await wooResponse.json()) as WooReview[];
+    if (!Array.isArray(reviews)) {
+      return NextResponse.json({ reviews: [] });
+    }
+
+    return NextResponse.json({
+      reviews: reviews.map((review) => ({
+        id: review.id,
+        date: review.date_created,
+        review: review.review,
+        reviewer: review.reviewer,
+        rating: review.rating,
+        verified: review.verified,
+      })),
+    });
+  } catch {
+    return NextResponse.json({ error: "Could not connect to the review service." }, { status: 500 });
+  }
+}
 
 export async function POST(request: Request) {
   let payload: ReviewPayload;
@@ -67,14 +138,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const siteUrl = (
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    "https://api.artacestudio.com/"
-  ).replace(/\/+$/, "");
-
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
+  const { siteUrl, consumerKey, consumerSecret } = getWooConfig();
 
   if (!consumerKey || !consumerSecret) {
     return NextResponse.json(

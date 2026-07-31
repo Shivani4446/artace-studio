@@ -73,6 +73,27 @@ type WooV3Variation = {
   is_in_stock?: boolean;
 };
 
+type WooV3MetaDataItem = { key?: string; value?: unknown };
+type WooV3Product = { meta_data?: WooV3MetaDataItem[]; weight?: string };
+
+// Same ACF meta keys WooCommerce stores for every product (originally used
+// for paintings) — Samora products are tagged with the same fields, so this
+// pulls real per-product specs rather than fabricating any.
+const SPEC_META_KEY_LABELS: Record<string, string> = {
+  artist: "Handcrafted By",
+  product_type: "Product Type",
+  material: "Material",
+  colors: "Color",
+  size_in_centimetres: "Size (cm)",
+  width_inches: "Width (inches)",
+  height_inches: "Height (inches)",
+  orientation: "Orientation",
+  customizable: "Customizable",
+  certificate_provided: "Certificate Provided",
+  country_of_origin: "Origin",
+};
+const SPEC_META_KEY_ORDER = Object.keys(SPEC_META_KEY_LABELS);
+
 const getApiBaseUrl = () => {
   const apiBaseUrl =
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
@@ -159,6 +180,48 @@ const fetchProductVariations = async (productId: number) => {
   }
 };
 
+const fetchProductSpecs = async (
+  productId: number,
+  sku: string
+): Promise<{ label: string; value: string }[]> => {
+  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
+  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
+  if (!consumerKey || !consumerSecret) return [];
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const response = await fetch(`${getApiBaseUrl()}/wp-json/wc/v3/products/${productId}`, {
+      headers: { Authorization: `Basic ${basicToken}` },
+      next: { revalidate },
+    });
+    if (!response.ok) return [];
+
+    const payload = (await response.json()) as WooV3Product;
+    const metaByKey = new Map(
+      (payload.meta_data ?? []).map((meta) => [meta.key, meta.value])
+    );
+
+    const specs = SPEC_META_KEY_ORDER.map((key) => {
+      const rawValue = metaByKey.get(key);
+      const value = typeof rawValue === "string" ? decodeHtmlEntities(rawValue).trim() : "";
+      if (!value) return null;
+      return { label: SPEC_META_KEY_LABELS[key], value };
+    }).filter((spec): spec is { label: string; value: string } => spec !== null);
+
+    if (sku) specs.push({ label: "SKU", value: sku });
+
+    const weight = Number(payload.weight);
+    if (Number.isFinite(weight) && weight > 0) {
+      specs.push({ label: "Weight", value: `${weight} kg` });
+    }
+
+    return specs;
+  } catch {
+    return [];
+  }
+};
+
 const getAttributeOptions = (attribute: WooStoreAttribute) => {
   const optionsFromList = attribute.options ?? [];
   const optionsFromTerms = (attribute.terms ?? []).map((term) => term.name);
@@ -181,6 +244,16 @@ const toSamoraProductCard = (product: WooStoreProduct): SamoraProduct => {
     price: parsePrice(product.prices?.price, minorUnit),
     regularPrice: parsePrice(product.prices?.regular_price, minorUnit),
     currencySymbol: product.prices?.currency_symbol || "Rs. ",
+    categories: (product.categories ?? []).map((category) => ({
+      name: decodeHtmlEntities(category.name),
+      slug: category.slug,
+    })),
+    attributes: (product.attributes ?? [])
+      .map((attribute) => ({
+        name: decodeHtmlEntities(attribute.name),
+        options: getAttributeOptions(attribute),
+      }))
+      .filter((attribute) => attribute.options.length > 0),
   };
 };
 
@@ -237,9 +310,10 @@ const SamoraSingleProductPage = async ({ params }: SingleProductPageProps) => {
     notFound();
   }
 
-  const [variations, relatedProducts] = await Promise.all([
+  const [variations, relatedProducts, specs] = await Promise.all([
     fetchProductVariations(product.id),
     getOtherSamoraProducts(product.id),
+    fetchProductSpecs(product.id, product.sku || ""),
   ]);
 
   const minorUnit = product.prices?.currency_minor_unit ?? 2;
@@ -269,6 +343,7 @@ const SamoraSingleProductPage = async ({ params }: SingleProductPageProps) => {
     averageRating: Number(product.average_rating) || 0,
     reviewCount: product.review_count || 0,
     variations,
+    specs,
   };
 
   const schema = generateProductSchema(

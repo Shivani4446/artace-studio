@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
+import { ArrowRight, ShoppingCart } from "lucide-react";
 import HeroPriceAnchor from "./HeroPriceAnchor";
 
 const HeroSection = () => {
@@ -57,6 +57,20 @@ const HeroSection = () => {
             </div>
           </div>
         </div>
+
+        <Link
+          href="/samora"
+          className="absolute right-6 top-6 z-20 hidden items-center gap-2 rounded-full bg-[#F3ECDD] py-2.5 pl-4 pr-4 shadow-xl transition-transform duration-300 hover:scale-105 md:flex lg:right-10 lg:top-8"
+        >
+          <Image
+            src="/samroa-logo.svg"
+            alt="Samora"
+            width={112}
+            height={74}
+            className="h-10 w-auto"
+          />
+          <ArrowRight className="h-4 w-4 text-[#5b4f3f]" />
+        </Link>
       </div>
     </section>
   );

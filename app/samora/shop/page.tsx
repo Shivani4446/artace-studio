@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Coffee, RectangleHorizontal, ShoppingBag, Tag } from "lucide-react";
-import SamoraProductCard, { type SamoraProduct } from "@/components/samora/SamoraProductCard";
+import { type SamoraProduct } from "@/components/samora/SamoraProductCard";
+import SamoraShopCatalog from "@/components/samora/SamoraShopCatalog";
 import { decodeHtmlEntities } from "@/utils/text";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
@@ -65,12 +66,24 @@ type WooStoreImage = {
   alt?: string;
 };
 
+type WooStoreCategory = { id: number; name: string; slug: string };
+
+type WooStoreAttributeTerm = { id: number; name: string; slug: string };
+type WooStoreAttribute = {
+  id: number;
+  name: string;
+  options?: string[];
+  terms?: WooStoreAttributeTerm[];
+};
+
 type WooStoreProduct = {
   id: number;
   slug: string;
   name: string;
   images: WooStoreImage[];
   prices: WooStorePrices;
+  categories?: WooStoreCategory[];
+  attributes?: WooStoreAttribute[];
 };
 
 const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
@@ -78,6 +91,18 @@ const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
   const numericValue = Number(rawValue);
   if (Number.isNaN(numericValue)) return null;
   return numericValue / 10 ** minorUnit;
+};
+
+const getAttributeOptions = (attribute: WooStoreAttribute) => {
+  const optionsFromList = attribute.options ?? [];
+  const optionsFromTerms = (attribute.terms ?? []).map((term) => term.name);
+  return Array.from(
+    new Set(
+      [...optionsFromList, ...optionsFromTerms]
+        .map((value) => decodeHtmlEntities(value).trim())
+        .filter(Boolean)
+    )
+  );
 };
 
 const normalizeProducts = (products: WooStoreProduct[]): SamoraProduct[] => {
@@ -94,6 +119,16 @@ const normalizeProducts = (products: WooStoreProduct[]): SamoraProduct[] => {
       price: parsePrice(product.prices?.price, minorUnit),
       regularPrice: parsePrice(product.prices?.regular_price, minorUnit),
       currencySymbol: product.prices?.currency_symbol || "Rs. ",
+      categories: (product.categories ?? []).map((category) => ({
+        name: decodeHtmlEntities(category.name),
+        slug: category.slug,
+      })),
+      attributes: (product.attributes ?? [])
+        .map((attribute) => ({
+          name: decodeHtmlEntities(attribute.name),
+          options: getAttributeOptions(attribute),
+        }))
+        .filter((attribute) => attribute.options.length > 0),
     };
   });
 };
@@ -195,11 +230,7 @@ const SamoraShopPage = async () => {
       </div>
 
       {products.length > 0 ? (
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 md:mt-12 lg:grid-cols-4">
-          {products.map((product) => (
-            <SamoraProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <SamoraShopCatalog products={products} />
       ) : (
         <div className="mt-10 rounded-[20px] border border-[#2b2420]/10 bg-[#f3ead9] px-6 py-14 text-center md:mt-12 md:py-20">
           <p className="font-samora-display text-[24px] text-[#2b2420] md:text-[28px]">

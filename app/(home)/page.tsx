@@ -5,6 +5,7 @@ import TrustBar from "@/components/homepage/TrustBar";
 import ArtaceJourney from "@/components/homepage/ArtaceJourney";
 import ShopBestSellers from "@/components/homepage/ShopBestSellers";
 import ShopByRoom from "@/components/homepage/ShopByRoom";
+import ShopByPrice from "@/components/homepage/ShopByPrice";
 import DiscoverEssentials from "@/components/homepage/DiscoverEssentials";
 import TrueArtistrySection from "@/components/homepage/TrueArtistrySection";
 import AboutUsPanel from "@/components/homepage/AboutUsPanel";
@@ -155,6 +156,7 @@ const Home = async () => {
       <ShopBestSellers />
       <ArtaceJourney />
       <ShopByRoom />
+      <ShopByPrice />
       <DiscoverEssentials categories={discoverCategories} />
       <TrueArtistrySection />
       <AboutUsPanel />

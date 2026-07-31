@@ -341,8 +341,29 @@ const ShopCatalog = ({
     return Math.ceil(Math.max(...pricedProducts));
   }, [pricedProducts]);
 
-  const [priceMin, setPriceMin] = useState<number>(minAvailablePrice);
-  const [priceMax, setPriceMax] = useState<number>(maxAvailablePrice);
+  // Mirrors categoryFromQuery above: a homepage "Shop by Budget" tile links
+  // here as e.g. /shop?minPrice=5000&maxPrice=10000, and the slider should
+  // start already set to that range instead of the full catalog span.
+  const priceFromQuery = useMemo(() => {
+    const parseQueryPrice = (paramName: string): number | null => {
+      const rawValue = searchParams.get(paramName);
+      if (rawValue === null) return null;
+      const parsedValue = Number(rawValue);
+      return Number.isFinite(parsedValue) ? parsedValue : null;
+    };
+
+    return {
+      min: parseQueryPrice("minPrice"),
+      max: parseQueryPrice("maxPrice"),
+    };
+  }, [searchParams]);
+
+  const [priceMin, setPriceMin] = useState<number>(() =>
+    priceFromQuery.min !== null ? priceFromQuery.min : minAvailablePrice
+  );
+  const [priceMax, setPriceMax] = useState<number>(() =>
+    priceFromQuery.max !== null ? priceFromQuery.max : maxAvailablePrice
+  );
 
   const hasPriceFilter =
     priceMin > minAvailablePrice || priceMax < maxAvailablePrice;

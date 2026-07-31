@@ -38,6 +38,10 @@ type CheckoutRequestBody = {
   shipping?: Partial<CheckoutAddressInput>;
   customerNote?: string;
   couponCode?: string;
+  // Which storefront initiated checkout — shown as the payee name inside the
+  // Razorpay modal. Defaults to Artace Studio so the existing checkout flow
+  // (which never sends this field) is unaffected.
+  storeName?: string;
 };
 
 const normalizeCountry = (value: string) => {
@@ -117,6 +121,12 @@ export async function POST(request: NextRequest) {
 
   const couponCode = sanitizeText(body.couponCode).toLowerCase();
   const couponLines = couponCode ? [{ code: couponCode }] : [];
+
+  const ALLOWED_STORE_NAMES = new Set(["Artace Studio", "Samora"]);
+  const requestedStoreName = sanitizeText(body.storeName);
+  const storeName = ALLOWED_STORE_NAMES.has(requestedStoreName)
+    ? requestedStoreName
+    : "Artace Studio";
 
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
@@ -215,7 +225,7 @@ export async function POST(request: NextRequest) {
         orderId: razorpayOrder.id,
         amount: razorpayOrder.amount,
         currency: razorpayOrder.currency,
-        name: "Artace Studio",
+        name: storeName,
         description: `Order #${updatedWooOrder.orderNumber}`,
         prefill: {
           name: `${billing.firstName} ${billing.lastName}`.trim(),

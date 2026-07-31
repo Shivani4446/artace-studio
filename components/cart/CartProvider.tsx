@@ -33,9 +33,17 @@ type CartContextValue = {
   decrementItem: (id: CartItem["id"]) => void;
   removeItem: (id: CartItem["id"]) => void;
   clearCart: () => void;
+  // Order-level gift option (Samora's "Make it a gift" flow) — one message per
+  // order, not per line item, so it lives alongside the cart rather than on
+  // each CartItem.
+  isGiftOrder: boolean;
+  giftMessage: string;
+  setGiftOrder: (value: boolean) => void;
+  setGiftMessage: (value: string) => void;
 };
 
 const STORAGE_KEY = "artace-mini-cart";
+const GIFT_STORAGE_KEY = "artace-mini-cart-gift";
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
@@ -68,15 +76,53 @@ const parseStoredCart = (value: string | null): CartItem[] => {
   }
 };
 
+const parseStoredGift = (value: string | null): { isGiftOrder: boolean; giftMessage: string } => {
+  if (!value) return { isGiftOrder: false, giftMessage: "" };
+
+  try {
+    const parsed = JSON.parse(value) as { isGiftOrder?: unknown; giftMessage?: unknown };
+    return {
+      isGiftOrder: parsed.isGiftOrder === true,
+      giftMessage: typeof parsed.giftMessage === "string" ? parsed.giftMessage : "",
+    };
+  } catch {
+    return { isGiftOrder: false, giftMessage: "" };
+  }
+};
+
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window === "undefined") return [];
     return parseStoredCart(window.localStorage.getItem(STORAGE_KEY));
   });
 
+  const [isGiftOrder, setIsGiftOrder] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return parseStoredGift(window.localStorage.getItem(GIFT_STORAGE_KEY)).isGiftOrder;
+  });
+  const [giftMessage, setGiftMessageState] = useState(() => {
+    if (typeof window === "undefined") return "";
+    return parseStoredGift(window.localStorage.getItem(GIFT_STORAGE_KEY)).giftMessage;
+  });
+
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      GIFT_STORAGE_KEY,
+      JSON.stringify({ isGiftOrder, giftMessage })
+    );
+  }, [isGiftOrder, giftMessage]);
+
+  const setGiftOrder = useCallback((value: boolean) => {
+    setIsGiftOrder(value);
+  }, []);
+
+  const setGiftMessage = useCallback((value: string) => {
+    setGiftMessageState(value);
+  }, []);
 
   const addItem = useCallback(
     (product: CartProduct, quantity = 1) => {
@@ -130,6 +176,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const clearCart = useCallback(() => {
     setItems([]);
+    setIsGiftOrder(false);
+    setGiftMessageState("");
   }, []);
 
   const itemCount = useMemo(
@@ -156,6 +204,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       decrementItem,
       removeItem,
       clearCart,
+      isGiftOrder,
+      giftMessage,
+      setGiftOrder,
+      setGiftMessage,
     }),
     [
       items,
@@ -166,6 +218,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       decrementItem,
       removeItem,
       clearCart,
+      isGiftOrder,
+      giftMessage,
+      setGiftOrder,
+      setGiftMessage,
     ]
   );
 

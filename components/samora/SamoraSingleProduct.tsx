@@ -2,9 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { Star } from "lucide-react";
-import AddToCartButton from "@/components/cart/AddToCartButton";
+import { Minus, Plus, Star } from "lucide-react";
+import { useCart } from "@/components/cart/CartProvider";
 import SamoraProductCard, { type SamoraProduct } from "@/components/samora/SamoraProductCard";
+import SamoraGiftOption from "@/components/samora/SamoraGiftOption";
+import SamoraPincodeChecker from "@/components/samora/SamoraPincodeChecker";
+import SamoraProductSpecs, { type SamoraSpec } from "@/components/samora/SamoraProductSpecs";
+import SamoraReviews from "@/components/samora/SamoraReviews";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
 
 type SamoraVariation = {
@@ -32,6 +36,7 @@ export type SamoraProductDetail = {
   averageRating: number;
   reviewCount: number;
   variations: SamoraVariation[];
+  specs: SamoraSpec[];
 };
 
 const FALLBACK_IMAGE = "/images/product-ship.png";
@@ -44,8 +49,12 @@ const SamoraSingleProduct = ({
   relatedProducts: SamoraProduct[];
 }) => {
   const { formatPrice } = useCurrency();
+  const { addItem, setGiftOrder } = useCart();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [quantity, setQuantity] = useState(1);
+  const [wantsGift, setWantsGift] = useState(false);
+  const [justAdded, setJustAdded] = useState(false);
 
   const variationAttributeNames = useMemo(() => {
     const names = new Set<string>();
@@ -101,6 +110,28 @@ const SamoraSingleProduct = ({
   const activeImage = images[activeImageIndex] ?? images[0];
 
   const cartItemId = matchedVariation ? `${product.id}-${matchedVariation.id}` : product.id;
+
+  const handleAddToCart = () => {
+    addItem(
+      {
+        id: cartItemId,
+        woocommerceProductId: product.id,
+        woocommerceVariationId: matchedVariation?.id,
+        title: product.name,
+        image: activeImage.src,
+        subtitle: matchedVariation
+          ? matchedVariation.attributes.map((attr) => attr.value).join(" / ")
+          : undefined,
+        price: effectivePrice ?? undefined,
+      },
+      quantity
+    );
+
+    if (wantsGift) setGiftOrder(true);
+
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 2500);
+  };
 
   return (
     <main className="mx-auto max-w-[1320px] px-5 py-10 md:px-10 md:py-14">
@@ -217,7 +248,8 @@ const SamoraSingleProduct = ({
             </div>
           ) : null}
 
-          <div className="mt-8">
+          {/* Quantity + Add to Cart */}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             {isOutOfStock ? (
               <span className="inline-flex items-center rounded-full border border-[#2b2420]/20 px-6 py-3 text-[14px] font-medium text-[#8a7c68]">
                 Out of Stock
@@ -227,21 +259,48 @@ const SamoraSingleProduct = ({
                 Select options to continue
               </span>
             ) : (
-              <AddToCartButton
-                id={cartItemId}
-                woocommerceProductId={product.id}
-                woocommerceVariationId={matchedVariation?.id}
-                title={product.name}
-                image={activeImage.src}
-                subtitle={
-                  matchedVariation
-                    ? matchedVariation.attributes.map((attr) => attr.value).join(" / ")
-                    : undefined
-                }
-                price={effectivePrice ?? undefined}
-                className="!rounded-full !border-[#c1683d] !px-7 !py-3.5 !text-[14.5px] !font-medium !normal-case !tracking-normal !text-[#c1683d] hover:!bg-[#c1683d] hover:!text-white"
-              />
+              <>
+                <div className="flex h-[50px] items-center overflow-hidden rounded-full border border-[#2b2420]/20 bg-white">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                    aria-label="Decrease quantity"
+                    className="flex h-full w-11 items-center justify-center text-[#2b2420] transition-colors hover:bg-[#f3ead9]"
+                  >
+                    <Minus className="h-3.5 w-3.5" strokeWidth={2} />
+                  </button>
+                  <span className="w-9 text-center text-[15px] font-medium text-[#2b2420]">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((current) => current + 1)}
+                    aria-label="Increase quantity"
+                    className="flex h-full w-11 items-center justify-center text-[#2b2420] transition-colors hover:bg-[#f3ead9]"
+                  >
+                    <Plus className="h-3.5 w-3.5" strokeWidth={2} />
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddToCart}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#c1683d] px-7 py-3.5 text-[14.5px] font-medium text-[#c1683d] transition-colors hover:bg-[#c1683d] hover:text-white"
+                >
+                  {justAdded ? "Added to Cart" : "Add to Cart"}
+                </button>
+              </>
             )}
+          </div>
+
+          {/* Delivery check */}
+          <div className="mt-7 border-t border-[#2b2420]/10 pt-6">
+            <SamoraPincodeChecker amount={effectivePrice} />
+          </div>
+
+          {/* Make it a gift */}
+          <div className="mt-5">
+            <SamoraGiftOption checked={wantsGift} onChange={setWantsGift} />
           </div>
         </div>
       </div>
@@ -257,6 +316,14 @@ const SamoraSingleProduct = ({
           />
         </div>
       ) : null}
+
+      <SamoraProductSpecs specs={product.specs} />
+
+      <SamoraReviews
+        productId={product.id}
+        averageRating={product.averageRating}
+        reviewCount={product.reviewCount}
+      />
 
       {relatedProducts.length > 0 ? (
         <div className="mt-14 border-t border-[#2b2420]/10 pt-10 md:mt-16 md:pt-12">

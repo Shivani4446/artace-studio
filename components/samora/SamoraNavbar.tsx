@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Menu, X } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Menu, ShoppingBag, X } from "lucide-react";
+import { useCart } from "@/components/cart/CartProvider";
 
 const NAV_LINKS = [
   { label: "Shop", href: "/samora/shop" },
@@ -18,6 +19,7 @@ const WHATSAPP_HREF =
 
 const SamoraNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { itemCount } = useCart();
 
   return (
     <header className="sticky top-0 z-[60] border-b border-[#2b2420]/10 bg-[#fbf6ef]/95 backdrop-blur">
@@ -62,17 +64,43 @@ const SamoraNavbar = () => {
             Get in Touch
             <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
           </Link>
+          <Link
+            href="/samora/cart"
+            aria-label="Cart"
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#2b2420]/20 text-[#2b2420] transition-colors hover:border-[#2b2420]/40"
+          >
+            <ShoppingBag className="h-4 w-4" strokeWidth={1.75} />
+            {itemCount > 0 ? (
+              <span className="absolute -right-1.5 -top-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c1683d] px-1 text-[10px] font-semibold text-white">
+                {itemCount}
+              </span>
+            ) : null}
+          </Link>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setIsMenuOpen((open) => !open)}
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMenuOpen}
-          className="inline-flex h-10 w-10 items-center justify-center text-[#2b2420] md:hidden"
-        >
-          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <Link
+            href="/samora/cart"
+            aria-label="Cart"
+            className="relative inline-flex h-10 w-10 items-center justify-center text-[#2b2420]"
+          >
+            <ShoppingBag className="h-5 w-5" strokeWidth={1.75} />
+            {itemCount > 0 ? (
+              <span className="absolute right-0.5 top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#c1683d] px-1 text-[9px] font-semibold text-white">
+                {itemCount}
+              </span>
+            ) : null}
+          </Link>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
+            className="inline-flex h-10 w-10 items-center justify-center text-[#2b2420]"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {isMenuOpen ? (
