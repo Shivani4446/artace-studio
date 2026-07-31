@@ -9,6 +9,7 @@ import { generateProductSchema } from "@/lib/schema";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 export const runtime = 'edge';
 export const revalidate = 120;
@@ -63,6 +64,12 @@ type WooStoreCategory = {
   slug: string;
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreAttributeTerm = {
   id: number;
   name: string;
@@ -101,6 +108,7 @@ type WooStoreProduct = {
   stock_quantity: number | null;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   attributes: WooStoreAttribute[];
   prices: WooStorePrices;
   related_ids?: number[];
@@ -237,7 +245,12 @@ const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> =
             await fetchStoreProducts(query, { cache: "no-store" })
           )[0];
 
-    return product ? withFakeRating(product) : null;
+    if (!product) return null;
+
+    // Samora-tagged products live exclusively at /samora/shop/[slug].
+    if (hasSamoraTag(product.tags)) return null;
+
+    return withFakeRating(product);
   } catch {
     return null;
   }
@@ -921,7 +934,7 @@ const getRelatedProductsForProduct = async (
   const mergedProducts: WooStoreProduct[] = [];
 
   for (const relatedProduct of relatedProducts) {
-    if (usedIds.has(relatedProduct.id)) continue;
+    if (usedIds.has(relatedProduct.id) || hasSamoraTag(relatedProduct.tags)) continue;
     usedIds.add(relatedProduct.id);
     mergedProducts.push(relatedProduct);
     if (mergedProducts.length >= RELATED_PRODUCTS_LIMIT) {
@@ -931,7 +944,7 @@ const getRelatedProductsForProduct = async (
 
   const featuredProducts = await getFeaturedProducts();
   for (const featuredProduct of featuredProducts) {
-    if (usedIds.has(featuredProduct.id)) continue;
+    if (usedIds.has(featuredProduct.id) || hasSamoraTag(featuredProduct.tags)) continue;
     usedIds.add(featuredProduct.id);
     mergedProducts.push(featuredProduct);
     if (mergedProducts.length >= RELATED_PRODUCTS_LIMIT) break;

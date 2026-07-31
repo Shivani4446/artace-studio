@@ -7,6 +7,7 @@ import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
+import { hasSamoraTag } from "@/lib/samora/products";
 export const runtime = 'edge';
 
 export const metadata: Metadata = {
@@ -94,6 +95,12 @@ type WooStoreCategory = {
   slug: string;
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreAttributeTerm = {
   id: number;
   name: string;
@@ -113,6 +120,7 @@ type WooStoreProduct = {
   name: string;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   prices: WooStorePrices;
   attributes?: WooStoreAttribute[];
   average_rating?: string;
@@ -413,7 +421,8 @@ const ShopPage = async () => {
 
   try {
     const storeProducts = await getStoreProducts();
-    products = normalizeProducts(storeProducts);
+    // Samora-tagged products live exclusively at /samora/shop.
+    products = normalizeProducts(storeProducts.filter((product) => !hasSamoraTag(product.tags)));
   } catch (error) {
     loadError = error instanceof Error ? error.message : "Unable to load products.";
   }

@@ -469,6 +469,37 @@ img.protected-image {
   margin-bottom: 0.5rem;
 }
 
+/* Samora Product Content Styles */
+.samora-product-content > * {
+  margin: 0;
+}
+
+.samora-product-content > * + * {
+  margin-top: 0.9rem;
+}
+
+.samora-product-content strong {
+  color: #2b2420;
+  font-weight: 600;
+}
+
+.samora-product-content a {
+  color: #c1683d;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.samora-product-content ul,
+.samora-product-content ol {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1.25rem;
+}
+
+.samora-product-content li + li {
+  margin-top: 0.3rem;
+}
+
 @keyframes chat-message-in {
   from {
     opacity: 0;

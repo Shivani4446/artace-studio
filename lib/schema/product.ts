@@ -40,8 +40,11 @@ function extractAttributeValues(attributes: WooStoreProduct["attributes"], targe
 export function generateProductSchema(
   product: WooStoreProduct,
   reviews?: WooCommerceReview[],
-  baseUrl: string = DEFAULT_BASE_URL
+  baseUrl: string = DEFAULT_BASE_URL,
+  options?: { brand?: string; shopPath?: string }
 ) {
+  const brand = options?.brand ?? DEFAULT_BRAND;
+  const shopPath = options?.shopPath ?? "/shop";
   const description = [
     stripHtml(decodeHtmlEntities(product.short_description || "")),
     stripHtml(decodeHtmlEntities(product.description || "")),
@@ -61,7 +64,7 @@ export function generateProductSchema(
     (meta) => meta.key === "gtin" || meta.key === "ean" || meta.key === "upc"
   )?.value as string | undefined;
 
-  const productUrl = `${baseUrl}/shop/${product.slug}`;
+  const productUrl = `${baseUrl}${shopPath}/${product.slug}`;
 
   const productSchema: Record<string, unknown> = {
     "@type": "Product",
@@ -71,7 +74,7 @@ export function generateProductSchema(
     "sku": decodeHtmlEntities(product.sku || ""),
     "brand": {
       "@type": "Brand",
-      "name": DEFAULT_BRAND,
+      "name": brand,
     },
     "offers": generateAllOffersSchema(product, productUrl),
   };

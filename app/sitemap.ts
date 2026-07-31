@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 const DEFAULT_BASE_URL = "https://artacestudio.com";
 const DEFAULT_WP_JSON_PREFIX = "/wp-json";
@@ -97,6 +98,7 @@ type SitemapProduct = {
   date_modified?: string;
   date_modified_gmt?: string;
   categories?: Array<{ slug?: string }>;
+  tags?: Array<{ slug?: string }>;
 };
 
 type SitemapCategory = {
@@ -213,6 +215,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/samora/shop`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/about-us`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -285,11 +293,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     ...products
+      .filter((product) => !hasSamoraTag(product.tags))
       .map((product): MetadataRoute.Sitemap[number] | null => {
         const slug = (product.slug || "").trim();
         if (!slug) return null;
         return {
           url: `${baseUrl}/shop/${encodeURIComponent(slug)}`,
+          lastModified: safeDate(product.date_modified_gmt) || safeDate(product.date_modified),
+          changeFrequency: "daily" as const,
+          priority: 0.8,
+        };
+      })
+      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
+    ...products
+      .filter((product) => hasSamoraTag(product.tags))
+      .map((product): MetadataRoute.Sitemap[number] | null => {
+        const slug = (product.slug || "").trim();
+        if (!slug) return null;
+        return {
+          url: `${baseUrl}/samora/shop/${encodeURIComponent(slug)}`,
           lastModified: safeDate(product.date_modified_gmt) || safeDate(product.date_modified),
           changeFrequency: "daily" as const,
           priority: 0.8,
@@ -303,11 +325,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       // the sitemap never lists a URL the page would 404 on (a category's own
       // reported `count` can be stale, unlike this direct product cross-check).
       const liveCategorySlugs = new Set(
-        products.flatMap((product) =>
-          (product.categories || [])
-            .map((category) => (category.slug || "").trim())
-            .filter(Boolean)
-        )
+        products
+          .filter((product) => !hasSamoraTag(product.tags))
+          .flatMap((product) =>
+            (product.categories || [])
+              .map((category) => (category.slug || "").trim())
+              .filter(Boolean)
+          )
       );
 
       return categories
