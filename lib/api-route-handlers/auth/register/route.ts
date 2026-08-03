@@ -4,6 +4,8 @@ import {
   authenticateWordPressCredentials,
 } from "@/utils/auth";
 import { getWordPressSiteUrl } from "@/utils/wordpress-auth";
+import { sendTransactionalEmail } from "@/lib/email/resend";
+import { buildWelcomeEmail } from "@/lib/email/templates";
 
 export const runtime = "edge";
 
@@ -192,6 +194,14 @@ export async function POST(request: NextRequest) {
         { ok: false, message: apiMessage },
         { status: 400 }
       );
+    }
+
+    try {
+      const emailContent = buildWelcomeEmail({ firstName });
+      await sendTransactionalEmail({ to: email, ...emailContent });
+    } catch (error) {
+      // Never let a welcome-email failure block a successful registration.
+      console.error("[auth/register] welcome email failed:", error);
     }
 
     let session = null;
