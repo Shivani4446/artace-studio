@@ -120,7 +120,7 @@ const ArtaceJourney = () => {
           className="relative h-[320px] w-full sm:h-[420px] lg:h-auto"
         >
           <Image
-            src="/masterpiece-image.webp"
+            src="/masteripiece-image-v-1.webp"
             alt="A large framed painting of a golden-hour ocean wave displayed in a gallery-style room"
             fill
             className="object-contain"

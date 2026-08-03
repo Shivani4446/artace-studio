@@ -107,6 +107,47 @@ export default function RootLayout({
           async
         />
         <script
+          id="merchantWidgetScript"
+          src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
+          defer
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                function startMerchantWidget() {
+                  if (
+                    typeof window.merchantwidget === 'undefined' ||
+                    typeof window.merchantwidget.start !== 'function'
+                  ) {
+                    return;
+                  }
+                  window.merchantwidget.start({
+                    merchant_id: 689111711,
+                    position: 'BOTTOM_LEFT',
+                    region: 'ALL',
+                  });
+                }
+                function attachMerchantWidget() {
+                  var script = document.getElementById('merchantWidgetScript');
+                  if (!script) {
+                    return false;
+                  }
+                  if (script.readyState === 'complete' || script.readyState === 'loaded') {
+                    startMerchantWidget();
+                  } else {
+                    script.addEventListener('load', startMerchantWidget);
+                  }
+                  return true;
+                }
+                if (!attachMerchantWidget()) {
+                  document.addEventListener('DOMContentLoaded', attachMerchantWidget);
+                }
+              })();
+            `,
+          }}
+        />
+        <script
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="AHn7dT8Dlwwm42L41CA4Xg"
           async

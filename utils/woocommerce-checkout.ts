@@ -1,6 +1,11 @@
 type WooBillingPayload = {
   email?: unknown;
   phone?: unknown;
+  country?: unknown;
+};
+
+type WooShippingPayload = {
+  country?: unknown;
 };
 
 type WooMetaDataPayload = {
@@ -19,7 +24,9 @@ type WooOrderPayload = {
   checkout_payment_url?: unknown;
   payment_method_title?: unknown;
   transaction_id?: unknown;
+  date_created?: unknown;
   billing?: WooBillingPayload;
+  shipping?: WooShippingPayload;
   meta_data?: WooMetaDataPayload[];
 };
 
@@ -41,6 +48,9 @@ export type WooOrderSummary = {
   transactionId: string;
   billingEmail: string;
   billingPhone: string;
+  billingCountry: string;
+  shippingCountry: string;
+  dateCreated: string;
   metaData: WooMetaDataItem[];
 };
 
@@ -120,6 +130,9 @@ const parseWooOrderSummary = (payload: WooOrderPayload, siteUrl: string): WooOrd
     transactionId: sanitizeText(payload.transaction_id),
     billingEmail: sanitizeText(payload.billing?.email),
     billingPhone: sanitizeText(payload.billing?.phone),
+    billingCountry: sanitizeText(payload.billing?.country),
+    shippingCountry: sanitizeText(payload.shipping?.country),
+    dateCreated: sanitizeText(payload.date_created),
     metaData: parseMetaData(payload.meta_data),
   };
 };

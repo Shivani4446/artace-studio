@@ -91,30 +91,31 @@ const parseStoredGift = (value: string | null): { isGiftOrder: boolean; giftMess
 };
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window === "undefined") return [];
-    return parseStoredCart(window.localStorage.getItem(STORAGE_KEY));
-  });
-
-  const [isGiftOrder, setIsGiftOrder] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return parseStoredGift(window.localStorage.getItem(GIFT_STORAGE_KEY)).isGiftOrder;
-  });
-  const [giftMessage, setGiftMessageState] = useState(() => {
-    if (typeof window === "undefined") return "";
-    return parseStoredGift(window.localStorage.getItem(GIFT_STORAGE_KEY)).giftMessage;
-  });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isGiftOrder, setIsGiftOrder] = useState(false);
+  const [giftMessage, setGiftMessageState] = useState("");
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
+    setItems(parseStoredCart(window.localStorage.getItem(STORAGE_KEY)));
+    const storedGift = parseStoredGift(window.localStorage.getItem(GIFT_STORAGE_KEY));
+    setIsGiftOrder(storedGift.isGiftOrder);
+    setGiftMessageState(storedGift.giftMessage);
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isHydrated) return;
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+  }, [items, isHydrated]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     window.localStorage.setItem(
       GIFT_STORAGE_KEY,
       JSON.stringify({ isGiftOrder, giftMessage })
     );
-  }, [isGiftOrder, giftMessage]);
+  }, [isGiftOrder, giftMessage, isHydrated]);
 
   const setGiftOrder = useCallback((value: boolean) => {
     setIsGiftOrder(value);

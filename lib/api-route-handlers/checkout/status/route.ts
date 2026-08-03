@@ -36,6 +36,9 @@ export async function GET(request: NextRequest) {
       currency: order.currency,
       paymentMethodTitle: order.paymentMethodTitle,
       paymentState: mapWooOrderStatusToPaymentState(order.status),
+      email: order.billingEmail,
+      deliveryCountry: order.shippingCountry || order.billingCountry,
+      dateCreated: order.dateCreated,
     });
   } catch (error) {
     return NextResponse.json(

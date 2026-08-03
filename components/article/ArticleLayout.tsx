@@ -13,6 +13,7 @@ import type { FaqItem } from "@/utils/article";
 import { getExchangeRates } from "@/lib/currency/rates";
 import { formatConvertedPrice } from "@/lib/currency/convert";
 import { CURRENCY_COOKIE_NAME, DEFAULT_CURRENCY, parseCurrencyCode } from "@/lib/currency/cookie";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 const STOREFRONT_REVALIDATE_SECONDS = 60;
 
@@ -75,12 +76,19 @@ type WooStoreAttribute = {
   options?: string[];
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreProduct = {
   id: number;
   slug: string;
   name: string;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   attributes?: WooStoreAttribute[];
   prices: WooStorePrices;
 };
@@ -182,7 +190,9 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const payload = (await response.json()) as WooStoreProduct[];
     if (!Array.isArray(payload)) return [];
 
-    return normalizeProducts(payload, FEATURED_PRODUCTS_LIMIT);
+    // Samora-tagged products live exclusively at /samora/shop.
+    const artaceOnly = payload.filter((product) => !hasSamoraTag(product.tags));
+    return normalizeProducts(artaceOnly, FEATURED_PRODUCTS_LIMIT);
   } catch {
     return [];
   }

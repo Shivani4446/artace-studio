@@ -3,6 +3,7 @@ import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 export const runtime = "edge";
 
@@ -35,6 +36,12 @@ type WooStoreCategory = {
   slug: string;
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreAttributeTerm = {
   id: number;
   name: string;
@@ -54,6 +61,7 @@ type WooStoreProduct = {
   name: string;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   prices: WooStorePrices;
   attributes?: WooStoreAttribute[];
   average_rating?: string;
@@ -352,8 +360,10 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
 export async function GET() {
   try {
     const products = await getStoreProducts();
+    // Samora-tagged products live exclusively at /samora/shop.
+    const artaceProducts = products.filter((product) => !hasSamoraTag(product.tags));
     return NextResponse.json(
-      { products: normalizeProducts(products) },
+      { products: normalizeProducts(artaceProducts) },
       {
         headers: {
           "Cache-Control": "no-store",

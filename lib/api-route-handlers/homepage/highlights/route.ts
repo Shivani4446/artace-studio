@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { decodeHtmlEntities } from "@/utils/text";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 export const runtime = "edge";
 
@@ -30,6 +31,12 @@ type WooStoreCategory = {
   slug: string;
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreAttributeTerm = {
   id: number;
   name: string;
@@ -49,6 +56,7 @@ type WooStoreProduct = {
   name: string;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   attributes?: WooStoreAttribute[];
   prices: WooStorePrices;
 };
@@ -146,7 +154,8 @@ const getFeaturedProducts = async (): Promise<FeaturedProductCard[]> => {
     const payload = (await response.json()) as WooStoreProduct[];
     if (!Array.isArray(payload)) return [];
 
-    return normalizeFeaturedProducts(payload);
+    // Samora-tagged products live exclusively at /samora/shop.
+    return normalizeFeaturedProducts(payload.filter((product) => !hasSamoraTag(product.tags)));
   } catch {
     return [];
   }

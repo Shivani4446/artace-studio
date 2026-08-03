@@ -7,6 +7,7 @@ import { clearPendingCheckout } from "@/utils/checkout-client";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { trackPurchase } from "@/utils/gtm";
+import { renderGoogleCustomerReviewsOptIn } from "@/utils/google-reviews-optin";
 
 type CheckoutStatusPayload = {
   success?: boolean;
@@ -19,6 +20,9 @@ type CheckoutStatusPayload = {
   currency?: string;
   paymentMethodTitle?: string;
   paymentState?: "success" | "pending" | "failed";
+  email?: string;
+  deliveryCountry?: string;
+  dateCreated?: string;
 };
 
 const formatCurrency = (total: string, currency: string) => {
@@ -47,6 +51,7 @@ function CheckoutSuccessPageClient() {
 
   const orderId = searchParams.get("orderId") || "";
   const orderKey = searchParams.get("orderKey") || "";
+  const googleOptInRenderedRef = useRef(false);
 
   useEffect(() => {
     if (items.length > 0) {
@@ -117,6 +122,22 @@ function CheckoutSuccessPageClient() {
       isActive = false;
     };
   }, [clearCart, orderId, orderKey]);
+
+  useEffect(() => {
+    if (statusPayload?.paymentState !== "success") return;
+    if (googleOptInRenderedRef.current) return;
+
+    const confirmedOrderId = statusPayload.orderId ?? Number(orderId);
+    if (!confirmedOrderId || !statusPayload.email) return;
+
+    googleOptInRenderedRef.current = true;
+    renderGoogleCustomerReviewsOptIn({
+      orderId: confirmedOrderId,
+      email: statusPayload.email,
+      deliveryCountry: statusPayload.deliveryCountry,
+      orderDate: statusPayload.dateCreated,
+    });
+  }, [orderId, statusPayload]);
 
   const content = useMemo(() => {
     if (isLoading) {

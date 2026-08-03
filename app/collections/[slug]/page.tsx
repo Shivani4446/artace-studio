@@ -7,6 +7,7 @@ import CollectionLandingPage, {
 import { type FAQItem } from "@/components/seo/FAQSection";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
+import { hasSamoraTag } from "@/lib/samora/products";
 export const runtime = 'edge';
 export const revalidate = 60;
 
@@ -62,12 +63,19 @@ type WooStoreAttribute = {
   options?: string[];
 };
 
+type WooStoreTag = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 type WooStoreProduct = {
   id: number;
   slug: string;
   name: string;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
+  tags?: WooStoreTag[];
   prices: WooStorePrices;
   attributes?: WooStoreAttribute[];
   average_rating?: string;
@@ -239,7 +247,8 @@ const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
     }
   }
 
-  return products;
+  // Samora-tagged products live exclusively at /samora/shop.
+  return products.filter((product) => !hasSamoraTag(product.tags));
 };
 
 const formatPriceStat = (
