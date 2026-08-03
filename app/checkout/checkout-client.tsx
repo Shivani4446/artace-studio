@@ -8,6 +8,7 @@ import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
+import CheckoutTrustPoints from "@/components/checkout/CheckoutTrustPoints";
 
 type CheckoutFormState = {
   firstName: string;
@@ -677,9 +678,7 @@ export default function CheckoutPageClient() {
             {getPayButtonLabel(checkoutStage, isRazorpayReady)}
           </button>
 
-          <p className="mt-4 text-sm leading-6 text-[#666]">
-            Your payment details are handled by Razorpay. We do not store card or UPI credentials.
-          </p>
+          <CheckoutTrustPoints />
         </aside>
       </div>
     </main>

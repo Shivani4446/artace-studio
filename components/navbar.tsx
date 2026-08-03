@@ -918,14 +918,20 @@ const Navbar = () => {
                 }}
                 className="relative inline-flex h-9 w-9 cursor-pointer items-center justify-center text-[#2f2f2f] transition-colors hover:text-black md:h-10 md:w-10"
               >
-                <Image
-                  src="/user.svg"
-                  alt=""
-                  width={20}
-                  height={20}
-                  aria-hidden="true"
-                  className="h-5 w-5"
-                />
+                {isAuthenticated ? (
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1f1f1f] text-[11px] font-semibold uppercase tracking-[0.04em] text-white transition-colors hover:bg-black md:h-10 md:w-10 md:text-[12px]">
+                    {accountInitials}
+                  </span>
+                ) : (
+                  <Image
+                    src="/user.svg"
+                    alt=""
+                    width={20}
+                    height={20}
+                    aria-hidden="true"
+                    className="h-5 w-5"
+                  />
+                )}
               </button>
 
               {isAuthenticated ? (
