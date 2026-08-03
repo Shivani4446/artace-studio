@@ -7,6 +7,13 @@ export type EmailContent = {
   text: string;
 };
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
 const wrapEmailHtml = (bodyHtml: string) => `<!doctype html>
 <html>
   <body style="margin:0; padding:0; background-color:#f1f0ed; font-family:Arial, Helvetica, sans-serif;">
@@ -41,7 +48,7 @@ export const buildWelcomeEmail = ({ firstName }: { firstName: string }): EmailCo
   const shopUrl = buildSiteUrl("/shop");
 
   const html = wrapEmailHtml(`
-    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">Welcome to Artace Studio, ${name}!</h1>
+    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">Welcome to Artace Studio, ${escapeHtml(name)}!</h1>
     <p style="margin:0 0 16px 0;">Your account has been created successfully. You can now browse our collection of handcrafted canvas paintings, track your orders, and check out faster next time.</p>
     <p style="margin:0 0 24px 0;">
       <a href="${shopUrl}" style="display:inline-block; background-color:#1f3f63; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:bold;">Start Shopping</a>
@@ -73,7 +80,7 @@ export const buildPasswordResetEmail = ({
 
   const html = wrapEmailHtml(`
     <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">Reset your password</h1>
-    <p style="margin:0 0 16px 0;">Hi ${name}, we received a request to reset your Artace Studio password. Click the button below to choose a new one.</p>
+    <p style="margin:0 0 16px 0;">Hi ${escapeHtml(name)}, we received a request to reset your Artace Studio password. Click the button below to choose a new one.</p>
     <p style="margin:0 0 24px 0;">
       <a href="${resetUrl}" style="display:inline-block; background-color:#1f3f63; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:bold;">Reset Password</a>
     </p>
