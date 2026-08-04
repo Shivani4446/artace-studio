@@ -1,7 +1,3 @@
-import { sendTransactionalEmail } from "@/lib/email/resend";
-import { buildPasswordResetEmail } from "@/lib/email/templates";
-import { buildSiteUrl } from "@/lib/site";
-
 export type WordPressAuthUser = {
   id: number;
   name: string;
@@ -124,21 +120,19 @@ export const getWordPressJwtEndpoint = () => {
   return `${getWordPressApiUrl()}/wp-json/jwt-auth/v1/token`;
 };
 
-const getArtaceAuthBridgeUrl = (path: string) => {
-  const base = getWordPressApiUrl();
-  if (!base.startsWith("https://")) {
-    throw new Error("WordPress API URL must use HTTPS for the auth bridge.");
-  }
-  return `${base}/wp-json/artace-auth/v1${path}`;
-};
+// Uses getWordPressApiUrl() (api.artacestudio.com), not getWordPressSiteUrl()
+// (artacestudio.com) — the site's main domain now serves this Next.js app
+// itself, not WordPress, so wp-login.php only exists on the API subdomain.
+const getWordPressLostPasswordEndpoint = () =>
+  `${getWordPressApiUrl()}/wp-login.php?action=lostpassword`;
 
-const getArtaceAuthBridgeSecret = () => {
-  const secret = safeText(process.env.WORDPRESS_INTERNAL_API_SECRET);
-  if (!secret) {
-    throw new Error("WORDPRESS_INTERNAL_API_SECRET is not configured.");
-  }
-  return secret;
-};
+const getWordPressResetPasswordEntryEndpoint = (login: string, key: string) =>
+  `${getWordPressApiUrl()}/wp-login.php?action=rp&login=${encodeURIComponent(
+    login
+  )}&key=${encodeURIComponent(key)}`;
+
+const getWordPressResetPasswordSubmitEndpoint = () =>
+  `${getWordPressApiUrl()}/wp-login.php?action=resetpass`;
 
 const normalizeAvatarUrl = (value: unknown) => {
   if (!value || typeof value !== "object") return "";
@@ -167,6 +161,41 @@ const mapWordPressProfile = (
   avatarUrl: normalizeAvatarUrl(payload.avatar_urls),
   roles: safeStringArray(payload.roles),
 });
+
+const parseWordPressErrorMessage = (html: string) => {
+  const loginErrorMatch = html.match(
+    /<div[^>]+id=["']login_error["'][^>]*>([\s\S]*?)<\/div>/i
+  );
+  const messageSource = loginErrorMatch?.[1] || html;
+  const stripped = messageSource
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#8217;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return stripped || "Something went wrong. Please try again.";
+};
+
+const getSetCookies = (headers: Headers) => {
+  const cookieHeaders = headers as Headers & {
+    getSetCookie?: () => string[];
+  };
+
+  if (typeof cookieHeaders.getSetCookie === "function") {
+    return cookieHeaders.getSetCookie();
+  }
+
+  const singleHeader = headers.get("set-cookie");
+  return singleHeader ? [singleHeader] : [];
+};
+
+const getCookieHeader = (cookies: string[]) =>
+  cookies
+    .map((cookie) => cookie.split(";")[0]?.trim() || "")
+    .filter(Boolean)
+    .join("; ");
 
 export const getWordPressProfile = async (
   token: string
@@ -267,67 +296,39 @@ export const requestWordPressPasswordReset = async (
     };
   }
 
-  const genericSuccess: WordPressPasswordResult = {
-    ok: true,
-    message: "If an account exists for that email, we've sent a reset link.",
-  };
-
   try {
-    const secret = getArtaceAuthBridgeSecret();
-
-    const response = await fetch(getArtaceAuthBridgeUrl("/request-reset"), {
+    const response = await fetch(getWordPressLostPasswordEndpoint(), {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "X-Artace-Secret": secret,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: JSON.stringify({ username_or_email: normalizedUsername }),
+      body: new URLSearchParams({
+        user_login: normalizedUsername,
+        "wp-submit": "Get New Password",
+        redirect_to: "",
+      }),
+      redirect: "manual",
       cache: "no-store",
     });
 
-    if (!response.ok) {
-      console.error("[wordpress-auth] request-reset bridge call failed:", response.status);
-      return {
-        ok: false,
-        message: "Unable to reach WordPress right now. Please try again.",
-      };
+    const location = response.headers.get("location") || "";
+
+    if (response.status >= 300 && response.status < 400) {
+      if (location.includes("checkemail=confirm")) {
+        return {
+          ok: true,
+          message:
+            "If an account exists for that email, WordPress has sent a reset link.",
+        };
+      }
     }
 
-    const payload = (await response.json()) as {
-      found?: boolean;
-      login?: string;
-      email?: string;
-      firstName?: string;
-      key?: string;
+    const html = await response.text();
+    return {
+      ok: false,
+      message: parseWordPressErrorMessage(html),
     };
-
-    // Enumeration-safe: return the same generic message to the browser
-    // whether or not the account was found.
-    if (!payload.found || !payload.login || !payload.email || !payload.key) {
-      return genericSuccess;
-    }
-
-    try {
-      const resetUrl = buildSiteUrl(
-        `/reset-password?login=${encodeURIComponent(payload.login)}&key=${encodeURIComponent(
-          payload.key
-        )}`
-      );
-      const emailContent = buildPasswordResetEmail({
-        firstName: payload.firstName || "",
-        resetUrl,
-      });
-      await sendTransactionalEmail({ to: payload.email, ...emailContent });
-    } catch (error) {
-      // Don't let an email-delivery failure change the (enumeration-safe)
-      // response, but do log it — otherwise a broken Resend config would
-      // silently mean nobody ever gets a reset email.
-      console.error("[wordpress-auth] password reset email failed:", error);
-    }
-
-    return genericSuccess;
-  } catch (error) {
-    console.error("[wordpress-auth] request-reset bridge error:", error);
+  } catch {
     return {
       ok: false,
       message: "Unable to reach WordPress right now. Please try again.",
@@ -355,38 +356,67 @@ export const resetWordPressPassword = async ({
   }
 
   try {
-    const secret = getArtaceAuthBridgeSecret();
+    const bootstrapResponse = await fetch(
+      getWordPressResetPasswordEntryEndpoint(normalizedLogin, normalizedKey),
+      {
+        method: "GET",
+        redirect: "manual",
+        cache: "no-store",
+      }
+    );
 
-    const response = await fetch(getArtaceAuthBridgeUrl("/reset-password"), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Artace-Secret": secret,
-      },
-      body: JSON.stringify({
-        login: normalizedLogin,
-        key: normalizedKey,
-        password,
-      }),
-      cache: "no-store",
-    });
+    const bootstrapLocation = bootstrapResponse.headers.get("location") || "";
+    const cookieHeader = getCookieHeader(getSetCookies(bootstrapResponse.headers));
 
-    if (!response.ok) {
-      console.error("[wordpress-auth] reset-password bridge call failed:", response.status);
+    if (
+      bootstrapResponse.status < 300 ||
+      bootstrapResponse.status >= 400 ||
+      !cookieHeader ||
+      !bootstrapLocation.includes("action=resetpass")
+    ) {
+      const html = await bootstrapResponse.text();
       return {
         ok: false,
-        message: "Unable to reset your password right now. Please try again.",
+        message: parseWordPressErrorMessage(html),
       };
     }
 
-    const payload = (await response.json()) as { ok?: boolean; message?: string };
+    const submitResponse = await fetch(getWordPressResetPasswordSubmitEndpoint(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Cookie: cookieHeader,
+      },
+      body: new URLSearchParams({
+        pass1: password,
+        pass2: password,
+        rp_key: normalizedKey,
+        rp_login: normalizedLogin,
+        "wp-submit": "Save Password",
+      }),
+      redirect: "manual",
+      cache: "no-store",
+    });
 
+    const submitLocation = submitResponse.headers.get("location") || "";
+
+    if (
+      submitResponse.status >= 300 &&
+      submitResponse.status < 400 &&
+      submitLocation.includes("password-reset=true")
+    ) {
+      return {
+        ok: true,
+        message: "Your password has been updated. You can sign in now.",
+      };
+    }
+
+    const html = await submitResponse.text();
     return {
-      ok: Boolean(payload.ok),
-      message: payload.message || "Unable to reset your password right now. Please try again.",
+      ok: false,
+      message: parseWordPressErrorMessage(html),
     };
-  } catch (error) {
-    console.error("[wordpress-auth] reset-password bridge error:", error);
+  } catch {
     return {
       ok: false,
       message: "Unable to reset your password right now. Please try again.",
