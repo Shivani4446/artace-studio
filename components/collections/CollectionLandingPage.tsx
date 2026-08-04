@@ -107,10 +107,11 @@ const toBaseCollectionName = (value: string) => {
 const capitalizePhrase = (value: string) =>
   value.replace(/\b\w/g, (character) => character.toUpperCase());
 
-const buildProductSubtitle = (product: CollectionProductCard) => {
-  const parts = ["Handmade Painting"];
+const buildProductSubtitle = (product: CollectionProductCard, categorySlug: string) => {
+  const isPhotography = categorySlug === "photography";
+  const parts = [isPhotography ? "Original Digital Print" : "Handmade Painting"];
   if (product.sizeLabel) parts.push(product.sizeLabel);
-  if (product.mediumLabel) parts.push(product.mediumLabel);
+  if (!isPhotography && product.mediumLabel) parts.push(product.mediumLabel);
   return parts.join(" | ");
 };
 
@@ -629,15 +630,17 @@ const HeroArtworkComposition = ({
 const FeaturedProductCard = ({
   product,
   categoryLabel,
+  categorySlug,
   selectedCurrency,
   exchangeRates,
 }: {
   product: CollectionProductCard;
   categoryLabel: string;
+  categorySlug: string;
   selectedCurrency: CurrencyCode;
   exchangeRates: ExchangeRates | null;
 }) => {
-  const productSubtitle = buildProductSubtitle(product);
+  const productSubtitle = buildProductSubtitle(product, categorySlug);
 
   return (
     <article className="group relative flex flex-col">
@@ -961,6 +964,7 @@ const CollectionLandingPage = async ({
                 key={product.id}
                 product={product}
                 categoryLabel={baseCollectionName}
+                categorySlug={categorySlug}
                 selectedCurrency={selectedCurrency}
                 exchangeRates={exchangeRates}
               />

@@ -1022,10 +1022,13 @@ const ShopCatalog = ({
                   className={`grid ${getProductGridGapClassName(productsPerRow)} ${getProductGridClassName(productsPerRow)}`}
                 >
                   {paginatedProducts.map((product) => {
+                    const isPhotography = product.categorySlugs.includes("photography");
                     const categoryLabel = product.categories[0] || "Artwork";
-                    const paintingMetaLine = `Handmade Painting | ${getPaintingSizeLabel(
-                      product
-                    )} | Acrylic Colors on Canvas`;
+                    const paintingMetaLine = isPhotography
+                      ? `Original Digital Print | ${getPaintingSizeLabel(product)}`
+                      : `Handmade Painting | ${getPaintingSizeLabel(
+                          product
+                        )} | Acrylic Colors on Canvas`;
                     const isSingleRowLayout = productsPerRow === 1;
                     const cardTypography = getCardTypography(productsPerRow);
 
