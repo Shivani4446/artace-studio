@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Playfair_Display, Inter } from 'next/font/google';
 import { ArrowRight } from 'lucide-react';
+import { ARTISTS } from '@/lib/artists/data';
 
 // Font Configuration
 const playfair = Playfair_Display({ 
@@ -17,32 +18,6 @@ const inter = Inter({
   variable: '--font-inter'
 });
 
-const artists = [
-  {
-    name: "Aarav Mehta",
-    style: "Minimalism",
-    image: "/Artist-1.webp",
-    aspect: "aspect-square"
-  },
-  {
-    name: "Isha Reddy",
-    style: "Watercolor Art",
-    image: "/Artist-2.webp",
-    aspect: "aspect-[3/4]"
-  },
-  {
-    name: "Kabir Sharma",
-    style: "Surrealism",
-    image: "/Artist-3.webp",
-    aspect: "aspect-square"
-  },
-  {
-    name: "Tanvi Deshmukh",
-    style: "Expressionism",
-    image: "/Artist-4.webp",
-    aspect: "aspect-[3/4]"
-  }
-];
 
 const ShopByArtist = () => {
   return (
@@ -64,13 +39,13 @@ const ShopByArtist = () => {
           </Link>
         </div>
 
-        {/* Artists Grid - Staggered Layout */}
+        {/* Artists Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 align-top">
-          {artists.map((artist, index) => (
-            <div key={index} className="flex flex-col group cursor-pointer">
-              
-              {/* Image Container with Dynamic Aspect Ratio */}
-              <div className={`relative w-full ${artist.aspect} overflow-hidden mb-5 bg-gray-200`}>
+          {ARTISTS.map((artist) => (
+            <Link key={artist.slug} href={`/artists/${artist.slug}`} className="flex flex-col group">
+
+              {/* Image Container */}
+              <div className="relative w-full aspect-square overflow-hidden mb-5 bg-gray-200">
                 <Image
                   src={artist.image}
                   alt={`Artwork by ${artist.name}`}
@@ -86,10 +61,10 @@ const ShopByArtist = () => {
                   {artist.name}
                 </h3>
                 <span className="font-inter text-[#666666] text-sm md:text-[15px] font-normal">
-                  {artist.style}
+                  {artist.tagline}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

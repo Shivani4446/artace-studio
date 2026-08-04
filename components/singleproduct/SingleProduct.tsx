@@ -20,6 +20,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
+import { getArtistByName } from "@/lib/artists/data";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 
@@ -722,6 +723,7 @@ const SingleProduct = ({
     () => normalizeSingleProductData(initialProduct),
     [initialProduct]
   );
+  const artist = artistName ? getArtistByName(artistName) : undefined;
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
@@ -837,8 +839,8 @@ const SingleProduct = ({
 
     const highlights: string[] = [];
 
-    if (artistName) {
-      highlights.push(`Artist: ${artistName}`);
+    if (artist) {
+      highlights.push(`Artist: ${artist.name}`);
     }
 
     if (product.categories[0]?.name) {
@@ -857,7 +859,7 @@ const SingleProduct = ({
     }
 
     return highlights.slice(0, 4);
-  }, [artistName, product, sizeOptions]);
+  }, [artist, product, sizeOptions]);
 
   const selectedSizeValue =
     selectedSize && sizeOptions.includes(selectedSize)
@@ -1522,9 +1524,14 @@ const SingleProduct = ({
                 {product.name}
               </h1>
               <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="text-[16px] text-[#313131] underline underline-offset-2 md:text-[18px]">
-                  By {artistName}
-                </span>
+                {artist ? (
+                  <Link
+                    href={`/artists/${artist.slug}`}
+                    className="text-[16px] text-[#313131] underline underline-offset-2 hover:text-black md:text-[18px]"
+                  >
+                    By {artist.name}
+                  </Link>
+                ) : null}
                 <span className="inline-flex items-center gap-1 rounded-full bg-[#E3F7EC] px-2 py-1 text-[14px] font-medium text-[#14AE5C]">
                   <Star className="h-3 w-3 fill-[#14AE5C] text-[#14AE5C]" />
                   {displayRating.toFixed(1)}
@@ -2063,6 +2070,41 @@ const SingleProduct = ({
           </div>
         </div>
       </section>
+
+      {artist ? (
+        <section className="bg-[#1f1f1f] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
+          <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">
+            <div>
+              <p className="font-inter text-[14px] font-normal text-white/65 md:text-[18px]">
+                About the Artist
+              </p>
+              <h2 className="mt-4 max-w-3xl font-display text-[27px] leading-[1.12] text-white md:text-[36px]">
+                {artist.tagline}
+              </h2>
+              <Link
+                href={`/artists/${artist.slug}`}
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[15px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3] sm:w-auto md:text-[18px]"
+              >
+                View Artist Profile
+                <ArrowUpRight className="h-5 w-5" />
+              </Link>
+            </div>
+
+            <div className="justify-self-center text-center md:justify-self-end">
+              <div className="relative mx-auto h-52 w-52 overflow-hidden rounded-full md:h-72 md:w-72">
+                <Image
+                  src={artist.image}
+                  alt={artist.name}
+                  fill
+                  sizes="(max-width: 768px) 208px, 288px"
+                  className="object-cover"
+                />
+              </div>
+              <p className="mt-5 text-[15px] text-white/70">{artist.name}</p>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="bg-[#080909] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
         <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">

@@ -474,6 +474,36 @@ const fetchProductInformationFromWooApi = async (productId: number) => {
   }
 };
 
+// Independent of the product-information merging above (which has an
+// early-return path that can skip the wc/v3 fetch entirely) so this always
+// runs. Reads the "artist" custom field WooCommerce stores per-product —
+// this is the real, admin-entered source of truth for which artist painted
+// a given product; see lib/artists/data.ts for how it's matched.
+const fetchProductArtistName = async (productId: number): Promise<string | undefined> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+
+  if (!consumerKey || !consumerSecret) return undefined;
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+      headers: {
+        Authorization: `Basic ${basicToken}`,
+      },
+      next: { revalidate },
+    });
+
+    if (!response.ok) return undefined;
+    const payload = (await response.json()) as WooV3Product;
+    const artistMeta = payload.meta_data?.find((meta) => meta.key === "artist");
+    const value = typeof artistMeta?.value === "string" ? artistMeta.value.trim() : "";
+    return value || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 const fetchProductInformationFromWordPressApi = async (productId: number) => {
   const { siteUrl } = getWooServerConfig();
 
@@ -993,10 +1023,11 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     notFound();
   }
 
-  const [productWithInformation, relatedProducts, readMorePosts] = await Promise.all([
+  const [productWithInformation, relatedProducts, readMorePosts, artistName] = await Promise.all([
     getProductWithProductInformation(product),
     getRelatedProductsForProduct(product),
     getLatestBlogs(),
+    fetchProductArtistName(product.id),
   ]);
 
   const schema = generateProductSchema(product);
@@ -1011,6 +1042,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         initialProduct={productWithInformation}
         relatedProducts={relatedProducts}
         readMorePosts={readMorePosts}
+        artistName={artistName}
       />
     </>
   );
