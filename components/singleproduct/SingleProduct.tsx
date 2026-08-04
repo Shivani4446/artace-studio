@@ -4,14 +4,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Aperture,
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
+  BookOpen,
   ChevronDown,
   Heart,
   Minus,
   Plus,
   ShieldCheck,
+  Sofa,
   Star,
   Truck,
   X,
@@ -229,12 +232,19 @@ type AdvisorBlock = {
   ctaHref: string;
 };
 
+type PhotographyDetails = {
+  storyBehindTheCapture?: string;
+  photographyTechnique?: string;
+  interiorStylingRecommendations?: string;
+};
+
 type SingleProductProps = {
   initialProduct?: WooCommerceStoreProduct | SingleProductData | null;
   relatedProducts?: RelatedProductCard[];
   readMorePosts?: ReadMoreCard[];
   advisor?: AdvisorBlock;
   artistName?: string;
+  photographyDetails?: PhotographyDetails;
   className?: string;
 };
 
@@ -714,6 +724,7 @@ const SingleProduct = ({
   readMorePosts = DEFAULT_READ_MORE_POSTS,
   advisor = DEFAULT_ADVISOR,
   artistName = "Artace Studio",
+  photographyDetails,
   className = "",
 }: SingleProductProps) => {
   const { addItem } = useCart();
@@ -1517,9 +1528,21 @@ const SingleProduct = ({
             </div>
 
             <div>
-              <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
-                Customizable
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
+                  Customizable
+                </span>
+                {product.categories.some((category) => category.slug === "photography") && (
+                  <>
+                    <span className="inline-block rounded-full bg-[#EFE7DA] px-3 py-1 text-[13px] font-medium text-[#5b4f3f]">
+                      Ships in Tube
+                    </span>
+                    <span className="inline-block rounded-full bg-[#EFE7DA] px-3 py-1 text-[13px] font-medium text-[#5b4f3f]">
+                      Original Digital Print
+                    </span>
+                  </>
+                )}
+              </div>
               <h1 className="mt-3 font-display text-[24px] leading-[1.22] text-[#24211d] md:text-[28px] md:leading-[1.2]">
                 {product.name}
               </h1>
@@ -1681,6 +1704,15 @@ const SingleProduct = ({
                   />
                 </button>
 
+                {product.categories.some((category) => category.slug === "photography") && (
+                  <Link
+                    href={`/make-an-offer?product=${product.slug}`}
+                    className="order-5 inline-flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#1f1f1f] px-4 py-3 text-[16px] font-normal text-[#1f1f1f] transition-colors hover:bg-[#1f1f1f] hover:text-white md:order-none md:w-auto md:px-6 md:text-[18px]"
+                  >
+                    Make an Offer
+                  </Link>
+                )}
+
                 <button
                   type="button"
                   onClick={handleAddToWishlist}
@@ -1822,6 +1854,78 @@ const SingleProduct = ({
           </div>
         </div>
       </section>
+
+      {product.categories.some((category) => category.slug === "photography") &&
+        (photographyDetails?.storyBehindTheCapture ||
+          photographyDetails?.photographyTechnique ||
+          photographyDetails?.interiorStylingRecommendations) && (
+          <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
+            <div className="mx-auto max-w-[1440px] space-y-10 border-t border-[#e1ddd5] pt-12 md:space-y-14 md:pt-16">
+              {photographyDetails?.storyBehindTheCapture && (
+                <div className="flex flex-col gap-4 md:flex-row md:gap-10">
+                  <div className="flex shrink-0 items-start gap-3 md:w-[280px]">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#EFE7DA] text-[#5b4f3f]">
+                      <BookOpen className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="font-inter text-[12px] font-semibold uppercase tracking-[0.1em] text-[#8a8478]">
+                        The Story
+                      </p>
+                      <h2 className="mt-1 font-display text-[22px] leading-[1.2] text-[#24211d] md:text-[26px]">
+                        Story Behind the Capture
+                      </h2>
+                    </div>
+                  </div>
+                  <p className="whitespace-pre-line text-[16px] leading-8 text-[#4a453e] md:flex-1 md:text-[17px]">
+                    {photographyDetails.storyBehindTheCapture}
+                  </p>
+                </div>
+              )}
+
+              {photographyDetails?.photographyTechnique && (
+                <div className="flex flex-col gap-4 border-t border-[#eee9df] pt-10 md:flex-row md:gap-10 md:pt-14">
+                  <div className="flex shrink-0 items-start gap-3 md:w-[280px]">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#EFE7DA] text-[#5b4f3f]">
+                      <Aperture className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="font-inter text-[12px] font-semibold uppercase tracking-[0.1em] text-[#8a8478]">
+                        The Craft
+                      </p>
+                      <h2 className="mt-1 font-display text-[22px] leading-[1.2] text-[#24211d] md:text-[26px]">
+                        Photography Technique
+                      </h2>
+                    </div>
+                  </div>
+                  <p className="whitespace-pre-line text-[16px] leading-8 text-[#4a453e] md:flex-1 md:text-[17px]">
+                    {photographyDetails.photographyTechnique}
+                  </p>
+                </div>
+              )}
+
+              {photographyDetails?.interiorStylingRecommendations && (
+                <div className="flex flex-col gap-4 border-t border-[#eee9df] pt-10 md:flex-row md:gap-10 md:pt-14">
+                  <div className="flex shrink-0 items-start gap-3 md:w-[280px]">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#EFE7DA] text-[#5b4f3f]">
+                      <Sofa className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="font-inter text-[12px] font-semibold uppercase tracking-[0.1em] text-[#8a8478]">
+                        Styling Guide
+                      </p>
+                      <h2 className="mt-1 font-display text-[22px] leading-[1.2] text-[#24211d] md:text-[26px]">
+                        Interior Styling Recommendations
+                      </h2>
+                    </div>
+                  </div>
+                  <p className="whitespace-pre-line text-[16px] leading-8 text-[#4a453e] md:flex-1 md:text-[17px]">
+                    {photographyDetails.interiorStylingRecommendations}
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
       {toastState ? (
         <div className="fixed bottom-4 left-3 right-3 z-50 flex max-w-[calc(100vw-1.5rem)] items-start gap-2.5 rounded-[10px] border border-[#d9e7da] bg-white px-3 py-2.5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] sm:bottom-6 sm:left-6 sm:right-auto sm:max-w-[420px] sm:items-center sm:gap-3 sm:px-4 sm:py-3">

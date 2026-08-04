@@ -504,6 +504,47 @@ const fetchProductArtistName = async (productId: number): Promise<string | undef
   }
 };
 
+const fetchPhotographyDetails = async (
+  productId: number
+): Promise<{
+  storyBehindTheCapture?: string;
+  photographyTechnique?: string;
+  interiorStylingRecommendations?: string;
+}> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+
+  if (!consumerKey || !consumerSecret) return {};
+
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+
+  try {
+    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+      headers: {
+        Authorization: `Basic ${basicToken}`,
+      },
+      next: { revalidate },
+    });
+
+    if (!response.ok) return {};
+    const payload = (await response.json()) as WooV3Product;
+    const metaData = payload.meta_data ?? [];
+
+    const getMetaValue = (key: string): string | undefined => {
+      const entry = metaData.find((meta) => meta.key === key);
+      const value = typeof entry?.value === "string" ? entry.value.trim() : "";
+      return value || undefined;
+    };
+
+    return {
+      storyBehindTheCapture: getMetaValue("story_behind_the_capture"),
+      photographyTechnique: getMetaValue("photography_technique"),
+      interiorStylingRecommendations: getMetaValue("interior_styling_recommendations"),
+    };
+  } catch {
+    return {};
+  }
+};
+
 const fetchProductInformationFromWordPressApi = async (productId: number) => {
   const { siteUrl } = getWooServerConfig();
 
@@ -1023,12 +1064,14 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     notFound();
   }
 
-  const [productWithInformation, relatedProducts, readMorePosts, artistName] = await Promise.all([
-    getProductWithProductInformation(product),
-    getRelatedProductsForProduct(product),
-    getLatestBlogs(),
-    fetchProductArtistName(product.id),
-  ]);
+  const [productWithInformation, relatedProducts, readMorePosts, artistName, photographyDetails] =
+    await Promise.all([
+      getProductWithProductInformation(product),
+      getRelatedProductsForProduct(product),
+      getLatestBlogs(),
+      fetchProductArtistName(product.id),
+      fetchPhotographyDetails(product.id),
+    ]);
 
   const schema = generateProductSchema(product);
 
@@ -1043,6 +1086,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         relatedProducts={relatedProducts}
         readMorePosts={readMorePosts}
         artistName={artistName}
+        photographyDetails={photographyDetails}
       />
     </>
   );
