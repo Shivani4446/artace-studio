@@ -9,6 +9,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
 import CheckoutTrustPoints from "@/components/checkout/CheckoutTrustPoints";
+import CheckoutNeedMoreHelp from "@/components/checkout/CheckoutNeedMoreHelp";
 
 type CheckoutFormState = {
   firstName: string;
@@ -679,6 +680,7 @@ export default function CheckoutPageClient() {
           </button>
 
           <CheckoutTrustPoints />
+          <CheckoutNeedMoreHelp />
         </aside>
       </div>
     </main>
