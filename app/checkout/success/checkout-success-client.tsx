@@ -102,6 +102,11 @@ function CheckoutSuccessPageClient() {
           dedupeKey: `purchase:${payload.orderId ?? orderId}`,
           items: purchaseItemsRef.current,
         });
+        if (typeof window !== "undefined" && typeof window.fbq === "function") {
+          window.fbq("track", "Purchase", {
+            currency: payload.currency || "INR",
+          });
+        }
         clearCart();
         clearPendingCheckout();
         return;
