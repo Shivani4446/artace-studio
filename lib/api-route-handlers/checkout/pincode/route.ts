@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkDelhiveryServiceability, calculateDelhiveryShippingRate } from "@/lib/delhivery";
+import {
+  SAMORA_FREE_SHIPPING_THRESHOLD_INR,
+  isEligibleForFreeShipping,
+} from "@/lib/samora/pricing";
 
 export const runtime = "edge";
 
 const REVALIDATE_SECONDS = 3600;
 
 // India Post's public pincode API — free, no key required, authoritative for
-// whether a PIN code actually exists and which district/state it belongs to.
+// whether a PIN code exists and its real locality names (e.g. "Bibvewadi"
+// for 411037, not just the city "Pune").
 const INDIA_POST_API = "https://api.postalpincode.in/pincode";
 
 type IndiaPostOffice = {
   Name: string;
   District: string;
   State: string;
-  DeliveryStatus: string;
 };
 
 type IndiaPostResponse = {
@@ -20,117 +25,20 @@ type IndiaPostResponse = {
   PostOffice: IndiaPostOffice[] | null;
 };
 
-// City-level (not state-level) metro classification — a rural pincode in
-// Maharashtra shouldn't get a metro estimate just because Mumbai is also in
-// Maharashtra.
-const METRO_DISTRICTS = new Set([
-  "mumbai",
-  "mumbai suburban",
-  "pune",
-  "new delhi",
-  "delhi",
-  "bangalore",
-  "bengaluru",
-  "bengaluru urban",
-  "hyderabad",
-  "chennai",
-  "kolkata",
-  "ahmedabad",
-  "gurugram",
-  "gurgaon",
-  "noida",
-  "gautam buddha nagar",
-]);
-
-const getWooConfig = () => {
-  // WOOCOMMERCE_SITE_URL is commonly the storefront domain (artacestudio.com),
-  // which has no /wp-json route — the actual REST API lives at
-  // WOOCOMMERCE_REST_URL (api.artacestudio.com) when that's set separately.
-  const fallbackUrl =
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    "https://api.artacestudio.com/";
-  const siteUrl = (process.env.WOOCOMMERCE_REST_URL || fallbackUrl).replace(/\/+$/, "");
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
-  return { siteUrl, consumerKey, consumerSecret };
-};
-
-const toBasicAuthToken = (username: string, password: string) => {
-  const raw = `${username}:${password}`;
-  if (typeof btoa === "function") return btoa(raw);
-  const maybeBuffer = globalThis as {
-    Buffer?: { from: (v: string) => { toString: (enc: string) => string } };
-  };
-  if (maybeBuffer.Buffer) return maybeBuffer.Buffer.from(raw).toString("base64");
-  throw new Error("No base64 encoder available.");
-};
-
-type WooShippingMethod = {
-  method_id: string;
-  enabled: boolean;
-  settings?: Record<string, { value?: string }>;
-};
-
-type WooShippingZone = { id: number };
-type WooShippingLocation = { code?: string; type?: string };
-
-// Reads the actual WooCommerce "India" shipping zone rather than hardcoding a
-// threshold, so this stays correct if the store's free-shipping rule changes.
-const getFreeShippingThreshold = async (): Promise<number | null> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooConfig();
-  if (!consumerKey || !consumerSecret) return null;
-
-  const authHeader = `Basic ${toBasicAuthToken(consumerKey, consumerSecret)}`;
-  const fetchOptions = {
-    headers: { Authorization: authHeader },
-    next: { revalidate: REVALIDATE_SECONDS },
-  };
-
-  try {
-    const zonesResponse = await fetch(`${siteUrl}/wp-json/wc/v3/shipping/zones`, fetchOptions);
-    if (!zonesResponse.ok) return null;
-    const zones = (await zonesResponse.json()) as WooShippingZone[];
-    if (!Array.isArray(zones)) return null;
-
-    for (const zone of zones) {
-      if (zone.id === 0) continue;
-
-      const locationsResponse = await fetch(
-        `${siteUrl}/wp-json/wc/v3/shipping/zones/${zone.id}/locations`,
-        fetchOptions
-      );
-      if (!locationsResponse.ok) continue;
-      const locations = (await locationsResponse.json()) as WooShippingLocation[];
-      const coversIndia =
-        Array.isArray(locations) &&
-        (locations.length === 0 || locations.some((location) => location.code === "IN"));
-      if (!coversIndia) continue;
-
-      const methodsResponse = await fetch(
-        `${siteUrl}/wp-json/wc/v3/shipping/zones/${zone.id}/methods`,
-        fetchOptions
-      );
-      if (!methodsResponse.ok) continue;
-      const methods = (await methodsResponse.json()) as WooShippingMethod[];
-      const freeShippingMethod = methods.find(
-        (method) => method.method_id === "free_shipping" && method.enabled
-      );
-      const minAmountRaw = freeShippingMethod?.settings?.min_amount?.value;
-      const minAmount = Number((minAmountRaw || "").replace(/,/g, ""));
-      if (Number.isFinite(minAmount)) return minAmount;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
+const ZONE_ESTIMATED_DAYS: Record<string, { min: number; max: number }> = {
+  A: { min: 1, max: 2 },
+  B: { min: 2, max: 4 },
+  C: { min: 3, max: 5 },
+  D: { min: 4, max: 7 },
+  E: { min: 6, max: 9 },
 };
 
 export async function GET(request: NextRequest) {
   const pincode = (request.nextUrl.searchParams.get("pincode") || "").trim();
   const amountRaw = request.nextUrl.searchParams.get("amount");
+  const weightRaw = request.nextUrl.searchParams.get("weight"); // grams
   const amount = amountRaw ? Number(amountRaw) : null;
+  const weightGrams = weightRaw ? Number(weightRaw) : null;
 
   if (!/^[1-9][0-9]{5}$/.test(pincode)) {
     return NextResponse.json(
@@ -140,48 +48,58 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(`${INDIA_POST_API}/${pincode}`, {
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
+    const [indiaPostResult, delhiveryResult] = await Promise.all([
+      fetch(`${INDIA_POST_API}/${pincode}`, { next: { revalidate: REVALIDATE_SECONDS } })
+        .then((res) => (res.ok ? (res.json() as Promise<IndiaPostResponse[]>) : null))
+        .catch(() => null),
+      checkDelhiveryServiceability(pincode),
+    ]);
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { serviceable: false, message: "Could not verify this PIN code right now." },
-        { status: 502 }
-      );
-    }
-
-    const payload = (await response.json()) as IndiaPostResponse[];
-    const result = payload?.[0];
-    const postOffices = result?.PostOffice ?? [];
-
-    if (result?.Status !== "Success" || postOffices.length === 0) {
+    // Delhivery is the actual carrier — if they can't service the pincode,
+    // nothing else matters.
+    if (!delhiveryResult || !delhiveryResult.serviceable) {
       return NextResponse.json({
         serviceable: false,
-        message: "We couldn't find that PIN code. Please double-check and try again.",
+        message: "Sorry, this PIN code isn't serviceable by our courier partner right now.",
       });
     }
 
-    const deliveryOffice =
-      postOffices.find((office) => office.DeliveryStatus === "Delivery") ?? postOffices[0];
+    const postOffices = indiaPostResult?.[0]?.PostOffice ?? [];
+    const localityNames = Array.from(new Set(postOffices.map((office) => office.Name))).filter(
+      Boolean
+    );
+    const locality = localityNames.length > 0 ? localityNames.join(", ") : delhiveryResult.city;
+    const state = postOffices[0]?.State || "";
 
-    const district = deliveryOffice.District;
-    const state = deliveryOffice.State;
-    const isMetro = METRO_DISTRICTS.has(district.trim().toLowerCase());
+    const freeShippingEligible = amount !== null ? isEligibleForFreeShipping(amount) : null;
 
-    const freeShippingThreshold = await getFreeShippingThreshold();
-    const freeShippingEligible =
-      freeShippingThreshold !== null && amount !== null ? amount >= freeShippingThreshold : null;
+    let shippingFee: number | null = null;
+    let zone: string | null = null;
+
+    if (freeShippingEligible) {
+      shippingFee = 0;
+    } else if (weightGrams && weightGrams > 0) {
+      const rate = await calculateDelhiveryShippingRate({ destPincode: pincode, weightGrams });
+      if (rate) {
+        shippingFee = rate.amountInr;
+        zone = rate.zone;
+      }
+    }
+
+    const estimatedDays = zone ? ZONE_ESTIMATED_DAYS[zone] : undefined;
 
     return NextResponse.json({
       serviceable: true,
       pincode,
-      district,
+      locality,
+      district: delhiveryResult.district,
       state,
-      isMetro,
-      estimatedDays: isMetro ? { min: 4, max: 6 } : { min: 6, max: 9 },
-      freeShippingThreshold,
+      isRemoteArea: delhiveryResult.isRemoteArea,
+      codAvailable: delhiveryResult.codAvailable,
+      estimatedDays: estimatedDays ?? { min: 3, max: 7 },
+      freeShippingThreshold: SAMORA_FREE_SHIPPING_THRESHOLD_INR,
       freeShippingEligible,
+      shippingFee,
     });
   } catch {
     return NextResponse.json(

@@ -8,6 +8,11 @@ import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
+import {
+  calculateGiftFee,
+  SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS,
+  SAMORA_FREE_SHIPPING_THRESHOLD_INR,
+} from "@/lib/samora/pricing";
 
 type CheckoutFormState = {
   firstName: string;
@@ -43,6 +48,15 @@ type RazorpayCheckoutPayload = {
     prefill?: { name?: string; email?: string; contact?: string };
     notes?: Record<string, string>;
   };
+};
+
+type PincodeShippingPayload = {
+  serviceable?: boolean;
+  message?: string;
+  locality?: string;
+  estimatedDays?: { min: number; max: number };
+  freeShippingEligible?: boolean | null;
+  shippingFee?: number | null;
 };
 
 type CouponValidationPayload = {
@@ -134,6 +148,55 @@ export default function SamoraCheckoutPageClient() {
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<CouponValidationPayload["coupon"] | null>(null);
+  const [shippingQuote, setShippingQuote] = useState<PincodeShippingPayload | null>(null);
+  const [isCheckingShipping, setIsCheckingShipping] = useState(false);
+
+  const totalWeightGrams = useMemo(
+    () =>
+      items.reduce(
+        (sum, item) =>
+          sum + (item.weightKg ? item.weightKg * 1000 : SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS) * item.quantity,
+        0
+      ),
+    [items]
+  );
+
+  const giftFee = useMemo(() => calculateGiftFee(itemCount, isGiftOrder), [itemCount, isGiftOrder]);
+
+  // Real-time Delhivery-quoted shipping — refetched whenever the PIN code
+  // (or the gift-fee-affected total) changes, debounced so we're not hitting
+  // the API on every keystroke.
+  useEffect(() => {
+    if (!/^[1-9][0-9]{5}$/.test(form.postcode)) {
+      setShippingQuote(null);
+      return;
+    }
+
+    const timeoutId = window.setTimeout(async () => {
+      setIsCheckingShipping(true);
+      try {
+        const params = new URLSearchParams({
+          pincode: form.postcode,
+          amount: String(subtotal + giftFee),
+          weight: String(Math.round(totalWeightGrams)),
+        });
+        const response = await fetch(`/api/checkout/pincode?${params.toString()}`, {
+          cache: "no-store",
+        });
+        const data = (await response.json()) as PincodeShippingPayload;
+        setShippingQuote(data);
+      } catch {
+        setShippingQuote({ serviceable: false, message: "Could not calculate shipping right now." });
+      } finally {
+        setIsCheckingShipping(false);
+      }
+    }, 500);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [form.postcode, subtotal, giftFee, totalWeightGrams]);
+
+  const shippingFee = shippingQuote?.serviceable ? shippingQuote.shippingFee ?? null : null;
+  const orderTotal = subtotal + giftFee + (shippingFee ?? 0);
 
   const hasCheckoutReadyItems = useMemo(
     () => items.some((item) => getCheckoutProductId(item.id, item.woocommerceProductId)),
@@ -214,6 +277,12 @@ export default function SamoraCheckoutPageClient() {
         throw new Error("Razorpay checkout is still loading. Please try again.");
       }
 
+      if (shippingQuote?.serviceable === false) {
+        throw new Error(
+          shippingQuote.message || "This PIN code isn't serviceable by our courier partner."
+        );
+      }
+
       const lineItems = items
         .map((item) => {
           const productId = getCheckoutProductId(item.id, item.woocommerceProductId);
@@ -262,6 +331,7 @@ export default function SamoraCheckoutPageClient() {
           customerNote,
           couponCode: appliedCoupon?.code || undefined,
           storeName: "Samora",
+          isGift: isGiftOrder,
         }),
       });
 
@@ -566,15 +636,63 @@ export default function SamoraCheckoutPageClient() {
 
         <aside className="h-fit rounded-[20px] bg-[#f3ead9] p-6 sm:p-7">
           <div className="rounded-[16px] border border-[#2b2420]/10 bg-[#fbf6ef] px-5 py-5">
-            <div className="flex items-center justify-between">
-              <span className="text-[14px] text-[#5c5344]">Subtotal</span>
-              <span className="text-[15px] font-medium text-[#2b2420]">
-                INR {subtotal.toLocaleString("en-IN")}
-              </span>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#5c5344]">Subtotal</span>
+                <span className="text-[15px] font-medium text-[#2b2420]">
+                  INR {subtotal.toLocaleString("en-IN")}
+                </span>
+              </div>
+
+              {giftFee > 0 ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] text-[#5c5344]">Gift Wrapping</span>
+                  <span className="text-[15px] font-medium text-[#2b2420]">
+                    INR {giftFee.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              ) : null}
+
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#5c5344]">Shipping (Delhivery)</span>
+                <span className="text-[15px] font-medium text-[#2b2420]">
+                  {isCheckingShipping
+                    ? "Checking..."
+                    : !shippingQuote
+                      ? "Enter PIN below"
+                      : !shippingQuote.serviceable
+                        ? "Not serviceable"
+                        : shippingFee
+                          ? `INR ${shippingFee.toLocaleString("en-IN")}`
+                          : "FREE"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-[#2b2420]/10 pt-2.5">
+                <span className="text-[14.5px] font-semibold text-[#2b2420]">Total</span>
+                <span className="text-[17px] font-semibold text-[#2b2420]">
+                  INR {orderTotal.toLocaleString("en-IN")}
+                </span>
+              </div>
             </div>
-            <p className="mt-3 text-[13.5px] leading-[1.6] text-[#8a7c68]">
-              Review the final amount in Razorpay before you pay.
-            </p>
+
+            {shippingQuote?.serviceable && shippingQuote.locality ? (
+              <p className="mt-3 text-[13px] leading-[1.6] text-[#8a7c68]">
+                Delivering to {shippingQuote.locality}
+                {shippingQuote.estimatedDays
+                  ? ` · ${shippingQuote.estimatedDays.min}-${shippingQuote.estimatedDays.max} days`
+                  : ""}
+                {!shippingFee ? ` · free above INR ${SAMORA_FREE_SHIPPING_THRESHOLD_INR.toLocaleString("en-IN")}` : ""}
+              </p>
+            ) : shippingQuote && !shippingQuote.serviceable ? (
+              <p className="mt-3 text-[13px] leading-[1.6] text-[#a63b2d]">
+                {shippingQuote.message || "This PIN code isn't serviceable right now."}
+              </p>
+            ) : (
+              <p className="mt-3 text-[13.5px] leading-[1.6] text-[#8a7c68]">
+                Enter your PIN code in the form to see accurate shipping.
+              </p>
+            )}
           </div>
 
           <div className="mt-5 rounded-[16px] border border-[#2b2420]/10 bg-[#fbf6ef] px-5 py-5">
@@ -633,7 +751,8 @@ export default function SamoraCheckoutPageClient() {
               authStatus !== "authenticated" ||
               checkoutStage !== "idle" ||
               !hasCheckoutReadyItems ||
-              !isRazorpayReady
+              !isRazorpayReady ||
+              shippingQuote?.serviceable === false
             }
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#c1683d] px-5 py-3.5 text-[14px] font-semibold text-white transition-colors hover:bg-[#a8552f] disabled:cursor-not-allowed disabled:opacity-60"
           >

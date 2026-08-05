@@ -183,10 +183,10 @@ const fetchProductVariations = async (productId: number) => {
 const fetchProductSpecs = async (
   productId: number,
   sku: string
-): Promise<{ label: string; value: string }[]> => {
+): Promise<{ specs: { label: string; value: string }[]; weightKg: number | null }> => {
   const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
   const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
-  if (!consumerKey || !consumerSecret) return [];
+  if (!consumerKey || !consumerSecret) return { specs: [], weightKg: null };
 
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
@@ -195,7 +195,7 @@ const fetchProductSpecs = async (
       headers: { Authorization: `Basic ${basicToken}` },
       next: { revalidate },
     });
-    if (!response.ok) return [];
+    if (!response.ok) return { specs: [], weightKg: null };
 
     const payload = (await response.json()) as WooV3Product;
     const metaByKey = new Map(
@@ -212,13 +212,14 @@ const fetchProductSpecs = async (
     if (sku) specs.push({ label: "SKU", value: sku });
 
     const weight = Number(payload.weight);
-    if (Number.isFinite(weight) && weight > 0) {
-      specs.push({ label: "Weight", value: `${weight} kg` });
+    const weightKg = Number.isFinite(weight) && weight > 0 ? weight : null;
+    if (weightKg) {
+      specs.push({ label: "Weight", value: `${weightKg} kg` });
     }
 
-    return specs;
+    return { specs, weightKg };
   } catch {
-    return [];
+    return { specs: [], weightKg: null };
   }
 };
 
@@ -310,7 +311,7 @@ const SamoraSingleProductPage = async ({ params }: SingleProductPageProps) => {
     notFound();
   }
 
-  const [variations, relatedProducts, specs] = await Promise.all([
+  const [variations, relatedProducts, { specs, weightKg }] = await Promise.all([
     fetchProductVariations(product.id),
     getOtherSamoraProducts(product.id),
     fetchProductSpecs(product.id, product.sku || ""),
@@ -344,6 +345,7 @@ const SamoraSingleProductPage = async ({ params }: SingleProductPageProps) => {
     reviewCount: product.review_count || 0,
     variations,
     specs,
+    weightKg,
   };
 
   const schema = generateProductSchema(

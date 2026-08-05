@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Gift, Lock, Minus, Plus, ShieldCheck, ShoppingBa
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
+import { calculateGiftFee } from "@/lib/samora/pricing";
 
 const getCheckoutProductId = (id: number | string, woocommerceProductId?: number) => {
   if (typeof woocommerceProductId === "number" && woocommerceProductId > 0) {
@@ -166,14 +167,24 @@ export default function SamoraCartPageClient() {
           <h3 className="font-samora-display text-[21px] text-[#2b2420]">Order Summary</h3>
 
           <div className="mt-5 rounded-[16px] border border-[#2b2420]/10 bg-[#fbf6ef] px-5 py-5">
-            <div className="flex items-center justify-between">
-              <span className="text-[14px] text-[#5c5344]">Subtotal</span>
-              <span className="text-[15px] font-medium text-[#2b2420]">
-                {currency.formatPrice(subtotal)}
-              </span>
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[14px] text-[#5c5344]">Subtotal</span>
+                <span className="text-[15px] font-medium text-[#2b2420]">
+                  {currency.formatPrice(subtotal)}
+                </span>
+              </div>
+              {isGiftOrder ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] text-[#5c5344]">Gift Wrapping</span>
+                  <span className="text-[15px] font-medium text-[#2b2420]">
+                    {currency.formatPrice(calculateGiftFee(itemCount, true))}
+                  </span>
+                </div>
+              ) : null}
             </div>
             <p className="mt-3 text-[13.5px] leading-[1.6] text-[#8a7c68]">
-              Delivery details and payment happen on the next step.
+              Shipping is calculated at checkout based on your PIN code.
             </p>
           </div>
 

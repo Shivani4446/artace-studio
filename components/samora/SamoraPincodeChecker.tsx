@@ -6,14 +6,22 @@ import { CheckCircle2, Loader2, MapPin, XCircle } from "lucide-react";
 type PincodeResult = {
   serviceable: boolean;
   message?: string;
+  locality?: string;
   district?: string;
   state?: string;
   estimatedDays?: { min: number; max: number };
   freeShippingThreshold?: number | null;
   freeShippingEligible?: boolean | null;
+  shippingFee?: number | null;
 };
 
-const SamoraPincodeChecker = ({ amount }: { amount?: number | null }) => {
+const SamoraPincodeChecker = ({
+  amount,
+  weightGrams,
+}: {
+  amount?: number | null;
+  weightGrams?: number | null;
+}) => {
   const [pincode, setPincode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<PincodeResult | null>(null);
@@ -33,6 +41,7 @@ const SamoraPincodeChecker = ({ amount }: { amount?: number | null }) => {
     try {
       const params = new URLSearchParams({ pincode });
       if (amount) params.set("amount", String(amount));
+      if (weightGrams) params.set("weight", String(Math.round(weightGrams)));
 
       const response = await fetch(`/api/checkout/pincode?${params.toString()}`, {
         cache: "no-store",
@@ -83,18 +92,25 @@ const SamoraPincodeChecker = ({ amount }: { amount?: number | null }) => {
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
             <div>
               <p>
-                Delivers to {result.district}, {result.state}.
+                Delivers to {result.locality || result.district}
+                {result.state ? `, ${result.state}` : ""}.
               </p>
               {result.estimatedDays ? (
                 <p className="mt-0.5">
                   Estimated delivery in {result.estimatedDays.min}-{result.estimatedDays.max} days.
                 </p>
               ) : null}
-              {result.freeShippingThreshold ? (
+              {result.freeShippingEligible ? (
+                <p className="mt-0.5">Eligible for free shipping.</p>
+              ) : result.shippingFee !== null && result.shippingFee !== undefined ? (
                 <p className="mt-0.5">
-                  {result.freeShippingEligible
-                    ? "Eligible for free shipping."
-                    : `Free shipping on orders above Rs. ${result.freeShippingThreshold.toLocaleString("en-IN")}.`}
+                  Shipping: Rs. {result.shippingFee.toFixed(0)} (via Delhivery). Free above Rs.{" "}
+                  {(result.freeShippingThreshold ?? 2000).toLocaleString("en-IN")}.
+                </p>
+              ) : result.freeShippingThreshold ? (
+                <p className="mt-0.5">
+                  Free shipping on orders above Rs.{" "}
+                  {result.freeShippingThreshold.toLocaleString("en-IN")}.
                 </p>
               ) : null}
             </div>

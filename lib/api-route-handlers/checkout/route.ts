@@ -10,6 +10,13 @@ import {
   sanitizeText,
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
+import { calculateDelhiveryShippingRate } from "@/lib/delhivery";
+import {
+  calculateGiftFee,
+  isEligibleForFreeShipping,
+  SAMORA_SHIPPING_FALLBACK_INR,
+} from "@/lib/samora/pricing";
+import { fetchLineItemTotals } from "@/lib/samora/pricing.server";
 
 export const runtime = "edge";
 
@@ -42,6 +49,9 @@ type CheckoutRequestBody = {
   // Razorpay modal. Defaults to Artace Studio so the existing checkout flow
   // (which never sends this field) is unaffected.
   storeName?: string;
+  // Samora-only: gift wrapping + real Delhivery shipping are computed below
+  // when storeName === "Samora"; Artace's checkout never sends this field.
+  isGift?: boolean;
 };
 
 const normalizeCountry = (value: string) => {
@@ -150,6 +160,36 @@ export async function POST(request: NextRequest) {
 
   const { paymentMethod, paymentMethodTitle } = getWooCommercePaymentConfig();
 
+  // Gift wrapping + real Delhivery shipping only apply to Samora orders —
+  // Artace's checkout (storeName omitted/"Artace Studio") is unaffected.
+  let feeLines: { name: string; total: string }[] = [];
+  let shippingLines: { method_id: string; method_title: string; total: string }[] = [];
+
+  if (storeName === "Samora") {
+    const totalQuantity = normalizedLineItems.reduce((sum, item) => sum + item.quantity, 0);
+    const { subtotalInr, totalWeightGrams } = await fetchLineItemTotals(normalizedLineItems);
+
+    const giftFee = calculateGiftFee(totalQuantity, body.isGift === true);
+    if (giftFee > 0) {
+      feeLines = [{ name: "Gift Wrapping", total: giftFee.toFixed(2) }];
+    }
+
+    const destinationPincode = shipping.postcode || billing.postcode;
+    let shippingFee = 0;
+
+    if (!isEligibleForFreeShipping(subtotalInr)) {
+      const rate = await calculateDelhiveryShippingRate({
+        destPincode: destinationPincode,
+        weightGrams: totalWeightGrams,
+      });
+      shippingFee = rate?.amountInr ?? SAMORA_SHIPPING_FALLBACK_INR;
+    }
+
+    shippingLines = [
+      { method_id: "delhivery", method_title: "Delhivery", total: shippingFee.toFixed(2) },
+    ];
+  }
+
   try {
     const wooOrder = await createWooCommerceOrder({
       payment_method: paymentMethod,
@@ -179,6 +219,8 @@ export async function POST(request: NextRequest) {
       },
       line_items: normalizedLineItems,
       ...(couponLines.length ? { coupon_lines: couponLines } : {}),
+      ...(feeLines.length ? { fee_lines: feeLines } : {}),
+      ...(shippingLines.length ? { shipping_lines: shippingLines } : {}),
       customer_note: sanitizeText(body.customerNote),
       customer_id: customerId,
     });

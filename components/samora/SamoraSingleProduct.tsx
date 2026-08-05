@@ -37,6 +37,7 @@ export type SamoraProductDetail = {
   reviewCount: number;
   variations: SamoraVariation[];
   specs: SamoraSpec[];
+  weightKg: number | null;
 };
 
 const FALLBACK_IMAGE = "/images/product-ship.png";
@@ -123,6 +124,7 @@ const SamoraSingleProduct = ({
           ? matchedVariation.attributes.map((attr) => attr.value).join(" / ")
           : undefined,
         price: effectivePrice ?? undefined,
+        weightKg: product.weightKg ?? undefined,
       },
       quantity
     );
@@ -295,7 +297,10 @@ const SamoraSingleProduct = ({
 
           {/* Delivery check */}
           <div className="mt-7 border-t border-[#2b2420]/10 pt-6">
-            <SamoraPincodeChecker amount={effectivePrice} />
+            <SamoraPincodeChecker
+              amount={effectivePrice}
+              weightGrams={product.weightKg ? product.weightKg * 1000 * quantity : null}
+            />
           </div>
 
           {/* Make it a gift */}

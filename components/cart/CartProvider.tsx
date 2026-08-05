@@ -18,6 +18,9 @@ export type CartProduct = {
   image: string;
   subtitle?: string;
   price?: number;
+  // Real per-unit weight (kg) from WooCommerce — used by Samora's checkout
+  // to get an accurate Delhivery shipping rate for the whole cart.
+  weightKg?: number;
 };
 
 export type CartItem = CartProduct & {
