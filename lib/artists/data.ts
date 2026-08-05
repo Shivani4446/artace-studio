@@ -4,6 +4,7 @@ export type Artist = {
   image: string;
   tagline: string;
   bio: string;
+  recognition: string;
 };
 
 // Which products belong to which artist is driven entirely by WooCommerce's
@@ -23,6 +24,7 @@ export const ARTISTS: Artist[] = [
     tagline: "Blending traditional technique with a modern eye for color and composition.",
     bio:
       "Sahil Mahalley is one of the artists behind Artace Studio's handcrafted paintings. His work brings together classical technique and a contemporary sensibility, favouring bold composition and a confident use of color. Each piece is painted entirely by hand, with close attention to detail and finish, so that it feels as considered up close as it does from across a room.",
+    recognition: "Featured Artist — Artace Studio",
   },
   {
     slug: "sampadaa-mahalley",
@@ -31,6 +33,7 @@ export const ARTISTS: Artist[] = [
     tagline: "Rooted in tradition, painting India's stories, deities, and everyday moments of devotion.",
     bio:
       "Sampadaa Mahalley paints with a deep appreciation for India's traditional art forms, drawing on themes of devotion, mythology, and everyday ritual. Her paintings are known for their warmth and careful detail, whether she's working on a large canvas or a more intimate piece. Every artwork is handmade from start to finish, carrying the texture and character that only comes from a brush in hand.",
+    recognition: "Featured Artist — Artace Studio",
   },
   {
     slug: "vekkas-mahalley",
@@ -39,6 +42,7 @@ export const ARTISTS: Artist[] = [
     tagline: "Drawn to open landscapes and quiet, atmospheric scenes.",
     bio:
       "Vekkas Mahalley's paintings are shaped by a love of landscape and atmosphere — skies, water, and the quiet in-between moments of a scene. The work favours mood and depth over strict detail, built up in layers by hand on canvas. Each piece is made to bring a sense of calm and openness into the space it hangs in.",
+    recognition: "Featured Artist — Artace Studio",
   },
 ];
 

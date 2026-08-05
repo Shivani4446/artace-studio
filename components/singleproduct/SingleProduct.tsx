@@ -17,8 +17,13 @@ import {
   Sofa,
   Star,
   Truck,
+  UserCheck,
+  UserPlus,
   X,
 } from "lucide-react";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import "yet-another-react-lightbox/styles.css";
 import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
@@ -63,6 +68,20 @@ const TAB_HELPER_TEXT: Record<string, string> = {
   Packaging: "How we protect artwork in transit",
   Returns: "Return and exchange eligibility",
   Reviews: "Share your experience with this artwork",
+};
+
+const PHOTOGRAPHY_TAB_LABELS = [
+  "About the Photograph",
+  "Details and Dimensions",
+  "Shipping and Returns",
+  "Reviews",
+];
+
+const PHOTOGRAPHY_TAB_HELPER_TEXT: Record<string, string> = {
+  "About the Photograph": "Story, technique and artistic vision",
+  "Details and Dimensions": "Print medium and size details",
+  "Shipping and Returns": "How it ships and our return policy",
+  Reviews: "Share your experience with this photograph",
 };
 
 const WHY_ARTACE_POINTS = [
@@ -319,6 +338,31 @@ const toTitleCase = (value: string) =>
   value
     .toLowerCase()
     .replace(/\b\w/g, (character) => character.toUpperCase());
+
+const FOLLOWED_ARTISTS_STORAGE_KEY = "artace_followed_artists";
+
+const readFollowedArtistSlugs = (): string[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(FOLLOWED_ARTISTS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.filter((slug): slug is string => typeof slug === "string")
+      : [];
+  } catch {
+    return [];
+  }
+};
+
+const writeFollowedArtistSlugs = (slugs: string[]) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(FOLLOWED_ARTISTS_STORAGE_KEY, JSON.stringify(slugs));
+  } catch {
+    // Ignore write failures (private browsing, storage disabled, quota, etc.)
+  }
+};
 
 const parseMinorUnitPrice = (
   rawValue: string | undefined,
@@ -734,7 +778,31 @@ const SingleProduct = ({
     () => normalizeSingleProductData(initialProduct),
     [initialProduct]
   );
+  const isPhotography = useMemo(
+    () =>
+      product?.categories.some((category) => category.slug === "photography") ?? false,
+    [product]
+  );
+  const tabLabels = isPhotography ? PHOTOGRAPHY_TAB_LABELS : TAB_LABELS;
+  const tabHelperText = isPhotography ? PHOTOGRAPHY_TAB_HELPER_TEXT : TAB_HELPER_TEXT;
   const artist = artistName ? getArtistByName(artistName) : undefined;
+  const [isFollowingArtist, setIsFollowingArtist] = useState(false);
+
+  useEffect(() => {
+    if (!artist) return;
+    setIsFollowingArtist(readFollowedArtistSlugs().includes(artist.slug));
+  }, [artist]);
+
+  const toggleFollowArtist = () => {
+    if (!artist) return;
+    const current = readFollowedArtistSlugs();
+    const isCurrentlyFollowed = current.includes(artist.slug);
+    const next = isCurrentlyFollowed
+      ? current.filter((slug) => slug !== artist.slug)
+      : [...current, artist.slug];
+    writeFollowedArtistSlugs(next);
+    setIsFollowingArtist(!isCurrentlyFollowed);
+  };
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
@@ -743,8 +811,9 @@ const SingleProduct = ({
     linkHref?: string;
     linkLabel?: string;
   } | null>(null);
-  const [activeInfoTab, setActiveInfoTab] = useState(TAB_LABELS[0]);
+  const [activeInfoTab, setActiveInfoTab] = useState(tabLabels[0]);
   const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
+  const [isImageLightboxOpen, setIsImageLightboxOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isDescriptionTruncatable, setIsDescriptionTruncatable] = useState(false);
   const descriptionRef = React.useRef<HTMLParagraphElement>(null);
@@ -1455,6 +1524,132 @@ const SingleProduct = ({
       return <ProductReviewsForm productId={product.id} />;
     }
 
+    if (activeInfoTab === "About the Photograph") {
+      if (!aboutPaintingHtml) {
+        return (
+          <p className="text-[15px] leading-7 text-[#595959] md:text-[18px] md:leading-8">
+            About the photograph is currently unavailable.
+          </p>
+        );
+      }
+
+      return (
+        <div className="space-y-6">
+          <div className="rounded-[12px] border border-[#e4ded4] bg-[#faf8f4] p-4 md:p-6">
+            <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+              About The Photograph
+            </p>
+            <h3 className="mt-2 font-display text-[24px] leading-[1.2] text-[#313131] md:text-[32px]">
+              {stripHtml(product.name)}
+            </h3>
+            <p className="mt-2 text-[15px] leading-7 text-[#595959] md:text-[17px]">
+              Discover the story, technique, and vision behind this photograph.
+            </p>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <article className="rounded-[12px] border border-[#e4ded4] bg-white p-4 md:p-6">
+              <div
+                className="product-description-content"
+                dangerouslySetInnerHTML={{ __html: aboutPaintingHtml }}
+              />
+            </article>
+
+            <aside className="rounded-[12px] border border-[#e4ded4] bg-[#fcfbf8] p-4 md:p-5">
+              <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+                Quick Highlights
+              </p>
+              <ul className="mt-4 space-y-3">
+                {aboutPaintingHighlights.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[#313131]" />
+                    <span className="text-[14px] leading-6 text-[#595959] md:text-[16px] md:leading-7">
+                      {item}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 text-[14px] leading-6 text-[#6a655d] md:text-[15px] md:leading-7">
+                Every print is produced to museum-grade archival standards and
+                quality-checked before dispatch.
+              </p>
+            </aside>
+          </div>
+        </div>
+      );
+    }
+
+    if (activeInfoTab === "Details and Dimensions") {
+      return (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="font-inter text-[20px] font-medium text-[#313131] md:text-[24px]">
+              Photograph Details
+            </h3>
+            <span className="rounded-full bg-[#f4f2ee] px-3 py-1 text-[12px] text-[#595959] md:text-[14px]">
+              Archival Fine Art Print
+            </span>
+          </div>
+          {specificationRows.length > 0 ? (
+            <div className="mt-4 overflow-hidden rounded-[10px] border border-[#e4ded4]">
+              <div className="grid grid-cols-[minmax(110px,0.42fr)_minmax(0,1fr)] bg-[#f8f6f2] px-3 py-3 text-[13px] font-medium text-[#313131] md:grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] md:px-4 md:text-[15px]">
+                <p>Attribute</p>
+                <p>Details</p>
+              </div>
+              <div className="divide-y divide-[#ece7de]">
+                {specificationRows.map((row, index) => (
+                  <div
+                    key={`${row.label}-${index}`}
+                    className="grid grid-cols-[minmax(110px,0.42fr)_minmax(0,1fr)] gap-3 px-3 py-3 md:grid-cols-[minmax(140px,0.38fr)_minmax(0,1fr)] md:gap-4 md:px-4"
+                  >
+                    <p className="text-[14px] font-medium leading-6 text-[#313131] md:text-[17px] md:leading-7">
+                      {row.label}
+                    </p>
+                    <p className="text-[14px] leading-6 text-[#595959] md:text-[17px] md:leading-7">
+                      {row.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-3 text-[15px] text-[#595959] md:text-[18px]">
+              Photograph details are currently unavailable.
+            </p>
+          )}
+        </>
+      );
+    }
+
+    if (activeInfoTab === "Shipping and Returns") {
+      return (
+        <div className="space-y-4 text-[15px] leading-7 text-[#595959] md:space-y-5 md:text-[18px] md:leading-8">
+          <p>
+            Your photograph ships rolled in a protective tube to prevent damage
+            in transit. It arrives unframed — visit a local frame shop for
+            framing options suited to your space. A booklet with framing tips
+            is included.
+          </p>
+          <p>
+            If your order arrives damaged, contact our support team within 24
+            hours of delivery and we&apos;ll resolve it quickly.
+          </p>
+          <p>
+            You may return your photograph within 15 days of delivery. It
+            must be unframed, in its original packaging, and in the same
+            condition it was received in. Limited-edition prints purchased
+            through Make an Offer follow the same return window.
+          </p>
+          <p>
+            Delivery times are estimated and may vary by courier and, for
+            international orders, customs processing. Any import duties or
+            taxes for orders shipped outside India are paid directly to the
+            courier on delivery and are not included in our prices.
+          </p>
+        </div>
+      );
+    }
+
     return null;
   };
 
@@ -1487,18 +1682,40 @@ const SingleProduct = ({
             <div>
               <div className="mx-auto max-w-[500px] lg:mx-0">
                 <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
-                  <Image
-                    src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
-                    alt={generateProductImageAlt(
-                      product.name,
-                      product.categories[0]?.name,
-                      product.attributes
-                    )}
-                    width={500}
-                    height={500}
-                    sizes="(max-width: 768px) 100vw, 500px"
-                    className="h-auto w-full object-cover"
-                  />
+                  {isPhotography ? (
+                    <button
+                      type="button"
+                      onClick={() => setIsImageLightboxOpen(true)}
+                      className="relative z-10 block w-full cursor-zoom-in"
+                      aria-label="View full-size photograph"
+                    >
+                      <Image
+                        src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                        alt={generateProductImageAlt(
+                          product.name,
+                          product.categories[0]?.name,
+                          product.attributes
+                        )}
+                        width={500}
+                        height={500}
+                        sizes="(max-width: 768px) 100vw, 500px"
+                        className="h-auto w-full object-cover"
+                      />
+                    </button>
+                  ) : (
+                    <Image
+                      src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                      alt={generateProductImageAlt(
+                        product.name,
+                        product.categories[0]?.name,
+                        product.attributes
+                      )}
+                      width={500}
+                      height={500}
+                      sizes="(max-width: 768px) 100vw, 500px"
+                      className="h-auto w-full object-cover"
+                    />
+                  )}
                 </div>
 
                 <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
@@ -1529,10 +1746,12 @@ const SingleProduct = ({
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
-                  Customizable
-                </span>
-                {product.categories.some((category) => category.slug === "photography") && (
+                {!isPhotography && (
+                  <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
+                    Customizable
+                  </span>
+                )}
+                {isPhotography && (
                   <>
                     <span className="inline-block rounded-full bg-[#EFE7DA] px-3 py-1 text-[13px] font-medium text-[#5b4f3f]">
                       Ships in Tube
@@ -1688,23 +1907,25 @@ const SingleProduct = ({
                   />
                 </button>
 
-                <button
-                  type="button"
-                  onClick={openCustomSizeModal}
-                  className="order-4 inline-flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#FFDB4B] px-4 py-3 text-[16px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f] md:order-none md:w-auto md:px-6 md:text-[18px]"
-                >
-                  Order a Custom Size
-                  <Image
-                    src="/custom-order-icon.svg"
-                    alt=""
-                    aria-hidden="true"
-                    width={16}
-                    height={16}
-                    className="h-4 w-4"
-                  />
-                </button>
+                {!isPhotography && (
+                  <button
+                    type="button"
+                    onClick={openCustomSizeModal}
+                    className="order-4 inline-flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#FFDB4B] px-4 py-3 text-[16px] font-normal text-[#2c250f] transition-colors hover:bg-[#f2ce3f] md:order-none md:w-auto md:px-6 md:text-[18px]"
+                  >
+                    Order a Custom Size
+                    <Image
+                      src="/custom-order-icon.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={16}
+                      height={16}
+                      className="h-4 w-4"
+                    />
+                  </button>
+                )}
 
-                {product.categories.some((category) => category.slug === "photography") && (
+                {isPhotography && (
                   <Link
                     href={`/make-an-offer?product=${product.slug}`}
                     className="order-5 inline-flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#1f1f1f] px-4 py-3 text-[16px] font-normal text-[#1f1f1f] transition-colors hover:bg-[#1f1f1f] hover:text-white md:order-none md:w-auto md:px-6 md:text-[18px]"
@@ -1731,45 +1952,49 @@ const SingleProduct = ({
                 </button>
               </div>
 
-              <details className="group mt-5 overflow-hidden rounded-[6px] bg-transparent md:mt-[24px]">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-3 font-inter text-[15px] leading-6 text-[#3a3a3a] [&::-webkit-details-marker]:hidden md:px-4 md:text-[18px] md:leading-tight">
-                  <span className="inline-flex items-center gap-3">
-                    <Truck className="h-4 w-4 shrink-0 text-[#3a3a3a] md:h-5 md:w-5" />
-                    <span>Ships rolled. Frame it locally in your city to hang it</span>
-                  </span>
-                  <ChevronDown className="h-4 w-4 text-[#4f4f4f] transition-transform group-open:rotate-180 md:h-5 md:w-5" />
-                </summary>
-                <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-in-out group-open:grid-rows-[1fr]">
-                  <p className="overflow-hidden border-t border-[#ededed] px-3 py-3 text-[14px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100 md:px-4 md:text-[15px]">
-                    This reduces shipping costs and prevents damage during transit. You also get to choose the frame as per your decor and taste. Visit any local frame shop for multiple framing options. We ship the artwork carefully rolled in a protective tube. A booklet with framing tips is also included.
-                  </p>
-                </div>
-              </details>
+              {!isPhotography && (
+                <>
+                  <details className="group mt-5 overflow-hidden rounded-[6px] bg-transparent md:mt-[24px]">
+                    <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-3 font-inter text-[15px] leading-6 text-[#3a3a3a] [&::-webkit-details-marker]:hidden md:px-4 md:text-[18px] md:leading-tight">
+                      <span className="inline-flex items-center gap-3">
+                        <Truck className="h-4 w-4 shrink-0 text-[#3a3a3a] md:h-5 md:w-5" />
+                        <span>Ships rolled. Frame it locally in your city to hang it</span>
+                      </span>
+                      <ChevronDown className="h-4 w-4 text-[#4f4f4f] transition-transform group-open:rotate-180 md:h-5 md:w-5" />
+                    </summary>
+                    <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-in-out group-open:grid-rows-[1fr]">
+                      <p className="overflow-hidden border-t border-[#ededed] px-3 py-3 text-[14px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100 md:px-4 md:text-[15px]">
+                        This reduces shipping costs and prevents damage during transit. You also get to choose the frame as per your decor and taste. Visit any local frame shop for multiple framing options. We ship the artwork carefully rolled in a protective tube. A booklet with framing tips is also included.
+                      </p>
+                    </div>
+                  </details>
 
-              <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#1f1f1f]/10 pt-6 sm:grid-cols-4">
-                <div className="text-center">
-                  <BadgeCheck className="mx-auto h-4 w-4 text-[#3a6b96]" />
-                  <p className="mt-2 text-[11px] text-[#5c574f]">Premium Cotton Canvas</p>
-                </div>
-                <div className="text-center">
-                  <ShieldCheck className="mx-auto h-4 w-4 text-[#4c8e58]" />
-                  <p className="mt-2 text-[11px] text-[#5c574f]">100% Handmade</p>
-                </div>
-                <div className="text-center">
-                  <Star className="mx-auto h-4 w-4 text-[#d4a43d]" />
-                  <p className="mt-2 text-[11px] text-[#5c574f]">Museum Grade</p>
-                </div>
-                <div className="text-center">
-                  <ShieldCheck className="mx-auto h-4 w-4 text-[#cf7f33]" />
-                  <p className="mt-2 text-[11px] text-[#5c574f]">Authenticity Certificate</p>
-                </div>
-              </div>
+                  <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#1f1f1f]/10 pt-6 sm:grid-cols-4">
+                    <div className="text-center">
+                      <BadgeCheck className="mx-auto h-4 w-4 text-[#3a6b96]" />
+                      <p className="mt-2 text-[11px] text-[#5c574f]">Premium Cotton Canvas</p>
+                    </div>
+                    <div className="text-center">
+                      <ShieldCheck className="mx-auto h-4 w-4 text-[#4c8e58]" />
+                      <p className="mt-2 text-[11px] text-[#5c574f]">100% Handmade</p>
+                    </div>
+                    <div className="text-center">
+                      <Star className="mx-auto h-4 w-4 text-[#d4a43d]" />
+                      <p className="mt-2 text-[11px] text-[#5c574f]">Museum Grade</p>
+                    </div>
+                    <div className="text-center">
+                      <ShieldCheck className="mx-auto h-4 w-4 text-[#cf7f33]" />
+                      <p className="mt-2 text-[11px] text-[#5c574f]">Authenticity Certificate</p>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           <div ref={tabsRef} className="mt-7 hidden rounded-[16px] border border-[#d8d4cd] bg-gradient-to-b from-[#fbfaf8] to-[#f5f2ec] p-3 md:mt-9 md:block md:p-6">
             <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:grid md:gap-2 md:overflow-visible md:px-0 md:pb-0 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-              {TAB_LABELS.map((tab) => (
+              {tabLabels.map((tab) => (
                 <button
                   key={tab}
                   type="button"
@@ -1786,7 +2011,7 @@ const SingleProduct = ({
                       activeInfoTab === tab ? "text-white/80" : "text-[#6a655d]"
                     }`}
                   >
-                    {TAB_HELPER_TEXT[tab] ?? ""}
+                    {tabHelperText[tab] ?? ""}
                   </span>
                 </button>
               ))}
@@ -1795,7 +2020,7 @@ const SingleProduct = ({
             <div className="mt-4 flex flex-wrap gap-2">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#dcd7cf] bg-white px-3 py-1 text-[13px] text-[#57534b]">
                 <BadgeCheck className="h-3.5 w-3.5 text-[#3a6b96]" />
-                Authentic Handmade Art
+                {isPhotography ? "Authentic Fine Art Print" : "Authentic Handmade Art"}
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#dcd7cf] bg-white px-3 py-1 text-[13px] text-[#57534b]">
                 <Truck className="h-3.5 w-3.5 text-[#3a6b96]" />
@@ -1809,7 +2034,7 @@ const SingleProduct = ({
           </div>
 
           <div className="mt-5 space-y-2 md:hidden">
-            {TAB_LABELS.map((tab) => {
+            {tabLabels.map((tab) => {
               const isActive = activeInfoTab === tab;
 
               return (
@@ -1855,7 +2080,28 @@ const SingleProduct = ({
         </div>
       </section>
 
-      {product.categories.some((category) => category.slug === "photography") &&
+      {isPhotography && (
+        <Lightbox
+          open={isImageLightboxOpen}
+          close={() => setIsImageLightboxOpen(false)}
+          index={activeImageIndex}
+          slides={product.images.map((image) => ({
+            src: image.src,
+            alt: image.alt || stripHtml(product.name),
+          }))}
+          plugins={[Zoom]}
+          zoom={{
+            maxZoomPixelRatio: 3,
+            doubleTapDelay: 300,
+            doubleClickDelay: 300,
+          }}
+          on={{
+            view: ({ index }) => setActiveImageIndex(index),
+          }}
+        />
+      )}
+
+      {isPhotography &&
         (photographyDetails?.storyBehindTheCapture ||
           photographyDetails?.photographyTechnique ||
           photographyDetails?.interiorStylingRecommendations) && (
@@ -2107,10 +2353,10 @@ const SingleProduct = ({
         <div className="mx-auto max-w-[1440px]">
           <div className="mb-7 flex items-end justify-between gap-4 md:mb-8">
             <h2 className="font-display text-[26px] leading-[1.12] text-[#1f1f1f] md:text-[52px] md:leading-none">
-              Shop More Like This
+              {isPhotography ? "Photographs You May Also Like" : "Shop More Like This"}
             </h2>
             <Link
-              href="/shop"
+              href={isPhotography ? "/shop?category=photography" : "/shop"}
               className="inline-flex items-center gap-2 border-b border-[#1f1f1f] pb-1 text-[11px] uppercase tracking-[0.08em] md:text-[12px]"
             >
               Shop All
@@ -2118,28 +2364,39 @@ const SingleProduct = ({
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-            {relatedProducts.map((item) => (
-              <Link key={item.id} href={item.href || "#"} className="group block">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#e7e3dc]">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 768px) 46vw, 24vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <p className="mt-3 text-[12px] text-[#7a7368] md:text-[14px]">Handmade Painting</p>
-                <h3 className="mt-1 font-display text-[15px] leading-[1.32] text-[#1f1f1f] md:text-[18px]">
-                  {item.title}
-                </h3>
-                <p className="mt-1 text-[12px] text-[#6f685f] md:text-[14px]">
-                  Handmade Painting | {item.sizes} | Acrylic Colors on Canvas
-                </p>
-              </Link>
-            ))}
-          </div>
+          {relatedProducts.length === 0 && isPhotography ? (
+            <p className="rounded-[12px] border border-dashed border-[#d7d2c9] bg-[#faf8f4] px-6 py-10 text-center text-[15px] text-[#6a655d] md:text-[17px]">
+              This one&apos;s flying solo in the gallery right now — the only
+              photograph in the collection. More frames coming soon.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+              {relatedProducts.map((item) => (
+                <Link key={item.id} href={item.href || "#"} className="group block">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-[12px] bg-[#e7e3dc]">
+                    <Image
+                      src={item.image}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 768px) 46vw, 24vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <p className="mt-3 text-[12px] text-[#7a7368] md:text-[14px]">
+                    {isPhotography ? "Original Digital Print" : "Handmade Painting"}
+                  </p>
+                  <h3 className="mt-1 font-display text-[15px] leading-[1.32] text-[#1f1f1f] md:text-[18px]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-1 text-[12px] text-[#6f685f] md:text-[14px]">
+                    {isPhotography
+                      ? `Original Digital Print | ${item.sizes}`
+                      : `Handmade Painting | ${item.sizes} | Acrylic Colors on Canvas`}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -2205,45 +2462,84 @@ const SingleProduct = ({
                 />
               </div>
               <p className="mt-5 text-[15px] text-white/70">{artist.name}</p>
+              {isPhotography && (
+                <>
+                  <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[12px] font-medium text-white/80">
+                    <BadgeCheck className="h-3.5 w-3.5 text-[#8fd3a8]" />
+                    {artist.recognition}
+                  </p>
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    <Link
+                      href={`/artists/${artist.slug}`}
+                      className="inline-flex items-center gap-1.5 rounded-[4px] border border-white/30 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-white/10"
+                    >
+                      View Profile
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={toggleFollowArtist}
+                      className={`inline-flex items-center gap-1.5 rounded-[4px] px-3 py-2 text-[13px] font-medium transition-colors ${
+                        isFollowingArtist
+                          ? "bg-white text-[#141414] hover:bg-[#f3f3f3]"
+                          : "border border-white/30 text-white hover:bg-white/10"
+                      }`}
+                    >
+                      {isFollowingArtist ? (
+                        <>
+                          <UserCheck className="h-3.5 w-3.5" />
+                          Following
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="h-3.5 w-3.5" />
+                          Follow
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
       ) : null}
 
-      <section className="bg-[#080909] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
-        <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">
-          <div>
-            <p className="font-inter text-[14px] font-normal text-white/65 md:text-[18px]">
-              {toTitleCase(advisor.description)}
-            </p>
-            <h2 className="mt-4 max-w-3xl font-display text-[27px] leading-[1.12] text-white md:text-[36px]">
-              {advisor.headline}
-            </h2>
-            <Link
-              href={advisor.ctaHref}
-              className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[15px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3] sm:w-auto md:text-[18px]"
-            >
-              {advisor.ctaLabel}
-              <ArrowUpRight className="h-5 w-5" />
-            </Link>
-          </div>
-
-          <div className="justify-self-center text-center md:justify-self-end">
-            <div className="relative mx-auto h-52 w-52 overflow-hidden rounded-full md:h-72 md:w-72">
-              <Image
-                src={advisor.image}
-                alt={advisor.name}
-                fill
-                sizes="(max-width: 768px) 208px, 288px"
-                className="object-cover"
-              />
+      {!isPhotography && (
+        <section className="bg-[#080909] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
+          <div className="mx-auto grid max-w-[1440px] items-center gap-y-10 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)] md:gap-x-[80px]">
+            <div>
+              <p className="font-inter text-[14px] font-normal text-white/65 md:text-[18px]">
+                {toTitleCase(advisor.description)}
+              </p>
+              <h2 className="mt-4 max-w-3xl font-display text-[27px] leading-[1.12] text-white md:text-[36px]">
+                {advisor.headline}
+              </h2>
+              <Link
+                href={advisor.ctaHref}
+                className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[4px] bg-white px-5 py-3 text-[15px] font-medium text-[#141414] transition-colors hover:bg-[#f3f3f3] sm:w-auto md:text-[18px]"
+              >
+                {advisor.ctaLabel}
+                <ArrowUpRight className="h-5 w-5" />
+              </Link>
             </div>
-            <p className="mt-5 text-[15px] text-white/70">
-              {advisor.name}, {advisor.role}
-            </p>
+
+            <div className="justify-self-center text-center md:justify-self-end">
+              <div className="relative mx-auto h-52 w-52 overflow-hidden rounded-full md:h-72 md:w-72">
+                <Image
+                  src={advisor.image}
+                  alt={advisor.name}
+                  fill
+                  sizes="(max-width: 768px) 208px, 288px"
+                  className="object-cover"
+                />
+              </div>
+              <p className="mt-5 text-[15px] text-white/70">
+                {advisor.name}, {advisor.role}
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
         <div className="mx-auto max-w-[1440px]">

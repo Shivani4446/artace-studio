@@ -946,6 +946,17 @@ const getFeaturedProducts = async () => {
   return fetchStoreProducts(`featured=true&per_page=${RELATED_PRODUCTS_LIMIT}`);
 };
 
+const PHOTOGRAPHY_CATEGORY_ID = 376;
+
+const getRelatedPhotographyProducts = async (
+  currentProductId: number
+): Promise<RelatedProductCard[]> => {
+  const products = await fetchStoreProducts(
+    `category=${PHOTOGRAPHY_CATEGORY_ID}&exclude=${currentProductId}&per_page=${RELATED_PRODUCTS_LIMIT}`
+  );
+  return products.map(toRelatedCard);
+};
+
 const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com";
 
 const getLatestBlogs = async (): Promise<ReadMoreCard[]> => {
@@ -1064,10 +1075,16 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     notFound();
   }
 
+  const isPhotographyProduct = product.categories.some(
+    (category) => category.slug === "photography"
+  );
+
   const [productWithInformation, relatedProducts, readMorePosts, artistName, photographyDetails] =
     await Promise.all([
       getProductWithProductInformation(product),
-      getRelatedProductsForProduct(product),
+      isPhotographyProduct
+        ? getRelatedPhotographyProducts(product.id)
+        : getRelatedProductsForProduct(product),
       getLatestBlogs(),
       fetchProductArtistName(product.id),
       fetchPhotographyDetails(product.id),

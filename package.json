@@ -19,7 +19,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
-    "remark-breaks": "^4.0.0"
+    "remark-breaks": "^4.0.0",
+    "yet-another-react-lightbox": "^3.32.2"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "1.13.16",
