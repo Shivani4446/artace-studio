@@ -55,9 +55,23 @@ export async function GET(request: NextRequest) {
       checkDelhiveryServiceability(pincode),
     ]);
 
-    // Delhivery is the actual carrier — if they can't service the pincode,
-    // nothing else matters.
-    if (!delhiveryResult || !delhiveryResult.serviceable) {
+    // `null` means the Delhivery call itself failed (missing/invalid token,
+    // network issue, etc.) — that's a config/outage problem, not proof the
+    // pincode is unserviceable, so it must not be reported the same way.
+    if (!delhiveryResult) {
+      console.error(
+        "[checkout/pincode] Delhivery serviceability check returned null — check DELHIVERY_API_TOKEN and that the dev/deploy server was restarted after it was set."
+      );
+      return NextResponse.json(
+        {
+          serviceable: false,
+          message: "Could not verify delivery for this PIN code right now. Please try again shortly.",
+        },
+        { status: 502 }
+      );
+    }
+
+    if (!delhiveryResult.serviceable) {
       return NextResponse.json({
         serviceable: false,
         message: "Sorry, this PIN code isn't serviceable by our courier partner right now.",
