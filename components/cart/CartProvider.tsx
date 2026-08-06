@@ -21,6 +21,10 @@ export type CartProduct = {
   // Real per-unit weight (kg) from WooCommerce — used by Samora's checkout
   // to get an accurate Delhivery shipping rate for the whole cart.
   weightKg?: number;
+  // Which frame style was chosen on the product page (e.g. "Black & Brown"),
+  // if any. Forwarded to the real WooCommerce order as line-item metadata —
+  // see lib/api-route-handlers/checkout/route.ts.
+  frameLabel?: string;
 };
 
 export type CartItem = CartProduct & {

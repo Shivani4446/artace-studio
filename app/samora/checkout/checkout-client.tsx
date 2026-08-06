@@ -196,7 +196,18 @@ export default function SamoraCheckoutPageClient() {
   }, [form.postcode, subtotal, giftFee, totalWeightGrams]);
 
   const shippingFee = shippingQuote?.serviceable ? shippingQuote.shippingFee ?? null : null;
-  const orderTotal = subtotal + giftFee + (shippingFee ?? 0);
+
+  // Estimate only — WooCommerce computes the authoritative discount when the
+  // order is actually created; this just keeps the on-screen total honest
+  // before the shopper reaches Razorpay.
+  const couponDiscount =
+    appliedCoupon?.discountType === "percent"
+      ? Math.round(subtotal * (Number(appliedCoupon.amount) / 100) * 100) / 100
+      : appliedCoupon?.discountType === "fixed_cart"
+        ? Number(appliedCoupon.amount) || 0
+        : 0;
+
+  const orderTotal = Math.max(0, subtotal - couponDiscount) + giftFee + (shippingFee ?? 0);
 
   const hasCheckoutReadyItems = useMemo(
     () => items.some((item) => getCheckoutProductId(item.id, item.woocommerceProductId)),
@@ -437,7 +448,7 @@ export default function SamoraCheckoutPageClient() {
     setCouponError("");
 
     try {
-      const response = await fetch(`/api/checkout/coupon?code=${encodeURIComponent(code)}`, {
+      const response = await fetch(`/api/checkout/coupon?code=${encodeURIComponent(code)}&store=samora`, {
         method: "GET",
         cache: "no-store",
       });
@@ -643,6 +654,17 @@ export default function SamoraCheckoutPageClient() {
                   INR {subtotal.toLocaleString("en-IN")}
                 </span>
               </div>
+
+              {couponDiscount > 0 ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] text-[#5c5344]">
+                    Discount ({appliedCoupon?.code.toUpperCase()})
+                  </span>
+                  <span className="text-[15px] font-medium text-[#116329]">
+                    &minus;INR {couponDiscount.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              ) : null}
 
               {giftFee > 0 ? (
                 <div className="flex items-center justify-between">

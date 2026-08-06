@@ -253,6 +253,7 @@ export default function CheckoutPageClient() {
             productId: number;
             variationId?: number;
             quantity: number;
+            frameLabel?: string;
           } = {
             productId,
             quantity: item.quantity,
@@ -260,6 +261,10 @@ export default function CheckoutPageClient() {
 
           if (typeof item.woocommerceVariationId === "number") {
             checkoutLineItem.variationId = item.woocommerceVariationId;
+          }
+
+          if (typeof item.frameLabel === "string" && item.frameLabel) {
+            checkoutLineItem.frameLabel = item.frameLabel;
           }
 
           return checkoutLineItem;
@@ -271,6 +276,7 @@ export default function CheckoutPageClient() {
             productId: number;
             variationId?: number;
             quantity: number;
+            frameLabel?: string;
           } => lineItem !== null
         );
 

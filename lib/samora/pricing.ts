@@ -19,3 +19,12 @@ export const calculateGiftFee = (itemCount: number, isGift: boolean): number =>
 
 export const isEligibleForFreeShipping = (subtotalInr: number): boolean =>
   subtotalInr >= SAMORA_FREE_SHIPPING_THRESHOLD_INR;
+
+// Coupons that only apply to Samora orders — enforced in code (not just a
+// WooCommerce product/category restriction) so a mixed Artace+Samora cart
+// can't get the Samora discount on the Artace items, and the code can't be
+// used from Artace's own checkout at all.
+export const SAMORA_EXCLUSIVE_COUPON_CODES = new Set(["rakhi10"]);
+
+export const isSamoraExclusiveCoupon = (code: string): boolean =>
+  SAMORA_EXCLUSIVE_COUPON_CODES.has(code.trim().toLowerCase());

@@ -2,6 +2,7 @@
 // checkout pricing (gift fee eligibility, free-shipping threshold, Delhivery
 // weight) is based on authoritative data, never trusted from the client.
 import { SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS } from "@/lib/samora/pricing";
+import { hasSamoraTag } from "@/lib/samora/products";
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 
@@ -15,11 +16,12 @@ const toBasicAuthToken = (username: string, password: string) => {
   throw new Error("No base64 encoder available.");
 };
 
-type WooV3Product = { id: number; price?: string; weight?: string };
+type WooV3Tag = { id: number; slug: string };
+type WooV3Product = { id: number; price?: string; weight?: string; tags?: WooV3Tag[] };
 
 export const fetchLineItemTotals = async (
   lineItems: { product_id: number; quantity: number }[]
-): Promise<{ subtotalInr: number; totalWeightGrams: number }> => {
+): Promise<{ subtotalInr: number; totalWeightGrams: number; allItemsAreSamora: boolean }> => {
   const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
   const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
   const apiBaseUrl = (
@@ -51,6 +53,7 @@ export const fetchLineItemTotals = async (
 
   let subtotalInr = 0;
   let totalWeightGrams = 0;
+  let allItemsAreSamora = uniqueIds.length > 0;
 
   for (const item of lineItems) {
     const product = productsById.get(item.product_id);
@@ -62,7 +65,14 @@ export const fetchLineItemTotals = async (
       (Number.isFinite(weightKg) && weightKg > 0
         ? weightKg * 1000
         : SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS) * item.quantity;
+
+    // Unknown product (lookup failed) or a non-Samora product both fail the
+    // "cart is Samora-only" check — err on the side of not applying
+    // Samora-exclusive perks (gift wrap fee still applies either way).
+    if (!product || !hasSamoraTag(product.tags)) {
+      allItemsAreSamora = false;
+    }
   }
 
-  return { subtotalInr, totalWeightGrams };
+  return { subtotalInr, totalWeightGrams, allItemsAreSamora };
 };

@@ -29,16 +29,16 @@ const SamoraFestiveSpecial = ({ products }: { products: SamoraProduct[] }) => {
           </h2>
 
           <p className="mt-4 text-[16px] leading-[1.7] text-white/75 md:text-[17px]">
-            Celebrate the thread that ties you together with handcrafted gifts made to be
-            cherished &mdash; tote bags, coasters, trays, and more from Samora&apos;s small-batch
-            collection, ready for the season of siblings.
+            Celebrate the thread that ties you together with a handcrafted tote bag made to be
+            cherished &mdash; Samora&apos;s small-batch cotton totes, ready for the season of
+            siblings.
           </p>
 
           <Link
             href="/samora/shop"
             className="group mt-8 inline-flex items-center gap-2 rounded-full bg-[#c1683d] px-7 py-3.5 text-[14.5px] font-medium text-white transition-colors hover:bg-[#a8552f]"
           >
-            Shop Rakhi Gifts
+            Shop Rakhi Tote Bags
             <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
         </div>

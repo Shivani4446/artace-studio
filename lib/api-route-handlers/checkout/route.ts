@@ -14,6 +14,7 @@ import { calculateDelhiveryShippingRate } from "@/lib/delhivery";
 import {
   calculateGiftFee,
   isEligibleForFreeShipping,
+  isSamoraExclusiveCoupon,
   SAMORA_SHIPPING_FALLBACK_INR,
 } from "@/lib/samora/pricing";
 import { fetchLineItemTotals } from "@/lib/samora/pricing.server";
@@ -24,6 +25,7 @@ type CheckoutLineItemInput = {
   productId: number;
   variationId?: number;
   quantity: number;
+  frameLabel?: string;
 };
 
 type CheckoutAddressInput = {
@@ -102,16 +104,25 @@ export async function POST(request: NextRequest) {
       const productId = ensurePositiveInt(item.productId);
       const quantity = ensurePositiveInt(item.quantity);
       const variationId = ensurePositiveInt(item.variationId);
+      const frameLabel = sanitizeText(item.frameLabel);
       if (!productId || !quantity) return null;
 
       return {
         product_id: productId,
         quantity,
         ...(variationId ? { variation_id: variationId } : {}),
+        ...(frameLabel ? { meta_data: [{ key: "Frame", value: frameLabel }] } : {}),
       };
     })
-    .filter((item): item is { product_id: number; quantity: number; variation_id?: number } =>
-      Boolean(item)
+    .filter(
+      (
+        item
+      ): item is {
+        product_id: number;
+        quantity: number;
+        variation_id?: number;
+        meta_data?: Array<{ key: string; value: string }>;
+      } => Boolean(item)
     );
 
   if (normalizedLineItems.length === 0) {
@@ -130,13 +141,21 @@ export async function POST(request: NextRequest) {
   }
 
   const couponCode = sanitizeText(body.couponCode).toLowerCase();
-  const couponLines = couponCode ? [{ code: couponCode }] : [];
 
   const ALLOWED_STORE_NAMES = new Set(["Artace Studio", "Samora"]);
   const requestedStoreName = sanitizeText(body.storeName);
   const storeName = ALLOWED_STORE_NAMES.has(requestedStoreName)
     ? requestedStoreName
     : "Artace Studio";
+
+  // Samora-exclusive coupons (e.g. RAKHI10) can't be applied from Artace's
+  // checkout at all, regardless of cart contents.
+  if (couponCode && isSamoraExclusiveCoupon(couponCode) && storeName !== "Samora") {
+    return NextResponse.json(
+      { error: "That coupon code is only valid on Samora." },
+      { status: 400 }
+    );
+  }
 
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
@@ -164,10 +183,24 @@ export async function POST(request: NextRequest) {
   // Artace's checkout (storeName omitted/"Artace Studio") is unaffected.
   let feeLines: { name: string; total: string }[] = [];
   let shippingLines: { method_id: string; method_title: string; total: string }[] = [];
+  let effectiveCouponCode = couponCode;
 
   if (storeName === "Samora") {
     const totalQuantity = normalizedLineItems.reduce((sum, item) => sum + item.quantity, 0);
-    const { subtotalInr, totalWeightGrams } = await fetchLineItemTotals(normalizedLineItems);
+    const { subtotalInr, totalWeightGrams, allItemsAreSamora } =
+      await fetchLineItemTotals(normalizedLineItems);
+
+    // A Samora-exclusive coupon must not discount non-Samora items — reject
+    // rather than silently drop it, so the shopper knows why it didn't apply.
+    if (couponCode && isSamoraExclusiveCoupon(couponCode) && !allItemsAreSamora) {
+      return NextResponse.json(
+        {
+          error:
+            "That coupon only applies to carts containing Samora products only. Remove any non-Samora items to use it.",
+        },
+        { status: 400 }
+      );
+    }
 
     const giftFee = calculateGiftFee(totalQuantity, body.isGift === true);
     if (giftFee > 0) {
@@ -188,7 +221,13 @@ export async function POST(request: NextRequest) {
     shippingLines = [
       { method_id: "delhivery", method_title: "Delhivery", total: shippingFee.toFixed(2) },
     ];
+  } else if (couponCode && isSamoraExclusiveCoupon(couponCode)) {
+    // Defense in depth — already rejected above, but never let a
+    // Samora-exclusive code reach WooCommerce from a non-Samora checkout.
+    effectiveCouponCode = "";
   }
+
+  const couponLines = effectiveCouponCode ? [{ code: effectiveCouponCode }] : [];
 
   try {
     const wooOrder = await createWooCommerceOrder({

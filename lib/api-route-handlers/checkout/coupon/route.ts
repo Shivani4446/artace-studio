@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
+import { isSamoraExclusiveCoupon } from "@/lib/samora/pricing";
 
 export const runtime = "edge";
 
@@ -130,6 +131,14 @@ export async function GET(request: NextRequest) {
 
   if (code.length > 64) {
     return NextResponse.json({ ok: false, message: "Coupon code is too long." }, { status: 400 });
+  }
+
+  const store = sanitizeText(request.nextUrl.searchParams.get("store") || "").toLowerCase();
+  if (isSamoraExclusiveCoupon(code) && store !== "samora") {
+    return NextResponse.json(
+      { ok: false, message: "That coupon code is only valid on Samora." },
+      { status: 400 }
+    );
   }
 
   const baseUrl = getWooBaseUrl();

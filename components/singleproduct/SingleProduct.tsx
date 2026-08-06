@@ -29,6 +29,7 @@ import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { getArtistByName } from "@/lib/artists/data";
+import { FRAME_OPTIONS, type FrameOption } from "@/lib/framing/data";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 
@@ -806,6 +807,7 @@ const SingleProduct = ({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedFrame, setSelectedFrame] = useState<FrameOption>(FRAME_OPTIONS[0]);
   const [toastState, setToastState] = useState<{
     message: string;
     linkHref?: string;
@@ -1155,15 +1157,20 @@ const SingleProduct = ({
     if (product.categories.length > 0) {
       subtitleParts.push(product.categories[0].name);
     }
+    if (!isPhotography) {
+      subtitleParts.push(selectedFrame.label);
+    }
+    const frameIdSuffix = isPhotography ? "" : `-${selectedFrame.id}`;
 
     addItem(
       {
-        id: `${product.id}-${selectedSizeValue || "default"}`,
+        id: `${product.id}-${selectedSizeValue || "default"}${frameIdSuffix}`,
         woocommerceProductId: product.id,
         title: stripHtml(product.name),
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,
         price: currentPrice ?? undefined,
+        ...(!isPhotography ? { frameLabel: selectedFrame.label } : {}),
       },
       quantity
     );
@@ -1291,15 +1298,20 @@ const SingleProduct = ({
     if (product.categories.length > 0) {
       subtitleParts.push(product.categories[0].name);
     }
+    if (!isPhotography) {
+      subtitleParts.push(selectedFrame.label);
+    }
+    const frameIdSuffix = isPhotography ? "" : `-${selectedFrame.id}`;
 
     addItem(
       {
-        id: `${product.id}-custom-${formatDimensionValue(widthValue)}x${formatDimensionValue(heightValue)}-${customSizeUnit}`,
+        id: `${product.id}-custom-${formatDimensionValue(widthValue)}x${formatDimensionValue(heightValue)}-${customSizeUnit}${frameIdSuffix}`,
         woocommerceProductId: product.id,
         title: `${stripHtml(product.name)} (Custom Size)`,
         image: selectedImage.src,
         subtitle: subtitleParts.join(" | ") || undefined,
         price: customCalculatedPrice ?? currentPrice ?? undefined,
+        ...(!isPhotography ? { frameLabel: selectedFrame.label } : {}),
       },
       1
     );
@@ -1839,6 +1851,44 @@ const SingleProduct = ({
               </div>
               )}
 
+              {!isPhotography && (
+              <div className="mt-6 md:mt-[30px]">
+                <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Frame</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {FRAME_OPTIONS.map((frame) => (
+                    <button
+                      key={frame.id}
+                      type="button"
+                      onClick={() => setSelectedFrame(frame)}
+                      className={`flex flex-col items-center gap-2 rounded-[8px] border px-3 py-2 transition-colors ${
+                        selectedFrame.id === frame.id
+                          ? "border-[#3A4980]/40 bg-[#EDF0F8]"
+                          : "border-[#d5d5d5] bg-white"
+                      }`}
+                    >
+                      <span className="relative h-12 w-12 overflow-hidden rounded-[6px] bg-[#f1f0ed]">
+                        <Image
+                          src={frame.image}
+                          alt={frame.label}
+                          fill
+                          sizes="48px"
+                          className="object-cover"
+                        />
+                      </span>
+                      <span
+                        className={`max-w-[80px] text-center text-[12px] font-medium leading-tight ${
+                          selectedFrame.id === frame.id ? "text-[#3A4980]" : "text-[#595959]"
+                        }`}
+                      >
+                        {frame.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-2 text-[12px] text-[#8a8a8a]">Framing included in the price</p>
+              </div>
+              )}
+
               {product.shortDescription && (
                 <div className="mt-6 max-w-2xl md:mt-[30px]">
                   <p
@@ -1954,21 +2004,6 @@ const SingleProduct = ({
 
               {!isPhotography && (
                 <>
-                  <details className="group mt-5 overflow-hidden rounded-[6px] bg-transparent md:mt-[24px]">
-                    <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-3 font-inter text-[15px] leading-6 text-[#3a3a3a] [&::-webkit-details-marker]:hidden md:px-4 md:text-[18px] md:leading-tight">
-                      <span className="inline-flex items-center gap-3">
-                        <Truck className="h-4 w-4 shrink-0 text-[#3a3a3a] md:h-5 md:w-5" />
-                        <span>Ships rolled. Frame it locally in your city to hang it</span>
-                      </span>
-                      <ChevronDown className="h-4 w-4 text-[#4f4f4f] transition-transform group-open:rotate-180 md:h-5 md:w-5" />
-                    </summary>
-                    <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-in-out group-open:grid-rows-[1fr]">
-                      <p className="overflow-hidden border-t border-[#ededed] px-3 py-3 text-[14px] leading-6 text-[#595959] opacity-0 transition-opacity duration-300 ease-in-out group-open:opacity-100 md:px-4 md:text-[15px]">
-                        This reduces shipping costs and prevents damage during transit. You also get to choose the frame as per your decor and taste. Visit any local frame shop for multiple framing options. We ship the artwork carefully rolled in a protective tube. A booklet with framing tips is also included.
-                      </p>
-                    </div>
-                  </details>
-
                   <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#1f1f1f]/10 pt-6 sm:grid-cols-4">
                     <div className="text-center">
                       <BadgeCheck className="mx-auto h-4 w-4 text-[#3a6b96]" />
