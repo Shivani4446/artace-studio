@@ -25,10 +25,6 @@ const PRODUCT_INFORMATION_ATTRIBUTE_NAME = "Product Information";
 const PRODUCT_INFORMATION_KEY = "product_information";
 const PRODUCT_INFORMATION_GROUP_KEY = "group_68864bb8de1e7";
 const PRODUCT_INFORMATION_META_KEYS = [
-  "dimensions_&_materials",
-  "care_&_framing",
-  "shipping_&_returns",
-  "about_the_painting",
   "size_in_centimetres",
   "customizable",
   "product_type",

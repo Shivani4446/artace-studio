@@ -1753,6 +1753,35 @@ const SingleProduct = ({
                     </button>
                   ))}
                 </div>
+
+                {!isPhotography && (
+                  <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 divide-x divide-[#e4ded4] overflow-hidden rounded-[12px] border border-[#e4ded4] bg-white">
+                    <div className="flex flex-col items-center gap-2 p-3 text-center">
+                      <BadgeCheck className="h-6 w-6 text-[#3a6b96]" />
+                      <p className="text-[12px] font-medium leading-tight text-[#5c574f]">
+                        Premium Cotton Canvas
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 p-3 text-center">
+                      <ShieldCheck className="h-6 w-6 text-[#4c8e58]" />
+                      <p className="text-[12px] font-medium leading-tight text-[#5c574f]">
+                        100% Handmade
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 p-3 text-center">
+                      <Star className="h-6 w-6 text-[#d4a43d]" />
+                      <p className="text-[12px] font-medium leading-tight text-[#5c574f]">
+                        Museum Grade
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 p-3 text-center">
+                      <ShieldCheck className="h-6 w-6 text-[#cf7f33]" />
+                      <p className="text-[12px] font-medium leading-tight text-[#5c574f]">
+                        Authenticity Certificate
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -2001,29 +2030,6 @@ const SingleProduct = ({
                   />
                 </button>
               </div>
-
-              {!isPhotography && (
-                <>
-                  <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#1f1f1f]/10 pt-6 sm:grid-cols-4">
-                    <div className="text-center">
-                      <BadgeCheck className="mx-auto h-4 w-4 text-[#3a6b96]" />
-                      <p className="mt-2 text-[11px] text-[#5c574f]">Premium Cotton Canvas</p>
-                    </div>
-                    <div className="text-center">
-                      <ShieldCheck className="mx-auto h-4 w-4 text-[#4c8e58]" />
-                      <p className="mt-2 text-[11px] text-[#5c574f]">100% Handmade</p>
-                    </div>
-                    <div className="text-center">
-                      <Star className="mx-auto h-4 w-4 text-[#d4a43d]" />
-                      <p className="mt-2 text-[11px] text-[#5c574f]">Museum Grade</p>
-                    </div>
-                    <div className="text-center">
-                      <ShieldCheck className="mx-auto h-4 w-4 text-[#cf7f33]" />
-                      <p className="mt-2 text-[11px] text-[#5c574f]">Authenticity Certificate</p>
-                    </div>
-                  </div>
-                </>
-              )}
             </div>
           </div>
 
