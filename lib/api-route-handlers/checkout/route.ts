@@ -26,6 +26,8 @@ type CheckoutLineItemInput = {
   variationId?: number;
   quantity: number;
   frameLabel?: string;
+  unitPrice?: number;
+  orderTypeLabel?: string;
 };
 
 type CheckoutAddressInput = {
@@ -105,13 +107,26 @@ export async function POST(request: NextRequest) {
       const quantity = ensurePositiveInt(item.quantity);
       const variationId = ensurePositiveInt(item.variationId);
       const frameLabel = sanitizeText(item.frameLabel);
+      const orderTypeLabel = sanitizeText(item.orderTypeLabel);
       if (!productId || !quantity) return null;
+
+      const unitPrice =
+        typeof item.unitPrice === "number" && Number.isFinite(item.unitPrice) && item.unitPrice > 0
+          ? item.unitPrice
+          : null;
+      const lineTotal = unitPrice !== null ? (unitPrice * quantity).toFixed(2) : null;
+
+      const metaEntries = [
+        ...(frameLabel ? [{ key: "Frame", value: frameLabel }] : []),
+        ...(orderTypeLabel ? [{ key: "Order Type", value: orderTypeLabel }] : []),
+      ];
 
       return {
         product_id: productId,
         quantity,
         ...(variationId ? { variation_id: variationId } : {}),
-        ...(frameLabel ? { meta_data: [{ key: "Frame", value: frameLabel }] } : {}),
+        ...(metaEntries.length ? { meta_data: metaEntries } : {}),
+        ...(lineTotal !== null ? { subtotal: lineTotal, total: lineTotal } : {}),
       };
     })
     .filter(
@@ -122,6 +137,8 @@ export async function POST(request: NextRequest) {
         quantity: number;
         variation_id?: number;
         meta_data?: Array<{ key: string; value: string }>;
+        subtotal?: string;
+        total?: string;
       } => Boolean(item)
     );
 

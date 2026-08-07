@@ -265,6 +265,7 @@ type SingleProductProps = {
   advisor?: AdvisorBlock;
   artistName?: string;
   photographyDetails?: PhotographyDetails;
+  isAvailableAsPrint?: boolean;
   className?: string;
 };
 
@@ -770,6 +771,7 @@ const SingleProduct = ({
   advisor = DEFAULT_ADVISOR,
   artistName = "Artace Studio",
   photographyDetails,
+  isAvailableAsPrint = true,
   className = "",
 }: SingleProductProps) => {
   const { addItem } = useCart();
@@ -816,6 +818,11 @@ const SingleProduct = ({
   const [activeInfoTab, setActiveInfoTab] = useState(tabLabels[0]);
   const [isCustomSizeModalOpen, setIsCustomSizeModalOpen] = useState(false);
   const [isImageLightboxOpen, setIsImageLightboxOpen] = useState(false);
+  const NO_FRAME_OPTION =
+    FRAME_OPTIONS.find((frame) => frame.id === "no-frame") ?? FRAME_OPTIONS[FRAME_OPTIONS.length - 1];
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [printSelectedSize, setPrintSelectedSize] = useState("");
+  const [printSelectedFrame, setPrintSelectedFrame] = useState<FrameOption>(NO_FRAME_OPTION);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isDescriptionTruncatable, setIsDescriptionTruncatable] = useState(false);
   const descriptionRef = React.useRef<HTMLParagraphElement>(null);
@@ -974,6 +981,30 @@ const SingleProduct = ({
 
   const currentPrice = currentVariation?.price ?? product?.price ?? null;
   const currentRegularPrice = currentVariation?.regularPrice ?? product?.regularPrice ?? null;
+
+  const getPriceForSize = (sizeValue: string): number | null => {
+    if (!product) return null;
+    if (!sizeValue || !product.variations || product.variations.length === 0) {
+      return product.price ?? null;
+    }
+
+    const matchByAttributeName = product.variations.find((variation) =>
+      variation.attributes.some(
+        (attr) => /size|dimension/i.test(attr.name) && sizeOptionsMatch(attr.value, sizeValue)
+      )
+    );
+    if (matchByAttributeName) return matchByAttributeName.price ?? product.price ?? null;
+
+    const matchByAnyValue = product.variations.find((variation) =>
+      variation.attributes.some((attr) => sizeOptionsMatch(attr.value, sizeValue))
+    );
+    return matchByAnyValue?.price ?? product.price ?? null;
+  };
+
+  const printEffectiveSize = printSelectedSize || selectedSizeValue;
+  const printBasePrice = getPriceForSize(printEffectiveSize);
+  const printFramingCharge = printSelectedFrame.id === "no-frame" ? 0 : 350;
+  const printPrice = printBasePrice !== null ? printBasePrice * 0.25 + printFramingCharge : null;
 
   const wishlistItemId = product
     ? `${product.id}-${selectedSizeValue || "default"}`
@@ -1322,6 +1353,33 @@ const SingleProduct = ({
       linkLabel: "View bag",
     });
     setIsCustomSizeModalOpen(false);
+  };
+
+  const handleAddPrintToCart = () => {
+    if (!product || !selectedImage || !product.inStock || printPrice === null) return;
+
+    const subtitleParts = [printEffectiveSize, printSelectedFrame.label].filter(Boolean);
+
+    addItem(
+      {
+        id: `${product.id}-print-${printEffectiveSize || "default"}-${printSelectedFrame.id}`,
+        woocommerceProductId: product.id,
+        title: `${stripHtml(product.name)} — Fine Art Print`,
+        image: selectedImage.src,
+        subtitle: subtitleParts.join(" | ") || undefined,
+        price: printPrice,
+        orderTypeLabel: "Fine Art Print",
+        ...(printSelectedFrame.id !== "no-frame" ? { frameLabel: printSelectedFrame.label } : {}),
+      },
+      1
+    );
+
+    setIsPrintModalOpen(false);
+    setToastState({
+      message: "Print added to bag",
+      linkHref: "/cart",
+      linkLabel: "View bag",
+    });
   };
 
   const renderActiveTabContent = () => {
@@ -2013,6 +2071,16 @@ const SingleProduct = ({
                   </Link>
                 )}
 
+                {!isPhotography && isAvailableAsPrint && (
+                  <button
+                    type="button"
+                    onClick={() => setIsPrintModalOpen(true)}
+                    className="order-6 inline-flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#3A4980] px-4 py-3 text-[16px] font-normal text-[#3A4980] transition-colors hover:bg-[#3A4980] hover:text-white md:order-none md:w-auto md:px-6 md:text-[18px]"
+                  >
+                    Available in Print
+                  </button>
+                )}
+
                 <button
                   type="button"
                   onClick={handleAddToWishlist}
@@ -2376,6 +2444,145 @@ const SingleProduct = ({
                 <p className="mt-12 text-center text-[14px] text-[#4f4b45]">
                   Dimension markings update live with your custom inputs.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isPrintModalOpen ? (
+        <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:p-4 md:items-center md:p-6">
+          <button
+            type="button"
+            aria-label="Close print options"
+            onClick={() => setIsPrintModalOpen(false)}
+            className="absolute inset-0 bg-black/55"
+          />
+
+          <div className="relative z-[71] w-full max-w-[900px] overflow-hidden rounded-t-[16px] bg-white shadow-[0_22px_48px_rgba(0,0,0,0.28)] sm:rounded-[14px]">
+            <div className="grid max-h-[92dvh] overflow-y-auto lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)]">
+              <div className="relative aspect-square bg-[#f3f0ea] lg:aspect-auto">
+                <Image
+                  src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
+                  alt={selectedImage?.alt || stripHtml(product.name)}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="relative p-4 sm:p-6 md:p-8">
+                <button
+                  type="button"
+                  onClick={() => setIsPrintModalOpen(false)}
+                  className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#f3f3f3] text-[#313131] hover:bg-[#e7e7e7] sm:right-4 sm:top-4"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <p className="font-inter text-[13px] uppercase tracking-[0.08em] text-[#6a655d]">
+                  Fine Art Print
+                </p>
+                <h3 className="mt-2 font-display text-[24px] leading-[1.2] text-[#24211d] md:text-[30px]">
+                  {stripHtml(product.name)}
+                </h3>
+                <p className="mt-3 text-[14px] leading-6 text-[#595959] md:text-[15px]">
+                  A high-quality reproduction of this handmade original, at 25%
+                  of the original&apos;s price. Choose a size and, if you&apos;d
+                  like it framed, a frame style — ready to hang for an extra
+                  ₹350.
+                </p>
+
+                {sizeOptions.length > 0 && (
+                  <div className="mt-6">
+                    <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Size</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {sizeOptions.map((size) => (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => setPrintSelectedSize(size)}
+                          className={`inline-flex items-center gap-2 rounded-[8px] border px-3 py-2 font-inter text-[14px] font-medium transition-colors ${
+                            printEffectiveSize === size
+                              ? "border-[#3A4980]/20 bg-[#EDF0F8] text-[#3A4980]"
+                              : "border-[#d5d5d5] bg-white text-[#595959]"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-6">
+                  <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Frame</p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {FRAME_OPTIONS.map((frame) => (
+                      <button
+                        key={frame.id}
+                        type="button"
+                        onClick={() => setPrintSelectedFrame(frame)}
+                        className={`flex flex-col items-center gap-2 rounded-[8px] border px-3 py-2 transition-colors ${
+                          printSelectedFrame.id === frame.id
+                            ? "border-[#3A4980]/40 bg-[#EDF0F8]"
+                            : "border-[#d5d5d5] bg-white"
+                        }`}
+                      >
+                        <span className="relative h-12 w-12 overflow-hidden rounded-[6px] bg-[#f1f0ed]">
+                          <Image
+                            src={frame.image}
+                            alt={frame.label}
+                            fill
+                            sizes="48px"
+                            className="object-cover"
+                          />
+                        </span>
+                        <span
+                          className={`max-w-[80px] text-center text-[12px] font-medium leading-tight ${
+                            printSelectedFrame.id === frame.id ? "text-[#3A4980]" : "text-[#595959]"
+                          }`}
+                        >
+                          {frame.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[12px] text-[#8a8a8a]">
+                    {printSelectedFrame.id === "no-frame"
+                      ? "No framing charge"
+                      : "+ ₹350 framing charge"}
+                  </p>
+                </div>
+
+                <div className="mt-6 rounded-[12px] border border-[#e3ddd3] bg-[#faf8f4] p-4">
+                  <p className="text-[14px] text-[#6a655d]">Print Price</p>
+                  <p className="mt-1 font-display text-[28px] leading-none text-[#292929] md:text-[34px]">
+                    {printPrice !== null ? currency.formatPrice(printPrice) : "Price on request"}
+                  </p>
+                  <p className="mt-2 text-[14px] text-[#595959]">
+                    25% of the original&apos;s price for this size
+                    {printSelectedFrame.id !== "no-frame" ? " + ₹350 framing" : ""}.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddPrintToCart}
+                  disabled={!product.inStock || printPrice === null}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#1f1f1f] px-6 py-3 text-[16px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578] md:w-auto md:text-[18px]"
+                >
+                  Add to Bag
+                  <Image
+                    src="/add-icon.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={16}
+                    height={16}
+                    className="h-4 w-4"
+                  />
+                </button>
               </div>
             </div>
           </div>

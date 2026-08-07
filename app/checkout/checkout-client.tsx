@@ -254,6 +254,8 @@ export default function CheckoutPageClient() {
             variationId?: number;
             quantity: number;
             frameLabel?: string;
+            unitPrice?: number;
+            orderTypeLabel?: string;
           } = {
             productId,
             quantity: item.quantity,
@@ -267,6 +269,14 @@ export default function CheckoutPageClient() {
             checkoutLineItem.frameLabel = item.frameLabel;
           }
 
+          if (typeof item.price === "number" && Number.isFinite(item.price) && item.price > 0) {
+            checkoutLineItem.unitPrice = item.price;
+          }
+
+          if (typeof item.orderTypeLabel === "string" && item.orderTypeLabel) {
+            checkoutLineItem.orderTypeLabel = item.orderTypeLabel;
+          }
+
           return checkoutLineItem;
         })
         .filter(
@@ -277,6 +287,8 @@ export default function CheckoutPageClient() {
             variationId?: number;
             quantity: number;
             frameLabel?: string;
+            unitPrice?: number;
+            orderTypeLabel?: string;
           } => lineItem !== null
         );
 

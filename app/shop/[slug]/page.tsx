@@ -541,6 +541,27 @@ const fetchPhotographyDetails = async (
   }
 };
 
+const fetchPrintEligibility = async (productId: number): Promise<boolean> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+  if (!consumerKey || !consumerSecret) return true;
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+  try {
+    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+      headers: { Authorization: `Basic ${basicToken}` },
+      next: { revalidate },
+    });
+    if (!response.ok) return true;
+    const payload = (await response.json()) as WooV3Product;
+    const metaData = payload.meta_data ?? [];
+    const entry = metaData.find((meta) => meta.key === "available_as_print");
+    if (!entry) return true;
+    const rawValue = typeof entry.value === "string" ? entry.value.trim().toLowerCase() : "";
+    return rawValue !== "no" && rawValue !== "0" && rawValue !== "false";
+  } catch {
+    return true;
+  }
+};
+
 const fetchProductInformationFromWordPressApi = async (productId: number) => {
   const { siteUrl } = getWooServerConfig();
 
@@ -1075,16 +1096,23 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     (category) => category.slug === "photography"
   );
 
-  const [productWithInformation, relatedProducts, readMorePosts, artistName, photographyDetails] =
-    await Promise.all([
-      getProductWithProductInformation(product),
-      isPhotographyProduct
-        ? getRelatedPhotographyProducts(product.id)
-        : getRelatedProductsForProduct(product),
-      getLatestBlogs(),
-      fetchProductArtistName(product.id),
-      fetchPhotographyDetails(product.id),
-    ]);
+  const [
+    productWithInformation,
+    relatedProducts,
+    readMorePosts,
+    artistName,
+    photographyDetails,
+    isAvailableAsPrint,
+  ] = await Promise.all([
+    getProductWithProductInformation(product),
+    isPhotographyProduct
+      ? getRelatedPhotographyProducts(product.id)
+      : getRelatedProductsForProduct(product),
+    getLatestBlogs(),
+    fetchProductArtistName(product.id),
+    fetchPhotographyDetails(product.id),
+    fetchPrintEligibility(product.id),
+  ]);
 
   const schema = generateProductSchema(product);
 
@@ -1100,6 +1128,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         readMorePosts={readMorePosts}
         artistName={artistName}
         photographyDetails={photographyDetails}
+        isAvailableAsPrint={isAvailableAsPrint}
       />
     </>
   );

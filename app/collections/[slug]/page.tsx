@@ -178,9 +178,17 @@ const getMediumLabel = (attributes: WooStoreAttribute[] = []) => {
   return options[0] || "Acrylic on Canvas";
 };
 
-const toProductCard = (product: WooStoreProduct): CollectionProductCard => {
+const PRINT_PRICE_MULTIPLIER = 0.25;
+
+const toProductCard = (
+  product: WooStoreProduct,
+  categorySlug?: string
+): CollectionProductCard => {
   const minorUnit = product.prices?.currency_minor_unit ?? 2;
   const primaryImage = product.images?.[0];
+  const isPrintsCollection = categorySlug === "prints";
+  const rawPrice = parsePrice(product.prices?.price, minorUnit);
+  const rawRegularPrice = parsePrice(product.prices?.regular_price, minorUnit);
 
   return {
     id: product.id,
@@ -190,8 +198,11 @@ const toProductCard = (product: WooStoreProduct): CollectionProductCard => {
     imageAlt: decodeHtmlEntities(
       primaryImage?.alt || primaryImage?.name || product.name
     ),
-    price: parsePrice(product.prices?.price, minorUnit),
-    regularPrice: parsePrice(product.prices?.regular_price, minorUnit),
+    price: isPrintsCollection && rawPrice !== null ? rawPrice * PRINT_PRICE_MULTIPLIER : rawPrice,
+    regularPrice:
+      isPrintsCollection && rawRegularPrice !== null
+        ? rawRegularPrice * PRINT_PRICE_MULTIPLIER
+        : rawRegularPrice,
     currencyCode: product.prices?.currency_code || "INR",
     currencySymbol: product.prices?.currency_symbol || "Rs. ",
     sizeLabel: getSizeLabel(product.attributes ?? []),
@@ -335,6 +346,11 @@ const COLLECTION_SEO_OVERRIDES: Record<string, { title: string; description: str
     description:
       "Shop Vastu-compliant canvas paintings for your home and pooja room. Hand-painted wall art chosen for auspicious direction and placement, crafted to bring balance and positive energy to your space.",
   },
+  prints: {
+    title: "Fine Art Prints Online in India | Museum-Quality Reproductions | Artace Studio",
+    description:
+      "Shop fine-art print reproductions of Artace Studio's handmade paintings, at a fraction of the original's price. Choose your size, add framing, and bring the art you love home.",
+  },
 };
 
 export async function generateMetadata({ params }: CollectionPageProps) {
@@ -415,7 +431,7 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
   }
 
   const sortedProducts = sortProductsForFeature(matchedProducts);
-  const productCards = sortedProducts.map(toProductCard);
+  const productCards = sortedProducts.map((product) => toProductCard(product, decodedSlug));
   const topProducts = productCards.slice(0, 4);
   const heroImage =
     matchedCategory.image?.src || productCards[0]?.image || FALLBACK_PRODUCT_IMAGE;

@@ -25,6 +25,10 @@ export type CartProduct = {
   // if any. Forwarded to the real WooCommerce order as line-item metadata —
   // see lib/api-route-handlers/checkout/route.ts.
   frameLabel?: string;
+  // A plain-language tag for this line item shown to you in WooCommerce
+  // (e.g. "Fine Art Print") — forwarded as line-item metadata, same
+  // mechanism as frameLabel. Undefined for a normal order.
+  orderTypeLabel?: string;
 };
 
 export type CartItem = CartProduct & {

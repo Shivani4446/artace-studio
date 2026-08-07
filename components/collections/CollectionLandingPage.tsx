@@ -109,9 +109,12 @@ const capitalizePhrase = (value: string) =>
 
 const buildProductSubtitle = (product: CollectionProductCard, categorySlug: string) => {
   const isPhotography = categorySlug === "photography";
-  const parts = [isPhotography ? "Original Digital Print" : "Handmade Painting"];
+  const isPrint = categorySlug === "prints";
+  const parts = [
+    isPhotography ? "Original Digital Print" : isPrint ? "Fine Art Print" : "Handmade Painting",
+  ];
   if (product.sizeLabel) parts.push(product.sizeLabel);
-  if (!isPhotography && product.mediumLabel) parts.push(product.mediumLabel);
+  if (!isPhotography && !isPrint && product.mediumLabel) parts.push(product.mediumLabel);
   return parts.join(" | ");
 };
 
