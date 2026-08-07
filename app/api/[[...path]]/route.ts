@@ -27,6 +27,7 @@ import * as revalidateRoute from "@/lib/api-route-handlers/revalidate/route";
 import * as reviewsRoute from "@/lib/api-route-handlers/reviews/route";
 import * as searchRoute from "@/lib/api-route-handlers/search/route";
 import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/route";
+import * as tradeLeadsRoute from "@/lib/api-route-handlers/trade-leads/route";
 import * as uploadImageRoute from "@/lib/api-route-handlers/upload-image/route";
 
 export const runtime = "edge";
@@ -122,6 +123,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "store/products": {
     GET: () => storeProductsRoute.GET(),
+  },
+  "trade-leads": {
+    POST: (request) => tradeLeadsRoute.POST(request),
   },
   "upload-image": {
     POST: (request) => uploadImageRoute.POST(request),

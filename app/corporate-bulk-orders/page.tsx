@@ -275,6 +275,13 @@ const CorporateBulkOrdersPage = () => {
                 Need immediate assistance? Call or WhatsApp our B2B team directly at
                 <span className="font-medium text-[#1a1a1a]"> 9657609102</span>.
               </p>
+              <p className="mt-6 text-[15px] text-[#595959] md:text-[16px]">
+                Interior designer or architect?{" "}
+                <Link href="/trade" className="font-medium text-[#1a1a1a] underline underline-offset-2">
+                  Apply for our Trade Program
+                </Link>{" "}
+                for a flat 15% discount instead.
+              </p>
             </div>
 
             <CorporateLeadForm />
