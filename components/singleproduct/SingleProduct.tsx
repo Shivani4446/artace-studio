@@ -30,8 +30,14 @@ import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { getArtistByName } from "@/lib/artists/data";
 import { FRAME_OPTIONS, type FrameOption } from "@/lib/framing/data";
+import WhyArtaceStudio from "@/components/shared/WhyArtaceStudio";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
+// Artace Studio's real Trustpilot rating, shown on photography product
+// pages. Update this if the real score on trustpilot.com/review/artacestudio.com
+// changes — this is a manually-set number, not a live-fetched value.
+const TRUSTPILOT_RATING = 4.5;
+const TRUSTPILOT_PROFILE_URL = "https://www.trustpilot.com/review/artacestudio.com";
 
 const generateProductImageAlt = (
   productName: string,
@@ -84,29 +90,6 @@ const PHOTOGRAPHY_TAB_HELPER_TEXT: Record<string, string> = {
   "Shipping and Returns": "How it ships and our return policy",
   Reviews: "Share your experience with this photograph",
 };
-
-const WHY_ARTACE_POINTS = [
-  {
-    title: "Authenticity",
-    text: "We stand behind the authenticity and quality of our artwork, ensuring lasting beauty and value.",
-    iconSrc: "/Authenticity.svg",
-  },
-  {
-    title: "Satisfaction Guarantee",
-    text: "Enjoy peace of mind with our 15-day satisfaction guarantee and shop with confidence.",
-    iconSrc: "/Satisfaction Guarantee.svg",
-  },
-  {
-    title: "Personal Support",
-    text: "We offer dedicated support to ensure a smooth and exceptional experience from start to finish.",
-    iconSrc: "/Personal Support.svg",
-  },
-  {
-    title: "Curated with Confidence",
-    text: "We curate exceptional, authentic art so you can create with confidence.",
-    iconSrc: "/Curated with Confidence.svg",
-  },
-];
 
 type WooCommerceStorePrices = {
   currency_code: string;
@@ -1884,6 +1867,23 @@ const SingleProduct = ({
                 >
                   {displayReviewCount} Reviews
                 </button>
+                {isPhotography && (
+                  <a
+                    href={TRUSTPILOT_PROFILE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[#E3F7EC] px-2 py-1 text-[14px] font-medium text-[#126849] transition-colors hover:bg-[#d5efe0]"
+                  >
+                    <Image
+                      src="/trustpilot-logo.svg"
+                      alt="Trustpilot"
+                      width={70}
+                      height={17}
+                      className="h-[14px] w-auto"
+                    />
+                    {TRUSTPILOT_RATING.toFixed(1)}
+                  </a>
+                )}
               </div>
 
               <div className="mt-6 font-inter">
@@ -2648,37 +2648,7 @@ const SingleProduct = ({
         </div>
       </section>
 
-      <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
-        <div className="mx-auto max-w-[1440px]">
-          <h2 className="font-display text-[26px] leading-[1.12] text-[#1f1f1f] md:text-center md:text-[52px] md:leading-none">
-            Why Artace Studio
-          </h2>
-          <p className="mt-4 max-w-[980px] text-[15px] leading-7 text-[#595959] md:mx-auto md:text-center md:text-[18px] md:leading-8">
-            Bringing a new piece of art into your life is a significant moment, one filled with excitement and personal expression. We believe the experience of acquiring it should be just as inspiring and effortless.
-          </p>
-
-          <div className="mt-10 grid grid-cols-2 gap-x-4 gap-y-8 md:mt-12 md:gap-x-10 md:gap-y-10 md:grid-cols-2 lg:grid-cols-4">
-            {WHY_ARTACE_POINTS.map(({ title, text, iconSrc }) => (
-              <div
-                key={title}
-                className="flex h-full w-full flex-col items-start text-left md:mx-auto md:max-w-[320px] md:items-center md:text-center lg:max-w-none"
-              >
-                <Image
-                  src={iconSrc}
-                  alt={title}
-                  width={64}
-                  height={64}
-                  className="h-11 w-auto object-contain md:mx-auto md:h-14"
-                />
-                <h3 className="mt-5 font-display text-[22px] leading-[1.2] text-[#313131] md:text-[25px]">
-                  {title}
-                </h3>
-                <p className="mt-2 text-[15px] leading-7 text-[#595959] md:text-[18px] md:leading-8">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <WhyArtaceStudio />
 
       {artist ? (
         <section className="bg-[#1f1f1f] px-4 py-12 text-white sm:px-6 md:px-12 md:py-16 lg:px-24">
