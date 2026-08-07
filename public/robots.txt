@@ -1,0 +1,17 @@
+# https://www.artacestudio.com/robots.txt
+User-agent: *
+Allow: /
+
+User-agent: AhrefsBot
+Allow: /
+
+User-agent: SemrushBot
+Allow: /
+
+User-agent: DotBot
+Allow: /
+
+User-agent: MJ12bot
+Allow: /
+
+Sitemap: https://www.artacestudio.com/sitemap.xml

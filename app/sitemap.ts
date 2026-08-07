@@ -1,365 +1,76 @@
 import type { MetadataRoute } from "next";
-import { hasSamoraTag } from "@/lib/samora/products";
 
-const DEFAULT_BASE_URL = "https://artacestudio.com";
-const DEFAULT_WP_JSON_PREFIX = "/wp-json";
-const REVALIDATE_SECONDS = 60 * 60; // 1 hour
+const BASE_URL = "https://www.artacestudio.com";
 
-const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
+const shopSlugs = [
+  "canvas-paintings",
+  "wall-art",
+  "spiritual-paintings",
+  "abstract-paintings",
+  "portrait-paintings",
+  "landscape-paintings",
+  "modern-art",
+  "traditional-paintings",
+  "custom-paintings",
+];
 
-const normalizeBaseUrl = (value: string) => {
-  const trimmed = trimTrailingSlashes(value.trim());
+const collectionSlugs = [
+  "mahadev-nandi-canvas-painting",
+  "ganesh-paintings",
+  "krishna-paintings",
+  "durga-paintings",
+  "shiva-paintings",
+  "hanuman-paintings",
+  "buddha-paintings",
+  "radha-krishna-paintings",
+];
 
-  try {
-    const normalized = new URL(trimmed);
+const roomSlugs = ["pooja-room", "living-room", "bedroom", "dining-room"];
 
-    if (normalized.hostname === "api.artacestudio.com") {
-      normalized.hostname = "artacestudio.com";
-    }
-
-    return trimTrailingSlashes(normalized.origin);
-  } catch {
-    return trimmed;
-  }
-};
-
-const getBaseUrl = () => {
-  const raw =
-    process.env.SITE_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    DEFAULT_BASE_URL;
-
-  return normalizeBaseUrl(raw);
-};
-
-const getWooApiOrigin = () => {
-  const raw =
-    process.env.WOOCOMMERCE_REST_URL ||
-    process.env.WORDPRESS_API_URL ||
-    process.env.WORDPRESS_URL ||
-    process.env.WOOCOMMERCE_SITE_URL ||
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    DEFAULT_BASE_URL;
-
-  return trimTrailingSlashes(raw.trim());
-};
-
-const getWpJsonPrefix = () => {
-  const raw = (process.env.WOOCOMMERCE_WP_JSON_PREFIX || DEFAULT_WP_JSON_PREFIX).trim();
-  const normalized = raw.startsWith("/") ? raw : `/${raw}`;
-  return trimTrailingSlashes(normalized);
-};
-
-const toBase64 = (value: string) => {
-  if (typeof btoa === "function") return btoa(value);
-
-  const maybeBuffer = globalThis as {
-    Buffer?: { from: (v: string, enc?: string) => { toString: (enc: string) => string } };
-  };
-  if (maybeBuffer.Buffer) return maybeBuffer.Buffer.from(value, "utf8").toString("base64");
-
-  throw new Error("No base64 encoder available.");
-};
-
-const getWooAuthHeaders = () => {
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
-  const headers: Record<string, string> = {};
-  if (!consumerKey || !consumerSecret) return headers;
-
-  headers.Authorization = `Basic ${toBase64(`${consumerKey}:${consumerSecret}`)}`;
-  return headers;
-};
-
-async function fetchWooJson<T>(path: string, params: Record<string, string | number>) {
-  try {
-    const url = new URL(`${getWooApiOrigin()}${getWpJsonPrefix()}${path}`);
-    for (const [key, value] of Object.entries(params)) {
-      url.searchParams.set(key, String(value));
-    }
-
-    const response = await fetch(url.toString(), {
-      headers: getWooAuthHeaders(),
-      next: { revalidate: REVALIDATE_SECONDS },
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    return (await response.json()) as T;
-  } catch {
-    return null;
-  }
-}
-
-type SitemapProduct = {
-  slug?: string;
-  date_modified?: string;
-  date_modified_gmt?: string;
-  categories?: Array<{ slug?: string }>;
-  tags?: Array<{ slug?: string }>;
-};
-
-type SitemapCategory = {
-  slug?: string;
-  name?: string;
-  date_modified?: string;
-  date_modified_gmt?: string;
-};
-
-async function getAllProducts() {
-  const products: SitemapProduct[] = [];
-  const perPage = 100;
-
-  let page = 1;
-  while (true) {
-    const data = await fetchWooJson<unknown>(`/wc/v3/products`, {
-      per_page: perPage,
-      page,
-      orderby: "date",
-      order: "desc",
-      status: "publish",
-    });
-
-    if (!Array.isArray(data) || data.length === 0) break;
-
-    products.push(...(data as SitemapProduct[]));
-
-    if (data.length < perPage) break;
-    page += 1;
-  }
-
-  return products;
-}
-
-async function getAllCategories() {
-  const data = await fetchWooJson<unknown>(`/wc/v3/products/categories`, { per_page: 100 });
-  if (!Array.isArray(data)) return [];
-  return data as SitemapCategory[];
-}
-
-// Same catch-all-category exclusion already applied to the homepage's
-// Discover Collections grid (app/(home)/page.tsx) — this category exists in
-// WooCommerce but was never meant to have its own public collection page.
-const EXCLUDED_CATEGORY_SLUGS = new Set(["all-canvas-paintings", "all-canvas-paintngs", "all-products"]);
-const EXCLUDED_CATEGORY_NAMES = new Set(["all canvas paintings", "all canvas paintngs"]);
-
-const isExcludedCatchAllCategory = (category: SitemapCategory) => {
-  const slug = (category.slug || "").trim().toLowerCase();
-  const name = (category.name || "").trim().toLowerCase();
-  return EXCLUDED_CATEGORY_SLUGS.has(slug) || EXCLUDED_CATEGORY_NAMES.has(name);
-};
-
-async function getAllBlogPosts() {
-  try {
-    const siteUrl = (
-      process.env.WORDPRESS_API_URL ||
-      process.env.WOOCOMMERCE_SITE_URL ||
-      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-      "https://api.artacestudio.com"
-    ).replace(/\/+$/, "");
-
-    const posts: Array<{ slug?: string; modified?: string; date?: string }> = [];
-
-    for (let page = 1; page <= 20; page++) {
-      const res = await fetch(
-        `${siteUrl}/wp-json/wp/v2/posts?per_page=100&page=${page}&_fields=slug,modified,date&status=publish`,
-        { next: { revalidate: 3600 } }
-      );
-      if (!res.ok) break;
-      const data = await res.json();
-      if (!Array.isArray(data) || data.length === 0) break;
-      posts.push(...data);
-      if (data.length < 100) break;
-    }
-
-    return posts;
-  } catch {
-    return [];
-  }
-}
-
-const safeDate = (value: string | undefined) => {
-  if (!value) return undefined;
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
-};
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getBaseUrl();
-
-  const [products, categories, blogPosts] = await Promise.all([
-    getAllProducts(),
-    getAllCategories(),
-    getAllBlogPosts(),
-  ]);
-
-  return [
-    {
-      url: `${baseUrl}/`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/shop`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/samora`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/samora/shop`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about-us`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/exhibition`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact-us`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/corporate-bulk-orders`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/warli-paintings`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/rooms/bedroom`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/rooms/living-room`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/rooms/dining-room`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/rooms/pooja-room`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/original-abstract-art-for-sale-uk`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/original-paintings-for-sale-ireland`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/original-abstract-art-for-sale-nz`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    ...products
-      .filter((product) => !hasSamoraTag(product.tags))
-      .map((product): MetadataRoute.Sitemap[number] | null => {
-        const slug = (product.slug || "").trim();
-        if (!slug) return null;
-        return {
-          url: `${baseUrl}/shop/${encodeURIComponent(slug)}`,
-          lastModified: safeDate(product.date_modified_gmt) || safeDate(product.date_modified),
-          changeFrequency: "daily" as const,
-          priority: 0.8,
-        };
-      })
-      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
-    ...products
-      .filter((product) => hasSamoraTag(product.tags))
-      .map((product): MetadataRoute.Sitemap[number] | null => {
-        const slug = (product.slug || "").trim();
-        if (!slug) return null;
-        return {
-          url: `${baseUrl}/samora/shop/${encodeURIComponent(slug)}`,
-          lastModified: safeDate(product.date_modified_gmt) || safeDate(product.date_modified),
-          changeFrequency: "daily" as const,
-          priority: 0.8,
-        };
-      })
-      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
-    ...(() => {
-      // A category only gets a real /collections/[slug] page if at least one
-      // actual product carries that category slug — matches the same check
-      // app/collections/[slug]/page.tsx itself uses to decide notFound(), so
-      // the sitemap never lists a URL the page would 404 on (a category's own
-      // reported `count` can be stale, unlike this direct product cross-check).
-      const liveCategorySlugs = new Set(
-        products
-          .filter((product) => !hasSamoraTag(product.tags))
-          .flatMap((product) =>
-            (product.categories || [])
-              .map((category) => (category.slug || "").trim())
-              .filter(Boolean)
-          )
-      );
-
-      return categories
-        .filter((category) => !isExcludedCatchAllCategory(category))
-        .map((category): MetadataRoute.Sitemap[number] | null => {
-          const slug = (category.slug || "").trim();
-          if (!slug || !liveCategorySlugs.has(slug)) return null;
-          return {
-            url: `${baseUrl}/collections/${encodeURIComponent(slug)}`,
-            lastModified:
-              safeDate(category.date_modified_gmt) || safeDate(category.date_modified) || new Date(),
-            changeFrequency: "weekly" as const,
-            priority: 0.7,
-          };
-        })
-        .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null);
-    })(),
-    ...blogPosts
-      .map((post): MetadataRoute.Sitemap[number] | null => {
-        const slug = (post.slug || "").trim();
-        if (!slug) return null;
-        return {
-          url: `${baseUrl}/blogs/${encodeURIComponent(slug)}`,
-          lastModified: safeDate(post.modified) || safeDate(post.date) || new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        };
-      })
-      .filter((entry): entry is MetadataRoute.Sitemap[number] => entry !== null),
+export default function sitemap(): MetadataRoute.Sitemap {
+  const staticPages: MetadataRoute.Sitemap = [
+    { url: BASE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
+    { url: `${BASE_URL}/shop`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${BASE_URL}/collections`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/artists`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/about-us`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/contact-us`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/privacy-policy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${BASE_URL}/terms-of-use`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${BASE_URL}/return-policy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${BASE_URL}/cancellation-policy`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.3 },
+    { url: `${BASE_URL}/custom-order`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/corporate-bulk-orders`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/exhibition`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/blogs`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/team`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/warli-paintings`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/original-paintings-for-sale-ireland`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/original-abstract-art-for-sale-uk`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/original-abstract-art-for-sale-nz`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/rentals`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  const shopPages: MetadataRoute.Sitemap = shopSlugs.map((slug) => ({
+    url: `${BASE_URL}/shop/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  const collectionPages: MetadataRoute.Sitemap = collectionSlugs.map((slug) => ({
+    url: `${BASE_URL}/collections/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  const roomPages: MetadataRoute.Sitemap = roomSlugs.map((slug) => ({
+    url: `${BASE_URL}/rooms/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...shopPages, ...collectionPages, ...roomPages];
 }
