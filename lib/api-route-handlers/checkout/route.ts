@@ -18,8 +18,85 @@ import {
   SAMORA_SHIPPING_FALLBACK_INR,
 } from "@/lib/samora/pricing";
 import { fetchLineItemTotals } from "@/lib/samora/pricing.server";
+import { AFFILIATE_REF_COOKIE_NAME } from "@/lib/affiliates/constants";
 
 export const runtime = "edge";
+
+const SUPABASE_URL =
+  process.env.SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env["Project URL"] ||
+  "";
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  process.env["Anon Key"] ||
+  "";
+
+type AffiliateRecord = {
+  id: number;
+  referral_code: string;
+  commission_rate: number;
+  status: string;
+};
+
+const findApprovedAffiliateByCode = async (
+  referralCode: string
+): Promise<AffiliateRecord | null> => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return null;
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/affiliates?referral_code=eq.${encodeURIComponent(
+        referralCode
+      )}&status=eq.approved&select=id,referral_code,commission_rate,status&limit=1`,
+      {
+        headers: {
+          apikey: SUPABASE_SERVICE_ROLE_KEY,
+          Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        },
+      }
+    );
+    if (!response.ok) return null;
+    const rows = (await response.json()) as AffiliateRecord[];
+    return Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
+  } catch {
+    return null;
+  }
+};
+
+const recordAffiliateConversion = async (
+  affiliate: AffiliateRecord,
+  wcOrderId: number,
+  orderTotal: number
+): Promise<void> => {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) return;
+
+  const commissionAmount = orderTotal * affiliate.commission_rate;
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/affiliate_conversions`, {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_SERVICE_ROLE_KEY,
+        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+        "Content-Type": "application/json",
+        Prefer: "return=minimal",
+      },
+      body: JSON.stringify({
+        affiliate_id: affiliate.id,
+        wc_order_id: wcOrderId,
+        order_total: orderTotal,
+        commission_rate_applied: affiliate.commission_rate,
+        commission_amount: commissionAmount,
+      }),
+    });
+  } catch {
+    // Never let a commission-logging failure affect the checkout response —
+    // the order itself already succeeded by the time this runs.
+  }
+};
 
 type CheckoutLineItemInput = {
   productId: number;
@@ -301,12 +378,25 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const referralCode = request.cookies.get(AFFILIATE_REF_COOKIE_NAME)?.value || "";
+    const referringAffiliate = referralCode
+      ? await findApprovedAffiliateByCode(referralCode)
+      : null;
+
     const updatedWooOrder = await updateWooCommerceOrder(wooOrder.orderId, {
       meta_data: mergeWooMetaData(wooOrder.metaData, {
         _artace_razorpay_order_id: razorpayOrder.id,
         _artace_checkout_origin: request.nextUrl.origin,
+        ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
       }),
     });
+
+    if (referringAffiliate) {
+      const orderTotalNumber = Number(wooOrder.total);
+      if (Number.isFinite(orderTotalNumber)) {
+        await recordAffiliateConversion(referringAffiliate, wooOrder.orderId, orderTotalNumber);
+      }
+    }
 
     const { keyId } = getRazorpayPublicConfig();
 

@@ -11,6 +11,7 @@ const navItems = [
   { href: "/dashboard/orders", label: "Orders" },
   { href: "/dashboard/profile", label: "Profile" },
   { href: "/dashboard/details", label: "Details" },
+  { href: "/dashboard/affiliate", label: "Affiliate Program" },
   { href: "/contact-us", label: "Contact Support" },
 ];
 

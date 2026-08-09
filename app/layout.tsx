@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
@@ -10,6 +11,7 @@ import SiteChrome from "@/components/chrome/SiteChrome";
 import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
 import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
+import AffiliateClickTracker from "@/components/affiliates/AffiliateClickTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -183,6 +185,9 @@ fbq('track', 'PageView');`
         {process.env.NODE_ENV === "production" && gtmId ? (
           <GoogleTagManager gtmId={gtmId} />
         ) : null}
+        <Suspense fallback={null}>
+          <AffiliateClickTracker />
+        </Suspense>
         <AuthSessionProvider>
           <CurrencyProvider initialCurrency={DEFAULT_CURRENCY} initialRates={null}>
           <CartProvider>

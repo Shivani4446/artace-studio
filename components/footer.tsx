@@ -30,6 +30,7 @@ const footerSections: FooterSection[] = [
       { label: "Art Rentals", href: "/rentals" },
       { label: "Corporate & Bulk Orders", href: "/corporate-bulk-orders" },
       { label: "Trade Program", href: "/trade" },
+      { label: "Affiliate Program", href: "/affiliates" },
       { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "/dashboard/orders" },
       { label: "Wishlist", href: "/wishlist" },

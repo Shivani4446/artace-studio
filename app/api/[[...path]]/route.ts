@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as accountProfileRoute from "@/lib/api-route-handlers/account/profile/route";
+import * as adminAffiliatesRoute from "@/lib/api-route-handlers/admin/affiliates/route";
+import * as adminConversionsRoute from "@/lib/api-route-handlers/admin/conversions/route";
+import * as adminLoginRoute from "@/lib/api-route-handlers/admin/login/route";
+import * as adminLogoutRoute from "@/lib/api-route-handlers/admin/logout/route";
+import * as affiliateRoute from "@/lib/api-route-handlers/affiliate/route";
+import * as affiliateClickRoute from "@/lib/api-route-handlers/affiliate-click/route";
 import * as authForgotPasswordRoute from "@/lib/api-route-handlers/auth/forgot-password/route";
 import * as authLoginRoute from "@/lib/api-route-handlers/auth/login/route";
 import * as authLogoutRoute from "@/lib/api-route-handlers/auth/logout/route";
@@ -41,6 +47,28 @@ const ROUTES: Record<string, RouteHandlers> = {
   "account/profile": {
     GET: (request) => accountProfileRoute.GET(request),
     PATCH: (request) => accountProfileRoute.PATCH(request),
+  },
+  affiliate: {
+    GET: (request) => affiliateRoute.GET(request),
+    POST: (request) => affiliateRoute.POST(request),
+    PATCH: (request) => affiliateRoute.PATCH(request),
+  },
+  "affiliate-click": {
+    POST: (request) => affiliateClickRoute.POST(request),
+  },
+  "admin/affiliates": {
+    GET: (request) => adminAffiliatesRoute.GET(request),
+    PATCH: (request) => adminAffiliatesRoute.PATCH(request),
+  },
+  "admin/conversions": {
+    GET: (request) => adminConversionsRoute.GET(request),
+    PATCH: (request) => adminConversionsRoute.PATCH(request),
+  },
+  "admin/login": {
+    POST: (request) => adminLoginRoute.POST(request),
+  },
+  "admin/logout": {
+    POST: () => adminLogoutRoute.POST(),
   },
   "auth/forgot-password": {
     POST: (request) => authForgotPasswordRoute.POST(request),
