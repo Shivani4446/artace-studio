@@ -36,9 +36,9 @@ export const ARTISTS: Artist[] = [
     recognition: "Featured Artist — Artace Studio",
   },
   {
-    slug: "vekkas-mahalley",
+    slug: "vekkas-m",
     name: "Vekkas M",
-    image: "/vekkas-mahalley.webp",
+    image: "/vekkas-m.png",
     tagline: "Drawn to open landscapes and quiet, atmospheric scenes.",
     bio:
       "Vekkas M's paintings are shaped by a love of landscape and atmosphere — skies, water, and the quiet in-between moments of a scene. The work favours mood and depth over strict detail, built up in layers by hand on canvas. Each piece is made to bring a sense of calm and openness into the space it hangs in.",

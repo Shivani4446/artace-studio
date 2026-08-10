@@ -42,21 +42,25 @@ const ShopByArtist = () => {
         {/* Artists Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 align-top">
           {ARTISTS.map((artist) => (
-            <Link key={artist.slug} href={`/artists/${artist.slug}`} className="flex flex-col group">
+            <Link
+              key={artist.slug}
+              href={`/artists/${artist.slug}`}
+              className="flex flex-col items-center text-center group"
+            >
 
               {/* Image Container */}
-              <div className="relative w-full aspect-square overflow-hidden mb-5 bg-gray-200">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full mb-5 bg-gray-200">
                 <Image
                   src={artist.image}
                   alt={`Artwork by ${artist.name}`}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  sizes="(max-width: 768px) 128px, 160px"
                 />
               </div>
 
               {/* Artist Info */}
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col items-center gap-1">
                 <h3 className="font-playfair text-xl text-[#2C2C2C] leading-snug">
                   {artist.name}
                 </h3>
