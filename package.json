@@ -13,7 +13,8 @@
     "@next/third-parties": "15.5.2",
     "@supabase/supabase-js": "^2.100.1",
     "framer-motion": "^12.42.2",
-    "lightningcss": "^1.31.1",
+    "lightningcss": "^1.33.0",
+    "lightningcss-win32-x64-msvc": "^1.33.0",
     "lucide-react": "^0.563.0",
     "next": "15.5.2",
     "react": "19.2.3",
@@ -25,13 +26,13 @@
   "devDependencies": {
     "@cloudflare/next-on-pages": "1.13.16",
     "@cloudflare/workers-types": "4.20260702.1",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.3.3",
     "typescript": "^5",
     "wrangler": "4.107.0"
   }

@@ -24,6 +24,7 @@ import * as contactRoute from "@/lib/api-route-handlers/contact/route";
 import * as corporateLeadsRoute from "@/lib/api-route-handlers/corporate-leads/route";
 import * as currencyRatesRoute from "@/lib/api-route-handlers/currency/rates/route";
 import * as customOrderRoute from "@/lib/api-route-handlers/custom-order/route";
+import * as customPortraitsRoute from "@/lib/api-route-handlers/custom-portraits/route";
 import * as homepageHighlightsRoute from "@/lib/api-route-handlers/homepage/highlights/route";
 import * as ordersRoute from "@/lib/api-route-handlers/orders/route";
 import * as photographyOffersRoute from "@/lib/api-route-handlers/photography-offers/route";
@@ -123,6 +124,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "custom-order": {
     POST: (request) => customOrderRoute.POST(request),
+  },
+  "custom-portraits": {
+    POST: (request) => customPortraitsRoute.POST(request),
   },
   "homepage/highlights": {
     GET: () => homepageHighlightsRoute.GET(),
