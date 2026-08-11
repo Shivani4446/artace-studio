@@ -74,7 +74,7 @@ const ShopByPrice = () => {
             <Link
               key={tier.label}
               href={tier.href}
-              className={`group relative flex min-h-[180px] flex-col justify-between overflow-hidden rounded-[12px] p-6 transition-transform duration-500 hover:scale-[1.03] md:min-h-[220px] ${
+              className={`group relative flex min-h-[180px] flex-col justify-between overflow-hidden rounded-xl p-6 transition-transform duration-500 hover:scale-[1.03] md:min-h-[220px] ${
                 tier.background
               } ${index === PRICE_TIERS.length - 1 ? "col-span-2 sm:col-span-1" : ""}`}
             >

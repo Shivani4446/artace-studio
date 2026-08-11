@@ -19,7 +19,7 @@ export default function HeroSection() {
       {/* 1. Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/about-us-bg.webp" // Place your image in the /public folder
+          src="/Artace Studio Artwork.png"
           alt="Abstract dark nature background"
           fill
           priority
