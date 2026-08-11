@@ -8,7 +8,7 @@ const AboutUsPanel = () => {
     <section className="relative flex min-h-[560px] w-full flex-col justify-end overflow-hidden md:min-h-[640px] md:justify-center">
       <div className="absolute inset-0 h-full w-full">
         <Image
-          src="/Artace Studio Artwork.png"
+          src="/Artace-studio-artwork.png"
           alt="Modern interior with abstract art and blue textured wall"
           fill
           className="object-cover"
