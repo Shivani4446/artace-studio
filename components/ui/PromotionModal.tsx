@@ -6,6 +6,12 @@ import { X, Copy, Check, Sparkles } from "lucide-react";
 
 const PromotionModal = () => {
   const [isVisible, setIsVisible] = useState(false);
+  // Separate from isVisible: isVisible mounts the modal, isEntered controls
+  // its visual (opacity/scale) state. Without this split, the modal would
+  // mount already at its "shown" styles in the same paint — CSS transitions
+  // only animate between two distinct painted frames, so there'd be nothing
+  // to transition *from* and it would just flash in instantly.
+  const [isEntered, setIsEntered] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [copied, setCopied] = useState(false);
   const COUPON_CODE = "BAPPA";
@@ -13,7 +19,7 @@ const PromotionModal = () => {
   useEffect(() => {
     // Check if the user has already seen or closed the modal in this session
     const hasSeenModal = sessionStorage.getItem("hasSeenPromotionModal");
-    
+
     if (!hasSeenModal) {
       const timer = setTimeout(() => {
         setIsVisible(true);
@@ -22,6 +28,30 @@ const PromotionModal = () => {
       return () => clearTimeout(timer);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isVisible) {
+      setIsEntered(false);
+      return;
+    }
+
+    // Double rAF: guarantees the browser has painted the initial (hidden)
+    // frame before we flip to the "entered" styles, so the opacity/scale
+    // transition below actually has a starting point to animate from.
+    let secondFrame = 0;
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(() => {
+        setIsEntered(true);
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      cancelAnimationFrame(secondFrame);
+    };
+  }, [isVisible]);
+
+  const isShown = isEntered && !isClosing;
 
   const handleClose = () => {
     setIsClosing(true);
@@ -40,13 +70,13 @@ const PromotionModal = () => {
   if (!isVisible) return null;
 
   return (
-    <div 
-      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-500 sm:p-6 ${
-        isClosing ? "opacity-0" : "opacity-100"
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-opacity duration-500 sm:p-6 ${
+        isShown ? "opacity-100" : "opacity-0"
       }`}
     >
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500"
         onClick={handleClose}
       />
@@ -54,7 +84,7 @@ const PromotionModal = () => {
       {/* Modal Container */}
       <div
         className={`relative w-full max-w-4xl overflow-hidden rounded-[24px] bg-white shadow-2xl transition-all duration-500 ease-out ${
-          isClosing ? "scale-95 translate-y-4" : "scale-100 translate-y-0"
+          isShown ? "scale-100 translate-y-0" : "scale-95 translate-y-4"
         }`}
       >
         {/* Close Button */}
