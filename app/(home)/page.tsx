@@ -16,8 +16,6 @@ import SamoraSpotlight from "@/components/homepage/SamoraSpotlight";
 import ArtistInvitation from "@/components/homepage/ArtistInvitation";
 import FAQSection from "@/components/seo/FAQSection";
 import { buildSiteUrl } from "@/lib/site";
-import { decodeHtmlEntities } from "@/utils/text";
-import { getCollectionHref } from "@/utils/collections";
 import { homepageFaqs, homepageSchema } from "./homepage-schema";
 
 export const metadata: Metadata = {
@@ -50,102 +48,7 @@ export const metadata: Metadata = {
   },
 };
 
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
-const FALLBACK_CATEGORY_IMAGE = "/images/product-ship.png";
-const STOREFRONT_REVALIDATE_SECONDS = 60;
-const EXCLUDED_DISCOVER_CATEGORY_SLUGS = new Set([
-  "all-canvas-paintings",
-  "all-canvas-paintngs",
-]);
-const EXCLUDED_DISCOVER_CATEGORY_NAMES = new Set([
-  "all canvas paintings",
-  "all canvas paintngs",
-]);
-
-type WooStoreCategoryImage = {
-  id: number;
-  src: string;
-  thumbnail?: string;
-  alt?: string;
-  name?: string;
-};
-
-type WooStoreProductCategory = {
-  id: number;
-  name: string;
-  slug: string;
-  count: number;
-  image?: WooStoreCategoryImage | null;
-};
-
-type DiscoverCategoryCard = {
-  id: number;
-  title: string;
-  image: string;
-  imageAlt: string;
-  href: string;
-};
-
-const normalizeDiscoverCategories = (
-  categories: WooStoreProductCategory[]
-): DiscoverCategoryCard[] => {
-  return categories
-    .filter((category) => {
-      if (!category.slug || !category.name) return false;
-
-      const normalizedSlug = category.slug.trim().toLowerCase();
-      const normalizedName = decodeHtmlEntities(category.name).trim().toLowerCase();
-
-      if (EXCLUDED_DISCOVER_CATEGORY_SLUGS.has(normalizedSlug)) return false;
-      if (EXCLUDED_DISCOVER_CATEGORY_NAMES.has(normalizedName)) return false;
-
-      return true;
-    })
-    .sort((first, second) => second.count - first.count)
-    .map((category) => {
-      const title = decodeHtmlEntities(category.name);
-      const imageUrl = category.image?.src || FALLBACK_CATEGORY_IMAGE;
-      const imageAlt = decodeHtmlEntities(category.image?.alt || category.image?.name || title);
-
-      return {
-        id: category.id,
-        title,
-        image: imageUrl,
-        imageAlt,
-        href: getCollectionHref(category.slug),
-      };
-    });
-};
-
-const getDiscoverCategories = async (): Promise<DiscoverCategoryCard[]> => {
-  try {
-    const apiBaseUrl =
-      process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL || DEFAULT_WOOCOMMERCE_SITE_URL;
-    const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
-
-    const response = await fetch(
-      `${normalizedBaseUrl}/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=24`,
-      {
-        next: { revalidate: STOREFRONT_REVALIDATE_SECONDS },
-      }
-    );
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const payload = (await response.json()) as WooStoreProductCategory[];
-    if (!Array.isArray(payload)) return [];
-
-    return normalizeDiscoverCategories(payload);
-  } catch {
-    return [];
-  }
-};
-
 const Home = async () => {
-  const discoverCategories = await getDiscoverCategories();
-
   return (
     <main className="min-h-screen">
       <script
@@ -159,7 +62,7 @@ const Home = async () => {
       <ShopByRoom />
       <ShopByPrice />
       <ShopByArtist />
-      <DiscoverEssentials categories={discoverCategories} />
+      <DiscoverEssentials />
       <TrueArtistrySection />
       <AboutUsPanel />
       <Testimonials />

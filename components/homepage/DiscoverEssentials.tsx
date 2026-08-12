@@ -13,59 +13,53 @@ type DiscoverCategoryCard = {
   href: string;
 };
 
-type DiscoverEssentialsProps = {
-  categories?: DiscoverCategoryCard[];
-};
-
-const FALLBACK_CATEGORIES: DiscoverCategoryCard[] = [
+// Fixed, hand-curated lineup for the "Explore Our Collections" section —
+// order and images are deliberate choices, not derived from live WooCommerce
+// category data (product counts fluctuate and would reorder/replace these
+// unpredictably). To change which collections appear, or their order or
+// image, edit this array directly.
+const CURATED_CATEGORIES: DiscoverCategoryCard[] = [
   {
     id: 1,
-    title: "Radha Krishna",
-    image: "/stack-1.webp",
-    imageAlt: "Radha Krishna Collection",
-    href: getCollectionHref("radha-krishna-paintings"),
+    title: "Modern Art",
+    image: "/modern-art.webp",
+    imageAlt: "Modern Art Collection",
+    href: getCollectionHref("modern-wall-art"),
   },
   {
     id: 2,
-    title: "Figurative",
-    image: "/stack-2.webp",
-    imageAlt: "Figurative Collection",
-    href: getCollectionHref("figurative-paintings"),
-  },
-  {
-    id: 3,
-    title: "Buddha",
-    image: "/stack-3.webp",
-    imageAlt: "Buddha Collection",
-    href: getCollectionHref("buddha-paintings"),
-  },
-  {
-    id: 4,
-    title: "Abstract",
-    image: "/images/art-forest.png",
-    imageAlt: "Abstract Collection",
+    title: "Abstract Paintings",
+    image: "/abstract-art.webp",
+    imageAlt: "Abstract Paintings Collection",
     href: getCollectionHref("abstract-paintings"),
   },
   {
-    id: 5,
-    title: "Landscapes",
-    image: "/hero-bg.webp",
-    imageAlt: "Landscapes Collection",
+    id: 3,
+    title: "Landscape Paintings",
+    image: "/landscape-collection-bg.webp",
+    imageAlt: "Landscape Paintings Collection",
     href: getCollectionHref("landscapes-cityscapes-paintings"),
   },
   {
-    id: 6,
-    title: "Vastu",
-    image: "/images/interior-room.png",
-    imageAlt: "Vastu Collection",
-    href: getCollectionHref("vastu-paintings"),
+    id: 4,
+    title: "Ganesha Paintings",
+    image: "/ganesha-painting.webp",
+    imageAlt: "Ganesha Paintings Collection",
+    href: getCollectionHref("ganapati-paintings"),
   },
   {
-    id: 7,
-    title: "Ganapati",
-    image: "/images/hero-bg.png",
-    imageAlt: "Ganapati Collection",
-    href: getCollectionHref("ganapati-paintings"),
+    id: 5,
+    title: "Radha Krishna Paintings",
+    image: "/radha-krishna-collection-bg.webp",
+    imageAlt: "Radha Krishna Paintings Collection",
+    href: getCollectionHref("radha-krishna-paintings"),
+  },
+  {
+    id: 6,
+    title: "Photography",
+    image: "/Artist-1.webp",
+    imageAlt: "Photography Collection",
+    href: getCollectionHref("photography"),
   },
 ];
 
@@ -75,17 +69,6 @@ const CUSTOM_ORDER_CARD: DiscoverCategoryCard = {
   image: "/images/product-ship.png",
   imageAlt: "Create your custom painting",
   href: "/custom-order",
-};
-
-const PRIORITY_KEYWORDS = ["radha krishna", "figurative", "buddha", "abstract"];
-
-const getCategoryPriority = (title: string) => {
-  const normalizedTitle = title.trim().toLowerCase();
-  const matchIndex = PRIORITY_KEYWORDS.findIndex((keyword) =>
-    normalizedTitle.includes(keyword)
-  );
-
-  return matchIndex === -1 ? Number.POSITIVE_INFINITY : matchIndex;
 };
 
 const toCollectionLabel = (title: string) => {
@@ -101,34 +84,10 @@ const toCollectionLabel = (title: string) => {
   return `${cleanedTitle || normalizedTitle} Collection`;
 };
 
-const getDisplayCards = (categories: DiscoverCategoryCard[]) => {
-  const sourceCards = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
-  const prioritizedCards = sourceCards
-    .map((card, index) => ({
-      card,
-      index,
-      priority: getCategoryPriority(card.title),
-    }))
-    .sort((a, b) => {
-      if (a.priority !== b.priority) return a.priority - b.priority;
-      return a.index - b.index;
-    })
-    .map((entry) => entry.card);
-
-  const cards = prioritizedCards.slice(0, 7);
-  let fillerIndex = 0;
-  while (cards.length < 7) {
-    cards.push(FALLBACK_CATEGORIES[fillerIndex % FALLBACK_CATEGORIES.length]);
-    fillerIndex += 1;
-  }
-  // Replace last card with Custom Order card
-  cards[6] = CUSTOM_ORDER_CARD;
-
-  return cards;
-};
-
-const DiscoverEssentials = ({ categories = [] }: DiscoverEssentialsProps) => {
-  const displayCards = getDisplayCards(categories);
+const DiscoverEssentials = () => {
+  // 6 curated collections + Custom Order card = exactly 7: one large
+  // featured card up front, six in the grid, Custom Order always last.
+  const displayCards = [...CURATED_CATEGORIES, CUSTOM_ORDER_CARD];
   const featuredCard = displayCards[0];
   const gridCards = displayCards.slice(1, 7);
 

@@ -21,12 +21,12 @@ const inter = Inter({
 
 const ShopByArtist = () => {
   return (
-    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 ${playfair.variable} ${inter.variable}`}>
-      <div className="max-w-[1440px] mx-auto">
+    <section className={`bg-[#FAF9F6] py-20 ${playfair.variable} ${inter.variable}`}>
+      <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-12 md:mb-16 gap-4">
-          <h2 className="font-playfair text-3xl md:text-5xl text-[#2C2C2C] uppercase tracking-wide">
+          <h2 className="font-playfair text-3xl md:text-5xl text-[#2C2C2C] tracking-wide">
             Shop By Artist
           </h2>
           
@@ -60,11 +60,11 @@ const ShopByArtist = () => {
               </div>
 
               {/* Artist Info */}
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex w-full flex-col items-center gap-1">
                 <h3 className="font-playfair text-xl text-[#2C2C2C] leading-snug">
                   {artist.name}
                 </h3>
-                <span className="font-inter text-[#666666] text-sm md:text-[15px] font-normal">
+                <span className="line-clamp-2 min-h-[2.5rem] font-inter text-[#666666] text-sm leading-snug md:text-[15px] md:min-h-[2.75rem] font-normal">
                   {artist.tagline}
                 </span>
               </div>

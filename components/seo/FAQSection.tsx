@@ -58,20 +58,20 @@ const FAQSection = ({
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-3 text-left md:cursor-default"
+                  className="flex w-full items-center justify-between gap-3 text-left"
                 >
                   <h3 className="font-display text-[22px] leading-[1.2] text-[#1f1f1f] md:text-[26px]">
                     {item.question}
                   </h3>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-[#1f1f1f]/50 transition-transform duration-300 md:hidden ${
+                    className={`h-5 w-5 shrink-0 text-[#1f1f1f]/50 transition-transform duration-300 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                     strokeWidth={1.75}
                   />
                 </button>
                 <div
-                  className={`grid transition-[grid-template-rows] duration-300 ease-in-out md:grid-rows-[1fr] ${
+                  className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
                     isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                   }`}
                 >
