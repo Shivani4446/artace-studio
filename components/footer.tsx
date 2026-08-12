@@ -58,6 +58,7 @@ const footerSections: FooterSection[] = [
     title: "Resources",
     links: [
       { label: "Blogs", href: "/blogs" },
+      { label: "Art Care Guide", href: "/art-care" },
       { label: "Exhibition", href: "/exhibition" },
       { label: "About Us", href: "/about-us" },
       { label: "Team", href: "/team" },
@@ -126,10 +127,24 @@ export default function Footer() {
                 className="h-auto w-[88px]"
               />
             </Link>
-            <p className="mt-16 max-w-[320px] text-[18px] leading-[1.35] text-white/90">
-              We empower independent artists to share their stories with the
-              world.
+            <p className="mt-4 text-[13px] leading-tight text-white/60">
+              A Repository of Paintings
             </p>
+            <div className="mt-8 space-y-3 text-[16px] leading-tight text-[#95979f]">
+              <p>Pune, Maharashtra, India</p>
+              <a
+                href="tel:+919657609102"
+                className="block transition-colors duration-200 hover:text-white"
+              >
+                +91 9657609102
+              </a>
+              <a
+                href="mailto:info@artacestudio.com"
+                className="block transition-colors duration-200 hover:text-white"
+              >
+                info@artacestudio.com
+              </a>
+            </div>
           </div>
 
           {footerSections.map((section) => (

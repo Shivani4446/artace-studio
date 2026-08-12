@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { clearPendingCheckout } from "@/utils/checkout-client";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
-import { trackPurchase } from "@/utils/gtm";
+import { trackAdsConversionPurchase, trackPurchase } from "@/utils/gtm";
 import { renderGoogleCustomerReviewsOptIn } from "@/utils/google-reviews-optin";
 
 type CheckoutStatusPayload = {
@@ -101,6 +101,13 @@ function CheckoutSuccessPageClient() {
           paymentMethod: payload.paymentMethodTitle,
           dedupeKey: `purchase:${payload.orderId ?? orderId}`,
           items: purchaseItemsRef.current,
+        });
+        trackAdsConversionPurchase({
+          orderId: payload.orderId ?? orderId,
+          orderNumber: payload.orderNumber,
+          total: payload.total,
+          currency: payload.currency || "INR",
+          dedupeKey: `ads-conversion-purchase-1:${payload.orderId ?? orderId}`,
         });
         if (typeof window !== "undefined" && typeof window.fbq === "function") {
           window.fbq("track", "Purchase", {

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { Playfair_Display, Inter } from 'next/font/google';
 
 // Font Configuration
@@ -36,6 +37,12 @@ const OurCommitment = () => {
           <p className="max-w-2xl font-inter text-[16px] leading-7 text-[#555555] md:text-[1.125rem] md:leading-[1.7]">
             Whether you&apos;re seeking a statement piece for your home or a custom artwork that captures your unique vision, our team of skilled artists ensures that each creation meets our exacting standards of excellence.
           </p>
+          <Link
+            href="/art-care"
+            className="mt-4 inline-block font-inter text-[15px] font-medium text-[#2C2C2C] underline underline-offset-2 md:text-[16px]"
+          >
+            Learn how to care for your artwork →
+          </Link>
 
         </div>
 

@@ -56,6 +56,11 @@ const resourceLinks = [
     description: "Ideas on styling art, gifting, collecting, and choosing the right piece.",
   },
   {
+    name: "Art Care Guide",
+    href: "/art-care",
+    description: "Simple steps to keep your artwork looking beautiful for years.",
+  },
+  {
     name: "Warli Paintings",
     href: "/warli-paintings",
     description: "Handcrafted tribal art rooted in a 2,500-year-old Maharashtrian folk tradition.",

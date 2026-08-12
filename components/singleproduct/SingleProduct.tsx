@@ -1481,6 +1481,12 @@ const SingleProduct = ({
           <p>
             To preserve the beauty of your artwork for years to come, keep it away from direct sunlight and avoid placing it on walls with moisture or water leakage. With just a little care, your artwork will remain vibrant and beautiful for a long time. ✨
           </p>
+          <p>
+            <Link href="/art-care" className="font-medium text-[#1f1f1f] underline underline-offset-2">
+              Read our full Art Care Guide
+            </Link>{" "}
+            for more tips, including how to care for artwork in India's climate. →
+          </p>
         </div>
       );
     }

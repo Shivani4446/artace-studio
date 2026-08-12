@@ -103,6 +103,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google tag (gtag.js) — base GA4 tag, must stay first in <head> per
+            Google's install instructions. Separate from the GTM container
+            below; other Ads/GA4 events (see utils/gtm.ts) are pushed to the
+            same window.dataLayer this initializes. */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-27V3DFEVET"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-27V3DFEVET');
+            `,
+          }}
+        />
         <script
           type="text/javascript"
           src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"

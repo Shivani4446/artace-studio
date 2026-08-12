@@ -139,6 +139,46 @@ export const trackBeginCheckout = (
   markTrackedInSession(dedupeKey);
 };
 
+// Google Ads conversion tracking for a completed order, kept separate from
+// the general-purpose GA4 `trackPurchase` event above. This pushes a
+// dedicated dataLayer event ("ads_conversion_purchase_1") that a Google Ads
+// Conversion Tracking tag inside GTM (tagmanager.google.com — no code
+// changes needed there) can trigger on directly, using {{dlv - value}},
+// {{dlv - currency}}, and {{dlv - transaction_id}} as its variables. The
+// transaction_id also lets Google Ads itself dedupe the conversion
+// server-side, on top of the sessionStorage guard below.
+export const trackAdsConversionPurchase = ({
+  orderId,
+  orderNumber,
+  total,
+  currency = DEFAULT_CURRENCY,
+  dedupeKey,
+}: {
+  orderId: number | string;
+  orderNumber?: string;
+  total?: number | string;
+  currency?: string;
+  dedupeKey?: string;
+}) => {
+  if (hasTrackedInSession(dedupeKey)) return;
+
+  const parsedTotal =
+    typeof total === "number"
+      ? total
+      : typeof total === "string"
+        ? Number(total)
+        : Number.NaN;
+
+  pushToDataLayer({
+    event: "ads_conversion_purchase_1",
+    value: Number.isFinite(parsedTotal) ? parsedTotal : undefined,
+    currency,
+    transaction_id: String(orderNumber || orderId),
+  });
+
+  markTrackedInSession(dedupeKey);
+};
+
 export const trackPurchase = ({
   orderId,
   orderNumber,
