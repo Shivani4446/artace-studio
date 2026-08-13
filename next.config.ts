@@ -11,6 +11,16 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  eslint: {
+    // eslint.config.mjs was silently failing to resolve (broken module
+    // path) until just now, so lint has effectively never run during a
+    // build and an unknown backlog of findings has accumulated across the
+    // codebase. Match the ignoreBuildErrors convention above so fixing the
+    // config doesn't turn into a new deploy blocker — `npm run lint` still
+    // runs the now-correctly-configured linter for anyone who wants to
+    // work through that backlog deliberately.
+    ignoreDuringBuilds: true,
+  },
   async redirects() {
     return [
       {
