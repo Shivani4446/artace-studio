@@ -1,20 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import { Playfair_Display, Inter } from 'next/font/google';
 import { Component, User, Box, Cuboid } from 'lucide-react';
-
-// Font Configuration
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-playfair'
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400'], 
-  variable: '--font-inter'
-});
+import { inter } from '@/lib/fonts';
 
 const features = [
   {
@@ -41,7 +28,7 @@ const features = [
 
 const DedicationToExcellence = () => {
   return (
-    <section className={`bg-[#FAF9F6] px-4 py-12 sm:px-6 sm:py-16 md:px-12 md:py-24 lg:px-24 ${playfair.variable} ${inter.variable}`}>
+    <section className={`bg-[#FAF9F6] px-4 py-12 sm:px-6 sm:py-16 md:px-12 md:py-24 lg:px-24 ${inter.variable}`}>
       <div className="max-w-[1400px] mx-auto">
         
         {/* Header */}

@@ -3,22 +3,9 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display, Inter } from "next/font/google";
 import { ArrowRight } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
-
-// Font Configuration
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-playfair",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-inter",
-});
+import { inter } from "@/lib/fonts";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 
@@ -61,7 +48,7 @@ const ShopBestsellers = () => {
 
   return (
     <section
-      className={`bg-[#FAF9F6] py-14 md:py-20 ${playfair.variable} ${inter.variable}`}
+      className={`bg-[#FAF9F6] py-14 md:py-20 ${inter.variable}`}
     >
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         {/* Header Section */}

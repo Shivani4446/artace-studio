@@ -1,16 +1,5 @@
 import Image from "next/image";
-import { Playfair_Display, Inter } from "next/font/google";
-
-// Load fonts
-const playfair = Playfair_Display({ 
-  subsets: ["latin"], 
-  weight: ["700"] // Bold for the heading
-});
-
-const inter = Inter({ 
-  subsets: ["latin"],
-  weight: ["400"] // Regular for the subtext
-});
+import { playfairDisplay as playfair, inter } from "@/lib/fonts";
 
 export default function HeroSection() {
   return (
@@ -33,7 +22,7 @@ export default function HeroSection() {
           
           {/* Heading */}
           <h1
-            className={`${playfair.className} mb-4 text-4xl leading-[1.1] text-white sm:text-5xl md:mb-6 md:text-7xl lg:text-8xl`}
+            className={`${playfair.className} mb-4 text-4xl font-bold leading-[1.1] text-white sm:text-5xl md:mb-6 md:text-7xl lg:text-8xl`}
           >
             Creating for <br />
             Soulful Spaces

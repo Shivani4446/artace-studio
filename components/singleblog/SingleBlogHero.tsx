@@ -1,17 +1,5 @@
-import { Playfair_Display, Inter } from "next/font/google";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-playfair",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-inter",
-});
+import { inter } from "@/lib/fonts";
 
 type Props = {
   post: {
@@ -40,7 +28,7 @@ const SingleBlogHero = ({ post }: Props) => {
 
   return (
     <section
-      className={`bg-[#FAF9F6] py-24 ${playfair.variable} ${inter.variable}`}
+      className={`bg-[#FAF9F6] py-24 ${inter.variable}`}
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <h1

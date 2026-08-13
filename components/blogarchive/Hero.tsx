@@ -1,25 +1,12 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display, Inter } from "next/font/google";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-inter",
-});
+import { inter } from "@/lib/fonts";
 
 const SoulfulSpaces = () => {
   return (
     <section
-      className={`relative w-full h-[calc(100svh-5rem)] overflow-hidden md:h-[calc(100svh-6rem)] ${playfair.variable} ${inter.variable}`}
+      className={`relative w-full h-[calc(100svh-5rem)] overflow-hidden md:h-[calc(100svh-6rem)] ${inter.variable}`}
     >
       <div className="absolute inset-0 z-0 h-full w-full">
         <Image

@@ -1,18 +1,6 @@
 import React from "react";
-import { Playfair_Display, Inter } from "next/font/google";
 import { MessageSquareText, FileText, CheckCircle2, Truck, ChevronRight } from "lucide-react";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-playfair",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-});
+import { inter } from "@/lib/fonts";
 
 const steps = [
   {
@@ -48,7 +36,7 @@ const steps = [
 const BulkOrderingProcess = () => {
   return (
     <section
-      className={`relative overflow-hidden bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}
+      className={`relative overflow-hidden bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${inter.variable}`}
     >
       {/* Subtle Background Accent */}
       <div className="pointer-events-none absolute -top-48 right-0 h-[500px] w-[500px] rounded-full bg-[#D4AF37]/5 blur-[120px]" />

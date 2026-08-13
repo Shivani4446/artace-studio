@@ -1,15 +1,8 @@
 import type { ReactNode } from "react";
-import { Fraunces } from "next/font/google";
 import SamoraFooter from "@/components/samora/SamoraFooter";
 import SamoraNavbar from "@/components/samora/SamoraNavbar";
 import SamoraPromoBanner from "@/components/samora/SamoraPromoBanner";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
+import { fraunces } from "@/lib/fonts";
 
 export default function SamoraLayout({ children }: { children: ReactNode }) {
   return (

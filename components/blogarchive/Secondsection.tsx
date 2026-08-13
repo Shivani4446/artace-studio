@@ -1,19 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Playfair_Display, Inter } from 'next/font/google';
-
-// Font Configuration
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-playfair'
-});
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500'], 
-  variable: '--font-inter'
-});
+import { inter } from '@/lib/fonts';
 
 // Mock Data to replicate the exact content structure
 const rightGridItems = [
@@ -49,7 +36,7 @@ const rightGridItems = [
 
 const Favorites2026 = () => {
   return (
-    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${playfair.variable} ${inter.variable}`}>
+    <section className={`bg-[#FAF9F6] py-20 px-6 md:px-12 lg:px-24 ${inter.variable}`}>
       <div className="max-w-[1400px] mx-auto">
         
         {/* Section Heading */}

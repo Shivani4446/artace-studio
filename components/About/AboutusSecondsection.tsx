@@ -1,12 +1,5 @@
 import Image from "next/image";
-import { Lora } from "next/font/google";
-
-// Using Lora for the body text to match the elegant serif look
-const lora = Lora({ 
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"]
-});
+import { lora } from "@/lib/fonts";
 
 export default function GallerySection() {
   return (

@@ -1,24 +1,10 @@
 import React from 'react';
 import Image from 'next/image';
-import { Playfair_Display, Lora } from 'next/font/google';
-
-// Font Configuration
-const playfair = Playfair_Display({ 
-  subsets: ['latin'],
-  weight: ['400', '600'],
-  variable: '--font-playfair'
-});
-
-const lora = Lora({
-  subsets: ['latin'],
-  weight: ['400'], 
-  variable: '--font-lora'
-});
 
 const AboutusWhoAreWe = () => {
   return (
-    <section 
-      className={`bg-[#FAF9F6] px-4 py-12 text-[#2C2C2C] sm:px-6 sm:py-16 md:px-12 md:py-20 lg:px-24 ${playfair.variable} ${lora.variable}`}
+    <section
+      className="bg-[#FAF9F6] px-4 py-12 text-[#2C2C2C] sm:px-6 sm:py-16 md:px-12 md:py-20 lg:px-24"
     >
       <div className="mx-auto max-w-[1400px]">
         
