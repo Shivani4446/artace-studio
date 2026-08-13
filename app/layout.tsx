@@ -103,10 +103,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google tag (gtag.js) — base GA4 tag, must stay first in <head> per
-            Google's install instructions. Separate from the GTM container
-            below; other Ads/GA4 events (see utils/gtm.ts) are pushed to the
-            same window.dataLayer this initializes. */}
+        {/* Google tag (gtag.js) — base tag, must stay first in <head> per
+            Google's install instructions. Configures both the GA4 property
+            and the Google Ads account on the same loaded script/dataLayer,
+            per Google's guidance for sites with multiple tag IDs (only one
+            gtag/js loader is needed; each ID gets its own 'config' call).
+            Separate from the GTM container below; other Ads/GA4 events (see
+            utils/gtm.ts) are pushed to the same window.dataLayer this
+            initializes. */}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-27V3DFEVET"
@@ -118,6 +122,7 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-27V3DFEVET');
+              gtag('config', 'AW-11024941492');
             `,
           }}
         />
