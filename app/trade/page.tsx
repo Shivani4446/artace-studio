@@ -8,6 +8,7 @@ import {
   Palette,
   Headset,
   ClipboardCheck,
+  ArrowUpRight,
 } from "lucide-react";
 import TradeApplicationForm from "@/components/trade/TradeApplicationForm";
 import FAQSection, { type FAQItem } from "@/components/seo/FAQSection";
@@ -163,16 +164,22 @@ const TradePage = () => {
 
       <section className="px-4 py-12 sm:px-6 md:px-12 md:py-16">
         <div className="mx-auto grid max-w-[1100px] gap-8 md:grid-cols-2">
-          <div className="rounded-[16px] border border-[#1f1f1f]/10 bg-white p-8">
-            <h3 className="font-display text-[22px] text-[#1f1f1f]">
-              Interior Designers & Architects
-            </h3>
+          <Link
+            href="/interior-designer-partnership"
+            className="group rounded-[16px] border border-[#1f1f1f]/10 bg-white p-8 transition-colors hover:bg-[#faf8f4]"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <h3 className="font-display text-[22px] text-[#1f1f1f]">
+                Interior Designers & Architects
+              </h3>
+              <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-[#8a8478] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#1f1f1f]" />
+            </div>
             <p className="mt-3 text-[15px] leading-7 text-[#595959]">
               Sourcing original art and custom-sized pieces for residential and
               commercial client projects, with a dedicated point of contact for
               every order.
             </p>
-          </div>
+          </Link>
           <div className="rounded-[16px] border border-[#1f1f1f]/10 bg-white p-8">
             <h3 className="font-display text-[22px] text-[#1f1f1f]">
               Hospitality & Commercial Firms

@@ -237,7 +237,7 @@ const WarliPage = async () => {
                 <p className="font-display text-[18px] font-medium leading-[1.2] text-[#F5F5DC] md:text-[22px]">
                   Ancient Tribal Art, Timeless Beauty
                 </p>
-                <h1 className="mt-4 font-display text-[38px] font-semibold leading-[1.08] sm:text-[44px] md:mt-5 md:text-[52px] lg:text-[60px]">
+                <h1 className="mt-4 font-display text-[36px] leading-[1.1] md:mt-5 md:text-[56px]">
                   Warli Paintings
                 </h1>
                 <p className="mt-5 max-w-xl text-[17px] leading-[1.65] text-white/85 md:text-[20px] md:leading-[1.6]">

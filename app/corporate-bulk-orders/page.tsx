@@ -106,7 +106,7 @@ const CorporateBulkOrdersPage = () => {
         <div className="absolute inset-0 bg-black/65" />
         <div className="relative mx-auto flex w-full max-w-[1440px] flex-col gap-8 px-6 pb-16 pt-24 md:px-12 md:pb-20 md:pt-28 lg:pb-28">
           <div className="max-w-3xl">
-            <h1 className="font-display text-[34px] font-semibold leading-[1.1] text-white sm:text-[40px] md:text-[50px] lg:text-[58px]">
+            <h1 className="font-display text-[36px] leading-[1.1] text-white md:text-[56px]">
               Premium Hand-Painted Canvas Art for Corporate & Bulk Orders
             </h1>
             <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-white/85 sm:text-[16px] md:text-[18px]">

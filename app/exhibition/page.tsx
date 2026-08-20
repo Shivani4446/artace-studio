@@ -141,7 +141,7 @@ export default function ExhibitionPage() {
 
         <div className="relative mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-6 pb-16 pt-20 sm:pt-24 md:px-12 md:pb-20 md:pt-28 lg:grid lg:grid-cols-[minmax(0,1.2fr)_22rem] lg:gap-12 lg:pb-24">
           <div className="max-w-4xl">
-            <h1 className="font-display text-[2.4rem] leading-[1.02] text-white sm:text-[3.1rem] md:max-w-[12ch] md:text-[4.25rem]">
+            <h1 className="font-display text-[36px] leading-[1.1] text-white md:max-w-[12ch] md:text-[56px]">
               Exhibition
             </h1>
             <p className="mt-5 max-w-[42rem] font-inter text-[1rem] leading-[1.8] text-white/82 sm:text-[1.05rem] md:text-[1.125rem]">

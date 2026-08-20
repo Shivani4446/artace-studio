@@ -63,7 +63,7 @@ const TeamPage = () => {
     <main className="bg-[#f4f2ee] px-4 py-8 sm:px-6 md:px-12 md:py-14 lg:px-24">
       <section className="mx-auto max-w-[1440px]">
         <div>
-          <h1 className="font-display text-[34px] leading-[1.04] text-[#1f1f1f] md:text-[52px] md:leading-[0.98]">
+          <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">
             Meet the Team
           </h1>
           <p className="mt-4 max-w-[980px] font-inter text-[15px] leading-7 text-[#595959] md:mt-5 md:text-[18px] md:leading-8">

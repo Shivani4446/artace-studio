@@ -59,7 +59,7 @@ const ContactPageClient = () => {
         <section className="pt-32">
           <div className="flex flex-col md:flex-row justify-between items-end gap-12">
             <div className="max-w-2xl">
-              <h1 className="text-[40px] sm:text-[56px] md:text-[80px] font-serif mb-[32px] text-[#222] whitespace-nowrap">
+              <h1 className="text-[36px] leading-[1.1] md:text-[56px] font-serif mb-[32px] text-[#222] whitespace-nowrap">
                 Contact Us
               </h1>
               <p className="text-[#666] leading-relaxed text-[15px]">

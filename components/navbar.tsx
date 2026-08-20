@@ -77,6 +77,11 @@ const businessLinks = [
     tagline: "Flat trade pricing for interior designers, architects & hospitality projects.",
   },
   {
+    name: "Design Partner Program",
+    href: "/interior-designer-partnership",
+    tagline: "Handcrafted, bespoke canvas art built for the projects you design.",
+  },
+  {
     name: "Corporate & Bulk Orders",
     href: "/corporate-bulk-orders",
     tagline: "Plan bulk art orders for offices, gifting, and styled spaces.",
@@ -678,7 +683,7 @@ const Navbar = () => {
             </p>
           </div>
 
-          <div className="grid gap-4 pt-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 pt-5 sm:grid-cols-2 lg:grid-cols-5">
             {businessLinks.map((item) => (
               <Link
                 key={item.name}

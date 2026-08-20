@@ -22,7 +22,7 @@ export default function HeroSection() {
           
           {/* Heading */}
           <h1
-            className={`${playfair.className} mb-4 text-4xl font-bold leading-[1.1] text-white sm:text-5xl md:mb-6 md:text-7xl lg:text-8xl`}
+            className={`${playfair.className} mb-4 text-[36px] leading-[1.1] text-white md:mb-6 md:text-[56px]`}
           >
             Creating for <br />
             Soulful Spaces

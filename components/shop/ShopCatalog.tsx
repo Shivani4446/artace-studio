@@ -598,7 +598,7 @@ const ShopCatalog = ({
     <main className="bg-[#f4f2ee] py-8 md:py-14">
       <section className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-12">
         <div className="mb-8 flex flex-col items-start gap-3 md:mb-10 md:gap-4">
-          <h1 className="font-display text-[32px] leading-[1.05] text-[#1f1f1f] md:text-[52px] md:leading-none">
+          <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">
             Buy Handmade Paintings Online in India
           </h1>
           <p className="max-w-[1200px] text-[14px] leading-7 text-[#5f5a52] md:text-[18px] md:leading-8">

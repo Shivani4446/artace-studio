@@ -169,7 +169,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           />
         </div>
         <div>
-          <h1 className="font-display text-[32px] leading-[1.15] text-[#1f1f1f] md:text-[44px]">
+          <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">
             {artist.name}
           </h1>
           <p className="mt-2 text-[16px] text-[#666] md:text-[18px]">{artist.tagline}</p>

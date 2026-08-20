@@ -29,7 +29,7 @@ const HeroSection = () => {
         <div className="relative z-10 h-full w-full">
           <div className="mx-auto flex h-full w-full max-w-[1440px] items-start px-6 pb-10 pt-16 md:items-center md:px-12 md:pb-0 md:pt-0">
             <div className="w-full text-left text-white md:w-[70%] lg:w-[64%]">
-              <h1 className="font-display text-[30px] font-semibold leading-[1.08] sm:text-[34px] md:text-[36px] lg:text-[44px] xl:text-[52px]">
+              <h1 className="font-display text-[36px] leading-[1.1] md:text-[56px]">
                 <span className="block md:whitespace-nowrap">Handcrafted Canvas Paintings,</span>
                 <span className="block md:whitespace-nowrap">Bespoke to Your Vision</span>
               </h1>

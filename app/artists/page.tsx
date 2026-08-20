@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function ArtistsPage() {
   return (
     <main className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
-      <h1 className="font-display text-[32px] text-[#1f1f1f] md:text-[44px]">Our Artists</h1>
+      <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">Our Artists</h1>
       <p className="mt-2 max-w-2xl text-[16px] text-[#666] md:text-[18px]">
         Meet the artists behind our handcrafted paintings.
       </p>

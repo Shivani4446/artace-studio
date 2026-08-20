@@ -99,7 +99,7 @@ const SearchClient = () => {
         <p className="text-xs uppercase tracking-[0.35em] text-[#7a7368]">
           Search Results
         </p>
-        <h1 className="mt-4 font-display text-[32px] leading-[1.15] sm:text-[40px] md:text-[48px]">
+        <h1 className="mt-4 font-display text-[36px] leading-[1.1] md:text-[56px]">
           {query ? `Results for \"${query}\"` : "Search the Artace catalog"}
         </h1>
         <p className="mt-3 text-[16px] text-[#5b5b5b] md:text-[18px]">

@@ -146,7 +146,7 @@ const DiningRoomPage = async () => {
                 <p className="font-display text-[16px] font-medium uppercase tracking-[0.08em] text-white/80 md:text-[18px]">
                   Where Every Gathering Finds Its Backdrop
                 </p>
-                <h1 className="mt-4 font-display text-[36px] font-semibold leading-[1.08] sm:text-[42px] md:mt-5 md:text-[52px]">
+                <h1 className="mt-4 font-display text-[36px] leading-[1.1] md:mt-5 md:text-[56px]">
                   Dining Room Paintings
                 </h1>
                 <p className="mt-5 max-w-xl text-[16px] leading-[1.65] text-white/85 md:text-[18px]">

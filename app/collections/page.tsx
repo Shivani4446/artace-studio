@@ -143,7 +143,7 @@ const CollectionsIndexPage = async () => {
         <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">
           Shop by Category
         </p>
-        <h1 className="mt-4 font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:mt-5 md:text-[52px]">
+        <h1 className="mt-4 font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:mt-5 md:text-[56px]">
           Painting Categories
         </h1>
         <p className="mt-4 max-w-2xl text-[16px] leading-[1.7] text-[#5b5b5b] md:mt-5 md:text-[18px]">

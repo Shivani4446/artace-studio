@@ -374,7 +374,7 @@ export default function RentalsPage() {
             <p className="font-display text-[13px] font-medium uppercase tracking-[0.2em] text-white/70 md:text-[14px]">
               Artace Studio Rentals
             </p>
-            <h1 className="mt-4 font-display text-[40px] font-semibold leading-[1.1] text-white md:text-[48px] lg:text-[56px]">
+            <h1 className="mt-4 font-display text-[36px] leading-[1.1] text-white md:text-[56px]">
               Rent Handcrafted Art for Your Business Space
             </h1>
             <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-white/85 md:text-[19px]">
