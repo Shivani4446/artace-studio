@@ -31,40 +31,17 @@ import {
   getCollectionHref,
 } from "@/utils/collections";
 
-type DesktopMenuId = "collections" | "shop" | "resources";
+type DesktopMenuId = "collections" | "shop" | "customOrders" | "business" | "resources";
 
 const resourceLinks = [
-  {
-    name: "About Us",
-    href: "/about-us",
-    description: "The Artace story, our process, and what makes each canvas original.",
-  },
-  {
-    name: "Team",
-    href: "/team",
-    description: "Meet the artists, advisors, and makers behind every commission.",
-  },
-  {
-    name: "Exhibition",
-    href: "/exhibition",
-    description:
-      "Follow Artace's growing exhibition journey across India and global design destinations.",
-  },
-  {
-    name: "Blogs",
-    href: "/blogs",
-    description: "Ideas on styling art, gifting, collecting, and choosing the right piece.",
-  },
-  {
-    name: "Art Care Guide",
-    href: "/art-care",
-    description: "Simple steps to keep your artwork looking beautiful for years.",
-  },
-  {
-    name: "Warli Paintings",
-    href: "/warli-paintings",
-    description: "Handcrafted tribal art rooted in a 2,500-year-old Maharashtrian folk tradition.",
-  },
+  { name: "About Us", href: "/about-us" },
+  { name: "Team", href: "/team" },
+  { name: "Exhibition", href: "/exhibition" },
+  { name: "Blogs", href: "/blogs" },
+  { name: "Art Care Guide", href: "/art-care" },
+  { name: "Warli Paintings", href: "/warli-paintings" },
+  { name: "Reviews", href: "/reviews" },
+  { name: "Contact", href: "/contact-us" },
 ];
 
 const roomLinks = [
@@ -74,78 +51,72 @@ const roomLinks = [
   { name: "Pooja Room", href: "/rooms/pooja-room" },
 ];
 
-const collectionDescriptions: Record<string, string> = {
-  "ganapati-paintings": "Auspicious canvases for prosperity and new beginnings.",
-  "radha-krishna-paintings": "Devotional paintings centered on love and harmony.",
-  "buddha-paintings": "Meditative works that bring stillness indoors.",
-  "abstract-paintings": "Texture-rich contemporary canvases for modern, layered interiors.",
-  "landscapes-cityscapes-paintings": "Expansive horizons and urban scenes with atmosphere.",
-  "figurative-paintings": "Portrait-led storytelling with warmth and presence.",
-};
+const worldwideLinks = [
+  { name: "United Kingdom", href: "/original-abstract-art-for-sale-uk" },
+  { name: "Ireland", href: "/original-paintings-for-sale-ireland" },
+  { name: "New Zealand", href: "/original-abstract-art-for-sale-nz" },
+];
+
+const customOrdersLinks = [
+  {
+    name: "Custom Paintings",
+    href: "/custom-order",
+    tagline: "Commission bespoke artwork built around your concept, size, and space.",
+  },
+  {
+    name: "Custom Portraits",
+    href: "/custom-portraits",
+    tagline: "Single, couple, family & baby portraits, hand-painted from your photo.",
+  },
+];
+
+const businessLinks = [
+  {
+    name: "Trade Program",
+    href: "/trade",
+    tagline: "Flat trade pricing for interior designers, architects & hospitality projects.",
+  },
+  {
+    name: "Corporate & Bulk Orders",
+    href: "/corporate-bulk-orders",
+    tagline: "Plan bulk art orders for offices, gifting, and styled spaces.",
+  },
+  {
+    name: "Affiliate Program",
+    href: "/affiliates",
+    tagline: "Earn commission referring collectors to Artace Studio.",
+  },
+  {
+    name: "Art Rentals",
+    href: "/rentals",
+    tagline: "Rent artwork for offices, hotels, restaurants & spaces.",
+  },
+];
 
 const desktopLinks = [
-  { name: "Home", href: "/" },
-  { name: "Painting Collections", href: "/shop", menuId: "collections" as DesktopMenuId },
+  { name: "Collections", href: "/shop", menuId: "collections" as DesktopMenuId },
   { name: "Shop Art", href: "/shop", menuId: "shop" as DesktopMenuId },
+  { name: "Commissions", href: "/custom-order", menuId: "customOrders" as DesktopMenuId },
+  { name: "Business", href: "/trade", menuId: "business" as DesktopMenuId },
   { name: "Resources", href: "/about-us", menuId: "resources" as DesktopMenuId },
-  { name: "Contact", href: "/contact-us" },
 ];
 
 const collectionLinks = collectionLinkItems.map((item) => ({
   name: item.name,
   href: getCollectionHref(item.categorySlug),
   slug: item.categorySlug,
-  description:
-    collectionDescriptions[item.categorySlug] ||
-    "Handcrafted canvases curated for a distinct mood, story, and room.",
 }));
 
 const shopCategoryLinks = [
-  {
-    name: "Religious Paintings",
-    href: "/shop?category=religious-paintings",
-    description: "Spiritual icons and devotional scenes painted with depth and reverence.",
-  },
-  {
-    name: "Landscape & Cityscape",
-    href: "/shop?category=landscapes-cityscapes-paintings",
-    description: "Nature-led horizons and urban scenes with atmosphere, depth, and motion.",
-  },
-  {
-    name: "Vastu Paintings",
-    href: "/shop?category=vastu-paintings",
-    description: "Artwork chosen to support energy, balance, and intentional placement.",
-  },
-  {
-    name: "Table Top Paintings",
-    href: "/shop?category=table-top-paintings",
-    description: "Smaller-format originals for consoles, shelves, studies, and quiet corners.",
-  },
-  {
-    name: "Buddha Paintings",
-    href: "/shop?category=buddha-paintings",
-    description: "Calm, meditative works that anchor the room with a quieter presence.",
-  },
-  {
-    name: "Radha Krishna",
-    href: "/shop?category=radha-krishna-paintings",
-    description: "Devotional paintings centered on divine love, harmony, and grace.",
-  },
-  {
-    name: "Ganapati Paintings",
-    href: "/shop?category=ganapati-paintings",
-    description: "Auspicious artwork created to bring warmth, blessings, and presence indoors.",
-  },
-  {
-    name: "Figurative Paintings",
-    href: "/shop?category=figurative-paintings",
-    description: "Portrait-led and human-centered works with emotion, gesture, and story.",
-  },
-  {
-    name: "Abstract Paintings",
-    href: "/shop?category=abstract-paintings",
-    description: "Texture-rich contemporary canvases for modern, layered interiors.",
-  },
+  { name: "Religious Paintings", href: "/shop?category=religious-paintings" },
+  { name: "Landscape & Cityscape", href: "/shop?category=landscapes-cityscapes-paintings" },
+  { name: "Vastu Paintings", href: "/shop?category=vastu-paintings" },
+  { name: "Table Top Paintings", href: "/shop?category=table-top-paintings" },
+  { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
+  { name: "Radha Krishna", href: "/shop?category=radha-krishna-paintings" },
+  { name: "Ganapati Paintings", href: "/shop?category=ganapati-paintings" },
+  { name: "Figurative Paintings", href: "/shop?category=figurative-paintings" },
+  { name: "Abstract Paintings", href: "/shop?category=abstract-paintings" },
 ];
 
 const shopHighlights = [
@@ -184,7 +155,6 @@ type SearchSuggestion = {
 };
 
 const mobileLinks: MobileMenuLink[] = [
-  { name: "Home", href: "/" },
   {
     name: "Painting Collections",
     href: "/shop",
@@ -193,14 +163,29 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [...shopCategoryLinks, { name: "Shop All", href: "/shop" }, { name: "Custom Order", href: "/custom-order" }, { name: "Art Rentals", href: "/rentals" }, ...roomLinks],
+    children: [
+      ...shopCategoryLinks,
+      { name: "Shop All", href: "/shop" },
+      ...roomLinks,
+      { name: "Shop by Artist", href: "/artists" },
+      ...worldwideLinks,
+    ],
+  },
+  {
+    name: "Custom Orders",
+    href: "/custom-order",
+    children: customOrdersLinks,
+  },
+  {
+    name: "For Business",
+    href: "/trade",
+    children: businessLinks,
   },
   {
     name: "Resources",
     href: "/about-us",
     children: resourceLinks,
   },
-  { name: "Contact", href: "/contact-us" },
 ];
 
 const searchStaticPrefix = "Search For";
@@ -482,25 +467,18 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1 rounded-[18px] border border-black/6 bg-white px-6 py-5">
+          <div className="grid grid-cols-2 gap-x-6 rounded-[18px] border border-black/6 bg-white px-6 py-5">
             {collectionLinks.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={closeDesktopMenu}
-                className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
+                className="group flex items-center justify-between gap-4 border-b border-[#ebe5dc] py-3.5 last:border-b-0"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-inter text-[16px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
-                      {item.name}
-                    </p>
-                    <p className="mt-1 font-inter text-[14px] leading-[1.55] text-[#6b6b6b]">
-                      {item.description}
-                    </p>
-                  </div>
-                  <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
-                </div>
+                <p className="font-inter text-[16px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
+                  {item.name}
+                </p>
+                <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
               </Link>
             ))}
           </div>
@@ -552,26 +530,18 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 gap-x-6 gap-y-1 pt-2">
+            <div className="grid grid-cols-3 gap-x-6 pt-2">
               {shopCategoryLinks.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={closeDesktopMenu}
-                  className="group border-b border-[#ebe5dc] py-4 last:border-b-0"
+                  className="group flex items-center justify-between gap-4 border-b border-[#ebe5dc] py-3.5 [&:nth-last-child(-n+3)]:border-b-0"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-inter text-[15px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
-                        {item.name}
-                      </p>
-                      <p className="mt-2 max-w-[260px] font-inter text-[13px] leading-[1.6] text-[#6b6b6b]">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
-                  </div>
+                  <p className="font-inter text-[15px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
+                    {item.name}
+                  </p>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
                 </Link>
               ))}
             </div>
@@ -593,56 +563,139 @@ const Navbar = () => {
                 ))}
               </div>
             </div>
+
+            <div className="mt-4 border-t border-[#ebe5dc] pt-4">
+              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
+                More Ways to Shop
+              </p>
+              <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4">
+                <Link
+                  href="/artists"
+                  onClick={closeDesktopMenu}
+                  className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
+                >
+                  Shop by Artist
+                </Link>
+                {worldwideLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={closeDesktopMenu}
+                    className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
 
-<div className="grid grid-rows-[auto_auto_auto] gap-3">
-              {shopHighlights.slice(0, 2).map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-[14px] bg-white px-4 py-3"
-                >
-                  <p className="font-inter text-[13px] font-medium text-[#2c2c2c]">
-                    {item.title}
-                  </p>
-                  <p className="mt-1 font-inter text-[12px] leading-[1.5] text-[#6b6b6b]">
-                    {item.body}
-                  </p>
-                </div>
-              ))}
+          <div className="grid grid-rows-3 gap-3">
+            {shopHighlights.map((item) => (
+              <div key={item.title} className="rounded-[14px] bg-white px-4 py-3">
+                <p className="font-inter text-[13px] font-medium text-[#2c2c2c]">
+                  {item.title}
+                </p>
+                <p className="mt-1 font-inter text-[12px] leading-[1.5] text-[#6b6b6b]">
+                  {item.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
+    if (openDesktopMenu === "customOrders") {
+      return (
+        <div className="grid grid-cols-[minmax(0,1fr)_300px] items-stretch gap-8">
+          <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
+            <div className="border-b border-[#ebe5dc] pb-4">
+              <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+                Commission something made for you.
+              </h3>
+              <p className="mt-3 max-w-[520px] font-inter text-[14px] leading-[1.7] text-[#626262]">
+                Work with our artists on a bespoke concept, or turn a favorite photo into a
+                hand-painted portrait.
+              </p>
+            </div>
+
+            <div className="grid gap-4 pt-5 sm:grid-cols-2">
+              {customOrdersLinks.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={closeDesktopMenu}
+                  className="group rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-5 py-5 transition-colors hover:bg-[#ede5d9]"
+                >
+                  <p className="font-inter text-[16px] font-medium text-[#2c2c2c]">
+                    {item.name}
+                  </p>
+                  <p className="mt-2 font-inter text-[14px] leading-[1.6] text-[#6b6b6b]">
+                    {item.tagline}
+                  </p>
+                  <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
+                    Explore
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[18px] bg-[#d8d2c8]">
+            <Image
+              src="/journal-img.webp"
+              alt="Custom commissioned artwork"
+              fill
+              sizes="300px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent px-6 py-6 text-white">
+              <div className="flex h-full flex-col justify-end">
+                <p className="max-w-[220px] font-display text-[24px] leading-[1.08]">
+                  Made to your exact vision.
+                </p>
+                <p className="mt-3 max-w-[240px] font-inter text-[14px] leading-[1.65] text-white/82">
+                  Share a concept or a photo — our artists take it from there.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (openDesktopMenu === "business") {
+      return (
+        <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
+          <div className="border-b border-[#ebe5dc] pb-4">
+            <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+              For designers, businesses & partners.
+            </h3>
+            <p className="mt-3 max-w-[560px] font-inter text-[14px] leading-[1.7] text-[#626262]">
+              Trade pricing, bulk gifting, rentals, and ways to earn with Artace Studio.
+            </p>
+          </div>
+
+          <div className="grid gap-4 pt-5 sm:grid-cols-2 lg:grid-cols-4">
+            {businessLinks.map((item) => (
               <Link
-                href="/rentals"
+                key={item.name}
+                href={item.href}
                 onClick={closeDesktopMenu}
-                className="rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-4 py-3 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
+                className="group rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-5 py-5 transition-colors hover:bg-[#ede5d9]"
               >
-                <p className="font-inter text-[10px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
-                  Art Rentals
+                <p className="font-inter text-[16px] font-medium text-[#2c2c2c]">{item.name}</p>
+                <p className="mt-2 font-inter text-[13px] leading-[1.6] text-[#6b6b6b]">
+                  {item.tagline}
                 </p>
-                <p className="mt-1 font-display text-[16px] leading-[1.08]">
-                  Rent artwork for offices, hotels, restaurants & spaces.
-                </p>
-                <div className="mt-2 inline-flex items-center gap-1 font-inter text-[12px] font-medium text-[#2c2c2c]">
-                  Explore rentals
-                  <ArrowUpRight className="h-3 w-3" />
+                <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
+                  Explore
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
                 </div>
               </Link>
-
-            <Link
-              href="/corporate-bulk-orders"
-              onClick={closeDesktopMenu}
-              className="rounded-[14px] border border-[#ebe5dc] bg-[#f4efe7] px-4 py-3 text-[#2c2c2c] transition-colors hover:bg-[#ede5d9]"
-            >
-              <p className="font-inter text-[10px] font-medium uppercase tracking-[0.16em] text-[#7f776d]">
-                Corporate Orders
-              </p>
-              <p className="mt-1 font-display text-[16px] leading-[1.08]">
-                Plan bulk art orders for offices, gifting, and styled spaces.
-              </p>
-              <div className="mt-2 inline-flex items-center gap-1 font-inter text-[12px] font-medium text-[#2c2c2c]">
-                Explore corporate orders
-                <ArrowUpRight className="h-3 w-3" />
-              </div>
-            </Link>
+            ))}
           </div>
         </div>
       );
@@ -652,40 +705,24 @@ const Navbar = () => {
       return (
         <div className="grid grid-cols-[minmax(0,1fr)_300px] items-stretch gap-8">
           <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
-            <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
-              <div>
-                <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
-                  Learn, explore, and contact the studio.
-                </h3>
-              </div>
-              <Link
-                href="/contact-us"
-                onClick={closeDesktopMenu}
-                className="inline-flex items-center gap-2 whitespace-nowrap font-inter text-[14px] font-medium text-[#2a2a2a] transition-colors hover:text-black"
-              >
-                Contact
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
+            <div className="border-b border-[#ebe5dc] pb-4">
+              <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
+                Learn, explore, and contact the studio.
+              </h3>
             </div>
 
-            <div className="grid gap-5 pt-5 lg:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-3 pt-5 sm:grid-cols-2 lg:grid-cols-4">
               {resourceLinks.map((resource) => (
                 <Link
                   key={resource.name}
                   href={resource.href}
                   onClick={closeDesktopMenu}
-                  className="group rounded-[16px] bg-[#faf8f4] px-5 py-5 transition-colors hover:bg-[#f4efe7]"
+                  className="group flex items-center justify-between gap-3 rounded-[16px] bg-[#faf8f4] px-5 py-4 transition-colors hover:bg-[#f4efe7]"
                 >
                   <p className="font-inter text-[15px] font-medium text-[#2c2c2c]">
                     {resource.name}
                   </p>
-                  <p className="mt-2 font-inter text-[14px] leading-[1.7] text-[#6b6b6b]">
-                    {resource.description}
-                  </p>
-                  <div className="mt-4 inline-flex items-center gap-2 font-inter text-[14px] font-medium text-[#2c2c2c]">
-                    Open
-                    <ChevronRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                  </div>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
                 </Link>
               ))}
             </div>
@@ -737,14 +774,14 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="hidden items-center gap-10 lg:flex">
+          <div className="hidden items-center gap-2 2xl:gap-6 lg:flex">
             {desktopLinks.map((link) =>
               link.menuId ? (
                 <button
                   key={link.name}
                   type="button"
                   onClick={() => toggleDesktopMenu(link.menuId)}
-                  className={`inline-flex items-center gap-2 font-inter text-[18px] font-medium leading-none transition-colors hover:text-black ${
+                  className={`inline-flex items-center gap-1.5 whitespace-nowrap font-inter text-[15px] font-medium leading-none transition-colors hover:text-black 2xl:text-[18px] ${
                     openDesktopMenu === link.menuId ? "text-black" : "text-[#2f2f2f]"
                   }`}
                 >
@@ -756,7 +793,7 @@ const Navbar = () => {
                   key={link.name}
                   href={link.href}
                   onMouseEnter={closeDesktopMenu}
-                  className="inline-flex items-center gap-1 font-inter text-[18px] font-medium text-[#2f2f2f] transition-colors hover:text-black"
+                  className="inline-flex items-center gap-1 whitespace-nowrap font-inter text-[15px] font-medium text-[#2f2f2f] transition-colors hover:text-black 2xl:text-[18px]"
                 >
                   {link.name}
                 </Link>
@@ -765,7 +802,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-1 md:gap-2">
-            <div className="hidden md:flex items-center bg-[#f2f2f2] rounded-full px-4 py-2.5 w-[240px] lg:w-[320px] transition-all focus-within:ring-1 focus-within:ring-[#c6c1b6]">
+            <div className="hidden md:flex items-center bg-[#f2f2f2] rounded-full px-4 py-2.5 w-[130px] 2xl:w-[320px] transition-all focus-within:ring-1 focus-within:ring-[#c6c1b6]">
               <Search className="w-5 h-5 text-[#555555] mr-3" strokeWidth={1.5} />
               <div className="relative w-full">
                 <input
@@ -1090,7 +1127,7 @@ const Navbar = () => {
         >
           <div className="mx-auto max-w-[1440px] px-6 md:px-12">
             <div className="mt-4 rounded-[12px] border border-[#d8d3ca] bg-[#f4f2ee] shadow-[0_16px_40px_rgba(0,0,0,0.08)]">
-              <div className="px-6 py-8 md:px-12">
+              <div className="px-4 py-5 md:px-6 md:py-6">
                 {renderDesktopMenu()}
               </div>
             </div>
