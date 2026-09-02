@@ -13,6 +13,7 @@ import * as authRegisterRoute from "@/lib/api-route-handlers/auth/register/route
 import * as authResetPasswordRoute from "@/lib/api-route-handlers/auth/reset-password/route";
 import * as authSessionRoute from "@/lib/api-route-handlers/auth/session/route";
 import * as blogsRoute from "@/lib/api-route-handlers/blogs/route";
+import * as canvasRollEnquiriesRoute from "@/lib/api-route-handlers/canvas-roll-enquiries/route";
 import * as chatRoute from "@/lib/api-route-handlers/chat/route";
 import * as chatTranscribeRoute from "@/lib/api-route-handlers/chat/transcribe/route";
 import * as checkoutCouponRoute from "@/lib/api-route-handlers/checkout/coupon/route";
@@ -92,6 +93,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   blogs: {
     GET: () => blogsRoute.GET(),
+  },
+  "canvas-roll-enquiries": {
+    POST: (request) => canvasRollEnquiriesRoute.POST(request),
   },
   checkout: {
     POST: (request) => checkoutRoute.POST(request),

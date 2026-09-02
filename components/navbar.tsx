@@ -96,6 +96,11 @@ const businessLinks = [
     href: "/rentals",
     tagline: "Rent artwork for offices, hotels, restaurants & spaces.",
   },
+  {
+    name: "Canvas Rolls",
+    href: "/canvas-rolls",
+    tagline: "Premium cotton & poly-cotton canvas, supplied by the roll.",
+  },
 ];
 
 const desktopLinks = [
@@ -683,7 +688,7 @@ const Navbar = () => {
             </p>
           </div>
 
-          <div className="grid gap-4 pt-5 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-4 pt-5 sm:grid-cols-2 lg:grid-cols-3">
             {businessLinks.map((item) => (
               <Link
                 key={item.name}
