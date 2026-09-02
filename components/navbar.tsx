@@ -101,7 +101,7 @@ const businessLinks = [
 const desktopLinks = [
   { name: "Collections", href: "/shop", menuId: "collections" as DesktopMenuId },
   { name: "Shop Art", href: "/shop", menuId: "shop" as DesktopMenuId },
-  { name: "Commissions", href: "/custom-order", menuId: "customOrders" as DesktopMenuId },
+  { name: "Custom", href: "/custom-order", menuId: "customOrders" as DesktopMenuId },
   { name: "Business", href: "/trade", menuId: "business" as DesktopMenuId },
   { name: "Resources", href: "/about-us", menuId: "resources" as DesktopMenuId },
 ];

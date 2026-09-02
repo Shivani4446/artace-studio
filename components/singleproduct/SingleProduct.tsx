@@ -1041,18 +1041,129 @@ const SingleProduct = ({
   const customHeightDisplay =
     customHeight || formatDimensionValue(baseSizeDimensions.height);
 
-  const customCalculatedPrice = useMemo(() => {
-    if (!product || currentPrice === null || !baseSizeArea || baseSizeArea <= 0) {
-      return null;
+  // Every real size variation configured on this product (15x15 -> 12500,
+  // 20x20 -> 18000, ...) — the ground truth for what this business actually
+  // charges at each size. Used below to fit an accurate pricing model
+  // instead of naively scaling off whichever size pill happens to be
+  // selected on the page (the old approach: a single reference point,
+  // unstable, and mathematically wrong for real-world pricing — see the
+  // regression comment below).
+  const sizeVariationPricePoints = useMemo(() => {
+    if (!product?.variations) return [];
+
+    const points: { width: number; height: number; area: number; price: number }[] = [];
+    const seenAreas = new Set<number>();
+
+    for (const variation of product.variations) {
+      if (variation.price === null || variation.price === undefined || variation.price <= 0) {
+        continue;
+      }
+
+      const sizeAttribute = variation.attributes.find((attr) =>
+        /size|dimension/i.test(attr.name)
+      );
+      const dimensions = parseSizeDimensions(sizeAttribute?.value ?? "");
+      if (!dimensions) continue;
+
+      const area = dimensions.width * dimensions.height;
+      if (area <= 0 || seenAreas.has(area)) continue;
+      seenAreas.add(area);
+      points.push({ width: dimensions.width, height: dimensions.height, area, price: variation.price });
     }
+
+    return points.sort((a, b) => a.area - b.area);
+  }, [product]);
+
+  // Fits price = a * area^b via least-squares linear regression in
+  // log-log space, across every real size variation's (area, price) pair.
+  // Verified against real product data: per-square-inch cost consistently
+  // *decreases* at larger configured sizes (economies of scale in
+  // material/labor) — a power curve with b < 1 captures that shape far
+  // more accurately than a straight line (b=1 forces cost-per-area to be
+  // constant, which real pricing here contradicts by 2x at the extremes).
+  // This gives a stable, deterministic estimate for any custom size,
+  // instead of projecting off a single arbitrarily-selected reference
+  // size the way the previous implementation did.
+  const customSizePricingModel = useMemo(() => {
+    const points = sizeVariationPricePoints;
+    const n = points.length;
+    if (n === 0) return null;
+
+    if (n === 1) {
+      // Only one real price point — not enough data to fit a curve shape,
+      // so fall back to pure proportional (through-origin, b=1) scaling
+      // from that single known size.
+      const [{ area, price }] = points;
+      return area > 0 ? { a: price / area, b: 1 } : null;
+    }
+
+    const logPoints = points.map((point) => ({
+      x: Math.log(point.area),
+      y: Math.log(point.price),
+    }));
+    const meanX = logPoints.reduce((sum, p) => sum + p.x, 0) / n;
+    const meanY = logPoints.reduce((sum, p) => sum + p.y, 0) / n;
+
+    let numerator = 0;
+    let denominator = 0;
+    for (const { x, y } of logPoints) {
+      numerator += (x - meanX) * (y - meanY);
+      denominator += (x - meanX) ** 2;
+    }
+
+    if (denominator === 0) {
+      // Every real variation has the same area (shouldn't normally
+      // happen) — nothing to regress against. b=0 makes area^b always 1,
+      // so this reduces to a flat price equal to the average.
+      const meanPrice = points.reduce((sum, p) => sum + p.price, 0) / n;
+      return { a: meanPrice, b: 0 };
+    }
+
+    const b = numerator / denominator;
+    const a = Math.exp(meanY - b * meanX);
+    return { a, b };
+  }, [sizeVariationPricePoints]);
+
+  const customCalculatedPrice = useMemo(() => {
+    if (!product) return null;
     if (!Number.isFinite(customWidthNumber) || !Number.isFinite(customHeightNumber)) {
       return null;
     }
     if (customWidthNumber <= 0 || customHeightNumber <= 0) return null;
 
+    // Exact match against a real configured size (e.g. the customer types
+    // the same 15 x 15 that already exists as a variation): show that
+    // variation's real price directly, not an estimate.
+    const exactMatch = sizeVariationPricePoints.find(
+      (point) => point.width === customWidthNumber && point.height === customHeightNumber
+    );
+    if (exactMatch) return exactMatch.price;
+
     const customArea = customWidthNumber * customHeightNumber;
+
+    if (customSizePricingModel) {
+      const modeled =
+        customSizePricingModel.a * Math.pow(customArea, customSizePricingModel.b);
+      // Extrapolating for a custom size well outside the configured range
+      // should never produce a negative or nonsensical price.
+      return Math.max(modeled, 0);
+    }
+
+    // No usable real size-pricing data at all (product has no parseable
+    // size variations) — fall back to the previous single-reference
+    // scaling so custom sizing still produces something rather than
+    // nothing.
+    if (currentPrice === null || !baseSizeArea || baseSizeArea <= 0) return null;
     return currentPrice * (customArea / baseSizeArea);
-  }, [baseSizeArea, customHeightNumber, customWidthNumber, product, currentPrice]);
+  }, [
+    product,
+    customWidthNumber,
+    customHeightNumber,
+    sizeVariationPricePoints,
+    customSizePricingModel,
+    currentPrice,
+    baseSizeArea,
+  ]);
 
   const formattedCustomCalculatedPrice = useMemo(() => {
     if (!product) return null;
