@@ -39,38 +39,38 @@ const CanvasRollsHero = () => {
     >
       <div ref={imageRef} className="absolute inset-0">
         <Image
-          src="/weave-texture-1.webp"
-          alt="Extreme close-up of tightly woven cotton canvas unrolling on a wooden surface"
+          src="/canvas-page-bg.webp"
+          alt="Rolled Artace Studio premium canvas rolls, labeled and tied with twine, arranged in a basket with dried flowers"
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover object-[30%_center]"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#f4efe6] from-0% via-[#f4efe6] via-60% to-transparent" />
 
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-6 md:px-12">
-        <div className="max-w-3xl">
-          <p className="font-inter text-[13px] uppercase tracking-[0.14em] text-white/60">
+        <div className="sm:max-w-md lg:max-w-xl xl:max-w-2xl">
+          <p className="font-inter text-[13px] uppercase tracking-[0.14em] text-[#7b746a]">
             Canvas Rolls
           </p>
-          <h1 className="mt-4 font-display text-[36px] leading-[1.1] text-white md:text-[56px]">
+          <h1 className="mt-4 font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">
             Fine Art Canvas Rolls, Woven & Primed for the Studio
           </h1>
-          <p className="mt-5 max-w-2xl font-inter text-[16px] leading-7 text-white/85 md:text-[19px] md:leading-8">
+          <p className="mt-5 font-inter text-[16px] leading-7 text-[#4f4b45] md:text-[19px] md:leading-8">
             Cotton, cotton-poly blend, and linen canvas — double acrylic-gesso primed and
             supplied by the roll, for studios, framers, and print houses.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-6">
             <Link
               href="#enquire"
-              className="inline-flex items-center justify-center rounded-[12px] bg-white px-7 py-3 text-[16px] font-medium text-[#1f1f1f] transition-colors hover:bg-white/90"
+              className="inline-flex items-center justify-center rounded-[12px] bg-[#1a1a1a] px-7 py-3 text-[16px] font-medium text-white transition-colors hover:bg-black"
             >
               Request Pricing & Samples
             </Link>
             <Link
               href="#specifications"
-              className="font-inter text-[15px] font-medium text-white underline underline-offset-4 transition-opacity hover:opacity-80"
+              className="font-inter text-[15px] font-medium text-[#1f1f1f] underline underline-offset-4 transition-opacity hover:opacity-70"
             >
               See Specifications →
             </Link>
