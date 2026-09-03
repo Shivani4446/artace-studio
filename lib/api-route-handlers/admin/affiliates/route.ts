@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminRequest } from "@/lib/admin/auth";
+import { sendTransactionalEmail } from "@/lib/email/resend";
+import { buildAffiliateApprovedEmail } from "@/lib/email/templates";
 
 export const runtime = "edge";
 
@@ -87,6 +89,28 @@ export async function PATCH(request: NextRequest) {
   }
   update.updated_at = new Date().toISOString();
 
+  // Only a genuine pending -> approved transition should send the "you're
+  // approved" email — not e.g. reinstating a suspended affiliate back to
+  // approved, which is a different action. Check the current status before
+  // applying the update; only bother fetching it when this request could
+  // possibly be that transition.
+  let wasPending = false;
+  if (update.status === "approved") {
+    try {
+      const currentResponse = await fetch(
+        `${SUPABASE_URL}/rest/v1/affiliates?id=eq.${id}&select=status`,
+        { headers: supabaseHeaders() }
+      );
+      if (currentResponse.ok) {
+        const currentRows = (await currentResponse.json()) as { status?: string }[];
+        wasPending = currentRows[0]?.status === "pending";
+      }
+    } catch {
+      // If this lookup fails, we simply skip sending the email below rather
+      // than block the approval itself on it.
+    }
+  }
+
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/affiliates?id=eq.${id}`, {
       method: "PATCH",
@@ -101,7 +125,27 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Could not update affiliate." }, { status: 502 });
     }
     const rows = await response.json();
-    return NextResponse.json({ ok: true, affiliate: Array.isArray(rows) ? rows[0] : null });
+    const updatedAffiliate = Array.isArray(rows) ? rows[0] : null;
+
+    if (wasPending && updatedAffiliate?.email) {
+      try {
+        const emailContent = buildAffiliateApprovedEmail({
+          fullName: updatedAffiliate.full_name || "",
+          referralCode: updatedAffiliate.referral_code || "",
+          commissionRate:
+            typeof updatedAffiliate.commission_rate === "number"
+              ? updatedAffiliate.commission_rate
+              : 0.1,
+        });
+        await sendTransactionalEmail({ to: updatedAffiliate.email, ...emailContent });
+      } catch (error) {
+        // Approval already succeeded — a notification-email failure must
+        // never undo or fail the approval itself.
+        console.error("[admin/affiliates] approval email failed:", error);
+      }
+    }
+
+    return NextResponse.json({ ok: true, affiliate: updatedAffiliate });
   } catch {
     return NextResponse.json({ error: "Could not update affiliate." }, { status: 502 });
   }

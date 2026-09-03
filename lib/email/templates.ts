@@ -69,6 +69,47 @@ export const buildWelcomeEmail = ({ firstName }: { firstName: string }): EmailCo
   return { subject: "Welcome to Artace Studio", html, text };
 };
 
+export const buildAffiliateApprovedEmail = ({
+  fullName,
+  referralCode,
+  commissionRate,
+}: {
+  fullName: string;
+  referralCode: string;
+  commissionRate: number;
+}): EmailContent => {
+  const name = fullName || "there";
+  const referralLink = buildSiteUrl(`/?ref=${referralCode}`);
+  const dashboardUrl = buildSiteUrl("/dashboard/affiliate");
+  const ratePercent = Math.round(commissionRate * 100);
+
+  const html = wrapEmailHtml(`
+    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">You're approved, ${escapeHtml(name)}!</h1>
+    <p style="margin:0 0 16px 0;">Your Artace Studio affiliate application has been approved. You'll earn ${ratePercent}% commission on every order placed through your referral link.</p>
+    <p style="margin:0 0 8px 0; color:#6b6962; font-size:13px;">Your referral link</p>
+    <p style="margin:0 0 24px 0; word-break:break-all; font-size:14px;"><a href="${referralLink}" style="color:#1f3f63;">${referralLink}</a></p>
+    <p style="margin:0 0 24px 0;">
+      <a href="${dashboardUrl}" style="display:inline-block; background-color:#1f3f63; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:bold;">Go to Your Affiliate Dashboard</a>
+    </p>
+    <p style="margin:0; color:#6b6962; font-size:13px;">From your dashboard you can track clicks and referred orders, and add your payout details (UPI or bank) so we know where to send your commission.</p>
+  `);
+
+  const text = [
+    `You're approved, ${name}!`,
+    "",
+    `Your Artace Studio affiliate application has been approved. You'll earn ${ratePercent}% commission on every order placed through your referral link.`,
+    "",
+    "Your referral link:",
+    referralLink,
+    "",
+    `Go to your affiliate dashboard: ${dashboardUrl}`,
+    "",
+    "From your dashboard you can track clicks and referred orders, and add your payout details (UPI or bank) so we know where to send your commission.",
+  ].join("\n");
+
+  return { subject: "You're approved — Artace Studio Affiliate Program", html, text };
+};
+
 export const buildPasswordResetEmail = ({
   firstName,
   resetUrl,
