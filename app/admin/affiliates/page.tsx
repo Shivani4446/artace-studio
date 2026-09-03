@@ -101,6 +101,9 @@ export default function AdminAffiliatesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [tab, setTab] = useState<"applications" | "affiliates" | "conversions">("applications");
+  const [selectedConversionIds, setSelectedConversionIds] = useState<Set<number>>(new Set());
+  const [isPayingOut, setIsPayingOut] = useState(false);
+  const [payoutError, setPayoutError] = useState("");
 
   const loadAll = async () => {
     setIsLoading(true);
@@ -146,6 +149,55 @@ export default function AdminAffiliatesPage() {
       body: JSON.stringify({ id, status }),
     });
     void loadAll();
+  };
+
+  // Which affiliate the current selection belongs to — once a checkbox is
+  // checked, only other "approved" conversions for that same affiliate stay
+  // selectable, since one payout batch (and its one summary email) can only
+  // ever cover a single affiliate.
+  const selectedAffiliateId =
+    selectedConversionIds.size > 0
+      ? conversions.find((c) => selectedConversionIds.has(c.id))?.affiliate_id ?? null
+      : null;
+  const selectedTotal = conversions
+    .filter((c) => selectedConversionIds.has(c.id))
+    .reduce((sum, c) => sum + Number(c.commission_amount), 0);
+
+  const toggleConversionSelection = (conversion: Conversion) => {
+    setSelectedConversionIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(conversion.id)) {
+        next.delete(conversion.id);
+      } else {
+        next.add(conversion.id);
+      }
+      return next;
+    });
+  };
+
+  const markSelectedAsPaid = async () => {
+    if (selectedConversionIds.size === 0) return;
+    setIsPayingOut(true);
+    setPayoutError("");
+    try {
+      const response = await fetch("/api/admin/conversions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedConversionIds), status: "paid" }),
+      });
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        setPayoutError(payload.error || "Could not mark the selected conversions as paid.");
+        setIsPayingOut(false);
+        return;
+      }
+      setSelectedConversionIds(new Set());
+      setIsPayingOut(false);
+      void loadAll();
+    } catch {
+      setPayoutError("Could not mark the selected conversions as paid.");
+      setIsPayingOut(false);
+    }
   };
 
   const pendingApplications = affiliates.filter((a) => a.status === "pending");
@@ -294,10 +346,43 @@ export default function AdminAffiliatesPage() {
         )}
 
         {tab === "conversions" && (
-          <div className="mt-6 overflow-x-auto rounded-[14px] border border-black/8 bg-white">
+          <div className="mt-6">
+            {selectedConversionIds.size > 0 && (
+              <div className="mb-3 flex flex-col gap-3 rounded-[14px] border border-black/8 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-[14px] font-medium text-[#1f1f1f]">
+                    {selectedConversionIds.size} order{selectedConversionIds.size > 1 ? "s" : ""}{" "}
+                    selected · {formatCurrency(selectedTotal)}
+                  </p>
+                  <p className="text-[12px] text-[#7a7368]">
+                    One payout email will be sent covering all selected orders.
+                  </p>
+                  {payoutError && <p className="mt-1 text-[12px] text-red-600">{payoutError}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedConversionIds(new Set())}
+                    className="rounded-[8px] border border-black/10 px-4 py-2 text-[13px] font-medium text-[#4f4b45] hover:bg-black/5"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    onClick={markSelectedAsPaid}
+                    disabled={isPayingOut}
+                    className="rounded-[8px] bg-green-600 px-4 py-2 text-[13px] font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isPayingOut ? "Marking Paid..." : `Mark Selected as Paid (${formatCurrency(selectedTotal)})`}
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="overflow-x-auto rounded-[14px] border border-black/8 bg-white">
             <table className="w-full text-left text-[14px]">
               <thead className="border-b border-black/8 text-[13px] uppercase tracking-wide text-[#7a7368]">
                 <tr>
+                  <th className="px-4 py-3"></th>
                   <th className="px-4 py-3">Affiliate</th>
                   <th className="px-4 py-3">WC Order</th>
                   <th className="px-4 py-3">Order Total</th>
@@ -308,8 +393,24 @@ export default function AdminAffiliatesPage() {
                 </tr>
               </thead>
               <tbody>
-                {conversions.map((conversion) => (
+                {conversions.map((conversion) => {
+                  const canSelect =
+                    conversion.status === "approved" &&
+                    (selectedAffiliateId === null || conversion.affiliate_id === selectedAffiliateId);
+                  return (
                   <tr key={conversion.id} className="border-b border-black/5 last:border-0">
+                    <td className="px-4 py-3">
+                      {conversion.status === "approved" && (
+                        <input
+                          type="checkbox"
+                          checked={selectedConversionIds.has(conversion.id)}
+                          disabled={!canSelect}
+                          onChange={() => toggleConversionSelection(conversion)}
+                          className="h-4 w-4 disabled:cursor-not-allowed disabled:opacity-40"
+                          aria-label={`Select order #${conversion.wc_order_id} for payout`}
+                        />
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <p className="font-medium text-[#1f1f1f]">
                         {conversion.affiliates?.full_name || `#${conversion.affiliate_id}`}
@@ -344,15 +445,6 @@ export default function AdminAffiliatesPage() {
                             Approve
                           </button>
                         )}
-                        {conversion.status === "approved" && (
-                          <button
-                            type="button"
-                            onClick={() => updateConversionStatus(conversion.id, "paid")}
-                            className="text-[13px] font-medium text-green-700 underline underline-offset-2"
-                          >
-                            Mark Paid
-                          </button>
-                        )}
                         {conversion.status !== "voided" && conversion.status !== "paid" && (
                           <button
                             type="button"
@@ -365,9 +457,11 @@ export default function AdminAffiliatesPage() {
                       </div>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>

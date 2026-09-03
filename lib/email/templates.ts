@@ -110,6 +110,73 @@ export const buildAffiliateApprovedEmail = ({
   return { subject: "You're approved — Artace Studio Affiliate Program", html, text };
 };
 
+const formatInr = (value: number) => {
+  try {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(value);
+  } catch {
+    return `₹${Math.round(value).toLocaleString("en-IN")}`;
+  }
+};
+
+export const buildAffiliatePayoutEmail = ({
+  fullName,
+  totalAmount,
+  orders,
+}: {
+  fullName: string;
+  totalAmount: number;
+  orders: { wcOrderId: number; amount: number }[];
+}): EmailContent => {
+  const name = fullName || "there";
+  const dashboardUrl = buildSiteUrl("/dashboard/affiliate");
+
+  const orderRowsHtml = orders
+    .map(
+      (order) => `
+        <tr>
+          <td style="padding:6px 0; color:#4f4b45; font-size:14px; border-top:1px solid #ece7de;">Order #${order.wcOrderId}</td>
+          <td style="padding:6px 0; color:#1f1f1f; font-size:14px; text-align:right; border-top:1px solid #ece7de;">${escapeHtml(formatInr(order.amount))}</td>
+        </tr>`
+    )
+    .join("");
+
+  const html = wrapEmailHtml(`
+    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">You've been paid, ${escapeHtml(name)}!</h1>
+    <p style="margin:0 0 16px 0;">${escapeHtml(formatInr(totalAmount))} has been credited to you for the following order${orders.length > 1 ? "s" : ""} you referred:</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;">
+      ${orderRowsHtml}
+      <tr>
+        <td style="padding:10px 0 0 0; color:#1f1f1f; font-size:15px; font-weight:bold; border-top:2px solid #1f1f1f;">Total</td>
+        <td style="padding:10px 0 0 0; color:#1f1f1f; font-size:15px; font-weight:bold; text-align:right; border-top:2px solid #1f1f1f;">${escapeHtml(formatInr(totalAmount))}</td>
+      </tr>
+    </table>
+    <p style="margin:0 0 24px 0;">
+      <a href="${dashboardUrl}" style="display:inline-block; background-color:#1f3f63; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:bold;">View Your Affiliate Dashboard</a>
+    </p>
+    <p style="margin:0; color:#6b6962; font-size:13px;">Thank you for referring customers to Artace Studio — keep sharing your link to keep earning.</p>
+  `);
+
+  const text = [
+    `You've been paid, ${name}!`,
+    "",
+    `${formatInr(totalAmount)} has been credited to you for the following order${orders.length > 1 ? "s" : ""} you referred:`,
+    "",
+    ...orders.map((order) => `Order #${order.wcOrderId} — ${formatInr(order.amount)}`),
+    "",
+    `Total: ${formatInr(totalAmount)}`,
+    "",
+    `View your affiliate dashboard: ${dashboardUrl}`,
+    "",
+    "Thank you for referring customers to Artace Studio — keep sharing your link to keep earning.",
+  ].join("\n");
+
+  return { subject: "You've been paid — Artace Studio Affiliate Program", html, text };
+};
+
 export const buildPasswordResetEmail = ({
   firstName,
   resetUrl,
