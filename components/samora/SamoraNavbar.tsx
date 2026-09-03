@@ -22,7 +22,7 @@ const SamoraNavbar = () => {
   const { itemCount } = useCart();
 
   return (
-    <header className="border-b border-[#2b2420]/10 bg-[#fbf6ef]/95 backdrop-blur">
+    <header className="sticky top-0 z-[60] border-b border-[#2b2420]/10 bg-[#fbf6ef]/95 backdrop-blur">
       <div className="mx-auto flex h-[76px] max-w-[1320px] items-center justify-between px-5 md:px-10">
         <Link href="/samora" onClick={() => setIsMenuOpen(false)}>
           <Image

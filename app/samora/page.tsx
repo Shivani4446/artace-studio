@@ -19,8 +19,6 @@ export const revalidate = 60;
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 const FESTIVE_PRODUCTS_LIMIT = 4;
-// Rakhi section on the homepage showcases tote bags only.
-const FESTIVE_CATEGORY_SLUG = "tote-bags";
 
 type WooStorePrices = {
   currency_minor_unit: number;
@@ -72,7 +70,6 @@ const getFestiveSamoraProducts = async (): Promise<SamoraProduct[]> => {
     const queryParams = new URLSearchParams({
       per_page: String(FESTIVE_PRODUCTS_LIMIT),
       tag: SAMORA_TAG_SLUG,
-      category: FESTIVE_CATEGORY_SLUG,
       orderby: "date",
       order: "desc",
     });

@@ -2,7 +2,7 @@
 
 Working knowledge dump of everything built for **Samora**, the handcrafted-goods sub-brand of
 Artace Studio, across this chat. Written so a future session (or teammate) can pick this up
-without re-deriving it. Last updated: 2026-09-02.
+without re-deriving it. Last updated: September 2026 (Rakhi → Ganesh Chaturthi revision).
 
 ---
 
@@ -35,9 +35,12 @@ without re-deriving it. Last updated: 2026-09-02.
 ## 3. Routing & site chrome
 
 - `app/samora/layout.tsx` — Samora's own root-ish layout (nested under the app's single real root
-  layout): loads Fraunces, wraps children in `SamoraPromoBanner` + `SamoraNavbar` (combined into
-  **one** `sticky top-0 z-[60]` wrapper — they used to each be independently sticky, which broke;
-  don't re-add `sticky` to `SamoraNavbar` itself) and `SamoraFooter`.
+  layout): loads Fraunces, wraps children in `SamoraNavbar` (sticky, `top-0 z-[60]`, set directly
+  on its own `<header>`) and `SamoraFooter`.
+- **There was briefly a sticky promo strip** (`SamoraPromoBanner`, advertising the RAKHI10
+  coupon) stacked above the navbar in one shared sticky wrapper. It was removed by request —
+  file deleted, navbar's own `sticky` restored. If a promo banner is wanted again, rebuild it
+  fresh rather than assuming the old component still exists.
 - `components/chrome/SiteChrome.tsx` — the mechanism that makes `/samora/*` "feel like a
   different site": it path-matches `/samora` and skips Artace's `Navbar`, `Footer`,
   `PromotionBar`, `PromotionModal`, `ProductImageProtection`, `ChatWidget`, and the WhatsApp
@@ -52,17 +55,23 @@ without re-deriving it. Last updated: 2026-09-02.
 
 | Route | Purpose |
 |---|---|
-| `/samora` | Homepage: Hero, TrustBar, **FestiveSpecial** (Rakhi banner section, tote-bags-only showcase), CraftCategories, Story, Process, GiftingBanner, FAQ |
+| `/samora` | Homepage: Hero, TrustBar, **FestiveSpecial** (currently themed for **Ganesh Chaturthi**, general Samora showcase — see below), CraftCategories, Story, Process, GiftingBanner, FAQ |
 | `/samora/shop` | `SamoraShopCatalog`: dynamic category pills, dynamic attribute facets (e.g. Material/Color — appear automatically once products carry real WooCommerce *attributes*, not just meta fields), search, price range, sort (Newest/Price asc-desc/Name) — all client-side over the fetched product list |
 | `/samora/shop/[slug]` | `SamoraSingleProduct`: gallery, quantity stepper, variation selector, **PIN code delivery checker**, **"Make it a gift" option**, specs table (pulled from real WooCommerce meta fields), reviews (list + submission form, real WooCommerce reviews API), related products ("More from Samora") |
 | `/samora/cart` | Mirrors Artace's cart logic (`useCart()`), Samora-themed; shows gift-wrap fee line when applicable |
 | `/samora/checkout` | Mirrors Artace's checkout logic exactly (same `/api/checkout*` routes), Samora-themed; live shipping quote as the PIN code is typed; coupon field; order summary shows Subtotal / Discount / Gift Wrapping / Shipping / Total |
 | `/samora/checkout/success` | Mirrors Artace's success/polling page |
 
-Homepage's Festive Special section (`components/samora/SamoraFestiveSpecial.tsx`) is filtered to
-**tote bags only** (`category=tote-bags` combined with `tag=samora` in the Store API query in
-`app/samora/page.tsx`) — this was a deliberate later change; don't widen it back to "all Samora
-products" without being asked.
+Homepage's Festive Special section (`components/samora/SamoraFestiveSpecial.tsx`) currently shows
+the **4 most recent Samora-tagged products** with no category restriction (`tag=samora` only, in
+the Store API query in `app/samora/page.tsx`). It was originally a Raksha Bandhan (Rakhi) section
+restricted to `category=tote-bags`, with a sticky promo banner (`SamoraPromoBanner`, see §3) and a
+RAKHI10 coupon (§5) above the nav. On request, all of that was replaced ahead of Ganesh Chaturthi
+2026 (Sept 14): the category restriction was removed, the copy/design (`SamoraFestiveIcons.tsx` —
+bunting + `SamoraModakIcon`) was redone for Ganesh Chaturthi, and the sticky banner was deleted
+outright (not repurposed). Don't assume a banner or a category restriction exists here without
+checking the current files — the section is festival-themed on request, not evergreen, and will
+likely need to change again for the next festival.
 
 ## 5. Checkout business logic — Samora-specific
 
@@ -78,7 +87,9 @@ checkout is completely unaffected.
   **Samora-only constant in code**, deliberately independent of Artace's shared WooCommerce
   shipping zone (which stays at its own settings).
 - **RAKHI10 coupon**: real WooCommerce coupon (id `4272`, 10% off, `usage_limit_per_user: 1`,
-  expires `2026-08-29` — Raksha Bandhan 2026 is Aug 28). Enforced **Samora-only in application
+  expires `2026-08-29` — Raksha Bandhan 2026 is Aug 28). **Already expired** as of this revision
+  (Sept 2026) — still exists in WooCommerce but is no longer usable; nothing replaced it, since
+  the accompanying sticky banner was removed rather than repurposed (see §3). Enforced **Samora-only in application
   code**, not via WooCommerce's native product/category coupon restriction (deliberate — a
   native restriction would need manual updates every time a new Samora product is tagged; the
   code-layer check stays correct automatically):
@@ -222,8 +233,9 @@ lib/samora/pricing.server.ts        — server-only: fetchLineItemTotals() (real
                                        Samora-only check per cart, via WooCommerce)
 lib/delhivery.ts                    — checkDelhiveryServiceability(), calculateDelhiveryShippingRate()
 
-app/samora/layout.tsx               — banner + navbar (one sticky unit) + footer
-app/samora/page.tsx                 — homepage, fetches Festive Special products (tote-bags only)
+app/samora/layout.tsx               — sticky navbar + footer (no banner — see §3)
+app/samora/page.tsx                 — homepage, fetches Festive Special products (Samora tag only,
+                                       no category restriction — currently Ganesh Chaturthi theme)
 app/samora/samora-schema.ts         — JSON-LD schema + FAQ data for the homepage
 app/samora/shop/page.tsx            — shop listing, fetches all Samora products + categories/attrs
 app/samora/shop/[slug]/page.tsx     — single product page, fetches specs/weight/variations
@@ -232,9 +244,10 @@ app/samora/checkout/                — checkout page + client (gift, coupon, li
 app/samora/checkout/success/        — success/polling page
 
 components/samora/                  — all Samora-specific UI components (Navbar, Footer,
-                                       PromoBanner, ProductCard, ShopCatalog, SingleProduct,
-                                       PincodeChecker, GiftOption, GiftModal, FestiveSpecial,
-                                       Reviews, ProductSpecs, festive icons, etc.)
+                                       ProductCard, ShopCatalog, SingleProduct, PincodeChecker,
+                                       GiftOption, GiftModal, FestiveSpecial, Reviews,
+                                       ProductSpecs, FestiveIcons, etc. — no PromoBanner; deleted,
+                                       see §3)
 components/chrome/SiteChrome.tsx    — Artace-vs-Samora chrome switch by path
 
 lib/api-route-handlers/checkout/route.ts          — order creation; gift fee, shipping, coupon

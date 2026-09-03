@@ -1,4 +1,4 @@
-const BUNTING_COLORS = ["#c1683d", "#e8c07d", "#f3ead9"];
+const BUNTING_COLORS = ["#d4841a", "#f3c98b", "#7a2e0e"];
 const BUNTING_FLAG_COUNT = 24;
 const BUNTING_FLAG_WIDTH = 34;
 
@@ -17,7 +17,7 @@ export const SamoraFestiveBunting = ({ className = "" }: { className?: string })
       role="presentation"
       aria-hidden="true"
     >
-      <line x1="0" y1="3" x2={width} y2="3" stroke="#e8c07d" strokeWidth="1.5" opacity="0.55" />
+      <line x1="0" y1="3" x2={width} y2="3" stroke="#f3c98b" strokeWidth="1.5" opacity="0.55" />
       {Array.from({ length: BUNTING_FLAG_COUNT }).map((_, index) => {
         const x = index * BUNTING_FLAG_WIDTH + 6;
         const color = BUNTING_COLORS[index % BUNTING_COLORS.length];
@@ -34,23 +34,32 @@ export const SamoraFestiveBunting = ({ className = "" }: { className?: string })
   );
 };
 
-// A simple six-petal rosette evoking the decorative thread-work at the
-// centre of a rakhi. Small = eyebrow badge icon, large + faint = background
-// watermark texture.
-export const SamoraRakhiRosette = ({ className = "" }: { className?: string }) => (
+// A modak — the sweet dumpling offered during Ganesh Chaturthi — drawn as a
+// simple pleated dome with a curled tip. Small = eyebrow badge icon,
+// large + faint = background watermark texture.
+export const SamoraModakIcon = ({ className = "" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" fill="none" className={className} role="presentation" aria-hidden="true">
-    {[0, 60, 120, 180, 240, 300].map((angle) => (
-      <ellipse
-        key={angle}
-        cx="12"
-        cy="6.5"
-        rx="2.1"
-        ry="4.2"
-        fill="currentColor"
-        opacity="0.85"
-        transform={`rotate(${angle} 12 12)`}
-      />
-    ))}
-    <circle cx="12" cy="12" r="2.4" fill="currentColor" />
+    {/* base plate */}
+    <ellipse cx="12" cy="20.5" rx="7" ry="1.1" fill="currentColor" opacity="0.25" />
+    {/* dome body */}
+    <path
+      d="M12 3.6c4 1.1 7 4.9 7 9.3 0 4.4-3.3 7.9-7 7.9s-7-3.5-7-7.9c0-4.4 3-8.2 7-9.3z"
+      fill="currentColor"
+    />
+    {/* pleat lines */}
+    <path
+      d="M12 6.4v14.2M9 7.6c-1.2 3.6-1.2 9.4 0 13M15 7.6c1.2 3.6 1.2 9.4 0 13"
+      stroke="currentColor"
+      strokeOpacity="0.3"
+      strokeWidth="0.9"
+      strokeLinecap="round"
+    />
+    {/* top curl */}
+    <path
+      d="M12 3.6c-.7-1.5-.3-2.5.7-3.1"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+    />
   </svg>
 );
