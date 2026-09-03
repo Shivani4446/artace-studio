@@ -5,9 +5,10 @@ import ReactMarkdown from "react-markdown";
 import remarkBreaks from "remark-breaks";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import ChatProductCard from "./ChatProductCard";
+import ArtieMascot from "./ArtieMascot";
 import type { ChatMessage } from "./useChatConversation";
 
-const ASSISTANT_NAME = "Artsa";
+const ASSISTANT_NAME = "Artie";
 
 const formatTimestamp = (timestamp: number) =>
   new Date(timestamp).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -40,55 +41,63 @@ const markdownComponents = {
 
 const ChatMessageBubble = ({ message }: { message: ChatMessage }) => {
   const isUser = message.role === "user";
+  const isThinking = !isUser && !message.content;
+
+  if (isUser) {
+    return (
+      <div className="animate-chat-message-in flex justify-end">
+        <div className="max-w-[85%] rounded-[12px] bg-[#1f1f1f] px-3 py-2 text-[13px] leading-relaxed text-white">
+          <p className="whitespace-pre-wrap">{message.content}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`animate-chat-message-in ${isUser ? "flex justify-end" : "flex flex-col items-start"}`}>
-      {!isUser && (
+    <div className="animate-chat-message-in flex max-w-[85%] items-start gap-2">
+      <ArtieMascot
+        variant={isThinking ? "thinking" : "idle"}
+        size={24}
+        className="mt-4 h-6 w-6 shrink-0"
+      />
+      <div className="flex min-w-0 flex-col items-start">
         <span className="mb-1 px-1 text-[11px] text-[#96948f]">
           {ASSISTANT_NAME} · {formatTimestamp(message.timestamp)}
         </span>
-      )}
-      <div
-        className={`max-w-[85%] rounded-[12px] px-3 py-2 text-[13px] leading-relaxed ${
-          isUser ? "bg-[#1f1f1f] text-white" : "bg-white text-[#1f1f1f]"
-        }`}
-      >
-        {message.content ? (
-          isUser ? (
-            <p className="whitespace-pre-wrap">{message.content}</p>
-          ) : (
+        <div className="rounded-[12px] bg-white px-3 py-2 text-[13px] leading-relaxed text-[#1f1f1f]">
+          {message.content ? (
             <ReactMarkdown remarkPlugins={[remarkBreaks]} components={markdownComponents}>
               {message.content}
             </ReactMarkdown>
-          )
-        ) : (
-          <span className="inline-flex gap-1 py-1">
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f] [animation-delay:-0.3s]" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f] [animation-delay:-0.15s]" />
-            <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f]" />
-          </span>
-        )}
-        {message.products && message.products.length > 0 && (
-          <div className="mt-2 flex flex-col gap-2">
-            {message.products.map((product) => (
-              <ChatProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
-        {message.actions?.map((action) => (
-          <div key={`${action.productId}-${action.variationId ?? "base"}`} className="mt-2">
-            <AddToCartButton
-              id={action.variationId ?? action.productId}
-              woocommerceProductId={action.productId}
-              woocommerceVariationId={action.variationId}
-              title={action.title}
-              image={action.image}
-              subtitle={action.subtitle}
-              price={action.price}
-              quantity={action.quantity}
-            />
-          </div>
-        ))}
+          ) : (
+            <span className="inline-flex gap-1 py-1">
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f] [animation-delay:-0.3s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f] [animation-delay:-0.15s]" />
+              <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#96948f]" />
+            </span>
+          )}
+          {message.products && message.products.length > 0 && (
+            <div className="mt-2 flex flex-col gap-2">
+              {message.products.map((product) => (
+                <ChatProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
+          {message.actions?.map((action) => (
+            <div key={`${action.productId}-${action.variationId ?? "base"}`} className="mt-2">
+              <AddToCartButton
+                id={action.variationId ?? action.productId}
+                woocommerceProductId={action.productId}
+                woocommerceVariationId={action.variationId}
+                title={action.title}
+                image={action.image}
+                subtitle={action.subtitle}
+                price={action.price}
+                quantity={action.quantity}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

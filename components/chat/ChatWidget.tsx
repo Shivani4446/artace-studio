@@ -41,6 +41,7 @@ const ChatWidget = () => {
           <ChatHeader
             title={TAB_TITLES[activeTab]}
             isExpanded={isExpanded}
+            isStreaming={isStreaming}
             onToggleExpand={() => setIsExpanded((current) => !current)}
             onClear={clearConversation}
             onClose={() => setIsOpen(false)}

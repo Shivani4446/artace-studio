@@ -2,16 +2,18 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Maximize2, Minimize2, MoreVertical, Trash2, X } from "lucide-react";
+import ArtieMascot from "./ArtieMascot";
 
 type Props = {
   title: string;
   isExpanded: boolean;
+  isStreaming?: boolean;
   onToggleExpand: () => void;
   onClear: () => void;
   onClose: () => void;
 };
 
-const ChatHeader = ({ title, isExpanded, onToggleExpand, onClear, onClose }: Props) => {
+const ChatHeader = ({ title, isExpanded, isStreaming, onToggleExpand, onClear, onClose }: Props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -28,7 +30,10 @@ const ChatHeader = ({ title, isExpanded, onToggleExpand, onClear, onClose }: Pro
 
   return (
     <div className="flex items-center justify-between border-b border-[#1f1f1f]/10 bg-[#1f1f1f] px-4 py-3">
-      <span className="text-[14px] font-medium text-white">{title}</span>
+      <div className="flex items-center gap-2">
+        <ArtieMascot variant={isStreaming ? "thinking" : "idle"} size={30} className="h-[30px] w-[30px] shrink-0" />
+        <span className="text-[14px] font-medium text-white">{title}</span>
+      </div>
       <div className="flex items-center gap-3">
         <div ref={menuRef} className="relative">
           <button

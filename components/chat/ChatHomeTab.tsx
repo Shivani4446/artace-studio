@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import ArtieMascot from "./ArtieMascot";
 
 const SUGGESTION_CHIPS = [
   "Check what's New",
@@ -17,8 +18,13 @@ type Props = {
 
 const ChatHomeTab = ({ onChipSelect }: Props) => (
   <div className="flex-1 overflow-y-auto px-4 py-5">
-    <p className="font-display text-[20px] leading-snug text-[#1f1f1f]">Hi there 👋</p>
-    <p className="mt-1 text-[14px] text-[#65635d]">What would you like help with?</p>
+    <div className="flex items-center gap-3">
+      <ArtieMascot variant="greeting" size={44} className="h-11 w-11 shrink-0" />
+      <div>
+        <p className="font-display text-[20px] leading-snug text-[#1f1f1f]">Hi, I&apos;m Artie 👋</p>
+        <p className="mt-1 text-[14px] text-[#65635d]">What would you like help with?</p>
+      </div>
+    </div>
 
     <div className="mt-5 flex flex-wrap gap-2">
       {SUGGESTION_CHIPS.map((chip) => (
