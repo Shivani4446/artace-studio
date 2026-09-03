@@ -6,6 +6,8 @@ type Affiliate = {
   id: number;
   full_name: string;
   email: string;
+  phone?: string | null;
+  city?: string | null;
   referral_code: string;
   status: string;
   commission_rate: number;
@@ -267,6 +269,9 @@ export default function AdminAffiliatesPage() {
                   <div>
                     <p className="font-medium text-[#1f1f1f]">{affiliate.full_name}</p>
                     <p className="text-[13px] text-[#7a7368]">{affiliate.email}</p>
+                    <p className="text-[13px] text-[#7a7368]">
+                      {affiliate.phone || "No phone"} · {affiliate.city || "No city"}
+                    </p>
                     <p className="text-[13px] text-[#7a7368]">Code: {affiliate.referral_code}</p>
                   </div>
                   <div className="flex gap-2">
@@ -310,6 +315,9 @@ export default function AdminAffiliatesPage() {
                     <td className="px-4 py-3">
                       <p className="font-medium text-[#1f1f1f]">{affiliate.full_name}</p>
                       <p className="text-[12px] text-[#7a7368]">{affiliate.email}</p>
+                      <p className="text-[12px] text-[#7a7368]">
+                        {affiliate.phone || "No phone"} · {affiliate.city || "No city"}
+                      </p>
                     </td>
                     <td className="px-4 py-3">{affiliate.referral_code}</td>
                     <td className="px-4 py-3">

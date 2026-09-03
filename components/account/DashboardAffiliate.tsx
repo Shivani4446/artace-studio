@@ -48,6 +48,8 @@ export default function DashboardAffiliate() {
   const [applyStatus, setApplyStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [applyError, setApplyError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [applyPhone, setApplyPhone] = useState("");
+  const [applyCity, setApplyCity] = useState("");
 
   const loadStatus = async () => {
     setIsLoading(true);
@@ -72,11 +74,16 @@ export default function DashboardAffiliate() {
     void loadStatus();
   }, []);
 
-  const handleApply = async () => {
+  const handleApply = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setApplyStatus("submitting");
     setApplyError("");
     try {
-      const response = await fetch("/api/affiliate", { method: "POST" });
+      const response = await fetch("/api/affiliate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: applyPhone, city: applyCity }),
+      });
       const payload = (await response.json()) as { error?: string };
       if (!response.ok) {
         setApplyError(payload.error || "Could not submit your application.");
@@ -183,14 +190,37 @@ export default function DashboardAffiliate() {
             {session?.user?.name || session?.user?.email}
           </span>
         </p>
-        <button
-          type="button"
-          onClick={handleApply}
-          disabled={applyStatus === "submitting"}
-          className="mt-6 inline-flex min-h-[48px] items-center justify-center rounded-[12px] bg-[#1a1a1a] px-6 text-[15px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {applyStatus === "submitting" ? "Submitting..." : "Apply Now"}
-        </button>
+        <form onSubmit={handleApply} className="mt-5 grid gap-4 sm:grid-cols-2 sm:max-w-lg">
+          <label className="flex flex-col gap-2 text-[14px] font-medium text-[#313131]">
+            Mobile Number
+            <input
+              type="tel"
+              value={applyPhone}
+              onChange={(event) => setApplyPhone(event.target.value)}
+              placeholder="+91 00000 00000"
+              required
+              className="min-h-[48px] w-full rounded-[12px] border border-black/10 bg-[#faf8f4] px-4 text-[15px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a]"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-[14px] font-medium text-[#313131]">
+            City
+            <input
+              type="text"
+              value={applyCity}
+              onChange={(event) => setApplyCity(event.target.value)}
+              placeholder="Pune"
+              required
+              className="min-h-[48px] w-full rounded-[12px] border border-black/10 bg-[#faf8f4] px-4 text-[15px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a]"
+            />
+          </label>
+          <button
+            type="submit"
+            disabled={applyStatus === "submitting"}
+            className="mt-1 inline-flex min-h-[48px] items-center justify-center rounded-[12px] bg-[#1a1a1a] px-6 text-[15px] font-medium text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2 sm:w-fit"
+          >
+            {applyStatus === "submitting" ? "Submitting..." : "Apply Now"}
+          </button>
+        </form>
         {applyStatus === "error" ? (
           <p className="mt-3 text-[14px] text-red-600">{applyError}</p>
         ) : null}

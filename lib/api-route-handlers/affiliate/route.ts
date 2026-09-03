@@ -191,6 +191,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  let body: { phone?: unknown; city?: unknown } = {};
+  try {
+    body = (await request.json()) as { phone?: unknown; city?: unknown };
+  } catch {
+    // No/invalid body — treated the same as missing phone/city below.
+  }
+  const phone = typeof body.phone === "string" ? body.phone.trim() : "";
+  const city = typeof body.city === "string" ? body.city.trim() : "";
+
+  if (!phone || !city) {
+    return NextResponse.json(
+      { error: "Mobile number and city are required to apply." },
+      { status: 400 }
+    );
+  }
+
   try {
     const existing = await findAffiliateByCustomerId(userId);
     if (existing) {
@@ -214,6 +230,8 @@ export async function POST(request: NextRequest) {
         referral_code: referralCode,
         full_name: userName,
         email: userEmail,
+        phone,
+        city,
         status: "pending",
         commission_rate: 0.1,
       }),
@@ -239,7 +257,7 @@ export async function POST(request: NextRequest) {
             from: RESEND_FROM,
             to: [CONTACT_TO_EMAIL],
             subject: `New affiliate application from ${userName}`,
-            text: `New affiliate program application:\n\nName: ${userName}\nEmail: ${userEmail}\nReferral code generated: ${referralCode}\n\nApprove by setting status = 'approved' on this affiliate's row in Supabase.`,
+            text: `New affiliate program application:\n\nName: ${userName}\nEmail: ${userEmail}\nPhone: ${phone}\nCity: ${city}\nReferral code generated: ${referralCode}\n\nApprove from the admin panel: /admin/affiliates`,
           }),
         });
       } catch {
