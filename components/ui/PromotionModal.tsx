@@ -16,6 +16,45 @@ const PromotionModal = () => {
   const [copied, setCopied] = useState(false);
   const COUPON_CODE = "BAPPA";
 
+  // The code stays hidden until the visitor submits their email + phone —
+  // this is what turns the popup into a lead capture, not just a discount.
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadStatus, setLeadStatus] = useState<"form" | "submitting" | "revealed" | "error">(
+    "form"
+  );
+  const [leadError, setLeadError] = useState("");
+
+  const handleLeadSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLeadStatus("submitting");
+    setLeadError("");
+
+    try {
+      const response = await fetch("/api/promotion-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: leadEmail.trim(),
+          phone: leadPhone.trim(),
+          couponCode: COUPON_CODE,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error ?? "We couldn't unlock your code. Please try again.");
+      }
+
+      setLeadStatus("revealed");
+    } catch (error) {
+      setLeadStatus("error");
+      setLeadError(
+        error instanceof Error ? error.message : "We couldn't unlock your code. Please try again."
+      );
+    }
+  };
+
   useEffect(() => {
     // Check if the user has already seen or closed the modal in this session
     const hasSeenModal = sessionStorage.getItem("hasSeenPromotionModal");
@@ -131,34 +170,79 @@ const PromotionModal = () => {
               — plus a complimentary gift with your purchase, on us.
             </p>
 
-            <div className="mt-5 sm:mt-8">
-              <p className="text-[13px] font-bold uppercase tracking-wider text-[#999999]">
-                Use Coupon Code
-              </p>
-              <div className="mt-3 flex items-stretch gap-2">
-                <div className="flex flex-1 items-center justify-between rounded-xl border border-dashed border-[#D4AF37] bg-[#FAF9F6] px-5 py-3 font-mono text-[18px] font-semibold tracking-wider text-[#1a1a1a]">
-                  {COUPON_CODE}
-                  <button
-                    onClick={copyToClipboard}
-                    className="ml-3 flex items-center gap-2 text-[14px] font-medium text-[#D4AF37] transition-colors hover:text-[#B8962E]"
-                  >
-                    {copied ? (
-                      <Check className="h-4 w-4" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                    {copied ? "Copied" : "Copy"}
-                  </button>
+            {leadStatus === "revealed" ? (
+              <>
+                <div className="mt-5 sm:mt-8">
+                  <p className="text-[13px] font-bold uppercase tracking-wider text-[#999999]">
+                    Use Coupon Code
+                  </p>
+                  <div className="mt-3 flex items-stretch gap-2">
+                    <div className="flex flex-1 items-center justify-between rounded-xl border border-dashed border-[#D4AF37] bg-[#FAF9F6] px-5 py-3 font-mono text-[18px] font-semibold tracking-wider text-[#1a1a1a]">
+                      {COUPON_CODE}
+                      <button
+                        onClick={copyToClipboard}
+                        className="ml-3 flex items-center gap-2 text-[14px] font-medium text-[#D4AF37] transition-colors hover:text-[#B8962E]"
+                      >
+                        {copied ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                        {copied ? "Copied" : "Copy"}
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            <button
-              onClick={handleClose}
-              className="mt-5 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] sm:mt-8"
-            >
-              Claim My 20% Off & Shop Now
-            </button>
+                <button
+                  onClick={handleClose}
+                  className="mt-5 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] sm:mt-8"
+                >
+                  Claim My 20% Off & Shop Now
+                </button>
+              </>
+            ) : (
+              <form onSubmit={handleLeadSubmit} className="mt-5 sm:mt-8">
+                <p className="text-[13px] font-bold uppercase tracking-wider text-[#999999]">
+                  Enter Your Details to Unlock the Code
+                </p>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <input
+                    type="email"
+                    required
+                    value={leadEmail}
+                    onChange={(event) => setLeadEmail(event.target.value)}
+                    placeholder="you@email.com"
+                    aria-label="Email address"
+                    className="min-h-[48px] flex-1 rounded-xl border border-black/10 bg-white px-4 text-[15px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30"
+                  />
+                  <input
+                    type="tel"
+                    required
+                    value={leadPhone}
+                    onChange={(event) => setLeadPhone(event.target.value)}
+                    placeholder="+91 00000 00000"
+                    aria-label="Phone number"
+                    className="min-h-[48px] flex-1 rounded-xl border border-black/10 bg-white px-4 text-[15px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={leadStatus === "submitting"}
+                  className="mt-3 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {leadStatus === "submitting" ? "Unlocking..." : "Reveal My 20% Off Code"}
+                </button>
+
+                {leadStatus === "error" && (
+                  <p className="mt-2 text-[13px] text-red-600">{leadError}</p>
+                )}
+                <p className="mt-3 text-[12px] text-[#999999]">
+                  We&apos;ll only use this to send your code and occasional offers.
+                </p>
+              </form>
+            )}
 
             <p className="mt-4 text-center text-[12px] text-[#999999]">
               Ganesh Chaturthi sale, live now through 14th September. Free Pan-India Shipping.

@@ -208,3 +208,39 @@ export const buildPasswordResetEmail = ({
 
   return { subject: "Reset your Artace Studio password", html, text };
 };
+
+export const buildPromotionLeadNotificationEmail = ({
+  email,
+  phone,
+  couponCode,
+}: {
+  email: string;
+  phone: string;
+  couponCode: string;
+}): EmailContent => {
+  const html = wrapEmailHtml(`
+    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">New offer popup lead</h1>
+    <p style="margin:0 0 16px 0;">A visitor unlocked the "${escapeHtml(couponCode)}" coupon code from the site's offer popup:</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px 0; font-size:14px;">
+      <tr>
+        <td style="padding:4px 0; color:#6b6962; width:80px;">Email</td>
+        <td style="padding:4px 0; color:#1f1f1f;">${escapeHtml(email)}</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 0; color:#6b6962;">Phone</td>
+        <td style="padding:4px 0; color:#1f1f1f;">${escapeHtml(phone)}</td>
+      </tr>
+    </table>
+  `);
+
+  const text = [
+    "New offer popup lead",
+    "",
+    `A visitor unlocked the "${couponCode}" coupon code from the site's offer popup:`,
+    "",
+    `Email: ${email}`,
+    `Phone: ${phone}`,
+  ].join("\n");
+
+  return { subject: `New offer popup lead — ${email}`, html, text };
+};

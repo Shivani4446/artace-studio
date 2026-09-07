@@ -9,7 +9,7 @@ import { useCart } from "@/components/cart/CartProvider";
 const NAV_LINKS = [
   { label: "Shop", href: "/samora/shop" },
   { label: "Our Craft", href: "/samora#craft" },
-  { label: "Our Story", href: "/samora#story" },
+  { label: "Our Story", href: "/samora/our-story" },
   { label: "FAQ", href: "/samora#faq" },
 ];
 

@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+
 const SamoraStory = () => {
   return (
     <section id="story" className="bg-[#2b2420] py-16 text-[#f3ead9] md:py-24">
@@ -28,6 +31,13 @@ const SamoraStory = () => {
             with the same care Artace Studio applies to choosing its artists &mdash; because
             handmade, done properly, takes time.
           </p>
+          <Link
+            href="/samora/our-story"
+            className="inline-flex items-center gap-1.5 text-[14.5px] font-medium text-[#c1683d] transition-colors hover:text-[#e0956b]"
+          >
+            Meet Sampadaa, the maker behind Samora
+            <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
+          </Link>
         </div>
       </div>
     </section>

@@ -30,6 +30,7 @@ import * as designPartnersRoute from "@/lib/api-route-handlers/design-partners/r
 import * as homepageHighlightsRoute from "@/lib/api-route-handlers/homepage/highlights/route";
 import * as ordersRoute from "@/lib/api-route-handlers/orders/route";
 import * as photographyOffersRoute from "@/lib/api-route-handlers/photography-offers/route";
+import * as promotionLeadsRoute from "@/lib/api-route-handlers/promotion-leads/route";
 import * as razorpayWebhookRoute from "@/lib/api-route-handlers/razorpay/webhook/route";
 import * as rentalsRoute from "@/lib/api-route-handlers/rentals/route";
 import * as revalidateRoute from "@/lib/api-route-handlers/revalidate/route";
@@ -144,6 +145,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "photography-offers": {
     POST: (request) => photographyOffersRoute.POST(request),
+  },
+  "promotion-leads": {
+    POST: (request) => promotionLeadsRoute.POST(request),
   },
   "razorpay/webhook": {
     POST: (request) => razorpayWebhookRoute.POST(request),
