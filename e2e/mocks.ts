@@ -157,3 +157,9 @@ export async function mockRewardsBalance(page: Page, balance: number) {
     route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ balance }) })
   );
 }
+
+export async function mockGiftCardBalance(page: Page, response: { found: boolean; remainingBalance: number }) {
+  await page.route("**/api/gift-cards/balance*", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(response) })
+  );
+}

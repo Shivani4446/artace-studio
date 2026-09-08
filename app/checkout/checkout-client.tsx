@@ -11,6 +11,7 @@ import { trackBeginCheckout } from "@/utils/gtm";
 import CheckoutTrustPoints from "@/components/checkout/CheckoutTrustPoints";
 import CheckoutNeedMoreHelp from "@/components/checkout/CheckoutNeedMoreHelp";
 import ApplyPointsBox from "@/components/checkout/ApplyPointsBox";
+import RedeemGiftCardBox from "@/components/checkout/RedeemGiftCardBox";
 
 type CheckoutFormState = {
   firstName: string;
@@ -155,6 +156,8 @@ export default function CheckoutPageClient() {
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<CouponValidationPayload["coupon"] | null>(null);
   const [pointsToRedeem, setPointsToRedeem] = useState(0);
+  const [giftCardAmount, setGiftCardAmount] = useState(0);
+  const [giftCardCode, setGiftCardCode] = useState("");
 
   const hasCheckoutReadyItems = useMemo(
     () => items.some((item) => getCheckoutProductId(item.id, item.woocommerceProductId)),
@@ -318,6 +321,7 @@ export default function CheckoutPageClient() {
           customerNote: form.customerNote,
           couponCode: appliedCoupon?.code || undefined,
           pointsToRedeem: pointsToRedeem > 0 ? pointsToRedeem : undefined,
+          giftCardCode: giftCardAmount > 0 ? giftCardCode : undefined,
         }),
       });
 
@@ -686,6 +690,14 @@ export default function CheckoutPageClient() {
           </div>
 
           <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+
+          <RedeemGiftCardBox
+            subtotal={subtotal}
+            onAmountChange={(amount, code) => {
+              setGiftCardAmount(amount);
+              setGiftCardCode(code);
+            }}
+          />
 
           <button
             type="button"

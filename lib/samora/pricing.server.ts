@@ -3,53 +3,13 @@
 // weight) is based on authoritative data, never trusted from the client.
 import { SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS } from "@/lib/samora/pricing";
 import { hasSamoraTag } from "@/lib/samora/products";
-
-const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
-
-const toBasicAuthToken = (username: string, password: string) => {
-  const raw = `${username}:${password}`;
-  if (typeof btoa === "function") return btoa(raw);
-  const maybeBuffer = globalThis as {
-    Buffer?: { from: (v: string) => { toString: (enc: string) => string } };
-  };
-  if (maybeBuffer.Buffer) return maybeBuffer.Buffer.from(raw).toString("base64");
-  throw new Error("No base64 encoder available.");
-};
-
-type WooV3Tag = { id: number; slug: string };
-type WooV3Product = { id: number; price?: string; weight?: string; tags?: WooV3Tag[] };
+import { fetchCatalogProducts } from "@/lib/woocommerce/catalog-prices";
 
 export const fetchLineItemTotals = async (
   lineItems: { product_id: number; quantity: number }[]
 ): Promise<{ subtotalInr: number; totalWeightGrams: number; allItemsAreSamora: boolean }> => {
-  const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;
-  const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET;
-  const apiBaseUrl = (
-    process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
-    process.env.WOOCOMMERCE_REST_URL ||
-    DEFAULT_WOOCOMMERCE_SITE_URL
-  ).replace(/\/+$/, "");
-
   const uniqueIds = Array.from(new Set(lineItems.map((item) => item.product_id)));
-  const productsById = new Map<number, WooV3Product>();
-
-  if (consumerKey && consumerSecret && uniqueIds.length > 0) {
-    try {
-      const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-      const response = await fetch(
-        `${apiBaseUrl}/wp-json/wc/v3/products?include=${uniqueIds.join(",")}&per_page=${uniqueIds.length}`,
-        { headers: { Authorization: `Basic ${basicToken}` }, cache: "no-store" }
-      );
-      if (response.ok) {
-        const payload = (await response.json()) as WooV3Product[];
-        if (Array.isArray(payload)) {
-          payload.forEach((product) => productsById.set(product.id, product));
-        }
-      }
-    } catch {
-      // Fall through — items with unknown price/weight use the fallbacks below.
-    }
-  }
+  const productsById = await fetchCatalogProducts(uniqueIds);
 
   let subtotalInr = 0;
   let totalWeightGrams = 0;

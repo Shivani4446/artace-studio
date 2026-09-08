@@ -42,6 +42,7 @@ const resourceLinks = [
   { name: "Warli Paintings", href: "/warli-paintings" },
   { name: "Reviews", href: "/reviews" },
   { name: "Artace Rewards", href: "/rewards" },
+  { name: "Gift Cards", href: "/gift-cards" },
   { name: "Contact", href: "/contact-us" },
 ];
 

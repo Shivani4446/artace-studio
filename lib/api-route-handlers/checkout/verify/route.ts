@@ -11,6 +11,9 @@ import {
 } from "@/utils/woocommerce-checkout";
 import { creditPoints, debitPoints, calculatePointsEarned } from "@/lib/rewards/ledger";
 import { CUSTOM_PORTRAIT_DEPOSIT_PRODUCT_ID } from "@/lib/custom-portraits/pricing";
+import { createGiftCard, redeemGiftCard } from "@/lib/gift-cards/ledger";
+import { sendGiftCardEmail } from "@/lib/gift-cards/email";
+import { GIFT_CARD_PRODUCT_ID } from "@/lib/gift-cards/constants";
 
 export const runtime = "edge";
 
@@ -74,6 +77,7 @@ export async function POST(request: NextRequest) {
     const paymentState = mapWooOrderStatusToPaymentState(wooOrder.status);
     const paidMinor = parseAmountToMinorUnits(wooOrder.total);
     const paidCurrency = sanitizeText(wooOrder.currency) || "INR";
+    let generatedGiftCardCode: string | undefined;
 
     // Artace Rewards crediting/debiting must only run the first time this
     // order is finalized — never on a retried verify call for an
@@ -141,6 +145,37 @@ export async function POST(request: NextRequest) {
           // defensive posture as recordAffiliateConversion in the checkout route).
         }
       }
+
+      // A gift card can be redeemed on any order regardless of whether the
+      // same order also earns/redeems Artace Rewards points — these are
+      // independent discounts, so this isn't nested inside the block above.
+      const redeemedGiftCardCode = wooOrder.metaData.find((item) => item.key === "_artace_gift_card_code")?.value;
+      const redeemedGiftCardAmount = Number(
+        wooOrder.metaData.find((item) => item.key === "_artace_gift_card_amount")?.value || 0
+      );
+      if (redeemedGiftCardCode && redeemedGiftCardAmount > 0) {
+        try {
+          await redeemGiftCard({ code: redeemedGiftCardCode, wcOrderId: orderId, amount: redeemedGiftCardAmount });
+        } catch {
+          // Never let a redemption failure affect the checkout response.
+        }
+      }
+
+      const isGiftCardOrder = wooOrder.lineItems.some((item) => item.productId === GIFT_CARD_PRODUCT_ID);
+
+      if (isGiftCardOrder) {
+        try {
+          const { code } = await createGiftCard({
+            amount: Number(wooOrder.total),
+            purchaserEmail: wooOrder.billingEmail,
+            wcOrderId: orderId,
+          });
+          generatedGiftCardCode = code;
+          await sendGiftCardEmail({ to: wooOrder.billingEmail, code, amount: Number(wooOrder.total) });
+        } catch {
+          // Never let gift-card generation/email failure affect the checkout response.
+        }
+      }
     }
 
     return NextResponse.json({
@@ -152,6 +187,7 @@ export async function POST(request: NextRequest) {
       total: finalizedOrder.total,
       currency: finalizedOrder.currency,
       paymentState: mapWooOrderStatusToPaymentState(finalizedOrder.status),
+      ...(generatedGiftCardCode ? { giftCardCode: generatedGiftCardCode } : {}),
     });
   } catch (error) {
     return NextResponse.json(

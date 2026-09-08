@@ -139,6 +139,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/reviews`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
     { url: `${baseUrl}/affiliates`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/rewards`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/gift-cards`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
   ];
 
   const roomPages: MetadataRoute.Sitemap = ROOM_SLUGS.map((slug) => ({

@@ -21,6 +21,8 @@ import { fetchLineItemTotals } from "@/lib/samora/pricing.server";
 import { AFFILIATE_REF_COOKIE_NAME } from "@/lib/affiliates/constants";
 import { getPointsBalance } from "@/lib/rewards/ledger";
 import { MIN_REDEMPTION_POINTS, POINT_VALUE_INR } from "@/lib/rewards/constants";
+import { calculateOrderSubtotal } from "@/lib/checkout/subtotal";
+import { getGiftCardBalance } from "@/lib/gift-cards/ledger";
 
 export const runtime = "edge";
 
@@ -137,6 +139,8 @@ type CheckoutRequestBody = {
   isGift?: boolean;
   // Artace Rewards — how many points the customer chose to redeem on this order.
   pointsToRedeem?: number;
+  // A gift card code the customer chose to redeem on this order.
+  giftCardCode?: string;
 };
 
 const normalizeCountry = (value: string) => {
@@ -275,6 +279,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // The real, authoritative pre-discount order total — computed once, used
+  // to cap both Artace Rewards points (below) and gift card redemption
+  // (added when that feature was built) so neither can push the order
+  // total negative, and so a combined discount is capped correctly too.
+  const orderSubtotal = await calculateOrderSubtotal(normalizedLineItems);
+
   // Artace Rewards — validate the redemption request against the customer's
   // real balance server-side. Never trust the client's number.
   const requestedPoints = Math.floor(Number(body.pointsToRedeem) || 0);
@@ -297,7 +307,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (requestedPoints * POINT_VALUE_INR > orderSubtotal) {
+      return NextResponse.json(
+        { error: "You're trying to redeem more points than this order is worth." },
+        { status: 400 }
+      );
+    }
+
     pointsToRedeem = requestedPoints;
+  }
+
+  // Gift card redemption — validated against the same real orderSubtotal,
+  // capped so the combined discount (points + gift card) never exceeds it.
+  let giftCardApplied = 0;
+  let giftCardCodeNormalized = "";
+
+  if (body.giftCardCode) {
+    giftCardCodeNormalized = sanitizeText(body.giftCardCode).toUpperCase();
+    const giftCard = await getGiftCardBalance(giftCardCodeNormalized);
+
+    if (!giftCard.found || giftCard.status !== "active" || giftCard.remainingBalance <= 0) {
+      return NextResponse.json(
+        { error: "That gift card code isn't valid or has no remaining balance." },
+        { status: 400 }
+      );
+    }
+
+    const remainingAfterPoints = Math.max(0, orderSubtotal - pointsToRedeem);
+    giftCardApplied = Math.min(giftCard.remainingBalance, remainingAfterPoints);
   }
 
   const { paymentMethod, paymentMethodTitle } = getWooCommercePaymentConfig();
@@ -313,6 +350,9 @@ export async function POST(request: NextRequest) {
       name: "Artace Rewards Discount",
       total: (-pointsToRedeem * POINT_VALUE_INR).toFixed(2),
     });
+  }
+  if (giftCardApplied > 0) {
+    feeLines.push({ name: "Gift Card Redemption", total: (-giftCardApplied).toFixed(2) });
   }
   let shippingLines: { method_id: string; method_title: string; total: string }[] = [];
   let effectiveCouponCode = couponCode;
@@ -427,6 +467,9 @@ export async function POST(request: NextRequest) {
         _artace_checkout_origin: request.nextUrl.origin,
         ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
         ...(pointsToRedeem > 0 ? { _artace_points_to_redeem: String(pointsToRedeem) } : {}),
+        ...(giftCardApplied > 0
+          ? { _artace_gift_card_code: giftCardCodeNormalized, _artace_gift_card_amount: String(giftCardApplied) }
+          : {}),
       }),
     });
 

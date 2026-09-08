@@ -33,6 +33,7 @@ const footerSections: FooterSection[] = [
       { label: "Trade Program", href: "/trade" },
       { label: "Affiliate Program", href: "/affiliates" },
       { label: "Artace Rewards", href: "/rewards" },
+      { label: "Gift Cards", href: "/gift-cards" },
       { label: "Cart", href: "/cart" },
       { label: "Track Your Order", href: "/dashboard/orders" },
       { label: "Wishlist", href: "/wishlist" },

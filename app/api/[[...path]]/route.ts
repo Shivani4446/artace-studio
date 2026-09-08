@@ -27,6 +27,8 @@ import * as currencyRatesRoute from "@/lib/api-route-handlers/currency/rates/rou
 import * as customOrderRoute from "@/lib/api-route-handlers/custom-order/route";
 import * as customPortraitsRoute from "@/lib/api-route-handlers/custom-portraits/route";
 import * as designPartnersRoute from "@/lib/api-route-handlers/design-partners/route";
+import * as giftCardsRoute from "@/lib/api-route-handlers/gift-cards/route";
+import * as giftCardsBalanceRoute from "@/lib/api-route-handlers/gift-cards/balance/route";
 import * as homepageHighlightsRoute from "@/lib/api-route-handlers/homepage/highlights/route";
 import * as ordersRoute from "@/lib/api-route-handlers/orders/route";
 import * as photographyOffersRoute from "@/lib/api-route-handlers/photography-offers/route";
@@ -139,6 +141,12 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "design-partners": {
     POST: (request) => designPartnersRoute.POST(request),
+  },
+  "gift-cards": {
+    POST: (request) => giftCardsRoute.POST(request),
+  },
+  "gift-cards/balance": {
+    GET: (request) => giftCardsBalanceRoute.GET(request),
   },
   "homepage/highlights": {
     GET: () => homepageHighlightsRoute.GET(),
