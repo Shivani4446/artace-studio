@@ -41,6 +41,7 @@ const resourceLinks = [
   { name: "Art Care Guide", href: "/art-care" },
   { name: "Warli Paintings", href: "/warli-paintings" },
   { name: "Reviews", href: "/reviews" },
+  { name: "Artace Rewards", href: "/rewards" },
   { name: "Contact", href: "/contact-us" },
 ];
 
@@ -1220,7 +1221,7 @@ const Navbar = () => {
                               <span className="relative h-10 w-10 overflow-hidden rounded-[10px] bg-[#f1f1f1]">
                                 <Image
                                   src={suggestion.image}
-                                  alt={suggestion.name}
+                                  alt={suggestion.title}
                                   fill
                                   sizes="40px"
                                   className="object-cover"

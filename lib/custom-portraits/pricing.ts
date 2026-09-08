@@ -21,6 +21,18 @@ export const MIN_DIMENSION_INCHES = 4;
 export const MAX_DIMENSION_INCHES = 72;
 export const DEPOSIT_RATE = 0.1;
 
+// Created once via the WooCommerce Admin API — see
+// docs/superpowers/plans/2026-08-11-custom-portraits.md, Task 2. A draft, hidden, virtual,
+// tax-free product whose catalog price ("1") is never actually charged: every order overrides it
+// with the calculated deposit via the subtotal/total line-item override below (the same mechanism
+// already proven for Prints). Draft status (not "publish") because this store's Store API does not
+// honor catalog_visibility: "hidden" — draft was verified live to be the setting that actually
+// excludes it from the public catalog, search, and direct-by-id fetch, while still working fine for
+// server-side order creation via the Admin API (the only way this product is ever used).
+// Also used to exclude Custom Portraits orders from the main Artace Rewards crediting flow — see
+// lib/api-route-handlers/checkout/verify/route.ts.
+export const CUSTOM_PORTRAIT_DEPOSIT_PRODUCT_ID = 4317;
+
 export const isPortraitType = (value: unknown): value is PortraitType =>
   value === "single" || value === "couple" || value === "family" || value === "baby";
 

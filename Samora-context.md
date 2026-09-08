@@ -1,5 +1,7 @@
 # Samora — Project Context
 
+> **Related project docs:** [Website-pages.md](Website-pages.md) covers Artace's own (non-Samora) work and is the most current running log of this engagement. [features-context.md](features-context.md) has sitewide session conventions that also apply to Samora work. [PROJECT-RESUME.md](PROJECT-RESUME.md) is a business/product overview of Artace generally. [suggestion.md](suggestion.md) tracks the SEO/technical/feature improvement backlog (Artace-scoped; doesn't cover Samora).
+
 Working knowledge dump of everything built for **Samora**, the handcrafted-goods sub-brand of
 Artace Studio, across this chat. Written so a future session (or teammate) can pick this up
 without re-deriving it. Last updated: September 2026 (Rakhi → Ganesh Chaturthi revision).

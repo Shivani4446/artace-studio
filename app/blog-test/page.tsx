@@ -166,7 +166,7 @@ const Page = async () => {
             {/* Show tags */}
             {embeddedTags.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
-                {embeddedTags.map((tag: any) => (
+                {embeddedTags.map((tag) => (
                   <span key={tag.id} className="text-xs bg-gray-100 px-2 py-1 rounded">
                     {tag.name}
                   </span>

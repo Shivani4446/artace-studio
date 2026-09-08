@@ -1,12 +1,14 @@
 # Artace Studio - E-Commerce Art Gallery
 
+> **Related project docs:** [Website-pages.md](Website-pages.md) is the most current, actively-maintained running log of features/architecture built in this engagement. [features-context.md](features-context.md) has session conventions and WooCommerce API notes. [Samora-context.md](Samora-context.md) covers the separate Samora sub-brand. [suggestion.md](suggestion.md) tracks the SEO/technical/feature improvement backlog. If any two docs disagree on a fact, trust Website-pages.md — this file is a higher-level overview, not the current source of truth for implementation details.
+
 A full-featured e-commerce website for an Indian art gallery featuring handcrafted paintings, sculptures, and bespoke art pieces. The platform showcases traditional Indian art forms including Ganapati, Radha Krishna, Buddha, and landscape collections.
 
 ## Website Overview
 
 **Website**: [artacestudio.com](https://artacestudio.com)  
 **Type**: E-commerce art gallery with blog integration  
-**Tech Stack**: Next.js 16, React 19, TypeScript, Tailwind CSS 4
+**Tech Stack**: Next.js 15, React 19, TypeScript, Tailwind CSS 4
 
 ---
 
@@ -249,9 +251,9 @@ NEXT_PUBLIC_GTM_ID
 ```
 
 ### Deployment
-- Platform: Vercel (recommended for Next.js)
-- Build: Next.js 16 production build
-- Edge: All API routes configured for Edge Runtime
+- Platform: **Cloudflare Pages** (via `@cloudflare/next-on-pages` — see the `pages:build` script and the `wrangler` devDependency in `package.json`; no project config file is committed, so build/deploy settings live in the Cloudflare dashboard) — not Vercel.
+- Build: Next.js 15 production build
+- Edge: All API routes configured for Edge Runtime (required by the Cloudflare Pages adapter)
 
 ---
 
@@ -288,5 +290,5 @@ The website showcases India's rich artistic heritage:
 
 ---
 
-*Built with Next.js 16, React 19, TypeScript, and Tailwind CSS 4*
+*Built with Next.js 15, React 19, TypeScript, and Tailwind CSS 4*
 *Integrations: WooCommerce, WordPress, Razorpay, Supabase*

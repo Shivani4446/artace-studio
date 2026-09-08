@@ -19,6 +19,8 @@ import {
 } from "@/lib/samora/pricing";
 import { fetchLineItemTotals } from "@/lib/samora/pricing.server";
 import { AFFILIATE_REF_COOKIE_NAME } from "@/lib/affiliates/constants";
+import { getPointsBalance } from "@/lib/rewards/ledger";
+import { MIN_REDEMPTION_POINTS, POINT_VALUE_INR } from "@/lib/rewards/constants";
 
 export const runtime = "edge";
 
@@ -133,6 +135,8 @@ type CheckoutRequestBody = {
   // Samora-only: gift wrapping + real Delhivery shipping are computed below
   // when storeName === "Samora"; Artace's checkout never sends this field.
   isGift?: boolean;
+  // Artace Rewards — how many points the customer chose to redeem on this order.
+  pointsToRedeem?: number;
 };
 
 const normalizeCountry = (value: string) => {
@@ -271,11 +275,45 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Artace Rewards — validate the redemption request against the customer's
+  // real balance server-side. Never trust the client's number.
+  const requestedPoints = Math.floor(Number(body.pointsToRedeem) || 0);
+  let pointsToRedeem = 0;
+
+  if (requestedPoints > 0) {
+    const balance = await getPointsBalance(String(customerId));
+
+    if (requestedPoints > balance) {
+      return NextResponse.json(
+        { error: "You don't have enough Artace Rewards points for that." },
+        { status: 400 }
+      );
+    }
+
+    if (requestedPoints < MIN_REDEMPTION_POINTS) {
+      return NextResponse.json(
+        { error: `You need at least ${MIN_REDEMPTION_POINTS} points to redeem Artace Rewards.` },
+        { status: 400 }
+      );
+    }
+
+    pointsToRedeem = requestedPoints;
+  }
+
   const { paymentMethod, paymentMethodTitle } = getWooCommercePaymentConfig();
 
   // Gift wrapping + real Delhivery shipping only apply to Samora orders —
   // Artace's checkout (storeName omitted/"Artace Studio") is unaffected.
-  let feeLines: { name: string; total: string }[] = [];
+  // Both feeLines-populating branches (Artace Rewards below, Samora's gift
+  // wrap further down) push onto the same array rather than reassigning it,
+  // so a rewards discount and a Samora gift fee can coexist.
+  const feeLines: { name: string; total: string }[] = [];
+  if (pointsToRedeem > 0) {
+    feeLines.push({
+      name: "Artace Rewards Discount",
+      total: (-pointsToRedeem * POINT_VALUE_INR).toFixed(2),
+    });
+  }
   let shippingLines: { method_id: string; method_title: string; total: string }[] = [];
   let effectiveCouponCode = couponCode;
 
@@ -298,7 +336,7 @@ export async function POST(request: NextRequest) {
 
     const giftFee = calculateGiftFee(totalQuantity, body.isGift === true);
     if (giftFee > 0) {
-      feeLines = [{ name: "Gift Wrapping", total: giftFee.toFixed(2) }];
+      feeLines.push({ name: "Gift Wrapping", total: giftFee.toFixed(2) });
     }
 
     const destinationPincode = shipping.postcode || billing.postcode;
@@ -388,6 +426,7 @@ export async function POST(request: NextRequest) {
         _artace_razorpay_order_id: razorpayOrder.id,
         _artace_checkout_origin: request.nextUrl.origin,
         ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
+        ...(pointsToRedeem > 0 ? { _artace_points_to_redeem: String(pointsToRedeem) } : {}),
       }),
     });
 

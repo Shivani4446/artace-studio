@@ -63,6 +63,7 @@ type WooStoreImage = {
   id: number;
   src: string;
   alt?: string;
+  name?: string;
 };
 
 type WooStoreCategory = {
@@ -292,7 +293,7 @@ const WarliPage = async () => {
                   About Warli Art
                 </p>
                 <h2 className="mt-3 font-display text-[30px] font-semibold leading-[1.15] text-[#313131] sm:text-[36px] md:mt-4 md:text-[42px]">
-                  One of India's Oldest Tribal Art Forms
+                  One of India&apos;s Oldest Tribal Art Forms
                 </h2>
                 <div className="mt-6 space-y-5 text-[16px] leading-[1.7] text-[#5b5b5b] md:mt-8 md:text-[18px] md:leading-[1.65]">
                   <p>

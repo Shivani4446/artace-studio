@@ -1,5 +1,7 @@
 # Artace Studio — Session Feature & Context Log
 
+> **Related project docs:** [Website-pages.md](Website-pages.md) is the other, more recently-maintained running log of this engagement's work — check there for anything built after this file's last update. [PROJECT-RESUME.md](PROJECT-RESUME.md) is a business/product overview. [Samora-context.md](Samora-context.md) covers the separate Samora sub-brand. [suggestion.md](suggestion.md) tracks the SEO/technical/feature improvement backlog. The two known-pre-existing-error lists in this file and Website-pages.md should match — if they ever don't, something drifted; reconcile against the actual `npx tsc --noEmit` output rather than trusting either list blindly.
+
 A running record of the work done in this Claude Code session on the Artace Studio
 Next.js/WooCommerce site (`D:\Artace Studio\artace-studio`). Written as a reference for
 future sessions — read the "Session-Wide Conventions" section first, it governs how work
@@ -16,12 +18,19 @@ happens in this repo.
   absolute.
 - **No worktrees** — all work happens directly on `main` in place, with the user's
   session-wide consent.
-- **No test framework exists.** Verification is always: `npx tsc --noEmit` (compare against
-  the known pre-existing baseline errors — currently `app/samora/shop/[slug]/page.tsx`,
-  `app/warli-paintings/page.tsx`, `components/navbar.tsx`, plus noisy `.next/types/...`
-  route errors that fluctuate across dev-server restarts and aren't real), a full
-  `npm run build` (must exit 0), live dev-server checks via `curl`, and direct WooCommerce
-  REST API calls to confirm real data before/after a change.
+- **A real test framework now exists** (`@playwright/test`, `e2e/`, `playwright.config.ts`) —
+  see `suggestion.md` §2.3. It covers checkout, the Custom Portraits deposit flow, and one
+  lead-capture form, all hermetically mocked (no real Razorpay contact, no real WooCommerce
+  order). This used to say "no test framework exists" — that's no longer true; run
+  `npx playwright test` for those flows. Everything else still has no test coverage, so
+  verification for anything outside those three flows is still: `npx tsc --noEmit` (only
+  `.next/types/...` noise should remain — the three files once tracked as pre-existing
+  baseline errors here, `app/samora/shop/[slug]/page.tsx`, `app/warli-paintings/page.tsx`,
+  `components/navbar.tsx`, were fixed for real, not just silenced — see `suggestion.md` §2.1),
+  a full `npm run build` (must exit 0, and — as of that same fix — actually runs real type
+  checking and linting now, not `ignoreBuildErrors`/`ignoreDuringBuilds` skipping both), live
+  dev-server checks via `curl`, and direct WooCommerce REST API calls to confirm real data
+  before/after a change.
 - **Two different WooCommerce REST APIs, different shapes** — don't confuse them:
   - `wc/store/v1/*` (Store API): public, no auth, does **not** expose custom `meta_data`/ACF
     fields, prices are minor-unit integers, CORS-blocks browser-side calls (must fetch

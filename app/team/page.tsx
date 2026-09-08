@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { buildSiteUrl } from "@/lib/site";
+import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
+import { generatePersonSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Our Artists | Team | Artace Studio",
@@ -58,9 +59,27 @@ const TEAM_MEMBERS: TeamMember[] = [
   },
 ];
 
+const teamSchema = {
+  "@context": "https://schema.org",
+  "@graph": TEAM_MEMBERS.map((member) =>
+    generatePersonSchema({
+      name: member.name,
+      jobTitle: member.role,
+      image: toAbsoluteImageUrl(member.image),
+      description: member.bio,
+      sameAs: [member.linkedin],
+    })
+  ),
+};
+
 const TeamPage = () => {
   return (
-    <main className="bg-[#f4f2ee] px-4 py-8 sm:px-6 md:px-12 md:py-14 lg:px-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(teamSchema) }}
+      />
+      <main className="bg-[#f4f2ee] px-4 py-8 sm:px-6 md:px-12 md:py-14 lg:px-24">
       <section className="mx-auto max-w-[1440px]">
         <div>
           <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">
@@ -126,7 +145,8 @@ const TeamPage = () => {
           ))}
         </div>
       </section>
-    </main>
+      </main>
+    </>
   );
 };
 

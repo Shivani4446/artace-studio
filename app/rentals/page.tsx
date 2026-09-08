@@ -507,7 +507,7 @@ export default function RentalsPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-8">
                     <p className="font-display text-[20px] font-semibold text-white">
-                      "The artwork transformed our hotel lobby completely."
+                      &ldquo;The artwork transformed our hotel lobby completely.&rdquo;
                     </p>
                     <p className="mt-2 text-[14px] text-white/80">
                       — Luxury Hotel, Mumbai

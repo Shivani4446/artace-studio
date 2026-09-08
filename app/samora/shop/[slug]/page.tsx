@@ -49,6 +49,7 @@ type WooStoreAttribute = {
 type WooStoreProduct = {
   id: number;
   slug: string;
+  permalink: string;
   name: string;
   short_description: string;
   description: string;
@@ -57,6 +58,7 @@ type WooStoreProduct = {
   average_rating: string;
   review_count: number;
   stock_status: string;
+  stock_quantity: number | null;
   images: WooStoreImage[];
   categories: WooStoreCategory[];
   tags?: WooStoreTag[];

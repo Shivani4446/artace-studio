@@ -35,16 +35,19 @@ import * as razorpayWebhookRoute from "@/lib/api-route-handlers/razorpay/webhook
 import * as rentalsRoute from "@/lib/api-route-handlers/rentals/route";
 import * as revalidateRoute from "@/lib/api-route-handlers/revalidate/route";
 import * as reviewsRoute from "@/lib/api-route-handlers/reviews/route";
+import * as rewardsBalanceRoute from "@/lib/api-route-handlers/rewards/balance/route";
+import * as rewardsHistoryRoute from "@/lib/api-route-handlers/rewards/history/route";
 import * as searchRoute from "@/lib/api-route-handlers/search/route";
 import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/route";
 import * as tradeLeadsRoute from "@/lib/api-route-handlers/trade-leads/route";
 import * as uploadImageRoute from "@/lib/api-route-handlers/upload-image/route";
+import * as woocommerceOrderStatusWebhookRoute from "@/lib/api-route-handlers/webhooks/woocommerce-order-status/route";
 
 export const runtime = "edge";
 
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS" | "HEAD";
 type MethodHandler = (request: NextRequest) => Promise<Response> | Response;
-type RouteContext = { params: Promise<{ path?: string[] }> | { path?: string[] } };
+type RouteContext = { params: Promise<{ path?: string[] }> };
 type RouteHandlers = Partial<Record<Method, MethodHandler>>;
 
 const ROUTES: Record<string, RouteHandlers> = {
@@ -162,6 +165,12 @@ const ROUTES: Record<string, RouteHandlers> = {
     GET: (request) => reviewsRoute.GET(request),
     POST: (request) => reviewsRoute.POST(request),
   },
+  "rewards/balance": {
+    GET: (request) => rewardsBalanceRoute.GET(request),
+  },
+  "rewards/history": {
+    GET: (request) => rewardsHistoryRoute.GET(request),
+  },
   search: {
     GET: (request) => searchRoute.GET(request),
   },
@@ -173,6 +182,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "upload-image": {
     POST: (request) => uploadImageRoute.POST(request),
+  },
+  "webhooks/woocommerce-order-status": {
+    POST: (request) => woocommerceOrderStatusWebhookRoute.POST(request),
   },
 };
 

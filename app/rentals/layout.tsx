@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
 import { buildSiteUrl } from "@/lib/site";
+import { generateServiceSchema } from "@/lib/schema";
 
 export const revalidate = 120;
 
@@ -13,6 +13,27 @@ export const metadata: Metadata = {
   },
 };
 
+// rentals/page.tsx is a client component ("use client", for the calculator
+// state), so its metadata AND this schema both live here instead — a client
+// component can't export `metadata`, but this JSON-LD <script> only needs to
+// render into <head>/<body>, which a Server Component layout can do fine
+// alongside {children}.
+const rentalsServiceSchema = generateServiceSchema({
+  name: "Art Rentals for Corporate & Hospitality",
+  description:
+    "Rent handcrafted Indian artwork for offices, restaurants, hotels, and commercial spaces. Flexible rental periods from 1 week to 6+ months.",
+  url: buildSiteUrl("/rentals"),
+  serviceType: "Art rental service",
+});
+
 export default function RentalsLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(rentalsServiceSchema) }}
+      />
+      {children}
+    </>
+  );
 }

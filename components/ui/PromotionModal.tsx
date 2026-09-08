@@ -141,7 +141,7 @@ const PromotionModal = () => {
             no way to reach the close button or the CTA. */}
         <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:flex sm:max-h-[calc(100dvh-3rem)]">
           {/* Image Side */}
-          <div className="relative h-36 w-full shrink-0 sm:h-auto sm:w-[45%]">
+          <div className="relative h-20 w-full shrink-0 sm:h-auto sm:w-[45%]">
             <Image
               src="/images/bappa-1.webp"
               alt="Hand-painted Ganesha canvas artwork for Ganesh Chaturthi"
@@ -153,18 +153,18 @@ const PromotionModal = () => {
           </div>
 
           {/* Content Side */}
-          <div className="flex w-full flex-col justify-center p-6 text-[#1a1a1a] sm:p-12">
+          <div className="flex w-full flex-col justify-center p-5 text-[#1a1a1a] sm:p-12">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37]/10 px-3 py-1 text-[12px] font-bold uppercase tracking-widest text-[#D4AF37]">
               <Sparkles className="h-3.5 w-3.5" />
               Ganesh Chaturthi Special
             </div>
 
-            <h2 className="mt-4 font-display text-[26px] leading-[1.1] text-[#1A1A1A] sm:mt-6 sm:text-[42px]">
+            <h2 className="mt-3 font-display text-[24px] leading-[1.1] text-[#1A1A1A] sm:mt-6 sm:text-[42px]">
               Bring Home <br />
               <span className="text-[#D4AF37]">Bappa&apos;s Blessings.</span>
             </h2>
 
-            <p className="mt-4 text-[15px] leading-relaxed text-[#555555] sm:mt-6 sm:text-[18px]">
+            <p className="mt-3 text-[14px] leading-snug text-[#555555] sm:mt-6 sm:text-[18px] sm:leading-relaxed">
               This Ganesh Chaturthi, celebrate with a flat
               <span className="font-semibold text-[#1a1a1a]"> 20% off every order </span>
               — plus a complimentary gift with your purchase, on us.
@@ -172,11 +172,11 @@ const PromotionModal = () => {
 
             {leadStatus === "revealed" ? (
               <>
-                <div className="mt-5 sm:mt-8">
+                <div className="mt-4 sm:mt-8">
                   <p className="text-[13px] font-bold uppercase tracking-wider text-[#999999]">
                     Use Coupon Code
                   </p>
-                  <div className="mt-3 flex items-stretch gap-2">
+                  <div className="mt-2 flex items-stretch gap-2">
                     <div className="flex flex-1 items-center justify-between rounded-xl border border-dashed border-[#D4AF37] bg-[#FAF9F6] px-5 py-3 font-mono text-[18px] font-semibold tracking-wider text-[#1a1a1a]">
                       {COUPON_CODE}
                       <button
@@ -196,41 +196,38 @@ const PromotionModal = () => {
 
                 <button
                   onClick={handleClose}
-                  className="mt-5 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] sm:mt-8"
+                  className="mt-4 flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[15px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] sm:mt-8 sm:min-h-[52px] sm:text-[16px]"
                 >
                   Claim My 20% Off & Shop Now
                 </button>
               </>
             ) : (
-              <form onSubmit={handleLeadSubmit} className="mt-5 sm:mt-8">
-                <p className="text-[13px] font-bold uppercase tracking-wider text-[#999999]">
-                  Enter Your Details to Unlock the Code
-                </p>
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+              <form onSubmit={handleLeadSubmit} className="mt-4 sm:mt-8">
+                <div className="flex flex-row gap-2">
                   <input
                     type="email"
                     required
                     value={leadEmail}
                     onChange={(event) => setLeadEmail(event.target.value)}
-                    placeholder="you@email.com"
+                    placeholder="Email address"
                     aria-label="Email address"
-                    className="min-h-[48px] flex-1 rounded-xl border border-black/10 bg-white px-4 text-[15px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30"
+                    className="min-h-[44px] min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 text-[13px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30 sm:min-h-[48px] sm:px-4 sm:text-[15px]"
                   />
                   <input
                     type="tel"
                     required
                     value={leadPhone}
                     onChange={(event) => setLeadPhone(event.target.value)}
-                    placeholder="+91 00000 00000"
+                    placeholder="Phone number"
                     aria-label="Phone number"
-                    className="min-h-[48px] flex-1 rounded-xl border border-black/10 bg-white px-4 text-[15px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30"
+                    className="min-h-[44px] min-w-0 flex-1 rounded-xl border border-black/10 bg-white px-3 text-[13px] text-[#1a1a1a] outline-none transition-all focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37]/30 sm:min-h-[48px] sm:px-4 sm:text-[15px]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={leadStatus === "submitting"}
-                  className="mt-3 flex min-h-[52px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[16px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="mt-2 flex min-h-[48px] w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-8 text-[15px] font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[52px] sm:text-[16px]"
                 >
                   {leadStatus === "submitting" ? "Unlocking..." : "Reveal My 20% Off Code"}
                 </button>
@@ -238,13 +235,13 @@ const PromotionModal = () => {
                 {leadStatus === "error" && (
                   <p className="mt-2 text-[13px] text-red-600">{leadError}</p>
                 )}
-                <p className="mt-3 text-[12px] text-[#999999]">
+                <p className="mt-2 text-[11px] text-[#999999] sm:text-[12px]">
                   We&apos;ll only use this to send your code and occasional offers.
                 </p>
               </form>
             )}
 
-            <p className="mt-4 text-center text-[12px] text-[#999999]">
+            <p className="mt-3 text-center text-[11px] text-[#999999] sm:mt-4 sm:text-[12px]">
               Ganesh Chaturthi sale, live now through 14th September. Free Pan-India Shipping.
             </p>
           </div>

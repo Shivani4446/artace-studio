@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     "Shop original, hand-painted abstract canvas art online — shipped to New Zealand. Real brushwork and texture, never printed. Custom sizing and commissioned pieces available.",
   alternates: {
     canonical: "/original-abstract-art-for-sale-nz",
+    // See app/original-abstract-art-for-sale-uk/page.tsx for why this exists.
+    languages: {
+      "en-GB": "/original-abstract-art-for-sale-uk",
+      "en-NZ": "/original-abstract-art-for-sale-nz",
+      "en-IE": "/original-paintings-for-sale-ireland",
+    },
   },
   openGraph: {
     title: "Original Abstract Art For Sale Online | Shipped to New Zealand | Artace Studio",

@@ -1596,7 +1596,7 @@ const SingleProduct = ({
             <Link href="/art-care" className="font-medium text-[#1f1f1f] underline underline-offset-2">
               Read our full Art Care Guide
             </Link>{" "}
-            for more tips, including how to care for artwork in India's climate. →
+            for more tips, including how to care for artwork in India&apos;s climate. →
           </p>
         </div>
       );

@@ -1,5 +1,7 @@
 # WordPress JWT + Blog Fetch Fix (Exact Steps)
 
+> **Related project docs:** this is a narrow, one-off troubleshooting reference. For the engagement's general running log, see [Website-pages.md](Website-pages.md); for session conventions and WooCommerce API notes, see [features-context.md](features-context.md).
+
 Current status from your `/wp-json` response:
 
 - `jwt-auth/v1` exists

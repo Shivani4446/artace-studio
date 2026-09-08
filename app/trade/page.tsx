@@ -13,6 +13,7 @@ import {
 import TradeApplicationForm from "@/components/trade/TradeApplicationForm";
 import FAQSection, { type FAQItem } from "@/components/seo/FAQSection";
 import { buildSiteUrl } from "@/lib/site";
+import { generateServiceSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Trade Program for Designers & Architects | Artace Studio",
@@ -91,9 +92,22 @@ const FAQ_ITEMS: FAQItem[] = [
   },
 ];
 
+const tradeServiceSchema = generateServiceSchema({
+  name: "Trade Program for Interior Designers & Architects",
+  description:
+    "Interior designers, architects, and hospitality firms get a flat 15% trade discount, complimentary art advisory, and custom sizing/framing on every Artace Studio order.",
+  url: buildSiteUrl("/trade"),
+  serviceType: "Art trade discount program",
+});
+
 const TradePage = () => {
   return (
-    <main className="bg-[#f4f2ee] text-[#1f1f1f]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(tradeServiceSchema) }}
+      />
+      <main className="bg-[#f4f2ee] text-[#1f1f1f]">
       <section className="bg-[#1f1f1f] px-4 py-16 text-center text-white sm:px-6 md:px-12 md:py-24">
         <div className="mx-auto max-w-[860px]">
           <p className="font-inter text-[13px] uppercase tracking-[0.12em] text-white/60">
@@ -246,7 +260,8 @@ const TradePage = () => {
           </Link>
         </p>
       </section>
-    </main>
+      </main>
+    </>
   );
 };
 

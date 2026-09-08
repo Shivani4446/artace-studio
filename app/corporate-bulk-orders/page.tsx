@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CorporateLeadForm from "@/components/corporate/CorporateLeadForm";
 import { buildSiteUrl } from "@/lib/site";
+import { generateServiceSchema } from "@/lib/schema";
 
 export const metadata: Metadata = {
   title: "Corporate Bulk Orders | Business Art Gifting | Artace Studio",
@@ -92,9 +93,23 @@ const reasons = [
 ];
 
 
+const corporateServiceSchema = generateServiceSchema({
+  name: "Corporate Bulk Orders — Business Art Gifting",
+  description:
+    "Order paintings in bulk for corporate gifting. Perfect for office decoration, employee gifts, and business events.",
+  url: buildSiteUrl("/corporate-bulk-orders"),
+  serviceType: "Corporate bulk art ordering",
+  areaServed: "IN",
+});
+
 const CorporateBulkOrdersPage = () => {
   return (
-    <main className="bg-white text-[#121212]">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(corporateServiceSchema) }}
+      />
+      <main className="bg-white text-[#121212]">
       <section className="relative isolate overflow-hidden bg-black text-white">
         <Image
           src="/corporate-bulk-orders-bg.webp"
@@ -288,7 +303,8 @@ const CorporateBulkOrdersPage = () => {
           </div>
         </div>
       </section>
-    </main>
+      </main>
+    </>
   );
 };
 

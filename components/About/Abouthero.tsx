@@ -17,7 +17,7 @@ export default function HeroSection() {
       </div>
 
       {/* 2. Content Container */}
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 md:px-12 lg:px-20">
+      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 sm:px-6 md:px-12">
         <div className="max-w-3xl">
           
           {/* Heading */}

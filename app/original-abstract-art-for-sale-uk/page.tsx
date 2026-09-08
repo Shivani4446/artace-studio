@@ -27,6 +27,15 @@ export const metadata: Metadata = {
     "Shop original, hand-painted abstract canvas art online — shipped to the UK. Real brushwork and texture, never printed. Custom sizing and commissioned pieces available.",
   alternates: {
     canonical: "/original-abstract-art-for-sale-uk",
+    // These three pages are near-duplicate content targeting different
+    // countries — hreflang tells Google they're complementary regional
+    // variants rather than competing duplicates. Each must list itself as
+    // well as the others (Google Search Central's own requirement).
+    languages: {
+      "en-GB": "/original-abstract-art-for-sale-uk",
+      "en-NZ": "/original-abstract-art-for-sale-nz",
+      "en-IE": "/original-paintings-for-sale-ireland",
+    },
   },
   openGraph: {
     title: "Original Abstract Art For Sale Online | Shipped to the UK | Artace Studio",

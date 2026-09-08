@@ -28,6 +28,8 @@ type WooOrderPayload = {
   billing?: WooBillingPayload;
   shipping?: WooShippingPayload;
   meta_data?: WooMetaDataPayload[];
+  customer_id?: unknown;
+  line_items?: unknown;
 };
 
 export type WooMetaDataItem = {
@@ -52,6 +54,8 @@ export type WooOrderSummary = {
   shippingCountry: string;
   dateCreated: string;
   metaData: WooMetaDataItem[];
+  customerId: number;
+  lineItems: { productId: number }[];
 };
 
 export type CheckoutPaymentState = "success" | "pending" | "failed";
@@ -134,6 +138,13 @@ const parseWooOrderSummary = (payload: WooOrderPayload, siteUrl: string): WooOrd
     shippingCountry: sanitizeText(payload.shipping?.country),
     dateCreated: sanitizeText(payload.date_created),
     metaData: parseMetaData(payload.meta_data),
+    customerId: ensurePositiveInt(payload.customer_id) || 0,
+    lineItems: Array.isArray(payload.line_items)
+      ? payload.line_items
+          .map((item) => ensurePositiveInt((item as { product_id?: unknown }).product_id))
+          .filter((id): id is number => id !== null)
+          .map((productId) => ({ productId }))
+      : [],
   };
 };
 

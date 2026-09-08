@@ -1,7 +1,9 @@
 # AGENTS.md
 
+> **Related project docs:** [Website-pages.md](Website-pages.md) is the most current, actively-maintained running log of this engagement's work — check there first. [features-context.md](features-context.md) has deeper session conventions and WooCommerce API notes. [PROJECT-RESUME.md](PROJECT-RESUME.md) is a business/product overview. [Samora-context.md](Samora-context.md) covers the separate Samora sub-brand. [suggestion.md](suggestion.md) tracks the SEO/technical/feature improvement backlog. If any two docs disagree on a fact, trust Website-pages.md and this file's own git history over either.
+
 ## Project Overview
-- **Framework**: Next.js 16.1.4 with React 19
+- **Framework**: Next.js 15.5.2 with React 19
 - **Styling**: Tailwind CSS 4
 - **Backend**: Headless WooCommerce (REST API)
 - **Payments**: Razorpay
@@ -34,8 +36,8 @@
 
 ## Known Issues
 
-- TypeScript build errors in `.next/dev/types/` - these are pre-existing issues with API route type generation, not related to new features
-- Some pre-existing lint errors in `app/blog-test/page.tsx`, `app/rentals/page.tsx`
+- TypeScript noise in `.next/dev/types/`/`.next/types/` — stale dev-cache artifacts, not real errors; they clear on a fresh `next build`.
+- ~~Some pre-existing lint errors in `app/blog-test/page.tsx`, `app/rentals/page.tsx`~~ — fixed (see `suggestion.md` §2.1). `next.config.ts` now enforces both `tsc` and lint at build time (`ignoreBuildErrors`/`ignoreDuringBuilds` are both `false`) — a real error fails the build again instead of shipping silently.
 
 ## Schema Module
 

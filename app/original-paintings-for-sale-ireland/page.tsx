@@ -27,6 +27,12 @@ export const metadata: Metadata = {
     "Shop original, hand-painted paintings online — shipped to Ireland. Real canvas texture and brushwork, never printed. Custom sizing and commissioned pieces available.",
   alternates: {
     canonical: "/original-paintings-for-sale-ireland",
+    // See app/original-abstract-art-for-sale-uk/page.tsx for why this exists.
+    languages: {
+      "en-GB": "/original-abstract-art-for-sale-uk",
+      "en-NZ": "/original-abstract-art-for-sale-nz",
+      "en-IE": "/original-paintings-for-sale-ireland",
+    },
   },
   openGraph: {
     title: "Original Paintings For Sale Online | Shipped to Ireland | Artace Studio",

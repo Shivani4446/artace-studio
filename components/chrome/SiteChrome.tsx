@@ -28,13 +28,24 @@ const SiteChrome = ({ children }: { children: ReactNode }) => {
 
   return (
     <>
+      {/* Keyboard/screen-reader users can jump straight past the nav to the
+          page content — visually hidden until it receives focus (always the
+          first focusable element on the page, which is the point of a skip
+          link). Targets the plain wrapper div below rather than each page's
+          own <main> so this doesn't require touching every page file. */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-[14px] focus:font-medium focus:text-black focus:shadow-lg"
+      >
+        Skip to content
+      </a>
       <PromotionModal />
       <ProductImageProtection />
       <div className="sticky top-0 z-[60]">
         <PromotionBar />
         <Navbar />
       </div>
-      {children}
+      <div id="main-content">{children}</div>
       <Footer />
       <ChatWidget />
       <Link

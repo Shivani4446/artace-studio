@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ARTISTS } from "@/lib/artists/data";
 import { buildSiteUrl } from "@/lib/site";
+import { generatePersonSchema } from "@/lib/schema";
 
 export const runtime = "edge";
 
@@ -14,9 +15,27 @@ export const metadata: Metadata = {
   },
 };
 
+const artistsSchema = {
+  "@context": "https://schema.org",
+  "@graph": ARTISTS.map((artist) =>
+    generatePersonSchema({
+      name: artist.name,
+      jobTitle: artist.recognition,
+      image: buildSiteUrl(artist.image),
+      description: artist.tagline,
+      url: buildSiteUrl(`/artists/${artist.slug}`),
+    })
+  ),
+};
+
 export default function ArtistsPage() {
   return (
-    <main className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(artistsSchema) }}
+      />
+      <main className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
       <h1 className="font-display text-[36px] leading-[1.1] text-[#1f1f1f] md:text-[56px]">Our Artists</h1>
       <p className="mt-2 max-w-2xl text-[16px] text-[#666] md:text-[18px]">
         Meet the artists behind our handcrafted paintings.
@@ -39,6 +58,7 @@ export default function ArtistsPage() {
           </Link>
         ))}
       </div>
-    </main>
+      </main>
+    </>
   );
 }

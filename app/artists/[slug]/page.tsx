@@ -4,6 +4,7 @@ import { getArtistBySlug } from "@/lib/artists/data";
 import { buildSiteUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import ArtistProductGrid, { type ArtistGridProduct } from "@/components/artists/ArtistProductGrid";
+import { generatePersonSchema } from "@/lib/schema";
 
 export const runtime = "edge";
 export const revalidate = 120;
@@ -156,8 +157,24 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
     .map(toArtistGridProduct)
     .filter((product): product is ArtistGridProduct => product !== null);
 
+  const artistSchema = {
+    "@context": "https://schema.org",
+    ...generatePersonSchema({
+      name: artist.name,
+      jobTitle: artist.recognition,
+      image: buildSiteUrl(artist.image),
+      description: artist.bio,
+      url: buildSiteUrl(`/artists/${artist.slug}`),
+    }),
+  };
+
   return (
-    <main className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(artistSchema) }}
+      />
+      <main className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 md:px-12 md:py-16 lg:px-24">
       <div className="grid gap-10 md:grid-cols-[minmax(0,0.5fr)_minmax(0,1fr)] md:items-start">
         <div className="relative mx-auto aspect-square w-full max-w-[320px] overflow-hidden rounded-full">
           <Image
@@ -187,6 +204,7 @@ export default async function ArtistPage({ params }: ArtistPageProps) {
           <ArtistProductGrid products={products} />
         </div>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

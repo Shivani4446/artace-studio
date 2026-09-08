@@ -10,6 +10,7 @@ import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
 import CheckoutTrustPoints from "@/components/checkout/CheckoutTrustPoints";
 import CheckoutNeedMoreHelp from "@/components/checkout/CheckoutNeedMoreHelp";
+import ApplyPointsBox from "@/components/checkout/ApplyPointsBox";
 
 type CheckoutFormState = {
   firstName: string;
@@ -153,6 +154,7 @@ export default function CheckoutPageClient() {
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<CouponValidationPayload["coupon"] | null>(null);
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
 
   const hasCheckoutReadyItems = useMemo(
     () => items.some((item) => getCheckoutProductId(item.id, item.woocommerceProductId)),
@@ -315,6 +317,7 @@ export default function CheckoutPageClient() {
           },
           customerNote: form.customerNote,
           couponCode: appliedCoupon?.code || undefined,
+          pointsToRedeem: pointsToRedeem > 0 ? pointsToRedeem : undefined,
         }),
       });
 
@@ -681,6 +684,8 @@ export default function CheckoutPageClient() {
               <p className="mt-3 text-sm leading-6 text-[#b42318]">{couponError}</p>
             ) : null}
           </div>
+
+          <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
 
           <button
             type="button"

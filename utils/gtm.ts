@@ -74,7 +74,7 @@ const toEcommerceItem = (item: CartProduct, quantity = 1) => {
 const getCartValue = (items: CartItem[]) =>
   items.reduce((total, item) => total + (getPrice(item.price) ?? 0) * item.quantity, 0);
 
-const pushToDataLayer = (payload: Record<string, unknown>) => {
+export const pushToDataLayer = (payload: Record<string, unknown>) => {
   if (typeof window === "undefined") return;
 
   window.dataLayer = window.dataLayer || [];

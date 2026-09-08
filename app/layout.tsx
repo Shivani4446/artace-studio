@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { GoogleTagManager } from "@next/third-parties/google";
+import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
 import { CartProvider } from "@/components/cart/CartProvider";
@@ -11,6 +12,7 @@ import { buildSiteUrl, getSiteOrigin } from "@/lib/site";
 import { CurrencyProvider } from "@/components/currency/CurrencyProvider";
 import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
 import AffiliateClickTracker from "@/components/affiliates/AffiliateClickTracker";
+import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
 import { inter } from "@/lib/fonts";
 
 const sentient = localFont({
@@ -97,19 +99,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Google tag (gtag.js) — base tag, must stay first in <head> per
-            Google's install instructions. Configures both the GA4 property
+        {/* Google tag (gtag.js) — base tag. Configures both the GA4 property
             and the Google Ads account on the same loaded script/dataLayer,
             per Google's guidance for sites with multiple tag IDs (only one
             gtag/js loader is needed; each ID gets its own 'config' call).
             Separate from the GTM container below; other Ads/GA4 events (see
             utils/gtm.ts) are pushed to the same window.dataLayer this
-            initializes. */}
-        <script
-          async
+            initializes. Loaded via next/script with strategy="afterInteractive"
+            (Next's own recommended strategy for GA/gtag) instead of a raw
+            <script> tag so it no longer competes with the page's own LCP
+            resources — the inline snippet's local gtag() shim just queues
+            onto window.dataLayer, which is order-independent by design, so
+            it's safe regardless of exactly when the external script finishes
+            loading relative to it. */}
+        <Script
+          strategy="afterInteractive"
           src="https://www.googletagmanager.com/gtag/js?id=G-27V3DFEVET"
         />
-        <script
+        <Script
+          id="gtag-config"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -120,17 +129,26 @@ export default function RootLayout({
             `,
           }}
         />
-        <script
+        {/* Trustpilot / Merchant widget / Ahrefs / Meta Pixel are all
+            non-critical third-party embeds (a reviews badge, a shopping
+            widget, analytics, an ads pixel) — none of them need to be ready
+            immediately, so they load via strategy="lazyOnload" (Next's
+            recommended strategy for this exact category: "chat support
+            plugins or social media widgets") instead of blocking on the
+            main thread during initial load. */}
+        <Script
           type="text/javascript"
           src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
-          async
+          strategy="lazyOnload"
         />
-        <script
+        <Script
           id="merchantWidgetScript"
           src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
-          defer
+          strategy="lazyOnload"
         />
-        <script
+        <Script
+          id="merchantWidgetStarter"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function () {
@@ -166,12 +184,14 @@ export default function RootLayout({
             `,
           }}
         />
-        <script
+        <Script
           src="https://analytics.ahrefs.com/analytics.js"
           data-key="AHn7dT8Dlwwm42L41CA4Xg"
-          async
+          strategy="lazyOnload"
         />
-        <script
+        <Script
+          id="meta-pixel"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `!function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -205,6 +225,7 @@ fbq('track', 'PageView');`
         <Suspense fallback={null}>
           <AffiliateClickTracker />
         </Suspense>
+        <WebVitalsReporter />
         <AuthSessionProvider>
           <CurrencyProvider initialCurrency={DEFAULT_CURRENCY} initialRates={null}>
           <CartProvider>

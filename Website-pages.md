@@ -1,10 +1,12 @@
 # Website Pages & Engagement Knowledge
 
+> **Related project docs:** this is the most current, actively-maintained running log of this engagement's work — trust this one first if it disagrees with another doc. [features-context.md](features-context.md) has deeper session conventions and WooCommerce API notes from an earlier session thread. [PROJECT-RESUME.md](PROJECT-RESUME.md) is a business/product overview. [Samora-context.md](Samora-context.md) covers the separate Samora sub-brand. [suggestion.md](suggestion.md) tracks the SEO/technical/feature improvement backlog and doubles as a running log of everything fixed from it.
+
 A running reference for this Artace Studio engagement — every page/feature built, the decisions behind them, the technical patterns established, and the environment quirks discovered along the way. Written so a fresh session (or a human) can pick up context quickly without re-deriving it.
 
 **Site**: [artacestudio.com](https://artacestudio.com) — Next.js/React e-commerce site for handcrafted Indian paintings.
 **Backend**: WooCommerce at `api.artacestudio.com`, accessed only via REST APIs (no file/FTP/SSH/DB access) — Store API (public) for storefront reads, Admin API (Basic Auth, Consumer Key/Secret) for orders/products/categories.
-**Repo**: `D:\Artace Studio\artace-studio` (not a git repo in this sandbox — no `.git` here; the user manages version control themselves).
+**Repo**: `D:\Artace Studio\artace-studio` — a real git repo with a GitHub remote (`github.com/Shivani4446/artace-studio`, branch `main`); the user manages all commits/pushes themselves. (An earlier version of this doc said "not a git repo" — that was checked from the wrong directory, the parent `D:\Artace Studio`, which itself has no `.git`; the project subdirectory does.)
 
 ---
 

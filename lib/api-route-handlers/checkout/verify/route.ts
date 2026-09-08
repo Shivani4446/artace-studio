@@ -9,6 +9,8 @@ import {
   sanitizeText,
   updateWooCommerceOrder,
 } from "@/utils/woocommerce-checkout";
+import { creditPoints, debitPoints, calculatePointsEarned } from "@/lib/rewards/ledger";
+import { CUSTOM_PORTRAIT_DEPOSIT_PRODUCT_ID } from "@/lib/custom-portraits/pricing";
 
 export const runtime = "edge";
 
@@ -73,25 +75,73 @@ export async function POST(request: NextRequest) {
     const paidMinor = parseAmountToMinorUnits(wooOrder.total);
     const paidCurrency = sanitizeText(wooOrder.currency) || "INR";
 
-    const finalizedOrder =
+    // Artace Rewards crediting/debiting must only run the first time this
+    // order is finalized — never on a retried verify call for an
+    // already-paid order (that's exactly what this branch already
+    // distinguishes: the `wooOrder` branch means a prior call already
+    // finalized it).
+    const isFirstTimeFinalization = !(
       paymentState === "success" && wooOrder.transactionId === razorpayPaymentId
-        ? wooOrder
-        : await updateWooCommerceOrder(orderId, {
-            set_paid: true,
-            status: "processing",
-            transaction_id: razorpayPaymentId,
-            meta_data: mergeWooMetaData(wooOrder.metaData, {
-              _artace_razorpay_order_id: razorpayOrderId,
-              _artace_razorpay_payment_id: razorpayPaymentId,
-              _artace_razorpay_signature: razorpaySignature,
-              _artace_payment_state: "success",
-              // Persist the amount charged at checkout so dashboards show what the user actually paid,
-              // even if order totals are edited later in Woo admin.
-              ...(wooOrder.total ? { _artace_paid_total: wooOrder.total } : {}),
-              ...(paidMinor ? { _artace_paid_amount_minor: String(paidMinor) } : {}),
-              ...(paidCurrency ? { _artace_paid_currency: paidCurrency } : {}),
-            }),
-          });
+    );
+
+    const finalizedOrder = isFirstTimeFinalization
+      ? await updateWooCommerceOrder(orderId, {
+          set_paid: true,
+          status: "processing",
+          transaction_id: razorpayPaymentId,
+          meta_data: mergeWooMetaData(wooOrder.metaData, {
+            _artace_razorpay_order_id: razorpayOrderId,
+            _artace_razorpay_payment_id: razorpayPaymentId,
+            _artace_razorpay_signature: razorpaySignature,
+            _artace_payment_state: "success",
+            // Persist the amount charged at checkout so dashboards show what the user actually paid,
+            // even if order totals are edited later in Woo admin.
+            ...(wooOrder.total ? { _artace_paid_total: wooOrder.total } : {}),
+            ...(paidMinor ? { _artace_paid_amount_minor: String(paidMinor) } : {}),
+            ...(paidCurrency ? { _artace_paid_currency: paidCurrency } : {}),
+          }),
+        })
+      : wooOrder;
+
+    if (isFirstTimeFinalization) {
+      // Custom Portraits deposits reuse this exact endpoint but are out of
+      // scope for Artace Rewards (see suggestion.md Section 3, and the
+      // spec's Context section) — exclude them positively rather than
+      // assuming this endpoint never sees one.
+      const isCustomPortraitOrder = wooOrder.lineItems.some(
+        (item) => item.productId === CUSTOM_PORTRAIT_DEPOSIT_PRODUCT_ID
+      );
+
+      if (!isCustomPortraitOrder && wooOrder.customerId > 0) {
+        try {
+          const pointsEarned = calculatePointsEarned(Number(wooOrder.total));
+          if (pointsEarned > 0) {
+            await creditPoints({
+              wpCustomerId: String(wooOrder.customerId),
+              wcOrderId: orderId,
+              points: pointsEarned,
+              description: `Order #${wooOrder.orderNumber}`,
+            });
+          }
+
+          const pointsToRedeem = Number(
+            wooOrder.metaData.find((item) => item.key === "_artace_points_to_redeem")?.value || 0
+          );
+          if (pointsToRedeem > 0) {
+            await debitPoints({
+              wpCustomerId: String(wooOrder.customerId),
+              wcOrderId: orderId,
+              points: pointsToRedeem,
+              description: `Redeemed on Order #${wooOrder.orderNumber}`,
+            });
+          }
+        } catch {
+          // Never let a rewards-ledger failure affect the checkout response —
+          // the payment itself already succeeded by the time this runs (same
+          // defensive posture as recordAffiliateConversion in the checkout route).
+        }
+      }
+    }
 
     return NextResponse.json({
       success: true,
