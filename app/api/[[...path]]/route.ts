@@ -17,6 +17,7 @@ import * as canvasRollEnquiriesRoute from "@/lib/api-route-handlers/canvas-roll-
 import * as chatRoute from "@/lib/api-route-handlers/chat/route";
 import * as chatTranscribeRoute from "@/lib/api-route-handlers/chat/transcribe/route";
 import * as checkoutCouponRoute from "@/lib/api-route-handlers/checkout/coupon/route";
+import * as checkoutPayuCallbackRoute from "@/lib/api-route-handlers/checkout/payu-callback/route";
 import * as checkoutPincodeRoute from "@/lib/api-route-handlers/checkout/pincode/route";
 import * as checkoutStatusRoute from "@/lib/api-route-handlers/checkout/status/route";
 import * as checkoutVerifyRoute from "@/lib/api-route-handlers/checkout/verify/route";
@@ -39,6 +40,7 @@ import * as revalidateRoute from "@/lib/api-route-handlers/revalidate/route";
 import * as reviewsRoute from "@/lib/api-route-handlers/reviews/route";
 import * as rewardsBalanceRoute from "@/lib/api-route-handlers/rewards/balance/route";
 import * as rewardsHistoryRoute from "@/lib/api-route-handlers/rewards/history/route";
+import * as samoraNewsletterRoute from "@/lib/api-route-handlers/samora/newsletter/route";
 import * as searchRoute from "@/lib/api-route-handlers/search/route";
 import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/route";
 import * as tradeLeadsRoute from "@/lib/api-route-handlers/trade-leads/route";
@@ -109,6 +111,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   "checkout/coupon": {
     GET: (request) => checkoutCouponRoute.GET(request),
   },
+  "checkout/payu-callback": {
+    POST: (request) => checkoutPayuCallbackRoute.POST(request),
+  },
   "checkout/pincode": {
     GET: (request) => checkoutPincodeRoute.GET(request),
   },
@@ -178,6 +183,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "rewards/history": {
     GET: (request) => rewardsHistoryRoute.GET(request),
+  },
+  "samora/newsletter": {
+    POST: (request) => samoraNewsletterRoute.POST(request),
   },
   search: {
     GET: (request) => searchRoute.GET(request),

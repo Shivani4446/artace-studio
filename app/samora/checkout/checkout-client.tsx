@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Gift, Lock, ShieldCheck } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
+import ApplyPointsBox from "@/components/checkout/ApplyPointsBox";
+import RedeemGiftCardBox from "@/components/checkout/RedeemGiftCardBox";
 import {
   calculateGiftFee,
   SAMORA_DEFAULT_ITEM_WEIGHT_GRAMS,
@@ -138,6 +140,7 @@ const INPUT_CLASS =
 
 export default function SamoraCheckoutPageClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { status: authStatus, session } = useAuthSession();
   const { items, itemCount, subtotal, isGiftOrder, giftMessage } = useCart();
   const [form, setForm] = useState<CheckoutFormState>(INITIAL_FORM);
@@ -150,6 +153,13 @@ export default function SamoraCheckoutPageClient() {
   const [appliedCoupon, setAppliedCoupon] = useState<CouponValidationPayload["coupon"] | null>(null);
   const [shippingQuote, setShippingQuote] = useState<PincodeShippingPayload | null>(null);
   const [isCheckingShipping, setIsCheckingShipping] = useState(false);
+  // Artace Rewards + Gift Cards — same shared ledgers/session as the main
+  // Artace checkout, now formally extended to Samora too (points already
+  // earned on Samora orders regardless; this adds the redemption UI, and lets
+  // a gift card bought on either storefront be redeemed on a Samora order).
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
+  const [giftCardAmount, setGiftCardAmount] = useState(0);
+  const [giftCardCode, setGiftCardCode] = useState("");
 
   const totalWeightGrams = useMemo(
     () =>
@@ -343,6 +353,8 @@ export default function SamoraCheckoutPageClient() {
           couponCode: appliedCoupon?.code || undefined,
           storeName: "Samora",
           isGift: isGiftOrder,
+          pointsToRedeem: pointsToRedeem > 0 ? pointsToRedeem : undefined,
+          giftCardCode: giftCardAmount > 0 ? giftCardCode : undefined,
         }),
       });
 
@@ -436,9 +448,9 @@ export default function SamoraCheckoutPageClient() {
     }
   };
 
-  const handleApplyCoupon = async () => {
+  const handleApplyCoupon = async (codeOverride?: string) => {
     if (isApplyingCoupon) return;
-    const code = couponInput.trim();
+    const code = (codeOverride ?? couponInput).trim();
     if (!code) {
       setCouponError("Enter a coupon code.");
       return;
@@ -448,10 +460,13 @@ export default function SamoraCheckoutPageClient() {
     setCouponError("");
 
     try {
-      const response = await fetch(`/api/checkout/coupon?code=${encodeURIComponent(code)}&store=samora`, {
-        method: "GET",
-        cache: "no-store",
-      });
+      // distinctItems: how many different products are in the cart — only
+      // meaningful for the hamper-builder coupon (see lib/samora/pricing.ts),
+      // harmless to send for any other code.
+      const response = await fetch(
+        `/api/checkout/coupon?code=${encodeURIComponent(code)}&store=samora&distinctItems=${items.length}`,
+        { method: "GET", cache: "no-store" }
+      );
       const payload = (await response.json()) as CouponValidationPayload;
 
       if (!response.ok || !payload.ok || !payload.coupon?.code) {
@@ -470,6 +485,19 @@ export default function SamoraCheckoutPageClient() {
       setIsApplyingCoupon(false);
     }
   };
+
+  // Seeded from ?coupon= — the hamper builder sends shoppers here with
+  // hamper20 pre-applied instead of making them type it in manually.
+  const autoAppliedCouponRef = useRef(false);
+  useEffect(() => {
+    if (autoAppliedCouponRef.current) return;
+    const couponFromUrl = searchParams.get("coupon");
+    if (!couponFromUrl || items.length === 0) return;
+    autoAppliedCouponRef.current = true;
+    setCouponInput(couponFromUrl);
+    handleApplyCoupon(couponFromUrl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, items.length]);
 
   if (items.length === 0) {
     return (
@@ -736,7 +764,7 @@ export default function SamoraCheckoutPageClient() {
               />
               <button
                 type="button"
-                onClick={handleApplyCoupon}
+                onClick={() => handleApplyCoupon()}
                 disabled={isApplyingCoupon}
                 className="inline-flex items-center justify-center rounded-[10px] border border-[#2b2420]/15 bg-white px-5 py-3 text-[13.5px] font-semibold text-[#2b2420] transition-colors hover:bg-[#f3ead9] disabled:cursor-not-allowed disabled:opacity-60"
               >
@@ -765,6 +793,16 @@ export default function SamoraCheckoutPageClient() {
 
             {couponError ? <p className="mt-3 text-[13.5px] text-[#a63b2d]">{couponError}</p> : null}
           </div>
+
+          <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+
+          <RedeemGiftCardBox
+            subtotal={subtotal}
+            onAmountChange={(amount, code) => {
+              setGiftCardAmount(amount);
+              setGiftCardCode(code);
+            }}
+          />
 
           <button
             type="button"

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
-import { isSamoraExclusiveCoupon } from "@/lib/samora/pricing";
+import {
+  HAMPER_MIN_DISTINCT_ITEMS,
+  isHamperCoupon,
+  isSamoraExclusiveCoupon,
+} from "@/lib/samora/pricing";
 
 export const runtime = "edge";
 
@@ -139,6 +143,24 @@ export async function GET(request: NextRequest) {
       { ok: false, message: "That coupon code is only valid on Samora." },
       { status: 400 }
     );
+  }
+
+  // Hamper builder discount: only meaningful with 3+ distinct items in the
+  // cart. Checked here too (not just at order-creation time) so the customer
+  // gets an immediate, clear reason instead of the coupon silently failing
+  // at payment. The client sends how many distinct line items are in cart;
+  // the order-creation endpoint re-checks this authoritatively regardless.
+  if (isHamperCoupon(code)) {
+    const distinctItems = Number(request.nextUrl.searchParams.get("distinctItems") || "0");
+    if (!Number.isFinite(distinctItems) || distinctItems < HAMPER_MIN_DISTINCT_ITEMS) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: `Add at least ${HAMPER_MIN_DISTINCT_ITEMS} different Samora items to unlock this hamper discount.`,
+        },
+        { status: 400 }
+      );
+    }
   }
 
   const baseUrl = getWooBaseUrl();

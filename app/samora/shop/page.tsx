@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Coffee, RectangleHorizontal, ShoppingBag, Tag } from "lucide-react";
 import { type SamoraProduct } from "@/components/samora/SamoraProductCard";
 import SamoraShopCatalog from "@/components/samora/SamoraShopCatalog";
@@ -230,7 +231,9 @@ const SamoraShopPage = async () => {
       </div>
 
       {products.length > 0 ? (
-        <SamoraShopCatalog products={products} />
+        <Suspense fallback={null}>
+          <SamoraShopCatalog products={products} />
+        </Suspense>
       ) : (
         <div className="mt-10 rounded-[20px] border border-[#2b2420]/10 bg-[#f3ead9] px-6 py-14 text-center md:mt-12 md:py-20">
           <p className="font-samora-display text-[24px] text-[#2b2420] md:text-[28px]">

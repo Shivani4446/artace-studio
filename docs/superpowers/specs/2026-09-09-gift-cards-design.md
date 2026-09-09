@@ -17,6 +17,8 @@ Confirmed with the user before writing this spec:
 - **Gift card purchases don't earn Artace Rewards points** — approved in Section B, same treatment as Custom Portraits deposits.
 - **A public balance-checker** (enter a code, see remaining balance) — approved in Section D.
 
+**Update (Samora infra-reuse pass):** redemption was never storeName-gated in `checkout/verify/route.ts` (it keys purely on `GIFT_CARD_PRODUCT_ID` appearing in the order's line items), so extending it to Samora needed no backend change — `RedeemGiftCardBox` was added to `app/samora/checkout/checkout-client.tsx` reusing the same component and `/api/gift-cards/balance` endpoint. A card bought on Artace can be redeemed on a Samora order and vice versa — it was never brand-scoped to begin with. Purchasing is not yet surfaced as a Samora-native page; Samora's footer links out to the existing `/gift-cards` page instead, since a gift card's value isn't brand-specific.
+
 ## Decisions
 
 ### 1. Data model

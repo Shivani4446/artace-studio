@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
-import { Minus, Plus, Star } from "lucide-react";
+import { Heart, Minus, Plus, Star } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
+import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import SamoraProductCard, { type SamoraProduct } from "@/components/samora/SamoraProductCard";
 import SamoraGiftOption from "@/components/samora/SamoraGiftOption";
 import SamoraPincodeChecker from "@/components/samora/SamoraPincodeChecker";
@@ -51,6 +52,7 @@ const SamoraSingleProduct = ({
 }) => {
   const { formatPrice } = useCurrency();
   const { addItem, setGiftOrder } = useCart();
+  const { addItem: addWishlistItem, removeItem: removeWishlistItem, isInWishlist } = useWishlist();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
@@ -111,6 +113,25 @@ const SamoraSingleProduct = ({
   const activeImage = images[activeImageIndex] ?? images[0];
 
   const cartItemId = matchedVariation ? `${product.id}-${matchedVariation.id}` : product.id;
+
+  // Wishlisted at the base-product level (not per-variation) — matches how
+  // SamoraProductCard's quick-add heart button already keys entries, so
+  // toggling from the card and from this page stay in sync for the same item.
+  const isWishlisted = isInWishlist(product.id);
+  const toggleWishlist = () => {
+    if (isWishlisted) {
+      removeWishlistItem(product.id);
+      return;
+    }
+    addWishlistItem({
+      id: product.id,
+      woocommerceProductId: product.id,
+      title: product.name,
+      image: activeImage.src,
+      price: effectivePrice ?? undefined,
+      href: `/samora/shop/${product.slug}`,
+    });
+  };
 
   const handleAddToCart = () => {
     addItem(
@@ -293,6 +314,14 @@ const SamoraSingleProduct = ({
                 </button>
               </>
             )}
+            <button
+              type="button"
+              onClick={toggleWishlist}
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              className="inline-flex h-[50px] w-[50px] items-center justify-center rounded-full border border-[#2b2420]/20 text-[#2b2420] transition-colors hover:border-[#c1683d]/40"
+            >
+              <Heart className={`h-5 w-5 ${isWishlisted ? "fill-[#c1683d] text-[#c1683d]" : ""}`} strokeWidth={1.75} />
+            </button>
           </div>
 
           {/* Delivery check */}

@@ -1,6 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Mail, MessageCircle } from "lucide-react";
+import SamoraNewsletterSignup from "@/components/samora/SamoraNewsletterSignup";
+
+const SUPPORT_LINKS = [
+  { label: "Track My Order", href: "/samora/track-order" },
+  { label: "Care & Materials Guide", href: "/samora/care-guide" },
+  { label: "Shipping & Returns", href: "/samora/shipping-returns" },
+];
 
 const CATEGORY_LINKS = [
   { label: "Tote Bags", href: "/samora/shop" },
@@ -11,8 +18,15 @@ const CATEGORY_LINKS = [
 
 const QUICK_LINKS = [
   { label: "Shop", href: "/samora/shop" },
+  { label: "Build a Hamper", href: "/samora/hampers" },
   { label: "Our Craft", href: "/samora#craft" },
   { label: "Our Story", href: "/samora/our-story" },
+  { label: "Our Process", href: "/samora/our-process" },
+  { label: "Journal", href: "/samora/journal" },
+  { label: "Corporate Gifting", href: "/samora/corporate-gifting" },
+  // Gift cards are store-agnostic (same account, same WooCommerce) — reuses
+  // Artace's own purchase page rather than duplicating it for Samora.
+  { label: "Gift Cards", href: "/gift-cards" },
   { label: "FAQ", href: "/samora#faq" },
 ];
 
@@ -22,7 +36,19 @@ const SamoraFooter = () => {
   return (
     <footer className="border-t border-[#2b2420]/10 bg-[#f3ead9] text-[#2b2420]">
       <div className="mx-auto max-w-[1320px] px-5 py-14 md:px-10 md:py-16">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
+        <div className="flex flex-col gap-5 border-b border-[#2b2420]/10 pb-10 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="font-samora-display text-[20px] text-[#2b2420] md:text-[22px]">
+              Get first access to new drops
+            </p>
+            <p className="mt-1.5 max-w-[420px] text-[13.5px] leading-[1.6] text-[#5c5344]">
+              Samora makes in small batches, so pieces sell out. Join the list to hear first.
+            </p>
+          </div>
+          <SamoraNewsletterSignup />
+        </div>
+
+        <div className="mt-10 grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.1fr]">
           <div>
             <Image
               src="/samroa-logo.svg"
@@ -69,9 +95,16 @@ const SamoraFooter = () => {
 
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#8a7c68]">
-              Get in Touch
+              Support
             </p>
             <ul className="mt-4 space-y-2.5">
+              {SUPPORT_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link href={link.href} className="text-[14.5px] text-[#3f382f] hover:text-[#c1683d]">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
               <li>
                 <a
                   href="https://wa.me/9657609102"

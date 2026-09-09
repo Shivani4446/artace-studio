@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChevronDown, Search, X } from "lucide-react";
 import SamoraProductCard, { type SamoraProduct } from "@/components/samora/SamoraProductCard";
 
@@ -21,9 +22,12 @@ const pillClass = (active: boolean) =>
   }`;
 
 const SamoraShopCatalog = ({ products }: { products: SamoraProduct[] }) => {
+  const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [searchQuery, setSearchQuery] = useState("");
+  // Seeded from ?q= so a search from the navbar (any Samora page) lands here
+  // pre-filtered — same param name Artace's own /search already uses.
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") ?? "");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedAttributes, setSelectedAttributes] = useState<Record<string, string[]>>({});

@@ -1,4 +1,5 @@
-import { CheckCircle2, Hand, Leaf, Truck } from "lucide-react";
+import Link from "next/link";
+import { ArrowUpRight, CheckCircle2, Hand, Leaf, Truck } from "lucide-react";
 
 const STEPS = [
   {
@@ -34,6 +35,14 @@ const SamoraProcess = () => {
           The Samora process
         </h2>
       </div>
+
+      <Link
+        href="/samora/our-process"
+        className="mt-4 inline-flex items-center gap-1.5 text-[14.5px] font-medium text-[#c1683d] transition-colors hover:text-[#a8552f]"
+      >
+        See the full process
+        <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
+      </Link>
 
       <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {STEPS.map(({ icon: Icon, title, description }, index) => (

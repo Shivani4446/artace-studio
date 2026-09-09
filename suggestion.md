@@ -15,7 +15,7 @@ Two extra bugs turned up during verification and are fixed too: (1) every `/coll
 
 Also fixed in passing: the old file hardcoded `https://www.artacestudio.com` while every canonical tag and `robots.ts` uses the non-`www` origin (`getSiteOrigin()`) — sitemap URLs now match.
 
-**Not included, flagged for a decision:** Samora's own product pages (`/samora/shop/[slug]`) are real and crawlable (nothing disallows them in `robots.ts`) but weren't in scope of the original audit and aren't in this sitemap either — say the word if Samora should be indexed and I'll add them the same way.
+**Update (Samora indexing decision made):** Samora's static pages (`/samora`, `/samora/shop`, `/samora/our-story`, `/samora/corporate-gifting`) and every Samora-tagged product (`/samora/shop/[slug]`) are now in the sitemap too, reusing the product list this file already fetches (the same `hasSamoraTag` check that excludes them from the main `/shop/` sitemap, run the other way). No Samora category pages — there's no `/collections/[slug]` equivalent for that storefront.
 
 
 [app/sitemap.ts](app/sitemap.ts) is a hand-maintained array of ~20 static pages plus three hardcoded slug lists (`shopSlugs`, `collectionSlugs`, `roomSlugs`). It does **not** include:

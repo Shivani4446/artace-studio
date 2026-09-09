@@ -26,9 +26,12 @@ Confirmed with the user before writing this spec:
 - **Crediting timing**: points are credited the moment payment is verified
   (same moment the order is confirmed today), and automatically clawed back
   if that order is later refunded or cancelled.
-- **Scope**: the main Artace cart checkout only. Custom Portraits deposits and
-  Samora (a separate storefront/checkout) are explicitly out of scope for
-  this build — noted below as a natural follow-up, not silently dropped.
+- **Scope**: the main Artace cart checkout, plus Samora's checkout as of the
+  Samora infra-reuse follow-up (see §9) — Samora was originally meant to be
+  out of scope for this build, but the crediting code was never actually
+  gated by `storeName`, so it was earning points regardless; the user chose
+  to formalize that rather than fix it, and redemption was added to match.
+  Custom Portraits deposits remain out of scope.
 - **Public page**: yes, a dedicated `/rewards` explainer page, linked from the
   navbar and footer, on the sitemap.
 
@@ -282,8 +285,12 @@ Added to: `components/navbar.tsx` (Resources dropdown — the same one
 
 ### 9. Explicitly out of scope for this build
 
-- Custom Portraits deposits and Samora's checkout — noted in Context above;
-  natural follow-ups once the core system is proven, not silently dropped.
+- Custom Portraits deposits — noted in Context above.
+- ~~Samora's checkout~~ — **done**: `ApplyPointsBox` was added to
+  `app/samora/checkout/checkout-client.tsx`, reusing the same component,
+  `/api/rewards/balance` endpoint, and ledger as the main checkout. See the
+  Context note above for why (points were already being credited on Samora
+  orders regardless of this doc's original scope statement).
 - Point expiry, tiers, and bonus-earning rules (first order, referrals,
   reviews) — none of these were asked for; adding them speculatively would
   be scope creep beyond what was decided.

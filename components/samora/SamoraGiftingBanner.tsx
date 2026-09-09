@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-const WHATSAPP_HREF =
-  "https://wa.me/9657609102?text=" +
-  encodeURIComponent("Hi Samora, I'm interested in corporate or festive gifting.");
-
 const SamoraGiftingBanner = () => {
   return (
     <section className="mx-auto max-w-[1320px] px-5 pb-16 md:px-10 md:pb-24">
@@ -19,9 +15,7 @@ const SamoraGiftingBanner = () => {
           </p>
         </div>
         <Link
-          href={WHATSAPP_HREF}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/samora/corporate-gifting"
           className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#2b2420] px-6 py-3 text-[14.5px] font-medium text-white transition-colors hover:bg-[#1c1712]"
         >
           Talk to Us

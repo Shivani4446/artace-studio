@@ -31,6 +31,9 @@ import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { getArtistByName } from "@/lib/artists/data";
 import { FRAME_OPTIONS, type FrameOption } from "@/lib/framing/data";
 import WhyArtaceStudio from "@/components/shared/WhyArtaceStudio";
+import { parseSizeDimensions, inferSizeUnit } from "@/utils/product-size";
+import { useIsMobileDevice } from "@/hooks/useIsMobileDevice";
+import ViewInYourRoomModal from "@/components/room-preview/ViewInYourRoomModal";
 
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
 // Artace Studio's real Trustpilot rating, shown on photography product
@@ -473,23 +476,6 @@ const getDeliveryRangeLabel = (baseDate: Date, fromDays: number, toDays: number)
   return `${formatDeliveryDate(fromDate)} - ${formatDeliveryDate(toDate)}`;
 };
 
-const parseSizeDimensions = (value: string) => {
-  const numericValues = value.match(/\d+(?:\.\d+)?/g);
-  if (!numericValues || numericValues.length < 2) return null;
-
-  const width = Number(numericValues[0]);
-  const height = Number(numericValues[1]);
-  if (!Number.isFinite(width) || !Number.isFinite(height) || height <= 0) {
-    return null;
-  }
-
-  return { width, height };
-};
-
-const inferSizeUnit = (value: string) => {
-  if (/cm|centimeter|centimetre/i.test(value)) return "cm";
-  return "in";
-};
 
 const formatDimensionValue = (value: number) => {
   if (!Number.isFinite(value) || value <= 0) return "";
@@ -790,6 +776,8 @@ const SingleProduct = ({
     setIsFollowingArtist(!isCurrentlyFollowed);
   };
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showRoomPreview, setShowRoomPreview] = useState(false);
+  const isMobileDevice = useIsMobileDevice();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedFrame, setSelectedFrame] = useState<FrameOption>(FRAME_OPTIONS[0]);
@@ -937,6 +925,24 @@ const SingleProduct = ({
     selectedSize && sizeOptions.includes(selectedSize)
       ? selectedSize
       : (sizeOptions[0] ?? "");
+
+  // "View in Your Room" — real dimensions for the room-preview overlay,
+  // converted to inches if the selected size is in cm. selectedSizeValue
+  // already falls back to the first available size when nothing is picked
+  // yet, so there's no separate "no size selected" case to handle here.
+  const CM_TO_INCHES = 1 / 2.54;
+  const parsedDimensionsForPreview = parseSizeDimensions(selectedSizeValue);
+  const sizeUnitForPreview = inferSizeUnit(selectedSizeValue);
+  const previewWidthInches = parsedDimensionsForPreview
+    ? sizeUnitForPreview === "cm"
+      ? parsedDimensionsForPreview.width * CM_TO_INCHES
+      : parsedDimensionsForPreview.width
+    : 0;
+  const previewHeightInches = parsedDimensionsForPreview
+    ? sizeUnitForPreview === "cm"
+      ? parsedDimensionsForPreview.height * CM_TO_INCHES
+      : parsedDimensionsForPreview.height
+    : 0;
 
   const currentVariation = useMemo(() => {
     if (!product?.variations || product.variations.length === 0) return null;
@@ -2053,6 +2059,28 @@ const SingleProduct = ({
                   ))}
                 </div>
               </div>
+              )}
+
+              {isMobileDevice && parsedDimensionsForPreview && (
+              <div className="mt-6 md:mt-[30px]">
+                <button
+                  type="button"
+                  onClick={() => setShowRoomPreview(true)}
+                  className="inline-flex items-center gap-2 rounded-[8px] border border-[#d5d5d5] bg-white px-4 py-2 font-inter text-[14px] font-medium text-[#595959] transition-colors hover:bg-[#f5f0e8]"
+                >
+                  View in Your Room
+                </button>
+              </div>
+              )}
+
+              {showRoomPreview && parsedDimensionsForPreview && (
+                <ViewInYourRoomModal
+                  imageUrl={product.images[activeImageIndex]?.src ?? product.images[0]?.src}
+                  productName={product.name}
+                  widthInches={previewWidthInches}
+                  heightInches={previewHeightInches}
+                  onClose={() => setShowRoomPreview(false)}
+                />
               )}
 
               {!isPhotography && (

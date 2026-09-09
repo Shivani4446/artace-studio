@@ -29,6 +29,15 @@ type CheckoutFormState = {
 
 type CheckoutStage = "idle" | "creating" | "paying" | "verifying";
 
+type CheckoutLineItem = {
+  productId: number;
+  variationId?: number;
+  quantity: number;
+  frameLabel?: string;
+  unitPrice?: number;
+  orderTypeLabel?: string;
+};
+
 type RazorpayCheckoutPayload = {
   success?: boolean;
   error?: string;
@@ -50,6 +59,19 @@ type RazorpayCheckoutPayload = {
       contact?: string;
     };
     notes?: Record<string, string>;
+  };
+  payu?: {
+    actionUrl: string;
+    key: string;
+    txnid: string;
+    amount: string;
+    productinfo: string;
+    firstname: string;
+    email: string;
+    phone: string;
+    surl: string;
+    furl: string;
+    hash: string;
   };
 };
 
@@ -151,6 +173,7 @@ export default function CheckoutPageClient() {
   const [checkoutStage, setCheckoutStage] = useState<CheckoutStage>("idle");
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [isRazorpayReady, setIsRazorpayReady] = useState(false);
+  const [isPayuRedirecting, setIsPayuRedirecting] = useState(false);
   const [couponInput, setCouponInput] = useState("");
   const [couponError, setCouponError] = useState("");
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
@@ -203,6 +226,18 @@ export default function CheckoutPageClient() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payuError")) {
+      setCheckoutError("Your PayU payment could not be completed. Please try again.");
+      // Clean the param out of the URL so a page refresh doesn't re-show it.
+      params.delete("payuError");
+      const nextUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+      window.history.replaceState({}, "", nextUrl);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     if (window.Razorpay) {
       setIsRazorpayReady(true);
       return;
@@ -233,6 +268,37 @@ export default function CheckoutPageClient() {
       setForm((current) => ({ ...current, [field]: event.target.value }));
     };
 
+  const buildCheckoutLineItems = (): CheckoutLineItem[] =>
+    items
+      .map((item) => {
+        const productId = getCheckoutProductId(item.id, item.woocommerceProductId);
+        if (!productId) return null;
+
+        const checkoutLineItem: CheckoutLineItem = {
+          productId,
+          quantity: item.quantity,
+        };
+
+        if (typeof item.woocommerceVariationId === "number") {
+          checkoutLineItem.variationId = item.woocommerceVariationId;
+        }
+
+        if (typeof item.frameLabel === "string" && item.frameLabel) {
+          checkoutLineItem.frameLabel = item.frameLabel;
+        }
+
+        if (typeof item.price === "number" && Number.isFinite(item.price) && item.price > 0) {
+          checkoutLineItem.unitPrice = item.price;
+        }
+
+        if (typeof item.orderTypeLabel === "string" && item.orderTypeLabel) {
+          checkoutLineItem.orderTypeLabel = item.orderTypeLabel;
+        }
+
+        return checkoutLineItem;
+      })
+      .filter((lineItem): lineItem is CheckoutLineItem => lineItem !== null);
+
   const handleCheckout = async () => {
     if (checkoutStage !== "idle") return;
 
@@ -249,53 +315,7 @@ export default function CheckoutPageClient() {
         throw new Error("Razorpay checkout is still loading. Please try again.");
       }
 
-      const lineItems = items
-        .map((item) => {
-          const productId = getCheckoutProductId(item.id, item.woocommerceProductId);
-          if (!productId) return null;
-
-          const checkoutLineItem: {
-            productId: number;
-            variationId?: number;
-            quantity: number;
-            frameLabel?: string;
-            unitPrice?: number;
-            orderTypeLabel?: string;
-          } = {
-            productId,
-            quantity: item.quantity,
-          };
-
-          if (typeof item.woocommerceVariationId === "number") {
-            checkoutLineItem.variationId = item.woocommerceVariationId;
-          }
-
-          if (typeof item.frameLabel === "string" && item.frameLabel) {
-            checkoutLineItem.frameLabel = item.frameLabel;
-          }
-
-          if (typeof item.price === "number" && Number.isFinite(item.price) && item.price > 0) {
-            checkoutLineItem.unitPrice = item.price;
-          }
-
-          if (typeof item.orderTypeLabel === "string" && item.orderTypeLabel) {
-            checkoutLineItem.orderTypeLabel = item.orderTypeLabel;
-          }
-
-          return checkoutLineItem;
-        })
-        .filter(
-          (
-            lineItem
-          ): lineItem is {
-            productId: number;
-            variationId?: number;
-            quantity: number;
-            frameLabel?: string;
-            unitPrice?: number;
-            orderTypeLabel?: string;
-          } => lineItem !== null
-        );
+      const lineItems = buildCheckoutLineItems();
 
       if (lineItems.length === 0) {
         throw new Error("No valid WooCommerce products found in your cart.");
@@ -422,6 +442,91 @@ export default function CheckoutPageClient() {
     }
   };
 
+  const handlePayuCheckout = async () => {
+    if (checkoutStage !== "idle") return;
+
+    setCheckoutError(null);
+    setCheckoutStage("creating");
+
+    try {
+      if (authStatus !== "authenticated") {
+        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
+        return;
+      }
+
+      const lineItems = buildCheckoutLineItems();
+      if (lineItems.length === 0) {
+        throw new Error("No valid WooCommerce products found in your cart.");
+      }
+
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lineItems,
+          billing: {
+            firstName: form.firstName,
+            lastName: form.lastName,
+            email: form.email,
+            phone: form.phone,
+            address1: form.address1,
+            address2: form.address2,
+            city: form.city,
+            state: form.state,
+            postcode: form.postcode,
+            country: form.country,
+          },
+          customerNote: form.customerNote,
+          couponCode: appliedCoupon?.code || undefined,
+          pointsToRedeem: pointsToRedeem > 0 ? pointsToRedeem : undefined,
+          giftCardCode: giftCardAmount > 0 ? giftCardCode : undefined,
+          paymentGateway: "payu",
+        }),
+      });
+
+      const payload = (await response.json()) as RazorpayCheckoutPayload;
+
+      if (response.status === 401) {
+        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
+        return;
+      }
+
+      if (!response.ok || !payload.success || !payload.payu) {
+        throw new Error(payload.error || "Unable to start your PayU payment.");
+      }
+
+      setIsPayuRedirecting(true);
+
+      const payuForm = document.createElement("form");
+      payuForm.method = "POST";
+      payuForm.action = payload.payu.actionUrl;
+      const fields: Record<string, string> = {
+        key: payload.payu.key,
+        txnid: payload.payu.txnid,
+        amount: payload.payu.amount,
+        productinfo: payload.payu.productinfo,
+        firstname: payload.payu.firstname,
+        email: payload.payu.email,
+        phone: payload.payu.phone,
+        surl: payload.payu.surl,
+        furl: payload.payu.furl,
+        hash: payload.payu.hash,
+      };
+      for (const [name, value] of Object.entries(fields)) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        payuForm.appendChild(input);
+      }
+      document.body.appendChild(payuForm);
+      payuForm.submit();
+    } catch (err) {
+      setCheckoutStage("idle");
+      setCheckoutError(err instanceof Error ? err.message : "Unable to start your PayU payment.");
+    }
+  };
+
   const handleApplyCoupon = async () => {
     if (isApplyingCoupon) return;
     const code = couponInput.trim();
@@ -509,7 +614,7 @@ export default function CheckoutPageClient() {
                 Delivery details
               </h2>
               <p className="mt-2 text-sm leading-6 text-[#666]">
-                Enter your delivery details. Payment is processed securely via Razorpay.
+                Enter your delivery details. Payment is processed securely via Razorpay or PayU.
               </p>
             </div>
           </div>
@@ -699,20 +804,37 @@ export default function CheckoutPageClient() {
             }}
           />
 
-          <button
-            type="button"
-            onClick={handleCheckout}
-            disabled={
-              authStatus !== "authenticated" ||
-              checkoutStage !== "idle" ||
-              !hasCheckoutReadyItems ||
-              !isRazorpayReady
-            }
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#1f1f1f] px-5 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <Lock className="h-4 w-4" />
-            {getPayButtonLabel(checkoutStage, isRazorpayReady)}
-          </button>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={handleCheckout}
+              disabled={
+                authStatus !== "authenticated" ||
+                checkoutStage !== "idle" ||
+                !hasCheckoutReadyItems ||
+                !isRazorpayReady ||
+                isPayuRedirecting
+              }
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-[12px] bg-[#1f1f1f] px-5 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Lock className="h-4 w-4" />
+              {getPayButtonLabel(checkoutStage, isRazorpayReady)}
+            </button>
+            <button
+              type="button"
+              onClick={handlePayuCheckout}
+              disabled={
+                authStatus !== "authenticated" ||
+                checkoutStage !== "idle" ||
+                !hasCheckoutReadyItems ||
+                isPayuRedirecting
+              }
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-[#1f1f1f] px-5 py-3 text-sm font-semibold uppercase tracking-[0.06em] text-[#1f1f1f] transition-colors hover:bg-[#f5f0e8] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Lock className="h-4 w-4" />
+              {isPayuRedirecting ? "Redirecting to PayU..." : "Pay with PayU"}
+            </button>
+          </div>
 
           <CheckoutTrustPoints />
           <CheckoutNeedMoreHelp />

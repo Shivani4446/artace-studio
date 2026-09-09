@@ -61,8 +61,16 @@ without re-deriving it. Last updated: September 2026 (Rakhi → Ganesh Chaturthi
 | `/samora/shop` | `SamoraShopCatalog`: dynamic category pills, dynamic attribute facets (e.g. Material/Color — appear automatically once products carry real WooCommerce *attributes*, not just meta fields), search, price range, sort (Newest/Price asc-desc/Name) — all client-side over the fetched product list |
 | `/samora/shop/[slug]` | `SamoraSingleProduct`: gallery, quantity stepper, variation selector, **PIN code delivery checker**, **"Make it a gift" option**, specs table (pulled from real WooCommerce meta fields), reviews (list + submission form, real WooCommerce reviews API), related products ("More from Samora") |
 | `/samora/cart` | Mirrors Artace's cart logic (`useCart()`), Samora-themed; shows gift-wrap fee line when applicable |
-| `/samora/checkout` | Mirrors Artace's checkout logic exactly (same `/api/checkout*` routes), Samora-themed; live shipping quote as the PIN code is typed; coupon field; order summary shows Subtotal / Discount / Gift Wrapping / Shipping / Total |
+| `/samora/checkout` | Mirrors Artace's checkout logic exactly (same `/api/checkout*` routes), Samora-themed; live shipping quote as the PIN code is typed; coupon field; **Artace Rewards** (`ApplyPointsBox`) + **Gift Card redemption** (`RedeemGiftCardBox`, both shared with Artace, unstyled); auto-applies `?coupon=` from the URL (used by the hamper builder) |
 | `/samora/checkout/success` | Mirrors Artace's success/polling page |
+| `/samora/wishlist` | Shared `WishlistProvider`, filtered to Samora items (`href` starting `/samora/shop/`) |
+| `/samora/our-story` | Sampadaa Mahalley's story — see §3-era notes; standalone page, linked from nav/footer/homepage |
+| `/samora/corporate-gifting` | B2B gifting landing page — lead form posts to the shared `/api/corporate-leads` with a `"Samora — "`-prefixed interest value |
+| `/samora/hampers` | **Build Your Own Hamper** — pick 3+ distinct Samora products, `hamper20` coupon (real WooCommerce coupon id `4416`, flat 20% off) auto-applies once unlocked; adds items to cart then routes to `/samora/checkout?coupon=hamper20`. Minimum-item-count is enforced in *application code* (both the live coupon-preview endpoint and order-creation, defense in depth) since WooCommerce has no native "N distinct products" coupon rule — see `HAMPER_MIN_DISTINCT_ITEMS` in `lib/samora/pricing.ts`. |
+| `/samora/care-guide` | Long-form content page (Care & Materials), real SEO metadata, indexed |
+| `/samora/shipping-returns` | Policy page — return-window/refund-timeline numbers **match Artace Studio's own published `/return-policy` exactly** (7-day window, 5-7 business day refund) rather than inventing different ones for Samora; personalized name plates called out as non-returnable |
+| `/samora/journal`, `/samora/journal/[slug]` | Real WordPress-backed blog plumbing, filtered to a `samora` category via the public `category_name=samora` query var (same WP instance as Artace's `/blogs`, separate category) — built ahead of real content existing, per the user's explicit choice. Currently shows an empty state; will pick up real posts automatically once one is published under a "Samora" category in WP admin (WordPress auto-creates the category the first time it's assigned — nothing needed to pre-create it). `[slug]` pages verify the post actually carries the `samora` category before rendering (`notFound()` otherwise) — same cross-storefront-leak protection already established for products in the sitemap. **Known issue, unrelated to this feature**: `WORDPRESS_APP_USERNAME`/`WORDPRESS_APP_PASSWORD` in `.env.local` returned `401 incorrect_password` when tested — stale/invalid application password. Not a blocker for this feature (public reads need no auth), but would block any *authenticated* WP write (e.g. programmatically pre-creating the category) until regenerated in WP admin. |
+| `/samora/track-order` | Utility page pointing to the shared `/dashboard/orders` — **not** live courier tracking (no waybill data exists yet; Delhivery shipment/waybill auto-booking is still paused, see §7) — `noindex`, excluded from the sitemap like `/samora/wishlist`/`/samora/cart`/`/samora/checkout` |
 
 Homepage's Festive Special section (`components/samora/SamoraFestiveSpecial.tsx`) currently shows
 the **4 most recent Samora-tagged products** with no category restriction (`tag=samora` only, in
@@ -102,6 +110,34 @@ checkout is completely unaffected.
     where new Samora-only coupon codes get registered.
 - **Real Delhivery shipping rate** at checkout, added as a real `shipping_lines` entry (method_id
   `delhivery`). See §6.
+- **Artace Rewards (loyalty) — formally extended to Samora.** Points-crediting
+  (`checkout/verify/route.ts`) was never actually `storeName`-gated (only Custom Portraits orders
+  were excluded), so Samora orders were already silently earning points despite the loyalty
+  program's own docs originally saying Samora was excluded. Rather than closing that gap, the user
+  chose to make it official and complete the other half: `ApplyPointsBox` (from
+  `components/checkout/`, the same component the main Artace checkout uses, unchanged/unstyled for
+  Samora) now appears in `app/samora/checkout/checkout-client.tsx`, and `pointsToRedeem` is sent in
+  the checkout payload exactly like the main checkout does. No backend change was needed — see
+  `docs/superpowers/plans/2026-09-08-loyalty-program.md` and its design spec for the full note.
+- **Gift Cards — redemption wired in, purchase not (yet) Samora-native.** Same story: gift-card
+  redemption in `checkout/verify/route.ts` keys purely on `GIFT_CARD_PRODUCT_ID` appearing in an
+  order's line items, not on `storeName`, so it was already store-agnostic. `RedeemGiftCardBox`
+  (same shared component, same `/api/gift-cards/balance` endpoint) was added next to
+  `ApplyPointsBox` in Samora's checkout. A card bought via Artace's `/gift-cards` can be redeemed
+  on a Samora order and vice versa. Samora doesn't have its own gift-card purchase page — the
+  footer's new "Gift Cards" link just points at the existing shared `/gift-cards` page, the same
+  "shared, unstyled" treatment already used for `/dashboard` and `/login`.
+- **Affiliate commissions — already included, confirmed by the user as intentional.** A third
+  instance of the same pattern: `AffiliateClickTracker` is mounted in the app's real root
+  `layout.tsx` (wraps Samora too), and `recordAffiliateConversion()` in `checkout/route.ts` (fires
+  right after Razorpay-order creation, inserting into `affiliate_conversions`) has never been
+  `storeName`-gated — the affiliate program's own plan doc never mentions Samora at all, unlike the
+  loyalty program's explicit (and incorrect) exclusion claim. So Samora sales through a referral
+  link were already earning affiliate commission before this was ever discussed; the user's answer
+  just makes that official rather than changing any code. **Known gap, not built**: the
+  `affiliate_conversions` table has no `store`/`source` column, so an affiliate's dashboard can't
+  currently distinguish an Artace sale from a Samora one at a glance (only by looking up the stored
+  `wc_order_id`). Worth adding if that visibility is ever actually needed.
 
 ## 6. Delhivery integration
 
@@ -248,15 +284,24 @@ app/samora/checkout/success/        — success/polling page
 components/samora/                  — all Samora-specific UI components (Navbar, Footer,
                                        ProductCard, ShopCatalog, SingleProduct, PincodeChecker,
                                        GiftOption, GiftModal, FestiveSpecial, Reviews,
-                                       ProductSpecs, FestiveIcons, etc. — no PromoBanner; deleted,
-                                       see §3)
+                                       ProductSpecs, FestiveIcons, WishlistClient,
+                                       CorporateGifting, CorporateLeadForm, OurStory, etc. — no
+                                       PromoBanner; deleted, see §3)
+components/checkout/ApplyPointsBox.tsx / RedeemGiftCardBox.tsx
+                                     — shared with Artace's own checkout, reused as-is (unstyled
+                                       for Samora, same neutral box) in Samora's checkout-client —
+                                       see §5
 components/chrome/SiteChrome.tsx    — Artace-vs-Samora chrome switch by path
 
 lib/api-route-handlers/checkout/route.ts          — order creation; gift fee, shipping, coupon
                                                      enforcement, all gated on storeName==="Samora"
+                                                     (pointsToRedeem/giftCardCode handling is NOT
+                                                     storeName-gated — see §5)
 lib/api-route-handlers/checkout/pincode/route.ts  — India Post + Delhivery combined lookup
 lib/api-route-handlers/checkout/coupon/route.ts   — coupon validation, store="samora" param
-lib/api-route-handlers/checkout/verify/route.ts   — client-driven payment confirmation
+lib/api-route-handlers/checkout/verify/route.ts   — client-driven payment confirmation; also where
+                                                     Rewards crediting + gift-card creation happen
+                                                     (neither storeName-gated — see §5)
 lib/api-route-handlers/razorpay/webhook/route.ts  — server-to-server payment confirmation
 lib/api-route-handlers/store/products/route.ts    — the "second" product list (had the leak bug)
 lib/api-route-handlers/homepage/highlights/route.ts

@@ -24,7 +24,19 @@ export const isEligibleForFreeShipping = (subtotalInr: number): boolean =>
 // WooCommerce product/category restriction) so a mixed Artace+Samora cart
 // can't get the Samora discount on the Artace items, and the code can't be
 // used from Artace's own checkout at all.
-export const SAMORA_EXCLUSIVE_COUPON_CODES = new Set(["rakhi10"]);
+export const SAMORA_EXCLUSIVE_COUPON_CODES = new Set(["rakhi10", "hamper20"]);
 
 export const isSamoraExclusiveCoupon = (code: string): boolean =>
   SAMORA_EXCLUSIVE_COUPON_CODES.has(code.trim().toLowerCase());
+
+// "Build Your Own Hamper" — real WooCommerce coupon (id 4416, flat 20% off,
+// no usage limit/expiry — a standing bundling incentive, not a festival
+// promo). Gated on distinct-item count in application code (WooCommerce has
+// no native "N distinct products" coupon rule) so it rewards actually
+// building a hamper rather than discounting any single item.
+export const HAMPER_COUPON_CODE = "hamper20";
+export const HAMPER_DISCOUNT_PERCENT = 20;
+export const HAMPER_MIN_DISTINCT_ITEMS = 3;
+
+export const isHamperCoupon = (code: string): boolean =>
+  code.trim().toLowerCase() === HAMPER_COUPON_CODE;

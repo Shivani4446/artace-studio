@@ -8,6 +8,8 @@
 
 **Tech Stack:** Next.js Edge Middleware, Next.js Route Handlers (Edge runtime), Supabase (REST insert), WooCommerce Admin API (order meta).
 
+**Update (Samora infra-reuse pass, Sept 2026):** this plan never scoped Samora out — `AffiliateClickTracker` sits in the app's real root `layout.tsx`, which wraps Samora too, and `recordAffiliateConversion()` in `checkout/route.ts` has no `storeName` check. So Samora orders placed through a referral link have been earning affiliate commission since this shipped, without it ever being a deliberate decision either way. Confirmed with the user and kept as-is (no code change) rather than treated as a bug. One real gap surfaced while checking this: `affiliate_conversions` has no column identifying which storefront a conversion came from — only `wc_order_id`, which you'd have to look up manually to tell an Artace sale from a Samora one. Not built (wasn't asked for), but flagged here for whoever eventually wants that visibility on the affiliate dashboard.
+
 ## Global Constraints
 
 - No `git commit`/`git push` — the user reviews and commits/pushes everything themselves.

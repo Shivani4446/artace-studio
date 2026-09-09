@@ -105,6 +105,26 @@ async function fetchAllBlogPosts(): Promise<WpPostSummary[]> {
   return posts;
 }
 
+// Samora's own journal is a separate category on the same WordPress instance
+// (see app/samora/journal/[slug]/page.tsx) — fetched separately by
+// category_name rather than filtered out of fetchAllBlogPosts above, since a
+// Samora-categorized post 404s at /blogs/[slug] the same way a Samora
+// product 404s at /shop/[slug].
+async function fetchSamoraJournalPosts(): Promise<WpPostSummary[]> {
+  const apiBaseUrl = getApiBaseUrl();
+  try {
+    const response = await fetchWithRetry(
+      `${apiBaseUrl}/wp-json/wp/v2/posts?category_name=samora&per_page=100&_fields=slug,modified&status=publish`,
+      { next: { revalidate } }
+    );
+    if (!response.ok) return [];
+    const payload = (await response.json()) as WpPostSummary[];
+    return Array.isArray(payload) ? payload : [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteOrigin();
   const now = new Date();
@@ -140,6 +160,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/affiliates`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/rewards`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/gift-cards`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/samora`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${baseUrl}/samora/shop`, lastModified: now, changeFrequency: "daily", priority: 0.8 },
+    { url: `${baseUrl}/samora/our-story`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/samora/our-process`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/samora/corporate-gifting`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/samora/hampers`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${baseUrl}/samora/care-guide`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/samora/shipping-returns`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${baseUrl}/samora/journal`, lastModified: now, changeFrequency: "weekly", priority: 0.5 },
+    // /samora/track-order and /samora/wishlist are account-adjacent utility
+    // pages, not content — deliberately excluded, matching /dashboard, /cart,
+    // /checkout, /wishlist for the main site.
   ];
 
   const roomPages: MetadataRoute.Sitemap = ROOM_SLUGS.map((slug) => ({
@@ -156,15 +188,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const [products, blogPosts] = await Promise.all([
+  const [products, blogPosts, samoraJournalPosts] = await Promise.all([
     fetchAllProducts(),
     fetchAllBlogPosts(),
+    fetchSamoraJournalPosts(),
   ]);
 
   // Samora-tagged products belong to a separate storefront (/samora/shop/[slug])
   // and 404 at /shop/[slug] and on /collections/[slug] — see the comment on
-  // fetchAllProducts above.
+  // fetchAllProducts above. They get their own sitemap entries below instead.
   const nonSamoraProducts = products.filter((product) => !hasSamoraTag(product.tags ?? []));
+  const samoraProducts = products.filter((product) => hasSamoraTag(product.tags ?? []));
 
   const categorySlugs = new Set<string>();
   for (const product of nonSamoraProducts) {
@@ -191,6 +225,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Samora has no /collections/[slug] equivalent (see the schema-wiring
+  // comment in app/samora/shop/[slug]/page.tsx), so no category pages here —
+  // just the products themselves.
+  const samoraProductPages: MetadataRoute.Sitemap = samoraProducts
+    .filter((product) => Boolean(product.slug))
+    .map((product) => ({
+      url: `${baseUrl}/samora/shop/${product.slug}`,
+      lastModified: product.date_created ? new Date(product.date_created) : now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+
   const blogPages: MetadataRoute.Sitemap = blogPosts
     .filter((post) => Boolean(post.slug))
     .map((post) => ({
@@ -200,12 +246,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
+  const samoraJournalPages: MetadataRoute.Sitemap = samoraJournalPosts
+    .filter((post) => Boolean(post.slug))
+    .map((post) => ({
+      url: `${baseUrl}/samora/journal/${post.slug}`,
+      lastModified: post.modified ? new Date(post.modified) : now,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    }));
+
   return [
     ...staticPages,
     ...roomPages,
     ...artistPages,
     ...productPages,
     ...categoryPages,
+    ...samoraProductPages,
+    ...samoraJournalPages,
     ...blogPages,
   ];
 }

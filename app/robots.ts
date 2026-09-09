@@ -12,6 +12,10 @@ const DISALLOWED_PATHS: string[] = [
   "/forgot-password",
   "/reset-password",
   "/wishlist",
+  "/samora/wishlist",
+  "/samora/cart",
+  "/samora/checkout",
+  "/samora/track-order",
 ];
 const EXPLICIT_ALLOWED_BOTS = [
   "Googlebot",

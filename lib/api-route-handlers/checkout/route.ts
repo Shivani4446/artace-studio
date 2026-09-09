@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthSessionFromRequest } from "@/utils/auth";
 import { createRazorpayOrder, getRazorpayPublicConfig } from "@/utils/razorpay";
+import { PAYU_PAYMENT_URL, generatePayuRequestHash } from "@/utils/payu";
 import {
   createWooCommerceOrder,
   ensurePositiveInt,
@@ -13,7 +14,9 @@ import {
 import { calculateDelhiveryShippingRate } from "@/lib/delhivery";
 import {
   calculateGiftFee,
+  HAMPER_MIN_DISTINCT_ITEMS,
   isEligibleForFreeShipping,
+  isHamperCoupon,
   isSamoraExclusiveCoupon,
   SAMORA_SHIPPING_FALLBACK_INR,
 } from "@/lib/samora/pricing";
@@ -23,6 +26,7 @@ import { getPointsBalance } from "@/lib/rewards/ledger";
 import { MIN_REDEMPTION_POINTS, POINT_VALUE_INR } from "@/lib/rewards/constants";
 import { calculateOrderSubtotal } from "@/lib/checkout/subtotal";
 import { getGiftCardBalance } from "@/lib/gift-cards/ledger";
+import { buildSiteUrl } from "@/lib/site";
 
 export const runtime = "edge";
 
@@ -141,6 +145,9 @@ type CheckoutRequestBody = {
   pointsToRedeem?: number;
   // A gift card code the customer chose to redeem on this order.
   giftCardCode?: string;
+  // Which payment gateway to use — defaults to Razorpay so today's checkout
+  // client (which never sends this field) keeps working unmodified.
+  paymentGateway?: "razorpay" | "payu";
 };
 
 const normalizeCountry = (value: string) => {
@@ -243,6 +250,7 @@ export async function POST(request: NextRequest) {
   }
 
   const couponCode = sanitizeText(body.couponCode).toLowerCase();
+  const paymentGateway = body.paymentGateway === "payu" ? "payu" : "razorpay";
 
   const ALLOWED_STORE_NAMES = new Set(["Artace Studio", "Samora"]);
   const requestedStoreName = sanitizeText(body.storeName);
@@ -374,6 +382,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Hamper builder discount: authoritative re-check (the coupon-preview
+    // endpoint already checks this client-side, but never trust that alone —
+    // this is what actually gates the real WooCommerce discount).
+    if (couponCode && isHamperCoupon(couponCode)) {
+      const distinctProductCount = new Set(normalizedLineItems.map((item) => item.product_id)).size;
+      if (distinctProductCount < HAMPER_MIN_DISTINCT_ITEMS) {
+        return NextResponse.json(
+          {
+            error: `Add at least ${HAMPER_MIN_DISTINCT_ITEMS} different Samora items to unlock this hamper discount.`,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     const giftFee = calculateGiftFee(totalQuantity, body.isGift === true);
     if (giftFee > 0) {
       feeLines.push({ name: "Gift Wrapping", total: giftFee.toFixed(2) });
@@ -445,6 +468,70 @@ export async function POST(request: NextRequest) {
       throw new Error("WooCommerce returned an invalid order total for payment.");
     }
 
+    const referralCode = request.cookies.get(AFFILIATE_REF_COOKIE_NAME)?.value || "";
+    const referringAffiliate = referralCode
+      ? await findApprovedAffiliateByCode(referralCode)
+      : null;
+
+    if (referringAffiliate) {
+      const orderTotalNumber = Number(wooOrder.total);
+      if (Number.isFinite(orderTotalNumber)) {
+        await recordAffiliateConversion(referringAffiliate, wooOrder.orderId, orderTotalNumber);
+      }
+    }
+
+    const commonMetaUpdates = {
+      _artace_checkout_origin: request.nextUrl.origin,
+      ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
+      ...(pointsToRedeem > 0 ? { _artace_points_to_redeem: String(pointsToRedeem) } : {}),
+      ...(giftCardApplied > 0
+        ? { _artace_gift_card_code: giftCardCodeNormalized, _artace_gift_card_amount: String(giftCardApplied) }
+        : {}),
+    };
+
+    if (paymentGateway === "payu") {
+      const txnid = `woo_${wooOrder.orderId}`;
+      const productinfo = `Order #${wooOrder.orderNumber}`;
+
+      const { hash, merchantKey } = await generatePayuRequestHash({
+        txnid,
+        amount: wooOrder.total,
+        productinfo,
+        firstname: billing.firstName,
+        email: billing.email,
+      });
+
+      const updatedWooOrder = await updateWooCommerceOrder(wooOrder.orderId, {
+        meta_data: mergeWooMetaData(wooOrder.metaData, {
+          ...commonMetaUpdates,
+          _artace_payu_txnid: txnid,
+        }),
+      });
+
+      return NextResponse.json({
+        success: true,
+        orderId: updatedWooOrder.orderId,
+        orderKey: updatedWooOrder.orderKey,
+        orderNumber: updatedWooOrder.orderNumber,
+        status: updatedWooOrder.status,
+        total: updatedWooOrder.total,
+        currency: updatedWooOrder.currency,
+        payu: {
+          actionUrl: PAYU_PAYMENT_URL,
+          key: merchantKey,
+          txnid,
+          amount: updatedWooOrder.total,
+          productinfo,
+          firstname: billing.firstName,
+          email: billing.email,
+          phone: billing.phone,
+          surl: buildSiteUrl("/api/checkout/payu-callback"),
+          furl: buildSiteUrl("/api/checkout/payu-callback"),
+          hash,
+        },
+      });
+    }
+
     const razorpayOrder = await createRazorpayOrder({
       amount,
       currency: wooOrder.currency || "INR",
@@ -456,29 +543,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    const referralCode = request.cookies.get(AFFILIATE_REF_COOKIE_NAME)?.value || "";
-    const referringAffiliate = referralCode
-      ? await findApprovedAffiliateByCode(referralCode)
-      : null;
-
     const updatedWooOrder = await updateWooCommerceOrder(wooOrder.orderId, {
       meta_data: mergeWooMetaData(wooOrder.metaData, {
+        ...commonMetaUpdates,
         _artace_razorpay_order_id: razorpayOrder.id,
-        _artace_checkout_origin: request.nextUrl.origin,
-        ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
-        ...(pointsToRedeem > 0 ? { _artace_points_to_redeem: String(pointsToRedeem) } : {}),
-        ...(giftCardApplied > 0
-          ? { _artace_gift_card_code: giftCardCodeNormalized, _artace_gift_card_amount: String(giftCardApplied) }
-          : {}),
       }),
     });
-
-    if (referringAffiliate) {
-      const orderTotalNumber = Number(wooOrder.total);
-      if (Number.isFinite(orderTotalNumber)) {
-        await recordAffiliateConversion(referringAffiliate, wooOrder.orderId, orderTotalNumber);
-      }
-    }
 
     const { keyId } = getRazorpayPublicConfig();
 
