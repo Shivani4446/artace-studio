@@ -139,7 +139,7 @@ const PromotionModal = () => {
             outer wrapper's padding) with internal scroll, so on short mobile
             viewports the popup never overflows above/below the screen with
             no way to reach the close button or the CTA. */}
-        <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:flex sm:max-h-[calc(100dvh-3rem)]">
+        <div className="max-h-[calc(100dvh-2rem)] sm:flex sm:max-h-[calc(100dvh-3rem)]">
           {/* Image Side */}
           <div className="relative h-20 w-full shrink-0 sm:h-auto sm:w-[45%]">
             <Image
