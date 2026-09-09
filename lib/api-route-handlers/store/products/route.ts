@@ -310,7 +310,10 @@ const getApiBaseUrl = () => {
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
     process.env.WOOCOMMERCE_REST_URL ||
     DEFAULT_WOOCOMMERCE_SITE_URL;
-  return apiBaseUrl.replace(/\/+$/, "");
+  const normalized = apiBaseUrl.replace(/\/+$/, "");
+  console.log(`[store/products] Using API base URL: ${normalized}`);
+  console.log(`[store/products] Env check - NEXT_PUBLIC_WOOCOMMERCE_SITE_URL: ${process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ? "set" : "missing"}, WOOCOMMERCE_REST_URL: ${process.env.WOOCOMMERCE_REST_URL ? "set" : "missing"}`);
+  return normalized;
 };
 
 const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
@@ -326,6 +329,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
       order: "desc",
     });
 
+    console.log(`[store/products] Fetching page ${page} from ${normalizedBaseUrl}/wp-json/wc/store/v1/products`);
     const response = await fetchWithRetry(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
@@ -334,7 +338,9 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch WooCommerce products (${response.status}).`);
+      const errorText = await response.text().catch(() => "no body");
+      console.error(`[store/products] WooCommerce API error: ${response.status} - ${errorText}`);
+      throw new Error(`Failed to fetch WooCommerce products (${response.status}): ${errorText}`);
     }
 
     const headerTotalPages = Number(response.headers.get("x-wp-totalpages") || "");
@@ -373,9 +379,17 @@ export async function GET() {
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Unable to load products.";
+    
+    // Detailed error logging for debugging
+    console.error("[store/products] Error:", {
+      message,
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : typeof error,
+      cause: error instanceof Error ? error.cause : undefined,
+    });
 
     return NextResponse.json(
-      { products: [], error: message },
+      { products: [], error: message, debug: error instanceof Error ? error.message : String(error) },
       {
         status: 500,
         headers: {
