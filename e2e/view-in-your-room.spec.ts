@@ -14,9 +14,11 @@ test.describe("View in Your Room", () => {
     void _defaultBrowserType;
     test.use({ ...iPhone13WithoutBrowserType });
 
-    test("the button appears and opens the modal", async ({ page }) => {
+    test("the button opens a user-initiated camera prompt", async ({ page }) => {
       await page.goto("/shop/lotus-madhubani-painting-traditional-indian-folk-art-artace-studio");
       await expect(page.getByRole("button", { name: "View in Your Room" })).toBeVisible();
+      await page.getByRole("button", { name: "View in Your Room" }).click();
+      await expect(page.getByRole("button", { name: "Start camera" })).toBeVisible();
     });
 
     test("shows the camera-denied message when permission is refused", async ({ page }) => {
@@ -32,8 +34,9 @@ test.describe("View in Your Room", () => {
 
       await page.goto("/shop/lotus-madhubani-painting-traditional-indian-folk-art-artace-studio");
       await page.getByRole("button", { name: "View in Your Room" }).click();
+      await page.getByRole("button", { name: "Start camera" }).click();
 
-      await expect(page.getByText("Camera access is needed for this feature.")).toBeVisible();
+      await expect(page.getByText("Camera could not start")).toBeVisible();
     });
 
     test("shows the insecure-context message when navigator.mediaDevices doesn't exist", async ({ page }) => {

@@ -134,12 +134,31 @@ const normalizeProducts = (products: WooStoreProduct[]): SamoraProduct[] => {
   });
 };
 
+const getSamoraTagId = async (normalizedBaseUrl: string): Promise<string | null> => {
+  try {
+    const response = await fetchWithRetry(
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products/tags?slug=${SAMORA_TAG_SLUG}`,
+      { next: { revalidate } }
+    );
+    if (!response.ok) return null;
+    const tags = (await response.json()) as Array<{ id: number; slug: string }>;
+    const samoraTag = tags.find((tag) => tag.slug === SAMORA_TAG_SLUG);
+    return samoraTag ? String(samoraTag.id) : null;
+  } catch {
+    return null;
+  }
+};
+
 const getSamoraStoreProducts = async (): Promise<WooStoreProduct[]> => {
   const apiBaseUrl =
     process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ||
     process.env.WOOCOMMERCE_REST_URL ||
     DEFAULT_WOOCOMMERCE_SITE_URL;
   const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+
+  const tagId = await getSamoraTagId(normalizedBaseUrl);
+  if (!tagId) return [];
+
   const products: WooStoreProduct[] = [];
   let totalPages = 1;
 
@@ -147,7 +166,7 @@ const getSamoraStoreProducts = async (): Promise<WooStoreProduct[]> => {
     const queryParams = new URLSearchParams({
       per_page: String(PRODUCTS_PER_PAGE),
       page: String(page),
-      tag: SAMORA_TAG_SLUG,
+      tag: tagId,
       orderby: "date",
       order: "desc",
     });

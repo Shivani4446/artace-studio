@@ -42,7 +42,7 @@ const nextConfig: NextConfig = {
           // anywhere in the codebase (camera, geolocation). Microphone is
           // deliberately left unrestricted — components/chat/ChatInputBar.tsx
           // uses getUserMedia({ audio: true }) for voice input.
-          { key: "Permissions-Policy", value: "camera=(), geolocation=()" },
+          { key: "Permissions-Policy", value: "camera=(self), geolocation=()" },
           // HSTS without includeSubDomains/preload for now — this codebase
           // can't fully verify every subdomain (api.artacestudio.com, any
           // others) is HTTPS-ready, and both of those flags are hard to

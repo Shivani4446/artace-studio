@@ -59,6 +59,21 @@ const getAttributeOptions = (attribute: WooStoreAttribute) => {
   );
 };
 
+const getSamoraTagId = async (normalizedBaseUrl: string): Promise<string | null> => {
+  try {
+    const response = await fetchWithRetry(
+      `${normalizedBaseUrl}/wp-json/wc/store/v1/products/tags?slug=${SAMORA_TAG_SLUG}`,
+      { next: { revalidate } }
+    );
+    if (!response.ok) return null;
+    const tags = (await response.json()) as Array<{ id: number; slug: string }>;
+    const samoraTag = tags.find((tag) => tag.slug === SAMORA_TAG_SLUG);
+    return samoraTag ? String(samoraTag.id) : null;
+  } catch {
+    return null;
+  }
+};
+
 const getFestiveSamoraProducts = async (): Promise<SamoraProduct[]> => {
   try {
     const apiBaseUrl = (
@@ -67,9 +82,12 @@ const getFestiveSamoraProducts = async (): Promise<SamoraProduct[]> => {
       DEFAULT_WOOCOMMERCE_SITE_URL
     ).replace(/\/+$/, "");
 
+    const tagId = await getSamoraTagId(apiBaseUrl);
+    if (!tagId) return [];
+
     const queryParams = new URLSearchParams({
       per_page: String(FESTIVE_PRODUCTS_LIMIT),
-      tag: SAMORA_TAG_SLUG,
+      tag: tagId,
       orderby: "date",
       order: "desc",
     });
