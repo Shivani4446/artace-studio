@@ -9,7 +9,9 @@ import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import { hasSamoraTag } from "@/lib/samora/products";
 export const runtime = 'edge';
-export const revalidate = 60;
+// Product and category data is shared across collection visitors. A five-minute
+// cache avoids repeatedly asking WooCommerce for the same catalog.
+export const revalidate = 300;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -237,12 +239,14 @@ const fetchCategories = async (): Promise<WooStoreCategory[] | null> => {
   return Array.isArray(payload) ? (payload as WooStoreCategory[]) : null;
 };
 
-const fetchAllProducts = async (): Promise<WooStoreProduct[] | null> => {
+const fetchProductsForCategory = async (
+  categoryId: number
+): Promise<WooStoreProduct[] | null> => {
   const products: WooStoreProduct[] = [];
 
   for (let page = 1; page <= MAX_PRODUCT_PAGES; page += 1) {
     const payload = await fetchWooStoreJson<unknown>(
-      `/wp-json/wc/store/v1/products?per_page=${PRODUCTS_PER_PAGE}&page=${page}&orderby=date&order=desc`
+      `/wp-json/wc/store/v1/products?category=${categoryId}&per_page=${PRODUCTS_PER_PAGE}&page=${page}&orderby=date&order=desc`
     );
 
     if (payload === null) {
@@ -278,17 +282,6 @@ const formatPriceStat = (
   } catch {
     return `${currencySymbol}${Math.round(value).toLocaleString("en-IN")}`;
   }
-};
-
-const getFallbackSuggestionImage = (
-  categorySlug: string,
-  products: WooStoreProduct[]
-) => {
-  const matchingProduct = products.find((product) =>
-    product.categories.some((category) => category.slug === categorySlug)
-  );
-
-  return matchingProduct?.images?.[0]?.src || FALLBACK_PRODUCT_IMAGE;
 };
 
 const getCategoryDescription = (categoryName: string, productCount: number) => {
@@ -401,9 +394,29 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
 
-  const [categories, allProducts] = await Promise.all([fetchCategories(), fetchAllProducts()]);
+  const categories = await fetchCategories();
 
-  if (categories === null || allProducts === null) {
+  if (categories === null) {
+    return (
+      <main className="mx-auto max-w-5xl px-6 py-16">
+        <div className="rounded-xl border border-[#1f1f1f]/10 bg-white p-8 text-[#5f5a52]">
+          <p className="font-semibold text-[#222]">Collection Temporarily Unavailable</p>
+          <p className="mt-2 text-sm">
+            We could not reach the live catalog service just now. Please refresh in a moment.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  const matchedCategory = categories.find((category) => category.slug === decodedSlug);
+  if (!matchedCategory) {
+    notFound();
+  }
+
+  const allProducts = await fetchProductsForCategory(matchedCategory.id);
+
+  if (allProducts === null) {
     return (
       <main className="mx-auto max-w-5xl px-6 py-16">
         <div className="rounded-xl border border-[#1f1f1f]/10 bg-white p-8 text-[#5f5a52]">
@@ -420,13 +433,7 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
     product.categories.some((category) => category.slug === decodedSlug)
   );
 
-  const matchedCategory =
-    categories.find((category) => category.slug === decodedSlug) ??
-    matchedProducts
-      .flatMap((product) => product.categories)
-      .find((category) => category.slug === decodedSlug);
-
-  if (!matchedCategory || matchedProducts.length === 0) {
+  if (matchedProducts.length === 0) {
     notFound();
   }
 
@@ -467,7 +474,7 @@ const CollectionPage = async ({ params }: CollectionPageProps) => {
       slug: category.slug,
       name: decodeHtmlEntities(category.name),
       image:
-        category.image?.src || getFallbackSuggestionImage(category.slug, allProducts),
+        category.image?.src || FALLBACK_PRODUCT_IMAGE,
       imageAlt: decodeHtmlEntities(
         category.image?.alt || category.image?.name || category.name
       ),

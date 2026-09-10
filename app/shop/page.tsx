@@ -41,7 +41,9 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60;
+// Keep the large catalog request out of WooCommerce's per-minute rate limit.
+// Product changes are still reflected within five minutes.
+export const revalidate = 300;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";

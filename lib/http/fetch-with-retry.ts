@@ -1,5 +1,6 @@
 const DEFAULT_RETRIES = 2;
-const DEFAULT_RETRY_DELAY_MS = 300;
+const DEFAULT_RETRY_DELAY_MS = 500;
+const MAX_RETRY_DELAY_MS = 5_000;
 
 type FetchWithRetryOptions = {
   retries?: number;
@@ -7,6 +8,17 @@ type FetchWithRetryOptions = {
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getRetryDelay = (response: Response, fallbackDelayMs: number) => {
+  const retryAfter = response.headers.get("retry-after");
+  const retryAfterSeconds = retryAfter ? Number(retryAfter) : Number.NaN;
+
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds >= 0) {
+    return Math.min(retryAfterSeconds * 1_000, MAX_RETRY_DELAY_MS);
+  }
+
+  return fallbackDelayMs;
+};
 
 // Retries only on network-level failures (fetch() itself throwing — connection
 // reset, timeout, DNS failure), which is what a brief upstream WordPress/
@@ -23,11 +35,16 @@ export const fetchWithRetry = async (
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
-      return await fetch(input, init);
+      const response = await fetch(input, init);
+      if (response.status !== 429 || attempt === retries) {
+        return response;
+      }
+
+      await sleep(getRetryDelay(response, retryDelayMs * 2 ** attempt));
     } catch (error) {
       lastError = error;
       if (attempt < retries) {
-        await sleep(retryDelayMs);
+        await sleep(retryDelayMs * 2 ** attempt);
       }
     }
   }

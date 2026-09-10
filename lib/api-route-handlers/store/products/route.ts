@@ -6,6 +6,7 @@ import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { hasSamoraTag } from "@/lib/samora/products";
 
 export const runtime = "edge";
+export const revalidate = 300;
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
 const FALLBACK_PRODUCT_IMAGE = "/images/product-ship.png";
@@ -333,7 +334,7 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     const response = await fetchWithRetry(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
-        cache: "no-store",
+        next: { revalidate },
       }
     );
 
@@ -372,7 +373,7 @@ export async function GET() {
       { products: normalizeProducts(artaceProducts) },
       {
         headers: {
-          "Cache-Control": "no-store",
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
         },
       }
     );
