@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getCollectionHref } from "@/utils/collections";
 
@@ -50,7 +51,7 @@ const getApiBaseUrl = () => {
 const fetchCategories = async (): Promise<WooStoreCategory[]> => {
   try {
     const apiBaseUrl = getApiBaseUrl();
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${apiBaseUrl}/wp-json/wc/store/v1/products/categories?hide_empty=true&per_page=100`,
       { next: { revalidate: 60 } }
     );

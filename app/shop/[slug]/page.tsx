@@ -455,7 +455,7 @@ const fetchProductInformationFromWooApi = async (productId: number) => {
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
-    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
@@ -483,7 +483,7 @@ const fetchProductArtistName = async (productId: number): Promise<string | undef
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
-    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
@@ -514,7 +514,7 @@ const fetchPhotographyDetails = async (
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
-    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
       headers: {
         Authorization: `Basic ${basicToken}`,
       },
@@ -546,7 +546,7 @@ const fetchPrintEligibility = async (productId: number): Promise<boolean> => {
   if (!consumerKey || !consumerSecret) return true;
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
   try {
-    const response = await fetch(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
       headers: { Authorization: `Basic ${basicToken}` },
       next: { revalidate },
     });
@@ -566,7 +566,7 @@ const fetchProductInformationFromWordPressApi = async (productId: number) => {
   const { siteUrl } = getWooServerConfig();
 
   try {
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${siteUrl}/wp-json/wp/v2/product/${productId}?acf_format=standard&_fields=acf,meta`,
       {
         next: { revalidate },
@@ -590,7 +590,7 @@ const fetchProductInformationFromAcfApi = async (productId: number) => {
 
   for (const endpoint of acfEndpointCandidates) {
     try {
-      const response = await fetch(endpoint, { next: { revalidate } });
+      const response = await fetchWithRetry(endpoint, { next: { revalidate } });
       if (!response.ok) continue;
 
       const payload = (await response.json()) as { acf?: Record<string, unknown> };
@@ -653,7 +653,7 @@ const fetchProductVariations = async (productId: number): Promise<VariationData[
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${siteUrl}/wp-json/wc/v3/products/${productId}/variations?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}&per_page=100`,
       {
         headers: {
@@ -699,7 +699,7 @@ const fetchProductFAQ = async (productId: number): Promise<{ question: string; a
   const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
   try {
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${siteUrl}/wp-json/wc/v3/products/${productId}?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
       {
         headers: {
@@ -979,7 +979,7 @@ const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com";
 const getLatestBlogs = async (): Promise<ReadMoreCard[]> => {
   try {
     const siteUrl = DEFAULT_WORDPRESS_SITE_URL;
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `${siteUrl}/wp-json/wp/v2/posts?per_page=3&_embed`,
       { next: { revalidate: 300 } }
     );

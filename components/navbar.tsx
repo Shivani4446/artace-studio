@@ -119,16 +119,34 @@ const collectionLinks = collectionLinkItems.map((item) => ({
   slug: item.categorySlug,
 }));
 
-const shopCategoryLinks = [
+const popularShopLinks = [
+  { name: "Shop All Art", href: "/shop" },
+  { name: "Abstract Paintings", href: "/shop?category=abstract-paintings" },
+  { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
+  { name: "Radha Krishna", href: "/shop?category=radha-krishna-paintings" },
+  { name: "Ganapati Paintings", href: "/shop?category=ganapati-paintings" },
+  { name: "Madhubani Art", href: "/shop?category=madhubani-art" },
+];
+
+const subjectAndStyleShopLinks = [
   { name: "Religious Paintings", href: "/shop?category=religious-paintings" },
   { name: "Landscape & Cityscape", href: "/shop?category=landscapes-cityscapes-paintings" },
   { name: "Vastu Paintings", href: "/shop?category=vastu-paintings" },
   { name: "Table Top Paintings", href: "/shop?category=table-top-paintings" },
-  { name: "Buddha Paintings", href: "/shop?category=buddha-paintings" },
-  { name: "Radha Krishna", href: "/shop?category=radha-krishna-paintings" },
-  { name: "Ganapati Paintings", href: "/shop?category=ganapati-paintings" },
   { name: "Figurative Paintings", href: "/shop?category=figurative-paintings" },
-  { name: "Abstract Paintings", href: "/shop?category=abstract-paintings" },
+  { name: "Animal Paintings", href: "/shop?category=animal" },
+];
+
+const moreShopLinks = [
+  { name: "Shop by Artist", href: "/artists" },
+  ...worldwideLinks,
+];
+
+const shopMenuGroups = [
+  { title: "Popular", links: popularShopLinks },
+  { title: "Subjects & Styles", links: subjectAndStyleShopLinks },
+  { title: "Shop by Room", links: roomLinks },
+  { title: "More Ways to Shop", links: moreShopLinks },
 ];
 
 const shopHighlights = [
@@ -151,10 +169,16 @@ type MobileMenuSubLink = {
   href: string;
 };
 
+type MobileMenuGroup = {
+  title: string;
+  links: MobileMenuSubLink[];
+};
+
 type MobileMenuLink = {
   name: string;
   href: string;
   children?: MobileMenuSubLink[];
+  groups?: MobileMenuGroup[];
 };
 
 type SearchSuggestion = {
@@ -175,13 +199,7 @@ const mobileLinks: MobileMenuLink[] = [
   {
     name: "Shop Art",
     href: "/shop",
-    children: [
-      ...shopCategoryLinks,
-      { name: "Shop All", href: "/shop" },
-      ...roomLinks,
-      { name: "Shop by Artist", href: "/artists" },
-      ...worldwideLinks,
-    ],
+    groups: shopMenuGroups,
   },
   {
     name: "Custom Orders",
@@ -209,6 +227,7 @@ const searchPlaceholderTerms = [
   "Landscapes",
   "Abstract",
   "Buddha Paintings",
+  "Animal Paintings",
   "Modern Art",
   "Portraits",
   "Gifts",
@@ -520,16 +539,16 @@ const Navbar = () => {
 
     if (openDesktopMenu === "shop") {
       return (
-        <div className="grid grid-cols-[minmax(0,1fr)_250px] items-stretch gap-6">
+        <div className="grid max-h-[calc(100vh-120px)] grid-cols-[minmax(0,1fr)_240px] items-start gap-6 overflow-y-auto pr-1">
           <div className="rounded-[18px] border border-black/6 bg-white px-6 py-5">
             <div className="flex items-end justify-between gap-6 border-b border-[#ebe5dc] pb-4">
               <div>
                 <h3 className="font-display text-[28px] leading-[1.08] text-[#2a2a2a]">
-                  Browse by art category.
+                  Shop Art by Category.
                 </h3>
                 <p className="mt-3 max-w-[520px] font-inter text-[14px] leading-[1.7] text-[#626262]">
-                  Use category-led navigation when you already know the kind of painting
-                  you want to buy or commission.
+                  Start with a subject, room, or buying path. This menu is grouped so
+                  new categories can be added without crowding the viewport.
                 </p>
               </div>
               <Link
@@ -542,67 +561,31 @@ const Navbar = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-3 gap-x-6 pt-2">
-              {shopCategoryLinks.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={closeDesktopMenu}
-                  className="group flex items-center justify-between gap-4 border-b border-[#ebe5dc] py-3.5 [&:nth-last-child(-n+3)]:border-b-0"
-                >
-                  <p className="font-inter text-[15px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors group-hover:text-black">
-                    {item.name}
+            <div className="grid gap-5 pt-5 lg:grid-cols-2 xl:grid-cols-4">
+              {shopMenuGroups.map((group) => (
+                <section key={group.title} className="min-w-0">
+                  <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
+                    {group.title}
                   </p>
-                  <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
-                </Link>
+                  <div className="mt-3 grid gap-1">
+                    {group.links.map((item) => (
+                      <Link
+                        key={`${group.title}-${item.name}`}
+                        href={item.href}
+                        onClick={closeDesktopMenu}
+                        className="group flex min-h-10 items-center justify-between gap-3 rounded-[10px] px-3 py-2 font-inter text-[14px] font-medium leading-[1.35] text-[#2c2c2c] transition-colors hover:bg-[#f4efe7] hover:text-black"
+                      >
+                        <span className="min-w-0">{item.name}</span>
+                        <ChevronRight className="h-4 w-4 shrink-0 text-[#8a8a8a] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#2c2c2c]" />
+                      </Link>
+                    ))}
+                  </div>
+                </section>
               ))}
-            </div>
-
-            <div className="mt-2 border-t border-[#ebe5dc] pt-4">
-              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
-                Shop by Room
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4">
-                {roomLinks.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={closeDesktopMenu}
-                    className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-4 border-t border-[#ebe5dc] pt-4">
-              <p className="font-inter text-[11px] font-medium uppercase tracking-[0.16em] text-[#7b746a]">
-                More Ways to Shop
-              </p>
-              <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-4">
-                <Link
-                  href="/artists"
-                  onClick={closeDesktopMenu}
-                  className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
-                >
-                  Shop by Artist
-                </Link>
-                {worldwideLinks.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    onClick={closeDesktopMenu}
-                    className="font-inter text-[14px] font-medium text-[#2c2c2c] transition-colors hover:text-black"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
             </div>
           </div>
 
-          <div className="grid grid-rows-3 gap-3">
+          <div className="grid gap-3">
             {shopHighlights.map((item) => (
               <div key={item.title} className="rounded-[14px] bg-white px-4 py-3">
                 <p className="font-inter text-[13px] font-medium text-[#2c2c2c]">
@@ -1357,7 +1340,8 @@ const Navbar = () => {
                 ) : null}
 
                 {mobileLinks.map((link) => (
-                  link.children && link.children.length > 0 ? (
+                  (link.children && link.children.length > 0) ||
+                  (link.groups && link.groups.length > 0) ? (
                     <div key={link.name} className="rounded-[12px] bg-[#f7f7f7] p-3">
                       <button
                         type="button"
@@ -1389,17 +1373,40 @@ const Navbar = () => {
                         }`}
                       >
                         <div className="overflow-hidden">
-                          <div className="space-y-2">
-                            {link.children.map((child) => (
-                              <Link
-                                key={`${link.name}-${child.name}`}
-                                href={child.href}
-                                onClick={closeMobileMenu}
-                                className="block rounded-[10px] bg-white px-3 py-2.5 font-inter text-[15px] font-medium text-[#4a4a4a] transition-colors hover:bg-[#ececec] hover:text-black"
-                              >
-                                {child.name}
-                              </Link>
-                            ))}
+                          <div className="max-h-[60dvh] space-y-3 overflow-y-auto pr-1">
+                            {link.groups && link.groups.length > 0
+                              ? link.groups.map((group) => (
+                                  <section
+                                    key={`${link.name}-${group.title}`}
+                                    className="rounded-[10px] bg-white px-3 py-3"
+                                  >
+                                    <p className="font-inter text-[11px] font-semibold uppercase tracking-[0.14em] text-[#7b746a]">
+                                      {group.title}
+                                    </p>
+                                    <div className="mt-2 grid gap-1">
+                                      {group.links.map((child) => (
+                                        <Link
+                                          key={`${link.name}-${group.title}-${child.name}`}
+                                          href={child.href}
+                                          onClick={closeMobileMenu}
+                                          className="block rounded-[8px] px-2 py-2 font-inter text-[15px] font-medium text-[#4a4a4a] transition-colors hover:bg-[#ececec] hover:text-black"
+                                        >
+                                          {child.name}
+                                        </Link>
+                                      ))}
+                                    </div>
+                                  </section>
+                                ))
+                              : link.children?.map((child) => (
+                                  <Link
+                                    key={`${link.name}-${child.name}`}
+                                    href={child.href}
+                                    onClick={closeMobileMenu}
+                                    className="block rounded-[10px] bg-white px-3 py-2.5 font-inter text-[15px] font-medium text-[#4a4a4a] transition-colors hover:bg-[#ececec] hover:text-black"
+                                  >
+                                    {child.name}
+                                  </Link>
+                                ))}
                           </div>
                         </div>
                       </div>

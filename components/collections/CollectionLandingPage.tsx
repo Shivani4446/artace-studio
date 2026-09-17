@@ -468,6 +468,70 @@ const buildCollectionCopy = (
     };
   }
 
+  if (categorySlug === "madhubani-art") {
+    return {
+      ...fallback,
+      heroEyebrow: "Traditional Indian Folk Art",
+      heroTitle: "Madhubani Paintings: Handcrafted Indian Folk Art for Your Home",
+      heroBody:
+        "Explore original Madhubani art inspired by one of India's most loved folk traditions. Bring home detailed linework, symbolic lotus, fish, deer, and nature motifs, and a vibrant handmade canvas that feels rooted, decorative, and deeply personal.",
+      heroCta: "Commission Your Madhubani Painting",
+      heroSecondaryCta: "Explore Madhubani Art",
+      overviewTitle: "Folk Art With Pattern, Symbolism, and Soul.",
+      overviewBody:
+        "Madhubani painting is known for bold outlines, intricate pattern filling, nature-led storytelling, and meaningful motifs. This collection brings that visual language into premium wall art for modern homes: lotus forms for purity and growth, fish motifs for prosperity, deer and trees for life and harmony, and rich color palettes that instantly warm a room. Every Artace Studio piece is selected for buyers who want Indian folk art online without settling for flat, mass-produced decor.",
+      featuredHeading: "Shop Best Madhubani Paintings",
+      featuredBody: "Original folk-art canvases with custom sizing support",
+      galleryTitle: "The Madhubani Gallery: Lotus, Fish, Deer & Indian Heritage",
+      galleryBody:
+        "Browse handmade Madhubani paintings created for living rooms, entryways, pooja corners, offices, studios, and gifting. Choose a ready artwork, or use it as the starting point for a custom folk-art commission.",
+      editorialTitle: "Beyond the Canvas: The Making of Madhubani-Inspired Handmade Art",
+      editorialIntro:
+        "Here is what makes Artace Studio's Madhubani collection a strong choice for collectors, gift buyers, and Indian homes:",
+      editorialItems: [
+        {
+          title: "A Heritage-Led Visual Language",
+          body: "Madhubani art comes from a tradition of dense linework, ornamental borders, repeated motifs, and storytelling through nature, devotion, and daily life. The result is decorative art that feels alive from a distance and rewarding up close.",
+        },
+        {
+          title: "Symbolic Motifs for Meaningful Spaces",
+          body: "Lotus, fish, deer, trees, flowers, and foliage are not random decorations. They carry associations of growth, abundance, beauty, harmony, and connection with nature, making Madhubani paintings especially fitting for homes, offices, and thoughtful gifts.",
+        },
+        {
+          title: "Handmade Detail Over Printed Decor",
+          body: "The charm of Madhubani lies in human detail: the repeated marks, pattern rhythm, and slight variations that make the artwork feel personal. Artace Studio helps you choose or commission a piece that keeps that handmade character at the center.",
+        },
+        {
+          title: "Custom Folk Art for Your Wall",
+          body: "Need a different size, subject, or color direction? Share your wall dimensions and room palette. We can guide a Madhubani-inspired commission around the motif, scale, and mood that fits your space.",
+        },
+      ],
+      testimonialTitle: "Why Madhubani Art Works Beautifully at Home",
+      testimonialItems: [
+        {
+          quote:
+            "Madhubani paintings are powerful in transition spaces because the patterned detail rewards a closer look while the bold outlines remain readable from across the room.",
+          name: "Collection Note",
+          location: "Artace Studio",
+        },
+        {
+          quote:
+            "For modern interiors, pair Madhubani art with quieter walls, natural wood, brass accents, or neutral upholstery so the folk-art color and linework can become the focal point.",
+          name: "Styling Note",
+          location: "Artace Studio",
+        },
+      ],
+      urgencyTitle: "Found a Madhubani artwork that feels right?",
+      urgencyBody:
+        "Choose an original piece from the collection, or commission a Madhubani-inspired canvas with the motif, size, and palette designed around your room.",
+      urgencyCta: "Order Your Madhubani Painting Today",
+      advisoryTitle: "Need Help Choosing the Right Madhubani Piece?",
+      advisoryBody:
+        "Unsure whether lotus, fish, deer, or a custom motif will suit your wall? Our complimentary art advisory service helps you shortlist the right size, color palette, and placement before you buy.",
+      advisoryCta: "Book Your Free Folk Art Consultation",
+    };
+  }
+
   if (categorySlug === "vastu-paintings") {
     return {
       ...fallback,

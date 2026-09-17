@@ -1,10 +1,12 @@
 const DEFAULT_RETRIES = 2;
 const DEFAULT_RETRY_DELAY_MS = 500;
 const MAX_RETRY_DELAY_MS = 5_000;
+const DEFAULT_RETRY_STATUSES = new Set([429, 500, 502, 503, 504]);
 
 type FetchWithRetryOptions = {
   retries?: number;
   retryDelayMs?: number;
+  retryStatuses?: number[];
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -17,26 +19,36 @@ const getRetryDelay = (response: Response, fallbackDelayMs: number) => {
     return Math.min(retryAfterSeconds * 1_000, MAX_RETRY_DELAY_MS);
   }
 
-  return fallbackDelayMs;
+  const retryAfterDate = retryAfter ? Date.parse(retryAfter) : Number.NaN;
+  if (Number.isFinite(retryAfterDate)) {
+    return Math.min(Math.max(retryAfterDate - Date.now(), 0), MAX_RETRY_DELAY_MS);
+  }
+
+  return Math.min(fallbackDelayMs, MAX_RETRY_DELAY_MS);
 };
 
-// Retries only on network-level failures (fetch() itself throwing — connection
-// reset, timeout, DNS failure), which is what a brief upstream WordPress/
-// WooCommerce blip looks like. HTTP error responses (404, 500, etc.) are
-// returned as-is and are the caller's responsibility — those are valid
-// responses, not transient failures, and retrying them would just mask a
-// real error or hammer an upstream that's legitimately saying "not found."
+const shouldRetryResponse = (response: Response, retryStatuses: Set<number>) =>
+  retryStatuses.has(response.status);
+
+// Retries network-level failures plus temporary WordPress/WooCommerce HTTP
+// responses such as 429 and gateway/server errors. Permanent responses like
+// 404 are returned as-is so callers can keep their normal fallback behavior.
 export const fetchWithRetry = async (
   input: string | URL,
   init?: RequestInit,
-  { retries = DEFAULT_RETRIES, retryDelayMs = DEFAULT_RETRY_DELAY_MS }: FetchWithRetryOptions = {}
+  {
+    retries = DEFAULT_RETRIES,
+    retryDelayMs = DEFAULT_RETRY_DELAY_MS,
+    retryStatuses,
+  }: FetchWithRetryOptions = {}
 ): Promise<Response> => {
   let lastError: unknown;
+  const statuses = retryStatuses ? new Set(retryStatuses) : DEFAULT_RETRY_STATUSES;
 
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
       const response = await fetch(input, init);
-      if (response.status !== 429 || attempt === retries) {
+      if (!shouldRetryResponse(response, statuses) || attempt === retries) {
         return response;
       }
 

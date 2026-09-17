@@ -1,4 +1,5 @@
 import { collectionLinkItems, getCollectionHref } from "@/utils/collections";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 
 export type SearchProduct = {
@@ -120,14 +121,14 @@ export async function fetchSearchResults(
   ].filter((page) => page.title.toLowerCase().includes(normalizedQuery));
 
   const [productResponse, blogResponse] = await Promise.all([
-    fetch(buildStoreApiUrl(trimmedQuery, productLimit)),
-    fetch(buildBlogApiUrl(trimmedQuery, blogLimit)),
+    fetchWithRetry(buildStoreApiUrl(trimmedQuery, productLimit)),
+    fetchWithRetry(buildBlogApiUrl(trimmedQuery, blogLimit)),
   ]);
 
   const wooAuthHeaders = getWooAuthHeaders();
   const hasWooAuth = Object.keys(wooAuthHeaders).length > 0;
   const wooResponse = hasWooAuth
-    ? await fetch(buildWooApiUrl(trimmedQuery, productLimit), {
+    ? await fetchWithRetry(buildWooApiUrl(trimmedQuery, productLimit), {
         headers: wooAuthHeaders,
       })
     : null;

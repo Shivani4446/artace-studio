@@ -13,6 +13,7 @@ import {
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateFaqSchema } from "@/lib/schema";
 import { buildSiteUrl } from "@/lib/site";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import {
   fetchAllWordPressTags,
   getWordPressBlogSiteUrl,
@@ -38,7 +39,7 @@ async function fetchPost(
   cacheOptions: RequestInit
 ): Promise<WordPressBlogPost | null> {
   try {
-    const res = await fetch(endpoint, {
+    const res = await fetchWithRetry(endpoint, {
       headers: WORDPRESS_HEADERS,
       ...cacheOptions,
     });
@@ -66,12 +67,18 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
 
 async function getAuthor(authorId: number) {
   const siteUrl = getWordPressBlogSiteUrl();
-  const res = await fetch(
-    `${siteUrl}/wp-json/wp/v2/users/${authorId}`,
-    { next: { revalidate: 60 } },
-  );
+  try {
+    const res = await fetchWithRetry(
+      `${siteUrl}/wp-json/wp/v2/users/${authorId}`,
+      { next: { revalidate: 60 } },
+    );
 
-  return res.json();
+    if (!res.ok) return null;
+
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

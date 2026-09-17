@@ -20,6 +20,7 @@ const COLLECTION_LINK_ITEMS: CollectionLinkItem[] = [
     name: "Landscape & Cityscape",
     categorySlug: "landscapes-cityscapes-paintings",
   },
+  { name: "Madhubani Art", categorySlug: "madhubani-art" },
 ];
 
 const COLLECTION_THEME_MAP: Record<string, CollectionTheme> = {
@@ -64,6 +65,13 @@ const COLLECTION_THEME_MAP: Record<string, CollectionTheme> = {
     accentStrong: "#233949",
     panel: "#EEF4F7",
     vector: ["#4C6A7F", "#9EB7C7", "#EEF4F7"],
+  },
+  "madhubani-art": {
+    accent: "#9F3F24",
+    accentSoft: "#F0D4A7",
+    accentStrong: "#4B1F17",
+    panel: "#FBF0DF",
+    vector: ["#9F3F24", "#2F6B52", "#F0D4A7"],
   },
 };
 

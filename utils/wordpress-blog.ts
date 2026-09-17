@@ -1,4 +1,5 @@
 import { stripHtmlAndDecode } from "@/utils/text";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 
 export const DEFAULT_WORDPRESS_SITE_URL = "https://api.artacestudio.com/";
 export const WORDPRESS_BLOG_REVALIDATE_SECONDS = 120;
@@ -98,13 +99,13 @@ const fetchWordPressCollection = async <T>(
     let response: Response;
 
     try {
-      response = await fetch(primaryUrl, {
+      response = await fetchWithRetry(primaryUrl, {
         headers: PUBLIC_WORDPRESS_HEADERS,
         next: { revalidate },
       });
     } catch {
       const fallbackUrl = `${siteUrl}/?rest_route=${encodeURIComponent(restRoutePath)}`;
-      response = await fetch(fallbackUrl, {
+      response = await fetchWithRetry(fallbackUrl, {
         headers: PUBLIC_WORDPRESS_HEADERS,
         next: { revalidate },
       });
@@ -112,7 +113,7 @@ const fetchWordPressCollection = async <T>(
 
     if (response.status === 404) {
       const fallbackUrl = `${siteUrl}/?rest_route=${encodeURIComponent(restRoutePath)}`;
-      response = await fetch(fallbackUrl, {
+      response = await fetchWithRetry(fallbackUrl, {
         headers: PUBLIC_WORDPRESS_HEADERS,
         next: { revalidate },
       });

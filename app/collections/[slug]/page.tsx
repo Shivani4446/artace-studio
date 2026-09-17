@@ -6,6 +6,7 @@ import CollectionLandingPage, {
 } from "@/components/collections/CollectionLandingPage";
 import { type FAQItem } from "@/components/seo/FAQSection";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
+import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { decodeHtmlEntities } from "@/utils/text";
 import { hasSamoraTag } from "@/lib/samora/products";
 export const runtime = 'edge';
@@ -96,7 +97,7 @@ const getApiBaseUrl = () => {
 const fetchWooStoreJson = async <T,>(path: string): Promise<T | null> => {
   const apiBaseUrl = getApiBaseUrl();
   const doFetch = async (url: string) =>
-    fetch(url, {
+    fetchWithRetry(url, {
       headers: PUBLIC_WOO_HEADERS,
       next: { revalidate },
     });
@@ -291,6 +292,10 @@ const getCategoryDescription = (categoryName: string, productCount: number) => {
     .replace(/\s{2,}/g, " ")
     .trim();
 
+  if (/madhubani/i.test(categoryName)) {
+    return `Explore ${productCount} handmade Madhubani art pieces featuring Indian folk-art motifs such as lotus, fish, deer, foliage, and ornamental pattern work. Browse original canvases and commission custom Madhubani-inspired wall art for your home, office, or gifting needs.`;
+  }
+
   return `Explore ${productCount} handmade ${baseName.toLowerCase()} works curated for collectors who want a more guided category journey. This page opens with a stronger editorial narrative, surfaces the best-performing works first, then reveals the full collection with proof, advisory, and next-step discovery built in.`;
 };
 
@@ -304,6 +309,36 @@ const getCollectionFaqs = (categoryName: string): FAQItem[] => {
   const readableCollectionName = toReadableCollectionName(categoryName);
   const shortName = readableCollectionName.replace(/\bpaintings?\b/gi, "").trim();
   const lowerName = shortName.toLowerCase() || "collection";
+
+  if (/madhubani/i.test(readableCollectionName)) {
+    return [
+      {
+        question: "What is Madhubani art?",
+        answer:
+          "Madhubani art is a traditional Indian folk-art style known for bold outlines, intricate pattern filling, ornamental borders, and symbolic nature-led motifs such as lotus, fish, deer, trees, flowers, and foliage.",
+      },
+      {
+        question: "Are Artace Studio Madhubani paintings handmade?",
+        answer:
+          "Yes. The Madhubani collection is curated around handmade Indian folk-art canvases and original decorative works, not generic printed posters. Each product page shows the exact artwork details, image, size, and pricing before you order.",
+      },
+      {
+        question: "Where should I place a Madhubani painting at home?",
+        answer:
+          "Madhubani paintings work well in living rooms, entryways, bedrooms, pooja corners, home offices, studios, and gallery walls. Choose a larger piece for a focal wall or a smaller artwork for a warm cultural accent.",
+      },
+      {
+        question: "Can I commission a custom Madhubani painting?",
+        answer:
+          "Yes. If you like the folk-art style but need a different motif, size, orientation, or color palette, Artace Studio can guide a custom Madhubani-inspired commission around your room, gifting need, or wall dimensions.",
+      },
+      {
+        question: "Which Madhubani motifs are best for gifting?",
+        answer:
+          "Lotus motifs are often chosen for purity, growth, and spiritual warmth, fish motifs for abundance and prosperity, and deer or tree compositions for harmony with nature. These symbolic subjects make Madhubani art a thoughtful housewarming, wedding, festival, or corporate gift.",
+      },
+    ];
+  }
 
   return [
     {
@@ -328,7 +363,10 @@ const getCollectionFaqs = (categoryName: string): FAQItem[] => {
 // SEO-tuned title/description for collections where the generic template
 // leaves validated keyword volume on the table (see docs/seo/2026-07-21-international-keyword-research.md).
 // Collections not listed here keep the generic template below.
-const COLLECTION_SEO_OVERRIDES: Record<string, { title: string; description: string }> = {
+const COLLECTION_SEO_OVERRIDES: Record<
+  string,
+  { title: string; description: string; keywords?: string[] }
+> = {
   "ganapati-paintings": {
     title: "Ganesha Canvas Painting Online in India | Hand-Painted Ganpati Art | Artace Studio",
     description:
@@ -343,6 +381,21 @@ const COLLECTION_SEO_OVERRIDES: Record<string, { title: string; description: str
     title: "Fine Art Prints Online in India | Museum-Quality Reproductions | Artace Studio",
     description:
       "Shop fine-art print reproductions of Artace Studio's handmade paintings, at a fraction of the original's price. Choose your size, add framing, and bring the art you love home.",
+  },
+  "madhubani-art": {
+    title: "Madhubani Paintings Online | Handmade Indian Folk Art | Artace Studio",
+    description:
+      "Shop handmade Madhubani paintings online at Artace Studio. Explore lotus, fish, deer, and Indian folk-art wall decor with original canvases and custom size options.",
+    keywords: [
+      "Madhubani paintings online",
+      "Madhubani art",
+      "handmade Indian folk art",
+      "Mithila painting",
+      "Indian folk art wall decor",
+      "lotus Madhubani painting",
+      "fish Madhubani painting",
+      "traditional Indian art",
+    ],
   },
 };
 
@@ -366,6 +419,7 @@ export async function generateMetadata({ params }: CollectionPageProps) {
   return {
     title,
     description,
+    keywords: seoOverride?.keywords,
     alternates: {
       canonical: `/collections/${decodedSlug}`,
     },

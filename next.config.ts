@@ -74,6 +74,16 @@ const nextConfig: NextConfig = {
         destination: "/collections/mahadev-nandi-canvas-painting",
         permanent: true,
       },
+      {
+        source: "/collections/madhubani-paintings",
+        destination: "/collections/madhubani-art",
+        permanent: true,
+      },
+      {
+        source: "/collections/madhubani-collection",
+        destination: "/collections/madhubani-art",
+        permanent: true,
+      },
     ];
   },
   images: {
