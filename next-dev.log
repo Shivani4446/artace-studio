@@ -16,3 +16,10 @@
  ○ Compiling /collections/[slug] ...
  ✓ Compiled /collections/[slug] in 2.3s (1586 modules)
  GET /collections/ganapati-paintings 200 in 4754ms
+   ▲ Next.js 15.5.2
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+ ✓ Ready in 25.3s
+[?25h
