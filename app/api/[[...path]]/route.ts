@@ -46,6 +46,7 @@ import * as storeProductsRoute from "@/lib/api-route-handlers/store/products/rou
 import * as tradeLeadsRoute from "@/lib/api-route-handlers/trade-leads/route";
 import * as uploadImageRoute from "@/lib/api-route-handlers/upload-image/route";
 import * as woocommerceOrderStatusWebhookRoute from "@/lib/api-route-handlers/webhooks/woocommerce-order-status/route";
+import * as youtubeVideosRoute from "@/lib/api-route-handlers/youtube/videos/route";
 
 export const runtime = "edge";
 
@@ -201,6 +202,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "webhooks/woocommerce-order-status": {
     POST: (request) => woocommerceOrderStatusWebhookRoute.POST(request),
+  },
+  "youtube/videos": {
+    GET: () => youtubeVideosRoute.GET(),
   },
 };
 

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import YouTubeVideosSection from "@/components/blogarchive/YouTubeVideosSection";
 
 export type BlogArchivePost = {
   id: number;
@@ -196,7 +197,7 @@ const BlogArchiveCatalog = ({
       <section className="mx-auto max-w-[1260px]">
         <header className="pb-5 md:pb-6">
           <h1 className="font-display text-[2.4rem] leading-[1.02] text-[#181512] sm:text-[2.8rem] md:text-[3.25rem]">
-            Artace Blogs
+            Artace Blogs & Videos
           </h1>
           <p className="mt-4 max-w-[48rem] text-[0.98rem] leading-7 text-[#4f483f] md:text-[1.02rem]">
             Read about art and how to purchase paintings online with Artace Studio.
@@ -296,6 +297,8 @@ const BlogArchiveCatalog = ({
                 </div>
               </section>
             ) : null}
+
+            <YouTubeVideosSection />
 
             <section className="pt-16 md:pt-20">
               <h2 className="font-display text-[1.85rem] leading-[1.08] text-[#181512] md:text-[2.3rem]">
