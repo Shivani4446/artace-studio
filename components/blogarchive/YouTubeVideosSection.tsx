@@ -10,6 +10,8 @@ type YouTubeVideo = {
   thumbnail: string;
   publishedAt: string | null;
   description: string;
+  viewCount: string | null;
+  likeCount: string | null;
 };
 
 type YouTubeVideosApiResponse = {
@@ -37,6 +39,15 @@ const trimDescription = (value: string) => {
   const normalized = value.replace(/\s+/g, " ").trim();
   if (normalized.length <= 140) return normalized;
   return `${normalized.slice(0, 137).trim()}...`;
+};
+
+const formatCount = (value: string | null): string | null => {
+  if (!value) return null;
+  const num = parseInt(value, 10);
+  if (Number.isNaN(num)) return null;
+  if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  if (num >= 1_000) return `${(num / 1_000).toFixed(1).replace(/\.0$/, "")}K`;
+  return String(num);
 };
 
 const YouTubeVideosSection = () => {
@@ -137,6 +148,19 @@ const YouTubeVideosSection = () => {
                 <h3 className="mt-2 font-display text-[1.15rem] leading-[1.14] text-[#181512] md:text-[1.25rem]">
                   {video.title}
                 </h3>
+                {(formatCount(video.viewCount) || formatCount(video.likeCount)) && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[0.78rem] text-[#8d8377]">
+                    {formatCount(video.viewCount) && (
+                      <span>{formatCount(video.viewCount)} views</span>
+                    )}
+                    {formatCount(video.viewCount) && formatCount(video.likeCount) && (
+                      <span aria-hidden="true">·</span>
+                    )}
+                    {formatCount(video.likeCount) && (
+                      <span>{formatCount(video.likeCount)} likes</span>
+                    )}
+                  </p>
+                )}
                 {video.description ? (
                   <p className="mt-2 text-[0.84rem] leading-6 text-[#5b544a]">
                     {trimDescription(video.description)}
