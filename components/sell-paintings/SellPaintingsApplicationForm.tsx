@@ -206,7 +206,7 @@ const SellPaintingsApplicationForm = () => {
       {status === "success" ? (
         <p className="md:col-span-2 text-[14px] text-green-700">
           Thanks for applying! Our curation team will respond within 24–48 hours via
-          WhatsApp/Email. If approved, you'll choose your ₹999 Standard or ₹1,899
+          WhatsApp/Email. If approved, you&apos;ll choose your ₹999 Standard or ₹1,899
           Premium annual plan to activate your artist account.
         </p>
       ) : null}
