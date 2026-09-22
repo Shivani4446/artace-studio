@@ -60,7 +60,7 @@ const SellPaintingsComparison = () => {
           </h2>
           <p className="mt-4 font-inter text-[15px] leading-7 text-[#595959] md:text-[17px]">
             Compare our transparent, respectful terms against traditional online
-            marketplaces like Fizdi.
+            marketplaces and traditional gallery consignment.
           </p>
         </motion.div>
 
@@ -82,7 +82,7 @@ const SellPaintingsComparison = () => {
                     Artace Studio
                   </th>
                   <th className="px-5 py-5 font-inter text-[13px] font-medium uppercase tracking-[0.08em] text-[#8a8478] md:px-7">
-                    Legacy Marketplaces (e.g. Fizdi)
+                    Legacy Marketplaces
                   </th>
                 </tr>
               </thead>
