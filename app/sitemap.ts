@@ -153,6 +153,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/rentals`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/art-care`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/canvas-rolls`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${baseUrl}/sell-paintings`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/interior-designer-partnership`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/trade`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${baseUrl}/make-an-offer`, lastModified: now, changeFrequency: "monthly", priority: 0.4 },

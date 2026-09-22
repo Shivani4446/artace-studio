@@ -84,6 +84,11 @@ const businessLinks = [
     tagline: "Handcrafted, bespoke canvas art built for the projects you design.",
   },
   {
+    name: "Sell Your Art (Artist Program)",
+    href: "/sell-paintings",
+    tagline: "Sell your original paintings. Keep 80%, zero fees, fast payouts.",
+  },
+  {
     name: "Corporate & Bulk Orders",
     href: "/corporate-bulk-orders",
     tagline: "Plan bulk art orders for offices, gifting, and styled spaces.",

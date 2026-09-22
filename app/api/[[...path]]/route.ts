@@ -6,6 +6,7 @@ import * as adminLoginRoute from "@/lib/api-route-handlers/admin/login/route";
 import * as adminLogoutRoute from "@/lib/api-route-handlers/admin/logout/route";
 import * as affiliateRoute from "@/lib/api-route-handlers/affiliate/route";
 import * as affiliateClickRoute from "@/lib/api-route-handlers/affiliate-click/route";
+import * as artistRegisterRoute from "@/lib/api-route-handlers/artist-register/route";
 import * as authForgotPasswordRoute from "@/lib/api-route-handlers/auth/forgot-password/route";
 import * as authLoginRoute from "@/lib/api-route-handlers/auth/login/route";
 import * as authLogoutRoute from "@/lib/api-route-handlers/auth/logout/route";
@@ -81,6 +82,9 @@ const ROUTES: Record<string, RouteHandlers> = {
   },
   "admin/logout": {
     POST: () => adminLogoutRoute.POST(),
+  },
+  "artist-register": {
+    POST: (request) => artistRegisterRoute.POST(request),
   },
   "auth/forgot-password": {
     POST: (request) => authForgotPasswordRoute.POST(request),

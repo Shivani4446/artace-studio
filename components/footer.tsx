@@ -30,6 +30,7 @@ const footerSections: FooterSection[] = [
       { label: "Art Rentals", href: "/rentals" },
       { label: "Corporate & Bulk Orders", href: "/corporate-bulk-orders" },
       { label: "Custom Portraits", href: "/custom-portraits" },
+      { label: "Sell Your Art", href: "/sell-paintings" },
       { label: "Trade Program", href: "/trade" },
       { label: "Affiliate Program", href: "/affiliates" },
       { label: "Artace Rewards", href: "/rewards" },
