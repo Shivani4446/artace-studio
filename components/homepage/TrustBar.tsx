@@ -8,27 +8,23 @@ const TRUST_ITEMS = [
   {
     icon: Paintbrush,
     label: "100% Handcrafted",
-    detail: "Never printed, never duplicated",
   },
   {
     icon: MessageCircle,
     label: "Artist-Led Consultation",
-    detail: "A real conversation, not a checkout form",
+    hiddenOnMobile: true,
   },
   {
     icon: PackageCheck,
     label: "White-Glove Delivery",
-    detail: "Packaged and delivered with care",
   },
   {
     icon: Star,
     label: "4.9★ on Google",
-    detail: "From collectors across India and beyond",
   },
   {
     icon: Globe,
     label: "Worldwide Shipping",
-    detail: "Your masterpiece, wherever home is",
   },
 ] as const;
 
@@ -47,14 +43,13 @@ const TrustBar = () => {
               whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.4, delay: index * 0.08 }}
-              className="flex w-[calc(50%-1rem)] flex-col items-center gap-2 text-center sm:w-auto sm:items-start sm:text-left"
+              className={`flex w-[calc(50%-1rem)] flex-col items-center gap-2 text-center sm:w-auto sm:items-start sm:text-left ${
+                "hiddenOnMobile" in item ? "hidden sm:flex" : ""
+              }`}
             >
               <Icon className="h-5 w-5 text-[#2f2f2f]" strokeWidth={1.75} />
               <p className="font-inter text-[13px] font-medium leading-tight text-[#2f2f2f] sm:text-[14px]">
                 {item.label}
-              </p>
-              <p className="font-inter text-[11px] leading-snug text-[#767676] sm:text-[12px]">
-                {item.detail}
               </p>
             </motion.div>
           );

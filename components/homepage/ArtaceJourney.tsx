@@ -48,8 +48,8 @@ const ArtaceJourney = () => {
 
   return (
     <section className="w-full bg-[#efeeec]">
-      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-10 px-6 md:px-12 lg:grid-cols-2 lg:gap-14">
-        <div className="py-14 md:py-24">
+      <div className="mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-3 px-6 md:px-12 lg:grid-cols-2 lg:gap-10">
+        <div className="pt-14 pb-10 md:pt-24 md:pb-14">
           <div className="max-w-2xl">
             <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:text-[52px]">
               A Masterpiece Made With You, Not Just For You
@@ -117,13 +117,21 @@ const ArtaceJourney = () => {
           whileInView={shouldReduceMotion ? undefined : { opacity: 1 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5 }}
-          className="relative h-[320px] w-full sm:h-[420px] lg:h-auto"
+          className="relative -mx-6 w-[calc(100%+3rem)] md:-mx-12 md:w-[calc(100%+6rem)] lg:mx-0 lg:h-auto lg:w-full"
         >
+          <Image
+            src="/masteripiece-image-v-1-mobile.webp"
+            alt="A large framed painting of a golden-hour ocean wave displayed in a gallery-style room"
+            width={1536}
+            height={1024}
+            className="h-auto w-full lg:hidden"
+            sizes="100vw"
+          />
           <Image
             src="/masteripiece-image-v-1.webp"
             alt="A large framed painting of a golden-hour ocean wave displayed in a gallery-style room"
             fill
-            className="object-contain"
+            className="hidden object-contain lg:block"
             sizes="(max-width: 1023px) 100vw, 45vw"
           />
         </motion.div>

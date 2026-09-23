@@ -11,7 +11,7 @@ const ShopByArtist = () => {
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-12 md:mb-16 gap-4">
+        <div className="mb-12 flex flex-col items-start gap-4 md:mb-16 md:flex-row md:items-center md:justify-between">
           <h2 className="font-playfair text-3xl md:text-5xl text-[#2C2C2C] tracking-wide">
             Shop By Artist
           </h2>
@@ -26,7 +26,7 @@ const ShopByArtist = () => {
         </div>
 
         {/* Artists Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 align-top">
+        <div className="grid grid-cols-2 gap-8 align-top lg:grid-cols-4">
           {ARTISTS.map((artist) => (
             <Link
               key={artist.slug}
@@ -35,7 +35,7 @@ const ShopByArtist = () => {
             >
 
               {/* Image Container */}
-              <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-full mb-5 bg-gray-200">
+              <div className="relative mb-4 h-28 w-28 shrink-0 overflow-hidden rounded-full bg-gray-200 md:mb-5 md:h-40 md:w-40">
                 <Image
                   src={artist.image}
                   alt={`Artwork by ${artist.name}`}
@@ -50,7 +50,7 @@ const ShopByArtist = () => {
                 <h3 className="font-playfair text-xl text-[#2C2C2C] leading-snug">
                   {artist.name}
                 </h3>
-                <span className="line-clamp-2 min-h-[2.5rem] font-inter text-[#666666] text-sm leading-snug md:text-[15px] md:min-h-[2.75rem] font-normal">
+                <span className="hidden line-clamp-2 min-h-[2.5rem] font-inter text-sm leading-snug font-normal text-[#666666] md:block md:min-h-[2.75rem] md:text-[15px]">
                   {artist.tagline}
                 </span>
               </div>

@@ -52,24 +52,10 @@ const ShopBestsellers = () => {
     >
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         {/* Header Section */}
-        <div className="mb-10 flex flex-col gap-4 md:mb-14 md:flex-row md:items-start md:justify-between">
-          <div className="max-w-2xl">
-            <h2 className="font-playfair text-3xl text-[#2C2C2C] tracking-wide md:text-5xl">
-              Bestselling Handcrafted Canvas Paintings
-            </h2>
-            <p className="mt-3 font-inter text-[15px] text-[#666666] md:text-[16px]">
-              The pieces our collectors return to again and again, devotional,
-              abstract, and everything between.
-            </p>
-          </div>
-
-          <Link
-            href="/shop"
-            className="group flex items-center gap-2 font-inter text-[#4A4846] text-sm font-medium border-b border-[#4A4846] pb-0.5 hover:text-black hover:border-black transition-colors"
-          >
-            SHOP ALL
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+        <div className="mb-10 md:mb-14">
+          <h2 className="font-playfair text-3xl text-[#2C2C2C] tracking-wide md:text-5xl">
+            Bestselling Handcrafted Canvas Paintings
+          </h2>
         </div>
 
         {/* Product Grid */}
@@ -134,6 +120,17 @@ const ShopBestsellers = () => {
               </article>
             ))
           )}
+        </div>
+
+        {/* Shop All Link */}
+        <div className="mt-10 flex justify-center lg:mt-12">
+          <Link
+            href="/shop"
+            className="group flex items-center gap-2 font-inter text-[#4A4846] text-sm font-medium border-b border-[#4A4846] pb-0.5 hover:text-black hover:border-black transition-colors"
+          >
+            SHOP ALL
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>

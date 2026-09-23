@@ -37,7 +37,10 @@ const ShopByRoom = () => {
   return (
     <section className="w-full bg-[#f4f2ee] py-14 md:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
-        <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:text-[52px]">
+        <p className="text-[16px] leading-[1.5] text-[#767676] md:text-[18px]">
+          Shop by Room
+        </p>
+        <h2 className="mt-4 font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:mt-5 md:text-[52px]">
           Find the Piece Your Space Is Waiting For
         </h2>
 
@@ -46,7 +49,7 @@ const ShopByRoom = () => {
             <Link
               key={room.title}
               href={room.href}
-              className="group relative block min-h-[280px] overflow-hidden rounded-[12px] bg-[#d6d2ca] md:min-h-[360px]"
+              className="group relative block min-h-[280px] overflow-hidden rounded-xl bg-[#d6d2ca] md:min-h-[360px]"
             >
               <Image
                 src={room.image}
@@ -55,7 +58,7 @@ const ShopByRoom = () => {
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                 sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 25vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-transparent" />
               <div className="absolute bottom-5 left-5 right-5">
                 <h3 className="font-display text-[19px] leading-[1.15] text-white md:text-[22px]">
                   {room.title}

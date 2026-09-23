@@ -13,9 +13,9 @@ const SamoraSpotlight = () => {
   return (
     <section className="w-full bg-[#FAF9F6]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-12">
-        <div className="flex flex-col items-stretch gap-10 lg:flex-row lg:gap-[50px]">
+        <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:gap-[50px]">
           {/* Left Column: Text Content */}
-          <div className="flex w-full flex-col items-start justify-center py-14 md:py-16 lg:w-1/2">
+          <div className="flex w-full flex-col items-start justify-center pt-14 pb-10 md:py-16 lg:w-1/2">
             <Image
               src="/samroa-logo.svg"
               alt="Samora by Artace Studio"
@@ -52,8 +52,8 @@ const SamoraSpotlight = () => {
             </Link>
           </div>
 
-          {/* Right Column: Image, flush with the section's full height */}
-          <div className="relative h-[420px] w-full sm:h-[520px] lg:h-auto lg:w-1/2">
+          {/* Right Column: Image, moved flush to the right edge of the viewport */}
+          <div className="relative h-[420px] w-full overflow-hidden rounded-[12px] sm:h-[520px] lg:h-auto lg:w-1/2 lg:translate-x-[calc(3rem+max(0px,calc(50vw-720px)))]">
             <Image
               src="/samora-section-image.webp"
               alt="Samora handcrafted tote bag, coasters, tray, bookmark, and keychains displayed together"

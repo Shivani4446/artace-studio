@@ -105,7 +105,7 @@ const DiscoverEssentials = () => {
         <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:mt-10 md:gap-5 lg:mt-12 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:grid-rows-2">
           <Link
             href={featuredCard.href}
-            className="group relative block min-h-[280px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:col-span-2 sm:min-h-[340px] md:row-span-2 md:min-h-[520px] lg:col-span-1 lg:min-h-[584px]"
+            className="group relative block min-h-[280px] overflow-hidden rounded-xl bg-[#d6d2ca] sm:col-span-2 sm:min-h-[340px] md:row-span-2 md:min-h-[520px] lg:col-span-1 lg:min-h-[584px]"
           >
             <Image
               src={featuredCard.image}
@@ -127,7 +127,7 @@ const DiscoverEssentials = () => {
               <Link
                 key={`${item.id}-${index}`}
                 href={item.href}
-                className="group relative flex flex-col items-center justify-center min-h-[190px] overflow-hidden rounded-[12px] bg-[#292929] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px] transition-colors hover:bg-[#1f1f1f]"
+                className="group relative flex flex-col items-center justify-center min-h-[190px] overflow-hidden rounded-xl bg-[#292929] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px] transition-colors hover:bg-[#1f1f1f]"
               >
                 <div className="text-center px-4">
                   <h3 className="font-inter text-[18px] font-medium leading-[1.2] text-white sm:text-[20px] md:text-[22px]">
@@ -145,7 +145,7 @@ const DiscoverEssentials = () => {
               <Link
                 key={`${item.id}-${index}`}
                 href={item.href}
-                className="group relative block min-h-[190px] overflow-hidden rounded-[12px] bg-[#d6d2ca] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px]"
+                className="group relative block min-h-[190px] overflow-hidden rounded-xl bg-[#d6d2ca] sm:min-h-[220px] md:min-h-[250px] lg:min-h-[280px]"
               >
                 <Image
                   src={item.image}

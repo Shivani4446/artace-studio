@@ -141,7 +141,7 @@ const PromotionModal = () => {
             no way to reach the close button or the CTA. */}
         <div className="max-h-[calc(100dvh-1.5rem)] overflow-y-auto md:flex md:max-h-[calc(100dvh-3rem)]">
           {/* Image Side */}
-          <div className="relative h-32 w-full shrink-0 md:h-auto md:min-h-[34rem] md:w-[43%]">
+          <div className="relative hidden h-32 w-full shrink-0 md:block md:h-auto md:min-h-[34rem] md:w-[43%]">
             <Image
               src="/images/bappa-1.webp"
               alt="Hand-painted Ganesha canvas artwork for Ganesh Chaturthi"

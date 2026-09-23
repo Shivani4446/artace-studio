@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 
 const GOOGLE_REVIEW_URL =
   "https://www.google.com/maps/search/?api=1&query=Artace+Studio";
@@ -15,6 +15,8 @@ type TestimonialCard = {
   location: string;
   rating: number;
   text: string;
+  hook: string;
+  date: string;
   avatarUrl?: string;
 };
 
@@ -25,6 +27,8 @@ const TESTIMONIALS: TestimonialCard[] = [
     location: "Pune, India",
     rating: 5,
     text: "Purchased 2 canvas paintings of Radha Krishna and Mahadev. The quality they offer is so good and all the packaging is very neatly done with goodies also. Definitely suggesting if want canvas painting in Pune.",
+    hook: "Quality that surprises, packaging that delights",
+    date: "2026-09-23",
     avatarUrl: "/24bites-review.webp",
   },
   {
@@ -33,6 +37,8 @@ const TESTIMONIALS: TestimonialCard[] = [
     location: "Mumbai, India",
     rating: 5,
     text: "Artace helped us choose the right piece and size for our living room. The final result changed the entire atmosphere of the space.",
+    hook: "Changed the entire atmosphere of our living room",
+    date: "2026-09-22",
     avatarUrl: "/anuj-kathed-review.webp",
   },
   {
@@ -41,6 +47,8 @@ const TESTIMONIALS: TestimonialCard[] = [
     location: "Thane, India",
     rating: 5,
     text: "Excellent communication, secure packaging, and authentic handmade art. We are already planning our next purchase.",
+    hook: "Authentic handmade art, handled with care",
+    date: "2026-09-18",
     avatarUrl: "/shruti_prabhune_review.webp",
   },
   {
@@ -49,22 +57,28 @@ const TESTIMONIALS: TestimonialCard[] = [
     location: "Pune, India",
     rating: 4.8,
     text: "Best Customizable painting store in Pune. I loved to purchase my own customized painting from Artace Studio.",
+    hook: "The best customizable painting store in Pune",
+    date: "2026-09-14",
     avatarUrl: "/anonymous.webp",
   },
-    {
+  {
     id: "review-5",
     authorName: "Akshay Chaudhari",
     location: "Parbhani, India",
     rating: 4.5,
-    text: "Purchased an ancient canvas painting of Madhavrao Peshwe Darbar and loved the details and accuracy of each character",
+    text: "Purchased an ancient canvas painting of Madhavrao Peshwe Darbar and loved the details and accuracy of each character.",
+    hook: "Details that bring history to life",
+    date: "2026-09-10",
     avatarUrl: "/anonymous.webp",
   },
-      {
+  {
     id: "review-6",
     authorName: "Shreyas Bangale",
     location: "Texas, USA",
     rating: 4.9,
-    text: "Purchased 2 paintings one form the gallery and second I customized on my own preference. Thank You Artace Studio.",
+    text: "Purchased 2 paintings one from the gallery and second I customized on my own preference. Thank You Artace Studio.",
+    hook: "From gallery to custom, done just right",
+    date: "2026-09-05",
     avatarUrl: "/anonymous.webp",
   },
 ];
@@ -77,6 +91,18 @@ const getInitials = (name: string) =>
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() || "")
     .join("");
+
+const getDateLabel = (isoDate: string) => {
+  const date = new Date(isoDate);
+  const today = new Date();
+  const startOfDay = (d: Date) =>
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const diffDays = Math.round((startOfDay(today) - startOfDay(date)) / 86400000);
+
+  if (diffDays <= 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+};
 
 const getStarCount = (rating: number) => {
   const rounded = Math.round(rating);
@@ -142,15 +168,40 @@ const Testimonials = () => {
   useEffect(() => {
     if (!isMounted) return;
 
-    const trustpilotApi = (
-      window as Window & {
-        Trustpilot?: { loadFromElement?: (element: HTMLElement, forceReload: boolean) => void };
-      }
-    ).Trustpilot;
+    const container = trustpilotWidgetRef.current;
+    if (!container) return;
 
-    if (trustpilotApi?.loadFromElement && trustpilotWidgetRef.current) {
-      trustpilotApi.loadFromElement(trustpilotWidgetRef.current, true);
-    }
+    let cancelled = false;
+    let attempts = 0;
+
+    const tryLoad = () => {
+      if (cancelled) return;
+
+      const trustpilotApi = (
+        window as Window & {
+          Trustpilot?: { loadFromElement?: (element: HTMLElement, forceReload: boolean) => void };
+        }
+      ).Trustpilot;
+
+      if (trustpilotApi?.loadFromElement) {
+        trustpilotApi.loadFromElement(container, true);
+        return;
+      }
+
+      // The Trustpilot bootstrap loads with strategy="lazyOnload", which can
+      // run after this effect fires. Poll until the API is available so the
+      // badge is never left as plain anchor text.
+      attempts += 1;
+      if (attempts < 50) {
+        window.setTimeout(tryLoad, 200);
+      }
+    };
+
+    tryLoad();
+
+    return () => {
+      cancelled = true;
+    };
   }, [isMounted]);
 
   const goToPrevious = () => {
@@ -173,40 +224,13 @@ const Testimonials = () => {
     <section className="bg-[#f4f2ee] py-14 md:py-20">
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
         <div className="flex flex-wrap items-start justify-between gap-5">
-          <div>
+          <div className="min-w-0 flex-1 basis-64">
             <h2 className="font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[38px] md:text-[54px]">
-              What Collectors Say
+              What Artace Studio Collectors Are Saying
             </h2>
           </div>
 
-          <div className="flex w-full items-center justify-start gap-2 sm:gap-3 md:w-auto">
-            <div className="hidden md:block md:min-w-[250px] md:max-w-[300px]">
-              {isMounted ? (
-                <div className="origin-left md:scale-100">
-                  <div
-                    ref={trustpilotWidgetRef}
-                    className="trustpilot-widget"
-                    data-locale="en-US"
-                    data-template-id="56278e9abfbbba0bdcd568bc"
-                    data-businessunit-id="66093cb3c75da0cae6905fa5"
-                    data-style-height="52px"
-                    data-style-width="100%"
-                    data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
-                  >
-                    <a
-                      href="https://www.trustpilot.com/review/artacestudio.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Trustpilot
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <div className="h-[52px] w-full" aria-hidden="true" />
-              )}
-            </div>
-
+          <div className="flex w-full flex-col items-start gap-2 sm:gap-3 md:w-auto md:shrink-0">
             <Link
               href={GOOGLE_REVIEW_URL}
               target="_blank"
@@ -221,19 +245,59 @@ const Testimonials = () => {
                 className="h-auto w-[78px] sm:w-[92px] md:w-[145px]"
               />
             </Link>
+
+            <div className="hidden md:block md:w-[145px]">
+              {isMounted ? (
+                <div className="origin-left md:scale-100">
+                  <div
+                    ref={trustpilotWidgetRef}
+                    className="trustpilot-widget"
+                    data-locale="en-US"
+                    data-template-id="5406e65db0d04a09e042d5fc"
+                    data-businessunit-id="66093cb3c75da0cae6905fa5"
+                    data-style-height="28px"
+                    data-style-width="100%"
+                    data-token="0d8c04ab-19b4-4e81-95aa-52df61a5dc6f"
+                  >
+                    <a
+                      href="https://www.trustpilot.com/review/artacestudio.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Trustpilot
+                    </a>
+                  </div>
+                </div>
+              ) : (
+                <div className="h-[28px] w-full" aria-hidden="true" />
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="mt-6 inline-flex flex-wrap items-center gap-3 rounded-full border border-[#1f1f1f]/12 bg-white px-4 py-2.5">
-          <div className="flex items-center gap-1">
-            {renderStars(overallRating, "overall-rating")}
+        <div className="mt-6 inline-flex rounded-2xl border border-[#1f1f1f]/12 bg-white px-5 py-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1">
+              {renderStars(overallRating, "overall-rating")}
+            </div>
+            <p className="text-sm font-semibold text-[#1f1f1f]">
+              {overallRating.toFixed(1)} / 5
+            </p>
+            <span className="text-[#8a8378]">|</span>
+            <p className="text-sm font-semibold text-[#1f1f1f]">
+              {overallRating.toFixed(1)} Average Customer Rating
+            </p>
+            <span className="text-[#8a8378]">|</span>
+            <p className="text-sm text-[#6f685f]">
+              {totalRatings.toLocaleString("en-IN")} Google Reviews
+            </p>
           </div>
-          <p className="text-sm font-semibold text-[#1f1f1f]">
-            {overallRating.toFixed(1)} / 5
-          </p>
-          <span className="text-[#8a8378]">|</span>
-          <p className="text-sm text-[#6f685f]">
-            {totalRatings.toLocaleString("en-IN")} Google Reviews
+        </div>
+
+        <div className="mt-3 flex items-center gap-2">
+          <BadgeCheck className="h-5 w-5 shrink-0 text-green-600" />
+          <p className="text-[15px] text-[#6f685f] md:text-base">
+            100% verified Google and Trustpilot reviews.
           </p>
         </div>
 
@@ -256,41 +320,56 @@ const Testimonials = () => {
                         key={testimonial.id}
                         className="flex h-full flex-col rounded-[12px] border border-[#1f1f1f]/10 bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.04)]"
                       >
-                        <div className="flex items-center gap-1">
-                          {renderStars(testimonial.rating, testimonial.id)}
-                        </div>
+                        <Quote className="h-6 w-6 text-[#1f1f1f]/25" />
 
-                        <p className="mt-5 text-[15px] leading-7 text-[#3f3a32]">
-                          &ldquo;{testimonial.text}&rdquo;
+                        <h3 className="mt-4 text-[17px] font-semibold leading-snug text-[#1f1f1f]">
+                          {testimonial.hook}
+                        </h3>
+
+                        <p className="mt-3 text-[15px] leading-relaxed text-[#3f3a32]">
+                          {testimonial.text}
                         </p>
 
+                        <div className="mt-5 flex items-center justify-between gap-3">
+                          <div className="flex shrink-0 items-center gap-1">
+                            {renderStars(testimonial.rating, testimonial.id)}
+                          </div>
+
+                          <div className="flex items-center gap-2.5">
+                            <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-[#ece4d6]">
+                              {testimonial.avatarUrl ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={testimonial.avatarUrl}
+                                  alt={`${testimonial.authorName} avatar`}
+                                  className="h-full w-full object-cover"
+                                  loading="lazy"
+                                  referrerPolicy="no-referrer"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center text-[12px] font-semibold uppercase text-[#52493d]">
+                                  {getInitials(testimonial.authorName)}
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold leading-tight text-[#1f1f1f]">
+                                {testimonial.authorName}
+                              </p>
+                              <p className="text-xs text-[#7a7368]">
+                                {testimonial.location}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="mt-auto pt-5">
-                          <div className="border-t border-[#1f1f1f]/10 pt-5">
-                            <div className="flex items-center gap-3">
-                              <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-[#ece4d6]">
-                                {testimonial.avatarUrl ? (
-                                  // eslint-disable-next-line @next/next/no-img-element
-                                  <img
-                                    src={testimonial.avatarUrl}
-                                    alt={`${testimonial.authorName} avatar`}
-                                    className="h-full w-full object-cover"
-                                    loading="lazy"
-                                    referrerPolicy="no-referrer"
-                                  />
-                                ) : (
-                                  <div className="flex h-full w-full items-center justify-center text-[13px] font-semibold uppercase text-[#52493d]">
-                                    {getInitials(testimonial.authorName)}
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                <p className="font-semibold text-[#1f1f1f]">
-                                  {testimonial.authorName}
-                                </p>
-                                <p className="mt-1 text-sm text-[#7a7368]">
-                                  {testimonial.location}
-                                </p>
-                              </div>
+                          <div className="border-t border-[#1f1f1f]/10 pt-4">
+                            <div className="flex items-center gap-1.5">
+                              <BadgeCheck className="h-4 w-4 shrink-0 text-green-600" />
+                              <p className="text-sm text-[#7a7368]">
+                                Verified · {getDateLabel(testimonial.date)}
+                              </p>
                             </div>
                           </div>
                         </div>

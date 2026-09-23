@@ -62,10 +62,10 @@ const ShopByPrice = () => {
           Shop by Budget
         </p>
         <h2 className="mt-4 font-display text-[32px] leading-[1.08] text-[#1f1f1f] sm:text-[40px] md:mt-5 md:text-[52px]">
-          Find Art That Fits Your Vision — and Your Budget
+          Find Art That Fits Your Vision, and Your Budget
         </h2>
         <p className="mt-4 max-w-2xl font-inter text-[16px] leading-[1.6] text-[#5b5b5b] md:mt-5 md:text-[18px]">
-          Every price point at Artace Studio is 100% hand-painted — never
+          Every price point at Artace Studio is 100% hand-painted, never
           printed, never mass-produced. Pick a range and start browsing.
         </p>
 

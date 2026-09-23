@@ -46,25 +46,25 @@ const FAQSection = ({
           ) : null}
         </div>
 
-        <div className="mt-8 grid gap-4 md:mt-10 md:grid-cols-2 md:gap-5">
+        <div className="mt-8 grid gap-x-14 md:mt-10 md:grid-cols-2">
           {items.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <article
                 key={item.question}
-                className="rounded-[14px] border border-[#1f1f1f]/10 bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.04)] md:p-6"
+                className="border-b border-[#1f1f1f]/10 py-4 md:py-5"
               >
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : index)}
                   aria-expanded={isOpen}
-                  className="flex w-full items-center justify-between gap-3 text-left"
+                  className="flex w-full items-center justify-between gap-3 py-1 text-left"
                 >
-                  <h3 className="font-display text-[22px] leading-[1.2] text-[#1f1f1f] md:text-[26px]">
+                  <h3 className="font-inter text-[15px] font-medium leading-snug text-[#1f1f1f] md:text-[16px]">
                     {item.question}
                   </h3>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-[#1f1f1f]/50 transition-transform duration-300 ${
+                    className={`h-4 w-4 shrink-0 text-[#1f1f1f]/40 transition-transform duration-300 ${
                       isOpen ? "rotate-180" : ""
                     }`}
                     strokeWidth={1.75}
@@ -76,7 +76,7 @@ const FAQSection = ({
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="pt-3 text-[15px] leading-7 text-[#4f4b45] md:text-[16px]">
+                    <p className="pt-1 pb-2 text-[14px] leading-relaxed text-[#6f685f] md:text-[15px]">
                       {item.answer}
                     </p>
                   </div>
