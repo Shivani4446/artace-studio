@@ -6,7 +6,9 @@ import {
   ArrowUpRight,
   BadgeCheck,
   Globe2,
+  MessagesSquare,
   Palette,
+  Quote,
   Star,
 } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
@@ -116,6 +118,11 @@ const buildProductSubtitle = (product: CollectionProductCard, categorySlug: stri
   if (product.sizeLabel) parts.push(product.sizeLabel);
   if (!isPhotography && !isPrint && product.mediumLabel) parts.push(product.mediumLabel);
   return parts.join(" | ");
+};
+
+const buildReviewHook = (quote: string) => {
+  const sentence = quote.split(/[.!?]/)[0].trim();
+  return sentence.length > 68 ? `${sentence.slice(0, 65).trim()}…` : sentence;
 };
 
 const buildCollectionCopy = (
@@ -607,6 +614,10 @@ const benefitItems = [
     title: "100% Handpainted on Premium Canvas",
     icon: Palette,
   },
+  {
+    title: "Complimentary Art Advice",
+    icon: MessagesSquare,
+  },
 ];
 
 const HeroArtworkComposition = ({
@@ -798,30 +809,47 @@ const TestimonialCard = ({
     .join("")
     .slice(0, 2)
     .toUpperCase();
+  const hook = buildReviewHook(quote);
 
   return (
-    <article className="flex h-full flex-col rounded-[12px] border border-[#1f1f1f]/10 bg-white p-5 shadow-[0_10px_24px_rgba(0,0,0,0.04)] md:p-6">
-      <div className="flex items-center gap-1">
-        {Array.from({ length: 5 }, (_, index) => (
-          <Star key={`${name}-star-${index}`} className="h-4 w-4 fill-[#FFDB4D] text-[#FFDB4D]" />
-        ))}
+    <article className="flex h-full flex-col rounded-[12px] border border-[#1f1f1f]/10 bg-white p-6 shadow-[0_10px_24px_rgba(0,0,0,0.04)]">
+      <Quote className="h-6 w-6 text-[#1f1f1f]/25" />
+
+      <h3 className="mt-4 text-[17px] font-semibold leading-snug text-[#1f1f1f]">
+        {hook}
+      </h3>
+
+      <p className="mt-3 text-[15px] leading-relaxed text-[#3f3a32]">{quote}</p>
+
+      <div className="mt-5 flex items-center justify-between gap-3">
+        <div className="flex shrink-0 items-center gap-1">
+          {Array.from({ length: 5 }, (_, index) => (
+            <Star
+              key={`${name}-star-${index}`}
+              className="h-4 w-4 fill-[#FFDB4D] text-[#FFDB4D]"
+            />
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold uppercase text-white"
+            style={{ backgroundColor: accent }}
+          >
+            {initials}
+          </div>
+          <div>
+            <p className="text-sm font-semibold leading-tight text-[#1f1f1f]">{name}</p>
+            <p className="text-xs text-[#7a7368]">{location}</p>
+          </div>
+        </div>
       </div>
 
-      <p className="mt-4 text-[15px] leading-7 text-[#3f3a32] md:mt-5">&ldquo;{quote}&rdquo;</p>
-
       <div className="mt-auto pt-5">
-        <div className="border-t border-[#1f1f1f]/10 pt-5">
-          <div className="flex items-center gap-3">
-            <div
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold uppercase text-white"
-              style={{ backgroundColor: accent }}
-            >
-              {initials}
-            </div>
-            <div>
-              <p className="font-semibold text-[#1f1f1f]">{name}</p>
-              <p className="mt-1 text-sm text-[#7a7368]">{location}</p>
-            </div>
+        <div className="border-t border-[#1f1f1f]/10 pt-4">
+          <div className="flex items-center gap-1.5">
+            <BadgeCheck className="h-4 w-4 shrink-0 text-green-600" />
+            <p className="text-sm text-[#7a7368]">Verified · Google Review</p>
           </div>
         </div>
       </div>
@@ -851,6 +879,14 @@ const CollectionLandingPage = async ({
   const isRadhaKrishnaCollection = categorySlug === "radha-krishna-paintings";
   const isGaneshaCollection = categorySlug === "ganapati-paintings";
   const isVectorOnlyHero = isBuddhaCollection || isRadhaKrishnaCollection;
+  const hideHeroArtworkOnMobile = [
+    "ganapati-paintings",
+    "radha-krishna-paintings",
+    "buddha-paintings",
+    "abstract-paintings",
+    "landscapes-cityscapes-paintings",
+    "madhubani-art",
+  ].includes(categorySlug);
   const baseCollectionName = toBaseCollectionName(categoryName) || categoryName;
   const collectionHeadline = getCollectionHeadline(categoryName);
   const collectionCopy = buildCollectionCopy(
@@ -937,16 +973,31 @@ const CollectionLandingPage = async ({
               </div>
             </div>
 
-            <HeroArtworkComposition
-              image={heroImage}
-              imageAlt={heroImageAlt}
-              title={collectionHeadline}
-              accent={theme.accent}
-              accentSoft={theme.accentSoft}
-              vectorSrc={heroVectorSrc}
-              minimalVector={isVectorOnlyHero}
-              vectorOnly={isVectorOnlyHero || collectionCopy.heroVectorOnly}
-            />
+            {hideHeroArtworkOnMobile ? (
+              <div className="hidden md:contents">
+                <HeroArtworkComposition
+                  image={heroImage}
+                  imageAlt={heroImageAlt}
+                  title={collectionHeadline}
+                  accent={theme.accent}
+                  accentSoft={theme.accentSoft}
+                  vectorSrc={heroVectorSrc}
+                  minimalVector={isVectorOnlyHero}
+                  vectorOnly={isVectorOnlyHero || collectionCopy.heroVectorOnly}
+                />
+              </div>
+            ) : (
+              <HeroArtworkComposition
+                image={heroImage}
+                imageAlt={heroImageAlt}
+                title={collectionHeadline}
+                accent={theme.accent}
+                accentSoft={theme.accentSoft}
+                vectorSrc={heroVectorSrc}
+                minimalVector={isVectorOnlyHero}
+                vectorOnly={isVectorOnlyHero || collectionCopy.heroVectorOnly}
+              />
+            )}
           </div>
         </div>
       </section>
@@ -982,21 +1033,23 @@ const CollectionLandingPage = async ({
 
       <section>
         <div className="mx-auto max-w-[1440px] border-t border-black/8 px-6 py-10 md:px-12 md:py-[100px]">
-          <div className="mx-auto grid gap-6 sm:grid-cols-3 sm:gap-5 lg:max-w-[940px]">
+          <div className="mx-auto grid max-w-[480px] grid-cols-2 gap-x-4 gap-y-8 sm:max-w-none md:max-w-[960px] md:grid-cols-4">
             {benefitItems.map((item) => {
               const Icon = item.icon;
 
               return (
                 <article
                   key={item.title}
-                  className="mx-auto flex max-w-[280px] flex-col items-center gap-5 text-center sm:max-w-none sm:gap-8"
+                  className="flex items-center justify-center text-center"
                 >
-                  <div className="rounded-[12px] bg-white p-[18px]">
-                    <Icon className="h-6 w-6 text-[#313131]" />
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="rounded-[12px] bg-white p-[12px]">
+                      <Icon className="h-5 w-5 text-[#313131]" />
+                    </div>
+                    <h3 className="max-w-[180px] text-[13px] font-medium leading-snug text-[#313131] md:text-[15px]">
+                      {item.title}
+                    </h3>
                   </div>
-                  <h3 className="font-display text-[22px] leading-[1.2] text-[#313131] md:text-[28px]">
-                    {item.title}
-                  </h3>
                 </article>
               );
             })}
@@ -1205,18 +1258,25 @@ const CollectionLandingPage = async ({
           </div>
 
           <div className="justify-self-center text-center lg:justify-self-end">
-            <div className="relative mx-auto h-[220px] w-[220px] overflow-hidden rounded-full sm:h-[260px] sm:w-[260px] md:h-[350px] md:w-[350px]">
-              <Image
-                src="/Sahil-mahalley.webp"
-                alt="Sahil Mahalley"
-                fill
-                sizes="(max-width: 768px) 260px, 350px"
-                className="object-cover"
-              />
+            <div className="flex min-w-0 items-center gap-4 text-left sm:flex-col sm:items-center sm:gap-0 sm:text-center">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full sm:h-[220px] sm:w-[220px] md:h-[350px] md:w-[350px]">
+                <Image
+                  src="/Sahil-mahalley.webp"
+                  alt="Sahil Mahalley"
+                  fill
+                  sizes="(max-width: 639px) 64px, (max-width: 768px) 220px, 350px"
+                  className="object-cover"
+                />
+              </div>
+              <div className="min-w-0 sm:mt-6">
+                <p className="text-[15px] font-semibold leading-tight text-white sm:text-[18px] sm:font-normal sm:leading-[1.5] sm:text-white/65">
+                  Sahil Mahalley
+                </p>
+                <p className="mt-0.5 text-[13px] leading-tight text-white/65 sm:mt-0 sm:text-[18px] sm:leading-[1.5]">
+                  Art Advisor
+                </p>
+              </div>
             </div>
-            <p className="mt-6 text-[18px] leading-[1.5] text-white/65">
-              Sahil Mahalley, Art Advisor
-            </p>
           </div>
         </div>
       </section>
