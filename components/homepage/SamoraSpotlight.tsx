@@ -11,7 +11,7 @@ const CATEGORIES = [
 
 const SamoraSpotlight = () => {
   return (
-    <section className="w-full bg-[#FAF9F6]">
+    <section className="w-full overflow-x-hidden bg-[#FAF9F6]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-12">
         <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:gap-[50px]">
           {/* Left Column: Text Content */}
