@@ -29,11 +29,11 @@ const ChatWidget = () => {
   };
 
   const panelSizeClass = isExpanded
-    ? "h-[520px] w-[calc(100vw-2.5rem)] md:w-[640px]"
-    : "h-[520px] w-[340px] md:w-[380px]";
+    ? "h-[calc(100dvh-12rem)] max-h-[520px] w-[calc(100vw-2.5rem)] md:w-[640px]"
+    : "h-[calc(100dvh-12rem)] max-h-[520px] w-[340px] md:w-[380px]";
 
   return (
-    <div className="fixed bottom-24 right-5 z-40 md:bottom-28 md:right-6">
+    <div className="fixed bottom-24 right-5 z-[70] md:bottom-28 md:right-6">
       {isOpen && (
         <div
           className={`mb-3 flex flex-col overflow-hidden rounded-[16px] border border-[#1f1f1f]/10 bg-[#f4f2ee] shadow-[0_18px_35px_rgba(0,0,0,0.15)] transition-[width,height] duration-200 ${panelSizeClass}`}
