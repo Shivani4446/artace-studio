@@ -8,23 +8,28 @@ const TRUST_ITEMS = [
   {
     icon: Paintbrush,
     label: "100% Handcrafted",
+    detail: "Never printed, never duplicated",
   },
   {
     icon: MessageCircle,
     label: "Artist-Led Consultation",
+    detail: "A real conversation, not a checkout form",
     hiddenOnMobile: true,
   },
   {
     icon: PackageCheck,
     label: "White-Glove Delivery",
+    detail: "Packaged and delivered with care",
   },
   {
     icon: Star,
     label: "4.9★ on Google",
+    detail: "From collectors across India and beyond",
   },
   {
     icon: Globe,
     label: "Worldwide Shipping",
+    detail: "Your masterpiece, wherever home is",
   },
 ] as const;
 
@@ -50,6 +55,9 @@ const TrustBar = () => {
               <Icon className="h-5 w-5 text-[#2f2f2f]" strokeWidth={1.75} />
               <p className="font-inter text-[13px] font-medium leading-tight text-[#2f2f2f] sm:text-[14px]">
                 {item.label}
+              </p>
+              <p className="hidden font-inter text-[11px] leading-snug text-[#767676] md:block sm:text-[12px]">
+                {item.detail}
               </p>
             </motion.div>
           );
