@@ -576,3 +576,84 @@ img.protected-image {
     transform: translateX(-50%);
   }
 }
+
+/* Samora — Navratri festive section.
+   Every one of these animates transform/opacity only, never layout properties,
+   so none of them can trigger reflow on scroll. The offer ribbon reuses the
+   `marquee` keyframe above rather than defining a near-identical second one. */
+
+@keyframes samora-flame-flicker {
+  0%,
+  100% {
+    opacity: 0.92;
+    transform: scale(1, 1);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(0.94, 1.1);
+  }
+  65% {
+    opacity: 0.86;
+    transform: scale(1.05, 0.95);
+  }
+}
+
+.samora-flame {
+  animation: samora-flame-flicker 2.6s ease-in-out infinite;
+}
+
+@keyframes samora-glow-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(4%, -5%, 0) scale(1.12);
+  }
+}
+
+.samora-glow-drift {
+  animation: samora-glow-drift 22s ease-in-out infinite;
+}
+
+@keyframes samora-gentle-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+/* Shared by the bunting and the offer ribbon, which are given opposing delays
+   so the two never rise and fall together. */
+.samora-gentle-drift {
+  animation: samora-gentle-drift 6s ease-in-out infinite;
+}
+
+@keyframes samora-mandala-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.samora-mandala-turn {
+  animation: samora-mandala-turn 120s linear infinite;
+}
+
+/* Vestibular-safety net for the whole festive section. The user did not ask for
+   reduced-motion support anywhere else in the app, and it was deliberately not
+   added to the chat/marquee animations above — but this section carries four
+   simultaneous infinite loops, so it gets one. */
+@media (prefers-reduced-motion: reduce) {
+  .samora-flame,
+  .samora-glow-drift,
+  .samora-gentle-drift,
+  .samora-mandala-turn {
+    animation: none;
+  }
+}

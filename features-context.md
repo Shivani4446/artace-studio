@@ -191,7 +191,7 @@ hotels/designers, personal custom-order conversations) — those need a real mai
 email-sending API.
 
 ### Popup transition fix
-The "Ganesh Chaturthi Special" promo popup (`components/ui/PromotionModal.tsx`, appears 15s
+The promo popup (`components/ui/PromotionModal.tsx`, appears 15s
 after page load) flashed in instantly instead of fading/scaling in — root cause: it had a
 working *close* transition but no *open* one, since React mounted it already at its final
 visible styles in one paint (nothing for the CSS transition to animate from). Fixed with a
@@ -326,7 +326,29 @@ Cloudflare-dashboard steps (AI Crawl Control panel to resolve the 3 bot conflict
 Mode / Super Bot Fight Mode in Security → Bots to check for AhrefsBot's actual traffic
 block, separate from robots.txt entirely). **Left open:** whether the user wants
 `ai-train=no` changed to `ai-train=yes` in that same Cloudflare panel — a real
-content-licensing decision, asked but not yet answered.
+  content-licensing decision, asked but not yet answered.
+
+### Promo popup re-skin: Ganesh Chaturthi → Navratri
+`PromotionModal.tsx` is a single reusable campaign component, not Ganesh-specific — only its
+copy, image, and code were ever hardcoded. Re-skinned it for the Navratri sale (Ganesh
+Chaturthi is over) in one pass, all inside that one file:
+- Coupon code `BAPPA` → `NAVRATRI2026` (same flat 20% off + complimentary gift).
+- Left-side image `/images/bappa-1.webp` → `/mahalaxmi-mata.webp` (Goddess Lakshmi), alt text
+  updated to match.
+- Copy: badge "Navratri Special", headline "Bring Home Maa's Grace.", body "This Navratri,
+  invoke Maa's blessings with…", fine print now "live now through 20th October".
+  Shardiya Navratri 2026 runs 11–20 Oct (Ghatasthapana 11th → Vijayadashami 20th).
+- **Dismissal key changed** `hasSeenPromotionModal` → `hasSeenNavratriPromotionModal`. The
+  `sessionStorage` gate is per-campaign-lifetime, so without this, anyone who had already
+  dismissed the Ganesh popup in a session would never see the new campaign. **This is the
+  step to repeat on every future re-skin** — otherwise the new copy silently ships to no one.
+  Key the reverse way too: the old key left in storage is dead weight, not a bug.
+No coupon allowlist exists in code — `lib/api-route-handlers/checkout/coupon/route.ts`
+delegates entirely to WooCommerce `/wc/v3/coupons` (lowercases the code, checks expiry and
+usage limit). So the coupon must be created in wp-admin or checkout rejects the code the
+popup just handed out. The `NAVRATRI2026` coupon was created by the user. Lead capture is
+unaffected: `POST /api/promotion-leads` stores the code to Supabase `promotion_leads` and
+emails it to the team, with no code-side changes needed.
 
 ---
 

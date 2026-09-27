@@ -14,7 +14,7 @@ const PromotionModal = () => {
   const [isEntered, setIsEntered] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const COUPON_CODE = "BAPPA";
+  const COUPON_CODE = "NAVRATRI2026";
 
   // The code stays hidden until the visitor submits their email + phone —
   // this is what turns the popup into a lead capture, not just a discount.
@@ -57,7 +57,9 @@ const PromotionModal = () => {
 
   useEffect(() => {
     // Check if the user has already seen or closed the modal in this session
-    const hasSeenModal = sessionStorage.getItem("hasSeenPromotionModal");
+    const hasSeenModal = sessionStorage.getItem(
+      "hasSeenNavratriPromotionModal"
+    );
 
     if (!hasSeenModal) {
       const timer = setTimeout(() => {
@@ -96,7 +98,7 @@ const PromotionModal = () => {
     setIsClosing(true);
     setTimeout(() => {
       setIsVisible(false);
-      sessionStorage.setItem("hasSeenPromotionModal", "true");
+      sessionStorage.setItem("hasSeenNavratriPromotionModal", "true");
     }, 300); // Animation duration
   };
 
@@ -143,8 +145,8 @@ const PromotionModal = () => {
           {/* Image Side */}
           <div className="relative hidden h-32 w-full shrink-0 md:block md:h-auto md:min-h-[34rem] md:w-[43%]">
             <Image
-              src="/images/bappa-1.webp"
-              alt="Hand-painted Ganesha canvas artwork for Ganesh Chaturthi"
+              src="/mahalaxmi-mata.webp"
+              alt="Hand-painted Goddess Mahalaxmi canvas artwork for Navratri"
               fill
               priority
               className="object-cover"
@@ -157,16 +159,16 @@ const PromotionModal = () => {
           <div className="flex min-w-0 flex-1 flex-col justify-center p-5 text-[#1a1a1a] sm:p-7 md:p-9 lg:p-12">
             <div className="inline-flex max-w-full items-center self-start rounded-full bg-[#D4AF37]/10 px-3 py-1 text-[11px] font-bold uppercase text-[#D4AF37] sm:gap-2 sm:text-xs">
               <Sparkles className="h-3.5 w-3.5" />
-              <span className="min-w-0 truncate">Ganesh Chaturthi Special</span>
+              <span className="min-w-0 truncate">Navratri Special</span>
             </div>
 
             <h2 className="mt-3 text-wrap font-display text-3xl leading-[1.08] text-[#1A1A1A] sm:mt-5 sm:text-4xl lg:text-[42px]">
               Bring Home <br />
-              <span className="text-[#D4AF37]">Bappa&apos;s Blessings.</span>
+              <span className="text-[#D4AF37]">Maa&apos;s Grace.</span>
             </h2>
 
             <p className="mt-3 max-w-[34rem] text-base leading-relaxed text-[#555555] sm:mt-5 sm:text-[17px] lg:text-lg">
-              This Ganesh Chaturthi, celebrate with a flat
+              This Navratri, invoke Maa&apos;s blessings with a flat
               <span className="font-semibold text-[#1a1a1a]"> 20% off every order </span>
               — plus a complimentary gift with your purchase, on us.
             </p>
@@ -243,7 +245,7 @@ const PromotionModal = () => {
             )}
 
             <p className="mt-3 text-center text-[11px] text-[#999999] sm:mt-4 sm:text-[12px]">
-              Ganesh Chaturthi sale, live now through 14th September. Free Pan-India Shipping.
+              Navratri sale, live now through 20th October. Free Pan-India Shipping.
             </p>
           </div>
         </div>
