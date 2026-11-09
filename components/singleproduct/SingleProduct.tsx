@@ -29,6 +29,10 @@ import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { getArtistByName } from "@/lib/artists/data";
+import { isAtelierProduct } from "@/lib/atelier";
+import { hasAtelierDetail, type AtelierMeta } from "@/lib/atelier/meta";
+import AtelierEnquiryForm from "@/components/singleproduct/AtelierEnquiryForm";
+import LuxeChip from "@/components/atelier/LuxeChip";
 import { FRAME_OPTIONS, type FrameOption } from "@/lib/framing/data";
 import WhyArtaceStudio from "@/components/shared/WhyArtaceStudio";
 import { parseSizeDimensions, inferSizeUnit } from "@/utils/product-size";
@@ -252,6 +256,7 @@ type SingleProductProps = {
   artistName?: string;
   photographyDetails?: PhotographyDetails;
   isAvailableAsPrint?: boolean;
+  atelierMeta?: AtelierMeta;
   className?: string;
 };
 
@@ -741,6 +746,7 @@ const SingleProduct = ({
   artistName = "Artace Studio",
   photographyDetails,
   isAvailableAsPrint = true,
+  atelierMeta,
   className = "",
 }: SingleProductProps) => {
   const { addItem } = useCart();
@@ -755,6 +761,19 @@ const SingleProduct = ({
       product?.categories.some((category) => category.slug === "photography") ?? false,
     [product]
   );
+  // Atelier originals are one-of-one: a single piece exists, so the quantity
+  // is pinned to 1 here and re-checked server-side in
+  // lib/checkout/verify-line-items.ts against WooCommerce's sold_individually.
+  const isQuantityCapped = useMemo(() => isAtelierProduct(product), [product]);
+  // Atelier is a distinct presentation mode, not a photography variant:
+  // originals get the zoom lightbox, and the reproducible-product affordances
+  // (custom sizing, fine-art prints, "Customizable") are wrong for a piece that
+  // exists exactly once. Membership is category-driven so these gates hold even
+  // if a piece has no Atelier meta filed yet.
+  const isAtelier = isQuantityCapped;
+  const hidesPrints = isAtelier || atelierMeta?.printsDisabled === true;
+  const hidesCustomSize = isAtelier || atelierMeta?.customSizeDisabled === true;
+  const atelierDetail = useMemo(() => hasAtelierDetail(atelierMeta), [atelierMeta]);
   const tabLabels = isPhotography ? PHOTOGRAPHY_TAB_LABELS : TAB_LABELS;
   const tabHelperText = isPhotography ? PHOTOGRAPHY_TAB_HELPER_TEXT : TAB_HELPER_TEXT;
   const artist = artistName ? getArtistByName(artistName) : undefined;
@@ -792,6 +811,7 @@ const SingleProduct = ({
   const NO_FRAME_OPTION =
     FRAME_OPTIONS.find((frame) => frame.id === "no-frame") ?? FRAME_OPTIONS[FRAME_OPTIONS.length - 1];
   const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+  const [isAtelierEnquiryOpen, setIsAtelierEnquiryOpen] = useState(false);
   const [printSelectedSize, setPrintSelectedSize] = useState("");
   const [printSelectedFrame, setPrintSelectedFrame] = useState<FrameOption>(NO_FRAME_OPTION);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -1302,6 +1322,7 @@ const SingleProduct = ({
         subtitle: subtitleParts.join(" | ") || undefined,
         price: currentPrice ?? undefined,
         ...(!isPhotography ? { frameLabel: selectedFrame.label } : {}),
+        ...(isQuantityCapped ? { maxQuantity: 1 } : {}),
       },
       quantity
     );
@@ -1858,12 +1879,16 @@ const SingleProduct = ({
             <div>
               <div className="mx-auto max-w-[500px] lg:mx-0">
                 <div className="relative overflow-hidden rounded-[12px] bg-[#e8e5df]">
-                  {isPhotography ? (
+                  {isPhotography || isAtelier ? (
                     <button
                       type="button"
                       onClick={() => setIsImageLightboxOpen(true)}
                       className="relative z-10 block w-full cursor-zoom-in"
-                      aria-label="View full-size photograph"
+                      aria-label={
+                        isAtelier
+                          ? "View full-size image of this original"
+                          : "View full-size photograph"
+                      }
                     >
                       <Image
                         src={selectedImage?.src || FALLBACK_PRODUCT_IMAGE}
@@ -1951,7 +1976,8 @@ const SingleProduct = ({
 
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                {!isPhotography && (
+                {isAtelier && <LuxeChip />}
+                {!isPhotography && !isAtelier && (
                   <span className="inline-block rounded-full bg-[#1f1f1f] px-3 py-1 text-[13px] font-medium text-white">
                     Customizable
                   </span>
@@ -2083,7 +2109,16 @@ const SingleProduct = ({
                 />
               )}
 
-              {!isPhotography && (
+              {isAtelier ? (
+              <div className="mt-6 md:mt-[30px]">
+                <p className="text-[14px] text-[#595959] md:text-[16px]">Framing</p>
+                <p className="mt-1 text-[14px] leading-6 text-[#595959] md:text-[16px]">
+                  {atelierMeta?.frameNote?.trim() ||
+                    "Framing consultation is included. Our studio will reach out to arrange a frame and installation that suit the piece and your space."}
+                </p>
+              </div>
+              ) : (
+              !isPhotography && (
               <div className="mt-6 md:mt-[30px]">
                 <p className="text-[14px] text-[#595959] md:text-[16px]">Choose a Frame</p>
                 <div className="mt-3 flex flex-wrap gap-3">
@@ -2119,6 +2154,7 @@ const SingleProduct = ({
                 </div>
                 <p className="mt-2 text-[12px] text-[#8a8a8a]">Framing included in the price</p>
               </div>
+              )
               )}
 
               {product.shortDescription && (
@@ -2143,6 +2179,37 @@ const SingleProduct = ({
                 </div>
               )}
 
+              {isAtelier && atelierDetail && (
+                <div className="mt-6 max-w-2xl rounded-[10px] border border-[#e4ded4] bg-[#faf8f4] p-5 md:mt-[30px] md:p-6">
+                  <p className="font-inter text-[12px] uppercase tracking-[0.08em] text-[#6a655d]">
+                    Provenance & Certificate
+                  </p>
+                  <dl className="mt-3 space-y-3">
+                    {[
+                      ["Provenance", atelierMeta?.provenance],
+                      ["Art medium", atelierMeta?.artMedium],
+                      ["Surface", atelierMeta?.surface],
+                      ["Year created", atelierMeta?.creationYear],
+                      ["Certificate ID", atelierMeta?.certificateId],
+                    ]
+                      .filter((row): row is [string, string] => Boolean(row[1]))
+                      .map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="flex flex-col gap-0.5 border-b border-[#e4ded4] pb-3 last:border-0 last:pb-0 sm:flex-row sm:gap-4"
+                        >
+                          <dt className="shrink-0 text-[14px] text-[#6a655d] sm:w-[150px] md:text-[15px]">
+                            {label}
+                          </dt>
+                          <dd className="text-[15px] leading-6 text-[#313131] md:text-[16px]">
+                            {value}
+                          </dd>
+                        </div>
+                      ))}
+                  </dl>
+                </div>
+              )}
+
               {product.sku && (
                 <p className="mt-6 text-[14px] text-[#595959] md:mt-[30px] md:text-[16px]">
                   SKU: {product.sku}
@@ -2150,6 +2217,14 @@ const SingleProduct = ({
               )}
 
               <div className="mt-6 flex flex-wrap items-stretch gap-2.5 sm:gap-3 md:mt-[30px]">
+                {/* One-of-one originals (Atelier) are capped at 1, so a -/+ stepper
+                    would be misleading — show the single available piece instead.
+                    The checkout route enforces the same cap server-side. */}
+                {isQuantityCapped ? (
+                  <div className="order-1 flex h-[46px] items-center rounded-[10px] border border-[#dcdad8] bg-white px-4 text-[14px] text-[#595959] md:order-none md:h-[50px] md:text-[15px]">
+                    Only 1 available
+                  </div>
+                ) : (
                 <div className="order-1 flex h-[46px] items-center overflow-hidden rounded-[10px] border border-[#dcdad8] bg-white md:order-none md:h-[50px]">
                   <button
                     type="button"
@@ -2171,14 +2246,14 @@ const SingleProduct = ({
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
-
+                )}
                 <button
                   type="button"
                   disabled={!product.inStock}
                   onClick={handleAddToCart}
                   className="order-3 inline-flex w-full items-center justify-center gap-2 rounded-[6px] bg-[#1f1f1f] px-4 py-3 text-[16px] font-normal text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:bg-[#8c8578] md:order-none md:w-auto md:px-6 md:text-[18px]"
                 >
-                  Add to Bag
+                  {isAtelier ? "Acquire This Piece" : "Add to Bag"}
                   <Image
                     src="/add-icon.svg"
                     alt=""
@@ -2189,7 +2264,7 @@ const SingleProduct = ({
                   />
                 </button>
 
-                {!isPhotography && (
+                {!isPhotography && !hidesCustomSize && (
                   <button
                     type="button"
                     onClick={openCustomSizeModal}
@@ -2207,6 +2282,16 @@ const SingleProduct = ({
                   </button>
                 )}
 
+                {isAtelier && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAtelierEnquiryOpen(true)}
+                    className="order-5 inline-flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#1f1f1f] px-4 py-3 text-[16px] font-normal text-[#1f1f1f] transition-colors hover:bg-[#1f1f1f] hover:text-white md:order-none md:w-auto md:px-6 md:text-[18px]"
+                  >
+                    {product.inStock ? "Enquire" : "Enquire About a Commission"}
+                  </button>
+                )}
+
                 {isPhotography && (
                   <Link
                     href={`/make-an-offer?product=${product.slug}`}
@@ -2216,7 +2301,7 @@ const SingleProduct = ({
                   </Link>
                 )}
 
-                {!isPhotography && isAvailableAsPrint && (
+                {!isPhotography && !hidesPrints && isAvailableAsPrint && (
                   <button
                     type="button"
                     onClick={() => setIsPrintModalOpen(true)}
@@ -2243,6 +2328,18 @@ const SingleProduct = ({
                   />
                 </button>
               </div>
+
+              {isAtelier && !product.inStock && (
+                <div className="mt-5 max-w-2xl rounded-[10px] border border-[#e4ded4] bg-[#faf8f4] p-5 md:p-6">
+                  <p className="text-[15px] font-medium text-[#24211d] md:text-[16px]">
+                    This piece has been acquired.
+                  </p>
+                  <p className="mt-1 text-[15px] leading-6 text-[#595959] md:text-[16px]">
+                    Enquire to commission a similar original, or to register your
+                    interest should this piece return to the studio.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
@@ -2440,6 +2537,18 @@ const SingleProduct = ({
             </Link>
           ) : null}
         </div>
+      ) : null}
+
+      {isAtelier && product ? (
+        <AtelierEnquiryForm
+          isOpen={isAtelierEnquiryOpen}
+          onClose={() => setIsAtelierEnquiryOpen(false)}
+          productId={product.id}
+          productName={product.name}
+          productSlug={product.slug}
+          productImage={selectedImage?.src}
+          intent={product.inStock ? "acquire" : "commission"}
+        />
       ) : null}
 
       {isCustomSizeModalOpen ? (

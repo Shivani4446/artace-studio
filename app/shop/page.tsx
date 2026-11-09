@@ -6,8 +6,10 @@ import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { decodeHtmlEntities } from "@/utils/text";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
+import { isAtelierProduct } from "@/lib/atelier";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { hasSamoraTag } from "@/lib/samora/products";
+import { parsePrice } from "@/lib/currency/parse-price";
 export const runtime = 'edge';
 
 export const metadata: Metadata = {
@@ -130,13 +132,6 @@ type WooStoreProduct = {
   total_sales?: number;
   date_created?: string;
   date_created_gmt?: string;
-};
-
-const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
 };
 
 const getAttributeOptions = (attribute: WooStoreAttribute) => {
@@ -314,7 +309,23 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
     const regularPrice = parsePrice(product.prices?.regular_price, minorUnit);
     const primaryImage = product.images[0];
     const imageUrl = primaryImage?.src || FALLBACK_PRODUCT_IMAGE;
-    const fakeRating = getFakeRating(product.id);
+
+    // Atelier pieces are one-of-one originals: never invent a rating or a
+    // review count for them. Fall back to WooCommerce's real values (empty
+    // for a product with no genuine reviews), which every consumer already
+    // treats as "no rating" — see SingleProduct.tsx displayRating and
+    // SamoraSingleProduct's `reviewCount > 0` guard.
+    const isAtelier = isAtelierProduct(product);
+    const realRating = Number.parseFloat(product.average_rating ?? "");
+    const fakeRating = isAtelier ? null : getFakeRating(product.id);
+    const resolvedReviewCount = fakeRating
+      ? fakeRating.reviewCount
+      : (product.review_count ?? 0);
+    const resolvedRating = fakeRating
+      ? fakeRating.rating
+      : Number.isFinite(realRating)
+        ? realRating
+        : 0;
 
     const explicitMoodOptions = (product.attributes ?? [])
       .filter((attribute) => /mood/i.test(attribute.name))
@@ -354,8 +365,8 @@ const normalizeProducts = (products: WooStoreProduct[]): ShopProduct[] => {
       regularPrice,
       currencyCode: product.prices?.currency_code || "INR",
       currencySymbol: product.prices?.currency_symbol || "Rs. ",
-      reviewCount: fakeRating.reviewCount,
-      averageRating: fakeRating.rating,
+      reviewCount: resolvedReviewCount,
+      averageRating: resolvedRating,
       totalSales: product.total_sales ?? 0,
       dateCreated: product.date_created_gmt || product.date_created || null,
       attributes: {

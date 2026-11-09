@@ -577,6 +577,28 @@ img.protected-image {
   }
 }
 
+/* Atelier "Luxe" chip — a gold light sweep across the black pill. Animates
+   transform only, so it can never trigger reflow. */
+@keyframes luxe-sheen {
+  0% {
+    transform: translateX(-130%);
+  }
+  45%,
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+.luxe-sheen {
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 240, 190, 0.55) 50%,
+    transparent 65%
+  );
+  animation: luxe-sheen 3.6s ease-in-out infinite;
+}
+
 /* Samora — Navratri festive section.
    Every one of these animates transform/opacity only, never layout properties,
    so none of them can trigger reflow on scroll. The offer ribbon reuses the

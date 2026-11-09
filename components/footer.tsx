@@ -14,6 +14,7 @@ const footerSections: FooterSection[] = [
   {
     title: "Collections",
     links: [
+      { label: "The Atelier", href: getCollectionHref("atelier") },
       { label: "Radha Krishna", href: getCollectionHref("radha-krishna-paintings") },
       { label: "Buddha", href: getCollectionHref("buddha-paintings") },
       { label: "Ganesha", href: getCollectionHref("ganapati-paintings") },

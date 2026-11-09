@@ -7,6 +7,12 @@ const SingleProduct = dynamic(() =>
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
 import { generateProductSchema } from "@/lib/schema";
 import { getFakeRating } from "@/lib/reviews/fake-rating";
+import { isAtelierProduct } from "@/lib/atelier";
+import {
+  EMPTY_ATELIER_META,
+  readAtelierMeta,
+  type AtelierMeta,
+} from "@/lib/atelier/meta";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
 import { hasSamoraTag } from "@/lib/samora/products";
@@ -219,6 +225,16 @@ const fetchStoreProducts = async (
 };
 
 const withFakeRating = (product: WooStoreProduct): WooStoreProduct => {
+  // Atelier pieces are one-of-one originals and are deliberately left with
+  // WooCommerce's real (empty) rating values. Overwriting them with invented
+  // 3.9–5.0 stars and 12–89 reviews would both show fabricated social proof
+  // on a premium product and publish an `aggregateRating` for reviews that
+  // do not exist. generateAggregateRatingSchema already returns null for
+  // empty values, so simply not overwriting here emits no rating at all.
+  if (isAtelierProduct(product)) {
+    return product;
+  }
+
   const fakeRating = getFakeRating(product.id);
   return {
     ...product,
@@ -538,6 +554,23 @@ const fetchPhotographyDetails = async (
     };
   } catch {
     return {};
+  }
+};
+
+const fetchAtelierMetaFromWooApi = async (productId: number): Promise<AtelierMeta> => {
+  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+  if (!consumerKey || !consumerSecret) return EMPTY_ATELIER_META;
+  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+  try {
+    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+      headers: { Authorization: `Basic ${basicToken}` },
+      next: { revalidate },
+    });
+    if (!response.ok) return EMPTY_ATELIER_META;
+    const payload = (await response.json()) as WooV3Product;
+    return readAtelierMeta(payload.meta_data);
+  } catch {
+    return EMPTY_ATELIER_META;
   }
 };
 
@@ -1095,6 +1128,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const isPhotographyProduct = product.categories.some(
     (category) => category.slug === "photography"
   );
+  const isAtelier = isAtelierProduct(product);
 
   const [
     productWithInformation,
@@ -1103,6 +1137,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     artistName,
     photographyDetails,
     isAvailableAsPrint,
+    atelierMeta,
   ] = await Promise.all([
     getProductWithProductInformation(product),
     isPhotographyProduct
@@ -1112,6 +1147,9 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     fetchProductArtistName(product.id),
     fetchPhotographyDetails(product.id),
     fetchPrintEligibility(product.id),
+    // Only Atelier pieces carry Atelier meta; skip the extra Admin API call for
+    // every other product on the site.
+    isAtelier ? fetchAtelierMetaFromWooApi(product.id) : Promise.resolve(EMPTY_ATELIER_META),
   ]);
 
   const schema = generateProductSchema(product);
@@ -1129,6 +1167,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         artistName={artistName}
         photographyDetails={photographyDetails}
         isAvailableAsPrint={isAvailableAsPrint}
+        atelierMeta={atelierMeta}
       />
     </>
   );

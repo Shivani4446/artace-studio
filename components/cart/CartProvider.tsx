@@ -29,6 +29,13 @@ export type CartProduct = {
   // (e.g. "Fine Art Print") — forwarded as line-item metadata, same
   // mechanism as frameLabel. Undefined for a normal order.
   orderTypeLabel?: string;
+  // Hard cap on how many of this item may be in the cart. Undefined means
+  // unlimited, which is the normal case. Set to 1 for one-of-one originals
+  // (Atelier pieces) so the stepper can't build an order for 3 copies of a
+  // unique painting. The checkout route independently rejects quantity > 1
+  // on any sold-individually product — this is the UX-side guard, that one
+  // is the security-side guard.
+  maxQuantity?: number;
 };
 
 export type CartItem = CartProduct & {
@@ -55,6 +62,16 @@ type CartContextValue = {
 
 const STORAGE_KEY = "artace-mini-cart";
 const GIFT_STORAGE_KEY = "artace-mini-cart-gift";
+
+/**
+ * A missing or nonsensical maxQuantity means "no limit". Guarded against
+ * NaN/0/negative/fractional values so a bad value can never silently
+ * clamp every cart to 0 items.
+ */
+const normalizeMaxQuantity = (value: number | undefined): number => {
+  if (typeof value !== "number" || !Number.isFinite(value)) return Number.POSITIVE_INFINITY;
+  return Math.max(1, Math.floor(value));
+};
 
 const CartContext = createContext<CartContextValue | undefined>(undefined);
 
@@ -138,7 +155,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addItem = useCallback(
     (product: CartProduct, quantity = 1) => {
-      const safeQty = Math.max(1, Math.floor(quantity));
+      const cap = normalizeMaxQuantity(product.maxQuantity);
+      const safeQty = Math.min(Math.max(1, Math.floor(quantity)), cap);
 
       trackAddToCart(product, safeQty);
 
@@ -149,9 +167,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           return [...prevItems, { ...product, quantity: safeQty }];
         }
 
+        // Clamp against the cap, not just the increment — adding the same
+        // one-of-one piece twice must never end up as quantity 2.
         return prevItems.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + safeQty }
+            ? {
+                ...item,
+                maxQuantity: item.maxQuantity ?? product.maxQuantity,
+                quantity: Math.min(item.quantity + safeQty, normalizeMaxQuantity(item.maxQuantity ?? product.maxQuantity)),
+              }
             : item
         );
       });
@@ -163,12 +187,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setItems((prevItems) => {
       const targetItem = prevItems.find((item) => item.id === id);
       if (targetItem) {
+        const cap = normalizeMaxQuantity(targetItem.maxQuantity);
+        if (targetItem.quantity >= cap) return prevItems;
         trackAddToCart(targetItem, 1);
       }
 
-      return prevItems.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      );
+      return prevItems.map((item) => {
+        if (item.id !== id) return item;
+        const cap = normalizeMaxQuantity(item.maxQuantity);
+        return { ...item, quantity: Math.min(item.quantity + 1, cap) };
+      });
     });
   }, []);
 

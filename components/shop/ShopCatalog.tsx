@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
+import LuxeChip from "@/components/atelier/LuxeChip";
 import type { ShopProduct, SizeBucket } from "@/components/shop/types";
 
 type ShopCatalogProps = {
@@ -1023,6 +1024,7 @@ const ShopCatalog = ({
                 >
                   {paginatedProducts.map((product) => {
                     const isPhotography = product.categorySlugs.includes("photography");
+                    const isAtelier = product.categorySlugs.includes("atelier");
                     const categoryLabel = product.categories[0] || "Artwork";
                     const paintingMetaLine = isPhotography
                       ? `Original Digital Print | ${getPaintingSizeLabel(product)}`
@@ -1059,9 +1061,19 @@ const ShopCatalog = ({
                               isSingleRowLayout ? "aspect-[4/5] h-full" : "aspect-[4/5] sm:aspect-square"
                             }`}
                           >
-                            <span className="absolute left-2 top-2 z-20 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-[#595959] shadow-sm sm:left-3 sm:top-3 sm:text-[12px]">
-                              Customizable
-                            </span>
+                            {/* Atelier pieces are one-of-one originals and are
+                                never customizable, so the standard badge would
+                                be misleading — show the Luxe chip instead. */}
+                            {isAtelier ? (
+                              <LuxeChip
+                                className="absolute left-2 top-2 z-20 sm:left-3 sm:top-3"
+                                textClassName="text-[12px] sm:text-[13px]"
+                              />
+                            ) : (
+                              <span className="absolute left-2 top-2 z-20 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-[#595959] shadow-sm sm:left-3 sm:top-3 sm:text-[12px]">
+                                Customizable
+                              </span>
+                            )}
                             <Image
                               src={product.image}
                               alt={product.imageAlt || product.name}

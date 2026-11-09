@@ -9,6 +9,7 @@ import { buildSiteUrl, toAbsoluteImageUrl } from "@/lib/site";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { decodeHtmlEntities } from "@/utils/text";
 import { hasSamoraTag } from "@/lib/samora/products";
+import { parsePrice } from "@/lib/currency/parse-price";
 export const runtime = 'edge';
 // Product and category data is shared across collection visitors. A five-minute
 // cache avoids repeatedly asking WooCommerce for the same catalog.
@@ -137,13 +138,6 @@ const fetchWooStoreJson = async <T,>(path: string): Promise<T | null> => {
       return null;
     }
   }
-};
-
-const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
 };
 
 const getAttributeOptions = (attribute: WooStoreAttribute) => {

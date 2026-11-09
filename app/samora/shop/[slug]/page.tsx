@@ -9,6 +9,7 @@ import { generateProductSchema } from "@/lib/schema";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
 import { hasSamoraTag, SAMORA_TAG_SLUG } from "@/lib/samora/products";
+import { parsePrice } from "@/lib/currency/parse-price";
 
 export const runtime = "edge";
 export const revalidate = 120;
@@ -111,13 +112,6 @@ const toBasicAuthToken = (username: string, password: string) => {
     .Buffer;
   if (maybeBuffer) return maybeBuffer.from(raw).toString("base64");
   throw new Error("No base64 encoder available.");
-};
-
-const parsePrice = (rawValue: string | undefined, minorUnit = 2): number | null => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
 };
 
 const fetchStoreProducts = async (queryString: string): Promise<WooStoreProduct[]> => {

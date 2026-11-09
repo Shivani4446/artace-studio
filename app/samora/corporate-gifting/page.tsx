@@ -4,6 +4,7 @@ import type { SamoraProduct } from "@/components/samora/SamoraProductCard";
 import { decodeHtmlEntities } from "@/utils/text";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { SAMORA_TAG_SLUG } from "@/lib/samora/products";
+import { parsePrice } from "@/lib/currency/parse-price";
 
 export const runtime = "edge";
 export const revalidate = 60;
@@ -27,13 +28,6 @@ type WooStoreProduct = {
   images: WooStoreImage[];
   prices: WooStorePrices;
   categories?: WooStoreCategory[];
-};
-
-const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
 };
 
 const getGiftingProducts = async (): Promise<SamoraProduct[]> => {

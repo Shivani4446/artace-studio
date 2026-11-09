@@ -10,7 +10,29 @@ const toBasicAuthToken = (username: string, password: string) => {
   throw new Error("No base64 encoder available.");
 };
 
-type WooV3Product = { id: number; price?: string; weight?: string; tags?: { id: number; slug: string }[] };
+/**
+ * A product as returned by the WooCommerce Admin API (wc/v3/products).
+ *
+ * Note the price unit difference from the public Store API used elsewhere in
+ * this codebase: wc/v3 returns MAJOR units ("150000.00" for INR 1,50,000),
+ * while wc/store/v1 returns MINOR units ("15000000"). Do not mix the two up
+ * — this is exactly the class of bug fixed in lib/schema/offer.ts.
+ */
+export type WooV3Product = {
+  id: number;
+  name?: string;
+  price?: string;
+  regular_price?: string;
+  weight?: string;
+  sku?: string;
+  stock_status?: string;
+  stock_quantity?: number | null;
+  manage_stock?: boolean;
+  sold_individually?: boolean;
+  categories?: { id: number; name: string; slug: string }[];
+  tags?: { id: number; slug: string }[];
+  meta_data?: { key: string; value: unknown }[];
+};
 
 /**
  * Batch-fetches real catalog prices (and full product records, for callers

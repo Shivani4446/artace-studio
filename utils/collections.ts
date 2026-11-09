@@ -12,6 +12,7 @@ export type CollectionLinkItem = {
 };
 
 const COLLECTION_LINK_ITEMS: CollectionLinkItem[] = [
+  { name: "The Atelier", categorySlug: "atelier" },
   { name: "Ganapati Painting", categorySlug: "ganapati-paintings" },
   { name: "Radha Krishna", categorySlug: "radha-krishna-paintings" },
   { name: "Buddha Paintings", categorySlug: "buddha-paintings" },
@@ -24,6 +25,13 @@ const COLLECTION_LINK_ITEMS: CollectionLinkItem[] = [
 ];
 
 const COLLECTION_THEME_MAP: Record<string, CollectionTheme> = {
+  "atelier": {
+    accent: "#B8963E",
+    accentSoft: "#F3E6B8",
+    accentStrong: "#1A1712",
+    panel: "#F7F1DF",
+    vector: ["#B8963E", "#D4AF37", "#F3E6B8"],
+  },
   "ganapati-paintings": {
     accent: "#8C4B2F",
     accentSoft: "#EAD4B4",

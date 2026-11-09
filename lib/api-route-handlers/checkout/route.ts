@@ -25,6 +25,7 @@ import { AFFILIATE_REF_COOKIE_NAME } from "@/lib/affiliates/constants";
 import { getPointsBalance } from "@/lib/rewards/ledger";
 import { MIN_REDEMPTION_POINTS, POINT_VALUE_INR } from "@/lib/rewards/constants";
 import { calculateOrderSubtotal } from "@/lib/checkout/subtotal";
+import { verifyLineItemsAgainstCatalog } from "@/lib/checkout/verify-line-items";
 import { getGiftCardBalance } from "@/lib/gift-cards/ledger";
 import { buildSiteUrl } from "@/lib/site";
 
@@ -193,7 +194,7 @@ export async function POST(request: NextRequest) {
   }
 
   const lineItems = Array.isArray(body.lineItems) ? body.lineItems : [];
-  const normalizedLineItems = lineItems
+  const requestedLineItems = lineItems
     .map((item) => {
       const productId = ensurePositiveInt(item.productId);
       const quantity = ensurePositiveInt(item.quantity);
@@ -202,11 +203,10 @@ export async function POST(request: NextRequest) {
       const orderTypeLabel = sanitizeText(item.orderTypeLabel);
       if (!productId || !quantity) return null;
 
-      const unitPrice =
+      const clientUnitPrice =
         typeof item.unitPrice === "number" && Number.isFinite(item.unitPrice) && item.unitPrice > 0
           ? item.unitPrice
           : null;
-      const lineTotal = unitPrice !== null ? (unitPrice * quantity).toFixed(2) : null;
 
       const metaEntries = [
         ...(frameLabel ? [{ key: "Frame", value: frameLabel }] : []),
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
         quantity,
         ...(variationId ? { variation_id: variationId } : {}),
         ...(metaEntries.length ? { meta_data: metaEntries } : {}),
-        ...(lineTotal !== null ? { subtotal: lineTotal, total: lineTotal } : {}),
+        clientUnitPrice,
       };
     })
     .filter(
@@ -229,17 +229,26 @@ export async function POST(request: NextRequest) {
         quantity: number;
         variation_id?: number;
         meta_data?: Array<{ key: string; value: string }>;
-        subtotal?: string;
-        total?: string;
+        clientUnitPrice: number | null;
       } => Boolean(item)
     );
 
-  if (normalizedLineItems.length === 0) {
+  if (requestedLineItems.length === 0) {
     return NextResponse.json(
       { error: "Cart is empty or contains invalid products." },
       { status: 400 }
     );
   }
+
+  // Rebuild every line from real WooCommerce data before it reaches the order.
+  // This discards the client-supplied price for ordinary products, enforces
+  // stock and one-of-one quantity, and fails closed if the catalog can't be
+  // read at all. See lib/checkout/verify-line-items.ts for the full rationale.
+  const verification = await verifyLineItemsAgainstCatalog(requestedLineItems);
+  if (!verification.ok) {
+    return NextResponse.json({ error: verification.error }, { status: 400 });
+  }
+  const normalizedLineItems = verification.lineItems;
 
   const { sanitized: billing, missingRequired } = validateAddress(body.billing || {});
   if (missingRequired) {

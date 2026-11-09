@@ -8,6 +8,7 @@ import { decodeHtmlEntities } from "@/utils/text";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
 import { SAMORA_TAG_SLUG } from "@/lib/samora/products";
+import { parsePrice } from "@/lib/currency/parse-price";
 
 export const runtime = "edge";
 export const revalidate = 60;
@@ -85,13 +86,6 @@ type WooStoreProduct = {
   prices: WooStorePrices;
   categories?: WooStoreCategory[];
   attributes?: WooStoreAttribute[];
-};
-
-const parsePrice = (rawValue: string | undefined, minorUnit: number) => {
-  if (!rawValue) return null;
-  const numericValue = Number(rawValue);
-  if (Number.isNaN(numericValue)) return null;
-  return numericValue / 10 ** minorUnit;
 };
 
 const getAttributeOptions = (attribute: WooStoreAttribute) => {
