@@ -2,24 +2,28 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import SamoraProductCard, { type SamoraProduct } from "@/components/samora/SamoraProductCard";
 import {
+  EVERGREEN_COUPON_CODE,
+  EVERGREEN_DISCOUNT_PERCENT,
+} from "@/components/ui/promotion";
+import {
   SamoraFestiveBunting,
   SamoraDiyaIcon,
   SamoraMandalaIcon,
 } from "@/components/samora/SamoraFestiveIcons";
 
-// Kept as constants rather than inline strings so the ribbon, the code chip and
-// any future copy edit stay in sync — and so there is exactly one place to
-// change when the campaign ends.
-const COUPON_CODE = "NAVRATRI2026";
-const OFFER_PERCENT = 20;
+// Same evergreen offer as the main Artace site (ARTACE15 is not
+// Samora-exclusive, so it works at both checkouts). Imported from the shared
+// constants so the code can only ever change in one place.
+const COUPON_CODE = EVERGREEN_COUPON_CODE;
+const OFFER_PERCENT = EVERGREEN_DISCOUNT_PERCENT;
 
 // The two marquee halves must render an identical sequence, because the
 // animation is a translateX(-50%). Change one and you have to change the other.
 const RIBBON_ITEMS = [
-  "Navratri Special",
-  `Flat ${OFFER_PERCENT}% Off Every Order`,
+  "Samora Special",
+  `${OFFER_PERCENT}% Off Every Order`,
   `Use Code ${COUPON_CODE}`,
-  "Nine Nights of Maa",
+  "Thoughtful Handmade Gifts",
   "Handmade in Small Batches",
 ];
 
@@ -96,16 +100,15 @@ const SamoraFestiveSpecial = ({ products }: { products: SamoraProduct[] }) => {
         <div className="max-w-[660px]">
           <span className="inline-flex items-center gap-2 rounded-full border border-[#e8c07d]/30 bg-[#e8c07d]/10 px-4 py-1.5 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-[#e8c07d]">
             <SamoraDiyaIcon className="h-4 w-4" flameClassName="samora-flame" />
-            Navratri Special
+            Samora Special
           </span>
 
           <h2 className="font-samora-display mt-5 text-[32px] leading-[1.14] text-white sm:text-[38px] md:text-[46px]">
-            Nine Nights of Maa. <span className="text-[#e8c07d]">Nine Handmade Gifts.</span>
+            Made by Hand. <span className="text-[#e8c07d]">Given with Heart.</span>
           </h2>
 
           <p className="mt-4 max-w-[38rem] text-[16px] leading-[1.7] text-white/75 md:text-[17px]">
-            Light a diya each evening of Navratri and welcome Maa home with something made
-            by hand. Take a flat{" "}
+            Small-batch pieces for your home and the people you love. Take{" "}
             <span className="font-semibold text-white">{OFFER_PERCENT}% off every order</span>{" "}
             with code <span className="font-semibold text-[#e8c07d]">{COUPON_CODE}</span>.
           </p>
@@ -120,7 +123,7 @@ const SamoraFestiveSpecial = ({ products }: { products: SamoraProduct[] }) => {
               </span>
             </div>
             <span className="text-[14px] text-white/70">
-              Flat {OFFER_PERCENT}% off, ends 20th October
+              {OFFER_PERCENT}% off every order, every time
             </span>
           </div>
 
