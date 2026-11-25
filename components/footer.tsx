@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ARTIST_DASHBOARD_LINKS } from "@/lib/artists/dashboard";
+import CookieSettingsButton from "@/components/consent/CookieSettingsButton";
 import { getCollectionHref } from "@/utils/collections";
 
 type FooterSection = {
@@ -175,9 +176,12 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between md:mt-24">
-          <p className="text-[18px] text-[#d4d5d8]">
-            © 2026 Artace Studio. All rights reserved
-          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <p className="text-[18px] text-[#d4d5d8]">
+              © 2026 Artace Studio. All rights reserved
+            </p>
+            <CookieSettingsButton className="text-[16px] text-[#d4d5d8] underline underline-offset-4 transition-opacity hover:opacity-70" />
+          </div>
 
           <div className="flex items-center gap-5">
             {socialLinks.map((social) => (

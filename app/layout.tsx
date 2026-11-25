@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { GoogleTagManager } from "@next/third-parties/google";
 import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -14,6 +13,8 @@ import { DEFAULT_CURRENCY } from "@/lib/currency/cookie";
 import AffiliateClickTracker from "@/components/affiliates/AffiliateClickTracker";
 import WebVitalsReporter from "@/components/analytics/WebVitalsReporter";
 import { inter } from "@/lib/fonts";
+import CookieConsent from "@/components/consent/CookieConsent";
+import { CONSENT_DEFAULT_SCRIPT } from "@/lib/consent";
 
 const sentient = localFont({
   src: [
@@ -94,44 +95,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
-
   return (
     <html lang="en">
       <head>
-        {/* Google tag (gtag.js) — base tag. Configures both the GA4 property
-            and the Google Ads account on the same loaded script/dataLayer,
-            per Google's guidance for sites with multiple tag IDs (only one
-            gtag/js loader is needed; each ID gets its own 'config' call).
-            Separate from the GTM container below; other Ads/GA4 events (see
-            utils/gtm.ts) are pushed to the same window.dataLayer this
-            initializes. Loaded via next/script with strategy="afterInteractive"
-            (Next's own recommended strategy for GA/gtag) instead of a raw
-            <script> tag so it no longer competes with the page's own LCP
-            resources — the inline snippet's local gtag() shim just queues
-            onto window.dataLayer, which is order-independent by design, so
-            it's safe regardless of exactly when the external script finishes
-            loading relative to it. */}
+        {/* Google Consent Mode v2 defaults — every non-essential signal is
+            "denied" until the visitor chooses in the cookie bar
+            (components/consent). Must run before any Google tag, hence
+            beforeInteractive. GA4, Google Ads, GTM, Ahrefs and the Meta
+            Pixel are loaded by components/consent/ConsentScripts only for
+            the categories the visitor allowed. */}
         <Script
-          strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-27V3DFEVET"
+          id="consent-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_SCRIPT }}
         />
-        <Script
-          id="gtag-config"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-27V3DFEVET');
-              gtag('config', 'AW-11024941492');
-            `,
-          }}
-        />
-        {/* Trustpilot / Merchant widget / Ahrefs / Meta Pixel are all
-            non-critical third-party embeds (a reviews badge, a shopping
-            widget, analytics, an ads pixel) — none of them need to be ready
+        {/* Trustpilot / Merchant widget are functional embeds (a reviews
+            badge and the Google store badge), not trackers, so they don't
+            wait for cookie consent. Neither needs to be ready
             immediately, so they load via strategy="lazyOnload" (Next's
             recommended strategy for this exact category: "chat support
             plugins or social media widgets") instead of blocking on the
@@ -184,48 +164,16 @@ export default function RootLayout({
             `,
           }}
         />
-        <Script
-          src="https://analytics.ahrefs.com/analytics.js"
-          data-key="AHn7dT8Dlwwm42L41CA4Xg"
-          strategy="lazyOnload"
-        />
-        <Script
-          id="meta-pixel"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{
-            __html: `!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '2637055520014152');
-fbq('track', 'PageView');`
-          }}
-        />
-        <noscript>
-          <img
-            height={1}
-            width={1}
-            style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=2637055520014152&ev=PageView&noscript=1"
-            alt=""
-          />
-        </noscript>
       </head>
       <body
         suppressHydrationWarning
         className={`${inter.variable} ${sentient.variable} antialiased`}
       >
-        {process.env.NODE_ENV === "production" && gtmId ? (
-          <GoogleTagManager gtmId={gtmId} />
-        ) : null}
         <Suspense fallback={null}>
           <AffiliateClickTracker />
         </Suspense>
         <WebVitalsReporter />
+        <CookieConsent />
         <AuthSessionProvider>
           <CurrencyProvider initialCurrency={DEFAULT_CURRENCY} initialRates={null}>
           <CartProvider>
