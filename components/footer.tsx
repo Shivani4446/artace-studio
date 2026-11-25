@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ARTIST_DASHBOARD_LINKS } from "@/lib/artists/dashboard";
 import { getCollectionHref } from "@/utils/collections";
 
 type FooterSection = {
@@ -32,6 +33,7 @@ const footerSections: FooterSection[] = [
       { label: "Corporate & Bulk Orders", href: "/corporate-bulk-orders" },
       { label: "Custom Portraits", href: "/custom-portraits" },
       { label: "Sell Your Art", href: "/sell-paintings" },
+      { label: "Artist Login", href: ARTIST_DASHBOARD_LINKS.signIn },
       { label: "Trade Program", href: "/trade" },
       { label: "Affiliate Program", href: "/affiliates" },
       { label: "Artace Rewards", href: "/rewards" },

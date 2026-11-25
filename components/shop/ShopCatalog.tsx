@@ -219,6 +219,12 @@ const ShopCatalog = ({
   }, [initialLoadError]);
 
   useEffect(() => {
+    // The server render already fetched the same catalog from the same
+    // 5-minute data cache, so re-fetching it on every visit only doubled the
+    // WooCommerce load. Fall back to the client fetch only when the server
+    // render came back empty (e.g. WooCommerce was briefly rate-limiting).
+    if (initialProducts.length > 0) return;
+
     const controller = new AbortController();
 
     const loadLatestProducts = async () => {

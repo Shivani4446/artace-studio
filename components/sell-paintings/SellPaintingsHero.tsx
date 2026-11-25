@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ARTIST_DASHBOARD_LINKS, withDashboardUtm } from "@/lib/artists/dashboard";
 import { motion, useReducedMotion } from "framer-motion";
 
 const WHP_LINK =
@@ -64,12 +65,12 @@ const SellPaintingsHero = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mt-8 flex flex-wrap items-center gap-5"
           >
-            <Link
-              href="#artist-register-form"
+            <a
+              href={withDashboardUtm(ARTIST_DASHBOARD_LINKS.apply, "hero")}
               className="inline-flex items-center justify-center rounded-[12px] bg-white px-7 py-3 text-[16px] font-medium text-[#1f1f1f] transition-colors hover:bg-white/90"
             >
               Apply as an Artist
-            </Link>
+            </a>
             <Link
               href={WHP_LINK}
               target="_blank"
@@ -82,6 +83,15 @@ const SellPaintingsHero = () => {
               Talk to Curator on WhatsApp
             </Link>
           </motion.div>
+          <p className="mt-5 font-inter text-[14px] text-white/70">
+            Already an Artace artist?{" "}
+            <a
+              href={withDashboardUtm(ARTIST_DASHBOARD_LINKS.signIn, "hero-sign-in")}
+              className="font-medium text-white underline underline-offset-4 hover:text-white/85"
+            >
+              Sign in to your dashboard
+            </a>
+          </p>
         </div>
       </div>
     </section>

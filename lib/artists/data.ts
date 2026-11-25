@@ -7,15 +7,14 @@ export type Artist = {
   recognition: string;
 };
 
-// Which products belong to which artist is driven entirely by WooCommerce's
-// own "artist" custom field (set per-product when a painting is uploaded —
-// visible as a plain text field on the product edit screen). This array only
-// holds each artist's profile content (name, photo, tagline, bio). A
-// product's real "artist" field value is matched against `name` below (see
-// getArtistByName) — case/whitespace-insensitive — to decide whether, and to
-// which artist page, a product links. To add a fourth (or more) artist,
-// add another entry here with a name that exactly matches what's entered in
-// WooCommerce for their products.
+// Hand-written profiles for the ORIGINAL studio artists only. Their products
+// are linked through WooCommerce's older per-product "artist" text meta field,
+// matched against `name` (case/whitespace-insensitive).
+//
+// New artists do NOT go here: they onboard through the artist portal
+// (dashboard.artacestudio.com), which creates their `artist` taxonomy term in
+// WordPress and publishes their approved profile. lib/artists/directory.ts
+// merges all three sources — always read artists through it.
 export const ARTISTS: Artist[] = [
   {
     slug: "sahil-mahalley",

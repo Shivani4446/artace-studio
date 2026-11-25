@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { ARTIST_DASHBOARD_LINKS } from "@/lib/artists/dashboard";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
@@ -86,7 +87,12 @@ const businessLinks = [
   {
     name: "Sell Your Art (Artist Program)",
     href: "/sell-paintings",
-    tagline: "Sell your original paintings. Keep 80%, zero fees, fast payouts.",
+    tagline: "Sell your original paintings. Keep 70%, plans from ₹999/yr, fast payouts.",
+  },
+  {
+    name: "Artist Login",
+    href: ARTIST_DASHBOARD_LINKS.signIn,
+    tagline: "Manage your artworks, orders and payouts in the artist dashboard.",
   },
   {
     name: "Corporate & Bulk Orders",

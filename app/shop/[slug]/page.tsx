@@ -16,6 +16,7 @@ import {
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { buildSiteUrl } from "@/lib/site";
 import { hasSamoraTag } from "@/lib/samora/products";
+import { getArtistForProduct } from "@/lib/artists/directory";
 
 export const runtime = 'edge';
 export const revalidate = 120;
@@ -106,6 +107,7 @@ type WooStoreProduct = {
   on_sale: boolean;
   average_rating: string;
   review_count: number;
+  type?: "simple" | "variable" | string;
   stock_status: "instock" | "outofstock" | "onbackorder" | string;
   stock_quantity: number | null;
   images: WooStoreImage[];
@@ -196,17 +198,27 @@ const parseWooCommerceDecimalPrice = (rawValue: string | undefined): number | nu
   return numericValue;
 };
 
-const fetchStoreProducts = async (
+type StoreProductsResult =
+  | { ok: true; products: WooStoreProduct[] }
+  // WordPress answered with an error (429 rate limit, 5xx) or was unreachable.
+  // Must never be treated as "product doesn't exist" — that's what used to
+  // turn every rate-limited request into a 404.
+  | { ok: false; status: number };
+
+const fetchStoreProductsResult = async (
   queryString: string,
   cacheOptions: RequestInit = { next: { revalidate } }
-): Promise<WooStoreProduct[]> => {
+): Promise<StoreProductsResult> => {
   try {
     const apiBaseUrl = getApiBaseUrl();
     let response = await fetchWithRetry(
-        `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
-        cacheOptions
-      );
+      `${apiBaseUrl}/wp-json/wc/store/v1/products?${queryString}`,
+      cacheOptions
+    );
 
+    // Only a 404 on the route itself (pretty permalinks disabled) warrants
+    // the ?rest_route= fallback — never a 429/5xx, which would just double
+    // the load on an already-struggling origin.
     if (response.status === 404) {
       response = await fetchWithRetry(
         `${apiBaseUrl}/?rest_route=${encodeURIComponent(
@@ -216,13 +228,30 @@ const fetchStoreProducts = async (
       );
     }
 
-    if (!response.ok) return [];
+    if (!response.ok) return { ok: false, status: response.status };
     const payload = (await response.json()) as WooStoreProduct[];
-    return Array.isArray(payload) ? payload : [];
+    return { ok: true, products: Array.isArray(payload) ? payload : [] };
   } catch {
-    return [];
+    return { ok: false, status: 0 };
   }
 };
+
+const fetchStoreProducts = async (
+  queryString: string,
+  cacheOptions?: RequestInit
+): Promise<WooStoreProduct[]> => {
+  const result = await fetchStoreProductsResult(queryString, cacheOptions);
+  return result.ok ? result.products : [];
+};
+
+// Thrown (not exported — page files may only export Next's known fields) so
+// the route's error.tsx renders a "busy, retrying" page instead of a 404.
+class StorefrontUnavailableError extends Error {
+  constructor(status: number) {
+    super(`WooCommerce is temporarily unavailable (status ${status || "network"}).`);
+    this.name = "StorefrontUnavailableError";
+  }
+}
 
 const withFakeRating = (product: WooStoreProduct): WooStoreProduct => {
   // Atelier pieces are one-of-one originals and are deliberately left with
@@ -243,30 +272,40 @@ const withFakeRating = (product: WooStoreProduct): WooStoreProduct => {
   };
 };
 
-const getSingleProduct = async (slug: string): Promise<WooStoreProduct | null> => {
-  try {
-    const query = `slug=${encodeURIComponent(slug)}&per_page=1`;
-    const cachedPayload = await fetchStoreProducts(query);
-    const product =
-      cachedPayload.length > 0
-        ? cachedPayload[0]
-        : (
-            // A cached miss can mean the product was only just published (WooCommerce/CDN
-            // propagation lag) or the ISR cache hasn't picked it up yet. Re-check live
-            // before giving up, so we don't lock in a false 404 for the revalidate window.
-            await fetchStoreProducts(query, { cache: "no-store" })
-          )[0];
+// Short window for re-checking an apparent miss. Keeps "just published"
+// products from being stuck behind the 120s cache, without letting bots that
+// crawl random /shop/<slug> URLs force an uncached WordPress hit every time
+// (the old `cache: "no-store"` re-check did exactly that).
+const MISS_RECHECK_REVALIDATE_SECONDS = 15;
 
+// React.cache shares one lookup between generateMetadata and the page itself
+// within a single request.
+const getSingleProduct = React.cache(
+  async (slug: string): Promise<WooStoreProduct | null> => {
+    const query = `slug=${encodeURIComponent(slug)}&per_page=1`;
+    let result = await fetchStoreProductsResult(query);
+
+    if (result.ok && result.products.length === 0) {
+      // A cached miss can mean the product was only just published. Re-check
+      // on a short-lived cache entry before giving up.
+      result = await fetchStoreProductsResult(`${query}&_recheck=1`, {
+        next: { revalidate: MISS_RECHECK_REVALIDATE_SECONDS },
+      });
+    }
+
+    // WordPress errored or rate-limited us: surface it as a temporary error,
+    // never as a 404 (a 404 tells Google the painting is gone).
+    if (!result.ok) throw new StorefrontUnavailableError(result.status);
+
+    const product = result.products[0];
     if (!product) return null;
 
     // Samora-tagged products live exclusively at /samora/shop/[slug].
     if (hasSamoraTag(product.tags)) return null;
 
     return withFakeRating(product);
-  } catch {
-    return null;
   }
-};
+);
 
 const parseProductInformationText = (value: string) => {
   return value
@@ -463,137 +502,58 @@ const getProductInformationFromWordPressProduct = (
   ]);
 };
 
-const fetchProductInformationFromWooApi = async (productId: number) => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+// Single authenticated wc/v3 product fetch, shared (via React.cache) by every
+// reader below — product information, artist, photography details, print
+// eligibility, Atelier meta and FAQs. Previously each of those issued its own
+// request for the same URL (the FAQ one with a different query string, so it
+// couldn't even be deduped), multiplying WordPress load per page render.
+const getWooV3Product = React.cache(
+  async (productId: number): Promise<WooV3Product | null> => {
+    const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+    if (!consumerKey || !consumerSecret) return null;
 
-  if (!consumerKey || !consumerSecret) return [];
+    const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
 
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-
-  try {
-    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
-      headers: {
-        Authorization: `Basic ${basicToken}`,
-      },
-      next: { revalidate },
-    });
-
-    if (!response.ok) return [];
-    const payload = (await response.json()) as WooV3Product;
-    return getProductInformationFromWooV3Product(payload);
-  } catch {
-    return [];
+    try {
+      const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
+        headers: { Authorization: `Basic ${basicToken}` },
+        next: { revalidate },
+      });
+      if (!response.ok) return null;
+      return (await response.json()) as WooV3Product;
+    } catch {
+      return null;
+    }
   }
+);
+
+const getV3MetaString = (product: WooV3Product | null, key: string): string | undefined => {
+  const entry = product?.meta_data?.find((meta) => meta.key === key);
+  const value = typeof entry?.value === "string" ? entry.value.trim() : "";
+  return value || undefined;
 };
 
-// Independent of the product-information merging above (which has an
-// early-return path that can skip the wc/v3 fetch entirely) so this always
-// runs. Reads the "artist" custom field WooCommerce stores per-product —
-// this is the real, admin-entered source of truth for which artist painted
-// a given product; see lib/artists/data.ts for how it's matched.
-const fetchProductArtistName = async (productId: number): Promise<string | undefined> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
+// Reads the "artist" custom field WooCommerce stores per-product — the real,
+// admin/dashboard-entered source of truth for which artist painted a given
+// product; see lib/artists for how it's matched to a profile.
+const readProductArtistName = (product: WooV3Product | null) =>
+  getV3MetaString(product, "artist");
 
-  if (!consumerKey || !consumerSecret) return undefined;
+const readPhotographyDetails = (product: WooV3Product | null) => ({
+  storyBehindTheCapture: getV3MetaString(product, "story_behind_the_capture"),
+  photographyTechnique: getV3MetaString(product, "photography_technique"),
+  interiorStylingRecommendations: getV3MetaString(product, "interior_styling_recommendations"),
+});
 
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-
-  try {
-    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
-      headers: {
-        Authorization: `Basic ${basicToken}`,
-      },
-      next: { revalidate },
-    });
-
-    if (!response.ok) return undefined;
-    const payload = (await response.json()) as WooV3Product;
-    const artistMeta = payload.meta_data?.find((meta) => meta.key === "artist");
-    const value = typeof artistMeta?.value === "string" ? artistMeta.value.trim() : "";
-    return value || undefined;
-  } catch {
-    return undefined;
-  }
+const readPrintEligibility = (product: WooV3Product | null): boolean => {
+  const entry = product?.meta_data?.find((meta) => meta.key === "available_as_print");
+  if (!entry) return true;
+  const rawValue = typeof entry.value === "string" ? entry.value.trim().toLowerCase() : "";
+  return rawValue !== "no" && rawValue !== "0" && rawValue !== "false";
 };
 
-const fetchPhotographyDetails = async (
-  productId: number
-): Promise<{
-  storyBehindTheCapture?: string;
-  photographyTechnique?: string;
-  interiorStylingRecommendations?: string;
-}> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
-
-  if (!consumerKey || !consumerSecret) return {};
-
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-
-  try {
-    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
-      headers: {
-        Authorization: `Basic ${basicToken}`,
-      },
-      next: { revalidate },
-    });
-
-    if (!response.ok) return {};
-    const payload = (await response.json()) as WooV3Product;
-    const metaData = payload.meta_data ?? [];
-
-    const getMetaValue = (key: string): string | undefined => {
-      const entry = metaData.find((meta) => meta.key === key);
-      const value = typeof entry?.value === "string" ? entry.value.trim() : "";
-      return value || undefined;
-    };
-
-    return {
-      storyBehindTheCapture: getMetaValue("story_behind_the_capture"),
-      photographyTechnique: getMetaValue("photography_technique"),
-      interiorStylingRecommendations: getMetaValue("interior_styling_recommendations"),
-    };
-  } catch {
-    return {};
-  }
-};
-
-const fetchAtelierMetaFromWooApi = async (productId: number): Promise<AtelierMeta> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
-  if (!consumerKey || !consumerSecret) return EMPTY_ATELIER_META;
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-  try {
-    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
-      headers: { Authorization: `Basic ${basicToken}` },
-      next: { revalidate },
-    });
-    if (!response.ok) return EMPTY_ATELIER_META;
-    const payload = (await response.json()) as WooV3Product;
-    return readAtelierMeta(payload.meta_data);
-  } catch {
-    return EMPTY_ATELIER_META;
-  }
-};
-
-const fetchPrintEligibility = async (productId: number): Promise<boolean> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
-  if (!consumerKey || !consumerSecret) return true;
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
-  try {
-    const response = await fetchWithRetry(`${siteUrl}/wp-json/wc/v3/products/${productId}`, {
-      headers: { Authorization: `Basic ${basicToken}` },
-      next: { revalidate },
-    });
-    if (!response.ok) return true;
-    const payload = (await response.json()) as WooV3Product;
-    const metaData = payload.meta_data ?? [];
-    const entry = metaData.find((meta) => meta.key === "available_as_print");
-    if (!entry) return true;
-    const rawValue = typeof entry.value === "string" ? entry.value.trim().toLowerCase() : "";
-    return rawValue !== "no" && rawValue !== "0" && rawValue !== "false";
-  } catch {
-    return true;
-  }
-};
+const readAtelierMetaFromV3 = (product: WooV3Product | null): AtelierMeta =>
+  product ? readAtelierMeta(product.meta_data) : EMPTY_ATELIER_META;
 
 const fetchProductInformationFromWordPressApi = async (productId: number) => {
   const { siteUrl } = getWooServerConfig();
@@ -675,10 +635,6 @@ type WooV3ProductMetaDataItem = {
   value?: unknown;
 };
 
-type WooV3ProductForFAQ = {
-  meta_data?: WooV3ProductMetaDataItem[];
-};
-
 const fetchProductVariations = async (productId: number): Promise<VariationData[]> => {
   const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
   if (!consumerKey || !consumerSecret) return [];
@@ -687,7 +643,9 @@ const fetchProductVariations = async (productId: number): Promise<VariationData[
 
   try {
     const response = await fetchWithRetry(
-      `${siteUrl}/wp-json/wc/v3/products/${productId}/variations?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}&per_page=100`,
+      // Credentials go in the Authorization header only — never the query
+      // string, where they'd end up in access logs and cache keys.
+      `${siteUrl}/wp-json/wc/v3/products/${productId}/variations?per_page=100`,
       {
         headers: {
           Authorization: `Basic ${basicToken}`,
@@ -725,91 +683,52 @@ type FAQItemFromApi = {
   answer?: string;
 };
 
-const fetchProductFAQ = async (productId: number): Promise<{ question: string; answer: string }[]> => {
-  const { siteUrl, consumerKey, consumerSecret } = getWooServerConfig();
-  if (!consumerKey || !consumerSecret) return [];
+const toFaqItems = (items: unknown[]): { question: string; answer: string }[] =>
+  items
+    .filter(
+      (item): item is FAQItemFromApi =>
+        Boolean(item && typeof item === "object" && ((item as FAQItemFromApi).title || (item as FAQItemFromApi).question))
+    )
+    .map((item) => ({
+      question: item.title ?? item.question ?? "",
+      answer: item.content ?? item.answer ?? "",
+    }));
 
-  const basicToken = toBasicAuthToken(consumerKey, consumerSecret);
+// Reads FAQs from the shared wc/v3 payload (see getWooV3Product) — no extra
+// request.
+const readProductFAQ = (product: WooV3Product | null): { question: string; answer: string }[] => {
+  const metaData = (product?.meta_data ?? []) as WooV3ProductMetaDataItem[];
 
-  try {
-    const response = await fetchWithRetry(
-      `${siteUrl}/wp-json/wc/v3/products/${productId}?consumer_key=${consumerKey}&consumer_secret=${consumerSecret}`,
-      {
-        headers: {
-          Authorization: `Basic ${basicToken}`,
-        },
-        next: { revalidate },
-      }
-    );
+  // Try different FAQ meta keys that WooCommerce FAQ plugins might use
+  const faqMetaKeys = ["wpcpf_faqs", "_wpcpf_faqs", "faqs", "_faqs", "product_faqs", "_product_faqs"];
+  let faqMeta: WooV3ProductMetaDataItem | undefined;
 
-    if (!response.ok) return [];
-    const payload = (await response.json()) as WooV3ProductForFAQ;
-    const metaData = payload.meta_data ?? [];
-    
-    // Try different FAQ meta keys that WooCommerce FAQ plugins might use
-    const faqMetaKeys = ['wpcpf_faqs', '_wpcpf_faqs', 'faqs', '_faqs', 'product_faqs', '_product_faqs'];
-    let faqMeta: WooV3ProductMetaDataItem | undefined;
-    
-    for (const key of faqMetaKeys) {
-      faqMeta = metaData.find((meta) => meta.key === key);
-      if (faqMeta && faqMeta.value) break;
-    }
-    
-    if (!faqMeta || !faqMeta.value) return [];
-
-    // Handle different FAQ data structures
-    const faqValue = faqMeta.value;
-    
-    // If it's an object with numbered keys (like wpcpf_faqs plugin format)
-    if (typeof faqValue === 'object' && !Array.isArray(faqValue)) {
-      const faqObject = faqValue as Record<string, FAQItemFromApi>;
-      return Object.values(faqObject)
-        .filter((item): item is FAQItemFromApi => Boolean(item && (item.title || item.question)))
-        .map((item) => ({
-          question: item.title ?? item.question ?? '',
-          answer: item.content ?? item.answer ?? '',
-        }));
-    }
-    
-    // If it's an array of FAQ items
-    if (Array.isArray(faqValue)) {
-      return faqValue
-        .filter((item): item is FAQItemFromApi => Boolean(item && typeof item === 'object' && (item.title || item.question)))
-        .map((item) => ({
-          question: item.title ?? item.question ?? '',
-          answer: item.content ?? item.answer ?? '',
-        }));
-    }
-    
-    // If it's a JSON string, try to parse it
-    if (typeof faqValue === 'string') {
-      try {
-        const parsed = JSON.parse(faqValue);
-        if (typeof parsed === 'object' && parsed !== null) {
-          if (Array.isArray(parsed)) {
-            return parsed
-              .filter((item): item is FAQItemFromApi => Boolean(item && typeof item === 'object' && (item.title || item.question)))
-              .map((item) => ({
-                question: item.title ?? item.question ?? '',
-                answer: item.content ?? item.answer ?? '',
-              }));
-          }
-          return Object.values(parsed as Record<string, FAQItemFromApi>)
-            .filter((item): item is FAQItemFromApi => Boolean(item && (item.title || item.question)))
-            .map((item) => ({
-              question: item.title ?? item.question ?? '',
-              answer: item.content ?? item.answer ?? '',
-            }));
-        }
-      } catch {
-        // JSON parse failed, return empty
-      }
-    }
-
-    return [];
-  } catch {
-    return [];
+  for (const key of faqMetaKeys) {
+    faqMeta = metaData.find((meta) => meta.key === key);
+    if (faqMeta && faqMeta.value) break;
   }
+
+  if (!faqMeta || !faqMeta.value) return [];
+
+  let faqValue: unknown = faqMeta.value;
+
+  // If it's a JSON string, try to parse it
+  if (typeof faqValue === "string") {
+    try {
+      faqValue = JSON.parse(faqValue);
+    } catch {
+      return [];
+    }
+  }
+
+  if (Array.isArray(faqValue)) return toFaqItems(faqValue);
+
+  // An object with numbered keys (like the wpcpf_faqs plugin format)
+  if (faqValue && typeof faqValue === "object") {
+    return toFaqItems(Object.values(faqValue as Record<string, unknown>));
+  }
+
+  return [];
 };
 
 const DERIVED_SIZE_ATTRIBUTE_ID = -2;
@@ -888,13 +807,21 @@ const mergeProductInformationIntoProduct = (
   };
 };
 
-const getProductWithProductInformation = async (product: WooStoreProduct) => {
+const getProductWithProductInformation = async (
+  product: WooStoreProduct,
+  v3Product: WooV3Product | null
+) => {
   const existingInformationItems = getProductInformationFromStoreProduct(product);
-  const variationsPromise = fetchProductVariations(product.id);
-  const faqPromise = fetchProductFAQ(product.id);
+  // Only variable products have variations; skip the request for simple
+  // ones (the vast majority of one-of-a-kind paintings). An unknown type
+  // still fetches, to stay safe.
+  const variations =
+    product.type && product.type !== "variable"
+      ? []
+      : await fetchProductVariations(product.id);
+  const faqs = readProductFAQ(v3Product);
 
   if (existingInformationItems.length > 0) {
-    const [variations, faqs] = await Promise.all([variationsPromise, faqPromise]);
     const productWithExtras = withDerivedSizeAttribute(
       { ...product, variations, faqs },
       existingInformationItems
@@ -902,14 +829,17 @@ const getProductWithProductInformation = async (product: WooStoreProduct) => {
     return mergeProductInformationIntoProduct(productWithExtras, existingInformationItems);
   }
 
-  const [acfApiInformationItems, wooApiInformationItems, wordPressApiInformationItems, variations, faqs] =
-    await Promise.all([
-      fetchProductInformationFromAcfApi(product.id),
-      fetchProductInformationFromWooApi(product.id),
-      fetchProductInformationFromWordPressApi(product.id),
-      variationsPromise,
-      faqPromise,
-    ]);
+  // The wc/v3 payload (already fetched) carries ACF-backed meta too, so it
+  // usually has everything. Only when it comes up empty do we fall back to
+  // the separate ACF / wp/v2 endpoints — previously all three were always hit.
+  const wooApiInformationItems = v3Product ? getProductInformationFromWooV3Product(v3Product) : [];
+  const [acfApiInformationItems, wordPressApiInformationItems] =
+    wooApiInformationItems.length > 0
+      ? [[], []]
+      : await Promise.all([
+          fetchProductInformationFromAcfApi(product.id),
+          fetchProductInformationFromWordPressApi(product.id),
+        ]);
 
   const mergedInformationItems = normalizeProductInformationItems([
     ...acfApiInformationItems,
@@ -1036,7 +966,6 @@ const getLatestBlogs = async (): Promise<ReadMoreCard[]> => {
       return [];
     }
 
-    console.log("[getLatestBlogs] Found posts:", posts.length, posts.map(p => ({ id: p.id, title: p.title?.rendered, hasMedia: !!p._embedded?.["wp:featuredmedia"]?.[0] })));
 
     return posts.slice(0, 3).map((post) => {
       const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
@@ -1050,8 +979,8 @@ const getLatestBlogs = async (): Promise<ReadMoreCard[]> => {
         href: `/blogs/${post.slug}`,
       };
     });
-  } catch (error) {
-    console.log("[getLatestBlogs] Error:", error);
+  } catch {
+
     return [];
   }
 };
@@ -1130,27 +1059,21 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   );
   const isAtelier = isAtelierProduct(product);
 
-  const [
-    productWithInformation,
-    relatedProducts,
-    readMorePosts,
-    artistName,
-    photographyDetails,
-    isAvailableAsPrint,
-    atelierMeta,
-  ] = await Promise.all([
-    getProductWithProductInformation(product),
+  const v3Product = await getWooV3Product(product.id);
+
+  const [productWithInformation, relatedProducts, readMorePosts, artist] = await Promise.all([
+    getProductWithProductInformation(product, v3Product),
     isPhotographyProduct
       ? getRelatedPhotographyProducts(product.id)
       : getRelatedProductsForProduct(product),
     getLatestBlogs(),
-    fetchProductArtistName(product.id),
-    fetchPhotographyDetails(product.id),
-    fetchPrintEligibility(product.id),
-    // Only Atelier pieces carry Atelier meta; skip the extra Admin API call for
-    // every other product on the site.
-    isAtelier ? fetchAtelierMetaFromWooApi(product.id) : Promise.resolve(EMPTY_ATELIER_META),
+    // Artist taxonomy term (set by the artist portal) first, then the legacy
+    // "artist" meta text field.
+    getArtistForProduct(product.id, readProductArtistName(v3Product)),
   ]);
+  const photographyDetails = readPhotographyDetails(v3Product);
+  const isAvailableAsPrint = readPrintEligibility(v3Product);
+  const atelierMeta = isAtelier ? readAtelierMetaFromV3(v3Product) : EMPTY_ATELIER_META;
 
   const schema = generateProductSchema(product);
 
@@ -1164,7 +1087,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         initialProduct={productWithInformation}
         relatedProducts={relatedProducts}
         readMorePosts={readMorePosts}
-        artistName={artistName}
+        artist={artist}
         photographyDetails={photographyDetails}
         isAvailableAsPrint={isAvailableAsPrint}
         atelierMeta={atelierMeta}

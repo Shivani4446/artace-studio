@@ -320,8 +320,6 @@ const getApiBaseUrl = () => {
     process.env.WOOCOMMERCE_REST_URL ||
     DEFAULT_WOOCOMMERCE_SITE_URL;
   const normalized = apiBaseUrl.replace(/\/+$/, "");
-  console.log(`[store/products] Using API base URL: ${normalized}`);
-  console.log(`[store/products] Env check - NEXT_PUBLIC_WOOCOMMERCE_SITE_URL: ${process.env.NEXT_PUBLIC_WOOCOMMERCE_SITE_URL ? "set" : "missing"}, WOOCOMMERCE_REST_URL: ${process.env.WOOCOMMERCE_REST_URL ? "set" : "missing"}`);
   return normalized;
 };
 
@@ -338,7 +336,6 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
       order: "desc",
     });
 
-    console.log(`[store/products] Fetching page ${page} from ${normalizedBaseUrl}/wp-json/wc/store/v1/products`);
     const response = await fetchWithRetry(
       `${normalizedBaseUrl}/wp-json/wc/store/v1/products?${queryParams.toString()}`,
       {
@@ -347,6 +344,8 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     );
 
     if (!response.ok) {
+      // Keep already-loaded pages if a later page is rate-limited.
+      if (products.length > 0) break;
       const errorText = await response.text().catch(() => "no body");
       console.error(`[store/products] WooCommerce API error: ${response.status} - ${errorText}`);
       throw new Error(`Failed to fetch WooCommerce products (${response.status}): ${errorText}`);

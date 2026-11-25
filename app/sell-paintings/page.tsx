@@ -7,7 +7,7 @@ import SellPaintingsProcess from "@/components/sell-paintings/SellPaintingsProce
 import SellPaintingsCalculator from "@/components/sell-paintings/SellPaintingsCalculator";
 import SellPaintingsPlans from "@/components/sell-paintings/SellPaintingsPlans";
 import SellPaintingsStandards from "@/components/sell-paintings/SellPaintingsStandards";
-import SellPaintingsApplicationForm from "@/components/sell-paintings/SellPaintingsApplicationForm";
+import SellPaintingsDashboardCta from "@/components/sell-paintings/SellPaintingsDashboardCta";
 import FAQSection, { type FAQItem } from "@/components/seo/FAQSection";
 import { buildSiteUrl } from "@/lib/site";
 
@@ -148,20 +148,7 @@ const SellPaintingsPage = () => {
 
         <FAQSection title="Artist FAQs" items={FAQ_ITEMS} />
 
-        <section id="artist-register-form" className="px-4 py-14 sm:px-6 md:px-12 md:py-20">
-          <div className="mx-auto max-w-[900px] text-center">
-            <h2 className="font-display text-[28px] leading-[1.12] text-[#1f1f1f] sm:text-[36px] md:text-[44px]">
-              Apply to Join Artace Studio
-            </h2>
-            <p className="mt-3 font-inter text-[15px] leading-7 text-[#595959] md:text-[16px]">
-              Takes less than 3 minutes. Plans start at ₹999/yr — our curation team
-              responds within 24–48 hours via WhatsApp or Email.
-            </p>
-            <div className="mt-8 text-left">
-              <SellPaintingsApplicationForm />
-            </div>
-          </div>
-        </section>
+        <SellPaintingsDashboardCta />
       </main>
     </>
   );

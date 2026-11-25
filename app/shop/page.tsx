@@ -386,7 +386,6 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     process.env.WOOCOMMERCE_REST_URL ||
     DEFAULT_WOOCOMMERCE_SITE_URL;
   const normalizedBaseUrl = apiBaseUrl.replace(/\/+$/, "");
-  console.log(`[Shop] Fetching products from: ${normalizedBaseUrl}`);
   const products: WooStoreProduct[] = [];
   let totalPages = 1;
 
@@ -405,6 +404,9 @@ const getStoreProducts = async (): Promise<WooStoreProduct[]> => {
     );
 
     if (!response.ok) {
+      // A later page failing (rate limit mid-crawl) shouldn't throw away the
+      // pages already loaded — show what we have rather than an empty shop.
+      if (products.length > 0) break;
       throw new Error(`Failed to fetch WooCommerce products (${response.status}).`);
     }
 

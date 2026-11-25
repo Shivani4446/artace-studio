@@ -28,7 +28,8 @@ import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
 import { decodeHtmlEntities, stripHtmlAndDecode } from "@/utils/text";
-import { getArtistByName } from "@/lib/artists/data";
+import type { ArtistProfile } from "@/lib/artists/directory";
+import ArtistAvatar from "@/components/artists/ArtistAvatar";
 import { isAtelierProduct } from "@/lib/atelier";
 import { hasAtelierDetail, type AtelierMeta } from "@/lib/atelier/meta";
 import AtelierEnquiryForm from "@/components/singleproduct/AtelierEnquiryForm";
@@ -253,7 +254,8 @@ type SingleProductProps = {
   relatedProducts?: RelatedProductCard[];
   readMorePosts?: ReadMoreCard[];
   advisor?: AdvisorBlock;
-  artistName?: string;
+  /** Resolved server-side (taxonomy term or legacy meta) — see lib/artists/directory. */
+  artist?: ArtistProfile;
   photographyDetails?: PhotographyDetails;
   isAvailableAsPrint?: boolean;
   atelierMeta?: AtelierMeta;
@@ -743,7 +745,7 @@ const SingleProduct = ({
   relatedProducts = DEFAULT_RELATED_PRODUCTS,
   readMorePosts = DEFAULT_READ_MORE_POSTS,
   advisor = DEFAULT_ADVISOR,
-  artistName = "Artace Studio",
+  artist,
   photographyDetails,
   isAvailableAsPrint = true,
   atelierMeta,
@@ -776,7 +778,6 @@ const SingleProduct = ({
   const atelierDetail = useMemo(() => hasAtelierDetail(atelierMeta), [atelierMeta]);
   const tabLabels = isPhotography ? PHOTOGRAPHY_TAB_LABELS : TAB_LABELS;
   const tabHelperText = isPhotography ? PHOTOGRAPHY_TAB_HELPER_TEXT : TAB_HELPER_TEXT;
-  const artist = artistName ? getArtistByName(artistName) : undefined;
   const [isFollowingArtist, setIsFollowingArtist] = useState(false);
 
   useEffect(() => {
@@ -2925,12 +2926,10 @@ const SingleProduct = ({
 
             <div className="justify-self-center text-center md:justify-self-end">
               <div className="relative mx-auto h-52 w-52 overflow-hidden rounded-full md:h-72 md:w-72">
-                <Image
-                  src={artist.image}
-                  alt={artist.name}
-                  fill
+                <ArtistAvatar
+                  name={artist.name}
+                  image={artist.image}
                   sizes="(max-width: 768px) 208px, 288px"
-                  className="object-cover"
                 />
               </div>
               <p className="mt-5 text-[15px] text-white/70">{artist.name}</p>

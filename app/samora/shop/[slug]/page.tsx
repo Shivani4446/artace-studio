@@ -1,3 +1,4 @@
+import React from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import SamoraSingleProduct, {
@@ -129,9 +130,23 @@ const fetchStoreProducts = async (queryString: string): Promise<WooStoreProduct[
   }
 };
 
-const getSingleSamoraProduct = async (slug: string): Promise<WooStoreProduct | null> => {
+// React.cache shares the lookup between generateMetadata and the page.
+const getSingleSamoraProduct = React.cache(async (slug: string): Promise<WooStoreProduct | null> => {
   const query = `slug=${encodeURIComponent(slug)}&per_page=1`;
-  const products = await fetchStoreProducts(query);
+  let products: WooStoreProduct[];
+  try {
+    const response = await fetchWithRetry(
+      `${getApiBaseUrl()}/wp-json/wc/store/v1/products?${query}`,
+      { next: { revalidate } }
+    );
+    // Rate-limited / server error: throw so error.tsx shows a retry page —
+    // never a 404 for a product that exists.
+    if (!response.ok) throw new Error(`WooCommerce unavailable (${response.status}).`);
+    const payload = (await response.json()) as WooStoreProduct[];
+    products = Array.isArray(payload) ? payload : [];
+  } catch (error) {
+    throw error instanceof Error ? error : new Error("WooCommerce unavailable.");
+  }
   const product = products[0];
   if (!product) return null;
 
@@ -140,7 +155,7 @@ const getSingleSamoraProduct = async (slug: string): Promise<WooStoreProduct | n
   if (!hasSamoraTag(product.tags)) return null;
 
   return product;
-};
+});
 
 const fetchProductVariations = async (productId: number) => {
   const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY;

@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { Check, Crown } from "lucide-react";
+import { ArrowUpRight, Check, Crown } from "lucide-react";
+import { ARTIST_DASHBOARD_LINKS, withDashboardUtm } from "@/lib/artists/dashboard";
 
 type Plan = {
   name: string;
@@ -119,7 +120,7 @@ const SellPaintingsPlans = () => {
                 {plan.headline}
               </p>
 
-              <ul className="mt-6 flex flex-col gap-3">
+              <ul className="mt-6 flex flex-1 flex-col gap-3">
                 {plan.features.map((feature, featureIndex) => (
                   <li
                     key={feature}
@@ -141,6 +142,23 @@ const SellPaintingsPlans = () => {
                   </li>
                 ))}
               </ul>
+
+              {/* Plans are chosen and paid for in the artist dashboard after
+                  the application is submitted and the email verified. */}
+              <a
+                href={withDashboardUtm(
+                  ARTIST_DASHBOARD_LINKS.apply,
+                  `plan-${plan.name.toLowerCase()}`
+                )}
+                className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-[12px] px-6 py-3 font-inter text-[15px] font-medium transition-colors ${
+                  plan.isPremium
+                    ? "bg-[#E6C46A] text-[#1f1f1f] hover:bg-[#f0d48a]"
+                    : "bg-[#1f1f1f] text-white hover:bg-black"
+                }`}
+              >
+                Apply for {plan.name}
+                <ArrowUpRight className="h-4 w-4" />
+              </a>
             </motion.div>
           ))}
         </div>
@@ -152,9 +170,9 @@ const SellPaintingsPlans = () => {
           transition={{ duration: 0.4, delay: 0.2 }}
           className="mt-8 text-center font-inter text-[13px] leading-6 text-[#8a8478]"
         >
-          Plans are billed annually. Your application and the artwork
-          curation review remain free — the plan is activated only for
-          approved artist partners.
+          Plans are billed annually. You choose your plan and pay securely in
+          the Artace artist dashboard after applying; your application and
+          the curation review are free.
         </motion.p>
       </div>
     </section>

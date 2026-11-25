@@ -1,7 +1,14 @@
-const DEFAULT_RETRIES = 2;
-const DEFAULT_RETRY_DELAY_MS = 500;
+const DEFAULT_RETRIES = 1;
+const DEFAULT_RETRY_DELAY_MS = 400;
 const MAX_RETRY_DELAY_MS = 5_000;
-const DEFAULT_RETRY_STATUSES = new Set([429, 500, 502, 503, 504]);
+// 429 is deliberately NOT retried. A 429 means WordPress (or Hostinger's
+// firewall in front of it) is already rate-limiting our egress IP; retrying
+// within milliseconds from the same IP only adds requests to the window that
+// tripped the limit and keeps the block alive longer. Every page fetch here
+// uses Next's data cache, which keeps serving the last good (stale) response
+// when a background revalidation fails, so not retrying costs nothing for
+// warm pages. Gateway/server errors and network failures still get one retry.
+const DEFAULT_RETRY_STATUSES = new Set([500, 502, 503, 504]);
 
 type FetchWithRetryOptions = {
   retries?: number;
@@ -30,9 +37,10 @@ const getRetryDelay = (response: Response, fallbackDelayMs: number) => {
 const shouldRetryResponse = (response: Response, retryStatuses: Set<number>) =>
   retryStatuses.has(response.status);
 
-// Retries network-level failures plus temporary WordPress/WooCommerce HTTP
-// responses such as 429 and gateway/server errors. Permanent responses like
-// 404 are returned as-is so callers can keep their normal fallback behavior.
+// Retries network-level failures plus temporary gateway/server errors once.
+// 429 and permanent responses like 404 are returned as-is so callers can keep
+// their normal fallback behavior (see DEFAULT_RETRY_STATUSES for why 429 is
+// not retried).
 export const fetchWithRetry = async (
   input: string | URL,
   init?: RequestInit,

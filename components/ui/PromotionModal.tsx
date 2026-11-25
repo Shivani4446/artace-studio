@@ -3,6 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, Copy, Check, Sparkles } from "lucide-react";
+import {
+  EVERGREEN_COUPON_CODE,
+  EVERGREEN_DISCOUNT_PERCENT,
+  OPEN_PROMOTION_EVENT,
+  PROMOTION_SEEN_STORAGE_KEY,
+} from "./promotion";
 
 const PromotionModal = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -14,7 +20,7 @@ const PromotionModal = () => {
   const [isEntered, setIsEntered] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const COUPON_CODE = "NAVRATRI2026";
+  const COUPON_CODE = EVERGREEN_COUPON_CODE;
 
   // The code stays hidden until the visitor submits their email + phone —
   // this is what turns the popup into a lead capture, not just a discount.
@@ -56,18 +62,27 @@ const PromotionModal = () => {
   };
 
   useEffect(() => {
-    // Check if the user has already seen or closed the modal in this session
-    const hasSeenModal = sessionStorage.getItem(
-      "hasSeenNavratriPromotionModal"
-    );
+    // The announcement bar's "Get your code" button opens the modal on demand.
+    const open = () => {
+      setIsClosing(false);
+      setIsVisible(true);
+    };
+    window.addEventListener(OPEN_PROMOTION_EVENT, open);
 
-    if (!hasSeenModal) {
-      const timer = setTimeout(() => {
-        setIsVisible(true);
-      }, 15000); // 15 seconds delay
-
-      return () => clearTimeout(timer);
+    // Auto-open once per session, after 15 seconds.
+    let hasSeenModal = false;
+    try {
+      hasSeenModal = Boolean(sessionStorage.getItem(PROMOTION_SEEN_STORAGE_KEY));
+    } catch {
+      // Storage blocked — treat as not seen.
     }
+
+    const timer = hasSeenModal ? undefined : setTimeout(open, 15000);
+
+    return () => {
+      window.removeEventListener(OPEN_PROMOTION_EVENT, open);
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -98,7 +113,12 @@ const PromotionModal = () => {
     setIsClosing(true);
     setTimeout(() => {
       setIsVisible(false);
-      sessionStorage.setItem("hasSeenNavratriPromotionModal", "true");
+      setIsClosing(false);
+      try {
+        sessionStorage.setItem(PROMOTION_SEEN_STORAGE_KEY, "true");
+      } catch {
+        // ignore
+      }
     }, 300); // Animation duration
   };
 
@@ -145,8 +165,8 @@ const PromotionModal = () => {
           {/* Image Side */}
           <div className="relative hidden h-32 w-full shrink-0 md:block md:h-auto md:min-h-[34rem] md:w-[43%]">
             <Image
-              src="/mahalaxmi-mata.webp"
-              alt="Hand-painted Goddess Mahalaxmi canvas artwork for Navratri"
+              src="/modern-art.webp"
+              alt="Hand-painted abstract canvas in gold, black and warm grey"
               fill
               priority
               className="object-cover"
@@ -159,18 +179,18 @@ const PromotionModal = () => {
           <div className="flex min-w-0 flex-1 flex-col justify-center p-5 text-[#1a1a1a] sm:p-7 md:p-9 lg:p-12">
             <div className="inline-flex max-w-full items-center self-start rounded-full bg-[#D4AF37]/10 px-3 py-1 text-[11px] font-bold uppercase text-[#D4AF37] sm:gap-2 sm:text-xs">
               <Sparkles className="h-3.5 w-3.5" />
-              <span className="min-w-0 truncate">Navratri Special</span>
+              <span className="min-w-0 truncate">Studio Offer</span>
             </div>
 
             <h2 className="mt-3 text-wrap font-display text-3xl leading-[1.08] text-[#1A1A1A] sm:mt-5 sm:text-4xl lg:text-[42px]">
-              Bring Home <br />
-              <span className="text-[#D4AF37]">Maa&apos;s Grace.</span>
+              Art That <br />
+              <span className="text-[#D4AF37]">Makes the Room.</span>
             </h2>
 
             <p className="mt-3 max-w-[34rem] text-base leading-relaxed text-[#555555] sm:mt-5 sm:text-[17px] lg:text-lg">
-              This Navratri, invoke Maa&apos;s blessings with a flat
-              <span className="font-semibold text-[#1a1a1a]"> 20% off every order </span>
-              — plus a complimentary gift with your purchase, on us.
+              Original, hand-painted canvases, from bold abstracts to quiet textures. Get
+              <span className="font-semibold text-[#1a1a1a]"> {EVERGREEN_DISCOUNT_PERCENT}% off every order</span>,
+              not just your first.
             </p>
 
             {leadStatus === "revealed" ? (
@@ -201,7 +221,7 @@ const PromotionModal = () => {
                   onClick={handleClose}
                   className="mt-4 flex min-h-12 w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-5 text-center text-base font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] sm:mt-7 sm:min-h-[52px]"
                 >
-                  Claim My 20% Off & Shop Now
+                  Shop with {EVERGREEN_DISCOUNT_PERCENT}% Off
                 </button>
               </>
             ) : (
@@ -232,7 +252,7 @@ const PromotionModal = () => {
                   disabled={leadStatus === "submitting"}
                   className="mt-2 flex min-h-12 w-full items-center justify-center rounded-xl bg-[#1a1a1a] px-5 text-center text-base font-semibold text-white transition-all hover:bg-black hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-[52px]"
                 >
-                  {leadStatus === "submitting" ? "Unlocking..." : "Reveal My 20% Off Code"}
+                  {leadStatus === "submitting" ? "Unlocking..." : `Reveal My ${EVERGREEN_DISCOUNT_PERCENT}% Off Code`}
                 </button>
 
                 {leadStatus === "error" && (
@@ -245,7 +265,7 @@ const PromotionModal = () => {
             )}
 
             <p className="mt-3 text-center text-[11px] text-[#999999] sm:mt-4 sm:text-[12px]">
-              Navratri sale, live now through 20th October. Free Pan-India Shipping.
+              Apply the code at checkout. Free Pan-India Shipping.
             </p>
           </div>
         </div>

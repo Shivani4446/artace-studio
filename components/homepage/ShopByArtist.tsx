@@ -1,11 +1,17 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { ARTISTS } from '@/lib/artists/data';
+import { getAllArtists } from '@/lib/artists/directory';
+import ArtistAvatar from '@/components/artists/ArtistAvatar';
 import { inter } from '@/lib/fonts';
 
-const ShopByArtist = () => {
+// One row on the homepage; "See all" links to the full directory. The
+// homepage is statically built, so this strip refreshes on each deploy —
+// /artists itself updates within 5 minutes.
+const MAX_HOMEPAGE_ARTISTS = 4;
+
+const ShopByArtist = async () => {
+  const artists = (await getAllArtists()).slice(0, MAX_HOMEPAGE_ARTISTS);
   return (
     <section className={`bg-[#FAF9F6] py-20 ${inter.variable}`}>
       <div className="mx-auto w-full max-w-[1440px] px-6 md:px-12">
@@ -27,7 +33,7 @@ const ShopByArtist = () => {
 
         {/* Artists Grid */}
         <div className="grid grid-cols-2 gap-8 align-top lg:grid-cols-4">
-          {ARTISTS.map((artist) => (
+          {artists.map((artist) => (
             <Link
               key={artist.slug}
               href={`/artists/${artist.slug}`}
@@ -36,11 +42,10 @@ const ShopByArtist = () => {
 
               {/* Image Container */}
               <div className="relative mb-4 h-28 w-28 shrink-0 overflow-hidden rounded-full bg-gray-200 md:mb-5 md:h-40 md:w-40">
-                <Image
-                  src={artist.image}
-                  alt={`Artwork by ${artist.name}`}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                <ArtistAvatar
+                  name={artist.name}
+                  image={artist.image}
+                  className="transition-transform duration-700 group-hover:scale-105"
                   sizes="(max-width: 768px) 128px, 160px"
                 />
               </div>

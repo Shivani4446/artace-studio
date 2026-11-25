@@ -10,10 +10,10 @@ const ArtistInvitation = () => {
           We empower independent artists to share their stories with the world.
         </p>
         <Link
-          href="/contact-us"
+          href="/sell-paintings"
           className="inline-flex items-center gap-1 font-inter text-[14px] font-medium text-white underline underline-offset-4 transition-colors hover:text-white/80 md:text-[15px]"
         >
-          Partner With Us
+          Sell Your Art With Us
           <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} />
         </Link>
       </div>

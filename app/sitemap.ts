@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getSiteOrigin } from "@/lib/site";
-import { ARTISTS } from "@/lib/artists/data";
+import { getAllArtists } from "@/lib/artists/directory";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import { hasSamoraTag } from "@/lib/samora/products";
 
@@ -182,7 +182,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  const artistPages: MetadataRoute.Sitemap = ARTISTS.map((artist) => ({
+  const artistPages: MetadataRoute.Sitemap = (await getAllArtists()).map((artist) => ({
     url: `${baseUrl}/artists/${artist.slug}`,
     lastModified: now,
     changeFrequency: "monthly" as const,
