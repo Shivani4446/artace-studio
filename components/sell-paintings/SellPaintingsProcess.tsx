@@ -21,7 +21,7 @@ const STEPS = [
 {
     number: "04",
     title: "Insured Delivery & Payment",
-    text: "When an artwork sells, roll and pack it into a secure tube and send it via insured courier to our Pune facility (courier charges are the artist's responsibility). Once inspected and delivered, your earnings are transferred within 7–10 days.",
+    text: "When an artwork sells, roll and pack it into a secure tube and send it via insured courier to our Pune facility (courier charges are the artist's responsibility). Once inspected and delivered, your earnings show as payable in your artist dashboard and are paid to your bank.",
   },
 ];
 

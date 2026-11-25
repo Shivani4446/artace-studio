@@ -17,7 +17,7 @@ const BENEFITS = [
   {
     icon: Wallet,
     title: "Transparent, Prompt Payouts",
-    text: "No hidden deductions, packaging penalties, or mysterious fees. What you quote is what you receive, transferred directly to your bank account within 7–10 days.",
+    text: "No hidden deductions, packaging penalties, or mysterious fees. What you quote is what you receive, transferred directly to your bank account and tracked in your artist dashboard.",
   },
   {
     icon: Sparkles,

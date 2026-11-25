@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SellPaintingsHero from "@/components/sell-paintings/SellPaintingsHero";
+import SellPaintingsDashboardGuide from "@/components/sell-paintings/SellPaintingsDashboardGuide";
 import SellPaintingsHighlights from "@/components/sell-paintings/SellPaintingsHighlights";
 import SellPaintingsComparison from "@/components/sell-paintings/SellPaintingsComparison";
 import SellPaintingsBenefits from "@/components/sell-paintings/SellPaintingsBenefits";
@@ -14,7 +15,7 @@ import { buildSiteUrl } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Sell Paintings Online in India | Artist Partnership & Registration | Artace Studio",
   description:
-    "Sell your original handmade paintings online with Artace Studio. Enjoy a flat 30% commission (keep 70%), simple annual artist plans from ₹999, and 7-day payouts.",
+    "Sell your original handmade paintings online with Artace Studio. Enjoy a flat 30% commission (keep 70%), flexible 3-month, 6-month and yearly artist plans from ₹999/year, and your own artist dashboard.",
   keywords: [
     "sell paintings online india",
     "sell art online india",
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sell Your Paintings Online with Artace Studio | Artist-First Gallery",
     description:
-      "Join India's premier handcrafted art community. Flat 30% commission, simple annual plans, prompt payouts, and dedicated artist promotion.",
+      "Join India's premier handcrafted art community. Flat 30% commission, flexible artist plans, an artist dashboard for orders and payouts, and dedicated artist promotion.",
   },
 };
 
@@ -50,17 +51,17 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     question: "Are there any registration or listing fees for artists?",
     answer:
-      "Getting started with Artace Studio requires an annual artist plan: ₹999/year for Standard or ₹1,899/year for Premium. There are no additional listing, profile, or promotion fees, and the only deduction on a sale is the flat 30% commission.",
+      "Getting started requires an artist plan, billed every 3 months, 6 months or yearly. Standard is ₹349 for 3 months, ₹599 for 6 months or ₹999 a year; Premium is ₹649, ₹1,149 or ₹1,899 a year (all plus 18% GST). The yearly plan saves up to 28%. There are no additional listing, profile, or promotion fees, and the only deduction on a sale is the flat 30% commission.",
   },
   {
     question: "What is the difference between the Standard and Premium artist plans?",
     answer:
-      "Both plans include a verified artist profile and unlimited original artwork listings at a flat 30% commission (you keep 70%). The ₹1,899/year Premium plan adds faster curation and listing turnaround, faster payouts, featured and banner placement across our storefront, digital print uploads and sales of your originals, and dedicated artist support.",
+      "Both plans include a verified artist profile and unlimited original artwork listings at a flat 30% commission (you keep 70%). Premium (from ₹1,899/year) adds curation within 24 hours instead of 48, payouts you can request any time, featured and banner placement across our storefront, digital print uploads and sales of your originals, and dedicated artist support.",
   },
   {
     question: "How and when do artists receive payment for sold paintings?",
     answer:
-      "Payments are deposited directly into your verified bank account within 7 to 10 business days following the customer delivery and inspection window. Premium artists enjoy faster payout timelines.",
+      "Payments go directly into your verified bank account after the customer delivery and inspection window. Standard artists are paid monthly; Premium artists can request a payout any time from their artist dashboard.",
   },
   {
     question: "Do I need a formal degree in Fine Arts (BFA/MFA) to sell here?",
@@ -138,6 +139,7 @@ const SellPaintingsPage = () => {
       />
       <main className="bg-[#f4f2ee] text-[#1f1f1f]">
         <SellPaintingsHero />
+        <SellPaintingsDashboardGuide />
         <SellPaintingsHighlights />
         <SellPaintingsComparison />
         <SellPaintingsBenefits />

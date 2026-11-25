@@ -17,7 +17,7 @@ const ROWS: Row[] = [
   },
   {
     term: "Registration & Account Fees",
-    artace: "Simple annual plans — ₹999 Standard / ₹1,899 Premium",
+    artace: "Flexible plans from ₹999/year: 3-month, 6-month or yearly",
     legacy: "₹990 paywall for print permissions",
   },
   {
@@ -27,7 +27,7 @@ const ROWS: Row[] = [
   },
   {
     term: "Payout Timeline",
-    artace: "7–10 business days post-inspection; faster on Premium",
+    artace: "Monthly after delivery & inspection; on request with Premium",
     legacy: "Long 30-day holding period",
   },
   {

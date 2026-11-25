@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 
 const HIGHLIGHTS = [
   { value: "30%", label: "Flat Commission (You Keep 70%)" },
-  { value: "₹999", label: "Annual Standard Plan* | ₹1,899 Premium" },
+  { value: "₹999", label: "Standard per year* | 3 & 6-month plans too" },
   { value: "7 Days", label: "Fast Payout Timeline*" },
   { value: "Pan-India & Global", label: "Curated Collector Reach" },
 ];
@@ -34,8 +34,8 @@ const SellPaintingsHighlights = () => {
         ))}
       </div>
       <p className="mt-6 px-6 text-center font-inter text-[13px] leading-6 text-[#8a8478] md:px-12">
-        *Payouts paid within 7–10 business days after delivery &amp; inspection on
-        Standard; Premium enjoys faster payout timelines.
+        *Plus 18% GST. Standard payouts are monthly after delivery &amp; inspection;
+        Premium artists can request a payout any time.
       </p>
     </section>
   );
