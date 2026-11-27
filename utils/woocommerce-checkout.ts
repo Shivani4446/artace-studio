@@ -1,4 +1,5 @@
 type WooBillingPayload = {
+  first_name?: unknown;
   email?: unknown;
   phone?: unknown;
   country?: unknown;
@@ -49,6 +50,7 @@ export type WooOrderSummary = {
   paymentMethodTitle: string;
   transactionId: string;
   billingEmail: string;
+  billingFirstName: string;
   billingPhone: string;
   billingCountry: string;
   shippingCountry: string;
@@ -133,6 +135,7 @@ const parseWooOrderSummary = (payload: WooOrderPayload, siteUrl: string): WooOrd
     paymentMethodTitle: sanitizeText(payload.payment_method_title),
     transactionId: sanitizeText(payload.transaction_id),
     billingEmail: sanitizeText(payload.billing?.email),
+    billingFirstName: sanitizeText(payload.billing?.first_name),
     billingPhone: sanitizeText(payload.billing?.phone),
     billingCountry: sanitizeText(payload.billing?.country),
     shippingCountry: sanitizeText(payload.shipping?.country),

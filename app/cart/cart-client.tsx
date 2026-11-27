@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Lock, Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Lock, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
@@ -192,43 +192,9 @@ export default function CartPageClient() {
           )}
 
           <div className="mt-6 rounded-[18px] border border-[#1f1f1f]/10 bg-white px-5 py-5">
-            {!isAuthenticated ? (
-              <>
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded-full bg-[#f5f0e8] p-2">
-                    <ShieldCheck className="h-5 w-5 text-[#1f1f1f]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#1f1f1f]">
-                      Action required: sign in to checkout
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-[#666]">
-                      We require an account before placing an order so your purchase is automatically linked for tracking and support.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                  <Link
-                    href={`/signup?callbackUrl=${encodeURIComponent("/cart")}`}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[12px] bg-[#1f1f1f] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-black"
-                  >
-                    Create account
-                  </Link>
-                  <Link
-                    href={`/login?callbackUrl=${encodeURIComponent("/cart")}`}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[12px] border border-black/10 bg-white px-4 py-3 text-sm font-semibold text-[#1f1f1f] transition-colors hover:bg-[#f5f0e8]"
-                  >
-                    Log in
-                  </Link>
-                </div>
-
-                <p className="mt-4 text-sm leading-6 text-[#666]">
-                  Already created your account? Log in and you will be able to checkout immediately.
-                </p>
-              </>
-            ) : (
-              <>
+            {/* Checkout no longer requires an account — guests can pay and an
+                account is created from their email (lib/checkout/guest-account.ts). */}
+            <>
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 rounded-full bg-[#f5f0e8] p-2">
                     <Lock className="h-5 w-5 text-[#1f1f1f]" />
@@ -265,8 +231,19 @@ export default function CartPageClient() {
                 <p className="mt-4 text-sm leading-6 text-[#666]">
                   Payments are processed by Razorpay. We do not store card or UPI credentials.
                 </p>
-              </>
-            )}
+                {!isAuthenticated ? (
+                  <p className="mt-3 text-sm leading-6 text-[#666]">
+                    Have an account?{" "}
+                    <Link
+                      href={`/login?callbackUrl=${encodeURIComponent("/cart")}`}
+                      className="font-semibold text-[#1f1f1f] underline underline-offset-2"
+                    >
+                      Sign in
+                    </Link>{" "}
+                    for faster checkout, or continue as a guest.
+                  </p>
+                ) : null}
+            </>
           </div>
         </aside>
       </div>

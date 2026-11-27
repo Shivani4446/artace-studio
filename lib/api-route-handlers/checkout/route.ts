@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthSessionFromRequest } from "@/utils/auth";
+import { applyAuthCookie, getAuthSessionFromRequest } from "@/utils/auth";
+import { findOrCreateCheckoutCustomer } from "@/lib/checkout/guest-account";
 import { createRazorpayOrder, getRazorpayPublicConfig } from "@/utils/razorpay";
 import { PAYU_PAYMENT_URL, generatePayuRequestHash } from "@/utils/payu";
 import {
@@ -279,20 +280,51 @@ export async function POST(request: NextRequest) {
   const shippingSource = body.shipping || body.billing || {};
   const { sanitized: shipping } = validateAddress(shippingSource);
   const session = await getAuthSessionFromRequest(request);
+  const isSignedIn = Boolean(session?.accessToken && ensurePositiveInt(session.user.id));
 
-  // New flow: account required before placing an order.
-  if (!session?.accessToken) {
-    return NextResponse.json(
-      { error: "Please sign in or create an account before checkout." },
-      { status: 401 }
-    );
+  // Guest checkout: signed-out shoppers can pay without signing up first.
+  // The order is attached to the account for the billing email — created
+  // on the spot (and signed in) if it doesn't exist yet. See
+  // lib/checkout/guest-account.ts.
+  let customerId = isSignedIn ? ensurePositiveInt(session!.user.id) : 0;
+  let createdAccount = false;
+  let newAccountAccessToken: string | null = null;
+
+  if (!isSignedIn) {
+    try {
+      const guest = await findOrCreateCheckoutCustomer({
+        billing,
+        shipping: {
+          firstName: shipping.firstName || billing.firstName,
+          lastName: shipping.lastName || billing.lastName,
+          email: billing.email,
+          phone: billing.phone,
+          address1: shipping.address1 || billing.address1,
+          address2: shipping.address2 || billing.address2,
+          city: shipping.city || billing.city,
+          state: shipping.state || billing.state,
+          postcode: shipping.postcode || billing.postcode,
+          country: shipping.country || billing.country,
+        },
+      });
+      customerId = guest.customerId;
+      createdAccount = guest.created;
+      newAccountAccessToken = guest.session?.accessToken ?? null;
+    } catch (error) {
+      // Never block a sale because the account step failed — place the
+      // order as a plain WooCommerce guest order instead.
+      console.error("[checkout] guest account step failed:", error);
+      customerId = 0;
+    }
   }
 
-  const customerId = ensurePositiveInt(session.user.id);
-  if (!customerId) {
+  // Points belong to an account, so redeeming them needs that account to be
+  // signed in — otherwise anyone could spend another customer's points just
+  // by typing their email at checkout.
+  if (!isSignedIn && Math.floor(Number(body.pointsToRedeem) || 0) > 0) {
     return NextResponse.json(
-      { error: "Your account session is missing a customer id. Please sign in again." },
-      { status: 401 }
+      { error: "Please sign in to redeem Artace Rewards points." },
+      { status: 400 }
     );
   }
 
@@ -433,6 +465,10 @@ export async function POST(request: NextRequest) {
 
   const couponLines = effectiveCouponCode ? [{ code: effectiveCouponCode }] : [];
 
+  // Signs in a shopper whose account this checkout just created.
+  const withNewAccountSession = (response: NextResponse) =>
+    newAccountAccessToken ? applyAuthCookie(response, newAccountAccessToken) : response;
+
   try {
     const wooOrder = await createWooCommerceOrder({
       payment_method: paymentMethod,
@@ -465,7 +501,7 @@ export async function POST(request: NextRequest) {
       ...(feeLines.length ? { fee_lines: feeLines } : {}),
       ...(shippingLines.length ? { shipping_lines: shippingLines } : {}),
       customer_note: sanitizeText(body.customerNote),
-      customer_id: customerId,
+      customer_id: customerId || 0,
     });
 
     if (!wooOrder.orderId || !wooOrder.orderKey) {
@@ -491,6 +527,9 @@ export async function POST(request: NextRequest) {
 
     const commonMetaUpdates = {
       _artace_checkout_origin: request.nextUrl.origin,
+      // Read by finalize-order to send the "set your password" email once
+      // the order is actually paid.
+      ...(createdAccount ? { _artace_auto_account: "yes" } : {}),
       ...(referringAffiliate ? { "Referred By": referringAffiliate.referral_code } : {}),
       ...(pointsToRedeem > 0 ? { _artace_points_to_redeem: String(pointsToRedeem) } : {}),
       ...(giftCardApplied > 0
@@ -517,8 +556,9 @@ export async function POST(request: NextRequest) {
         }),
       });
 
-      return NextResponse.json({
+      return withNewAccountSession(NextResponse.json({
         success: true,
+        accountCreated: createdAccount,
         orderId: updatedWooOrder.orderId,
         orderKey: updatedWooOrder.orderKey,
         orderNumber: updatedWooOrder.orderNumber,
@@ -538,7 +578,7 @@ export async function POST(request: NextRequest) {
           furl: buildSiteUrl("/api/checkout/payu-callback"),
           hash,
         },
-      });
+      }));
     }
 
     const razorpayOrder = await createRazorpayOrder({
@@ -561,8 +601,9 @@ export async function POST(request: NextRequest) {
 
     const { keyId } = getRazorpayPublicConfig();
 
-    return NextResponse.json({
+    return withNewAccountSession(NextResponse.json({
       success: true,
+      accountCreated: createdAccount,
       orderId: updatedWooOrder.orderId,
       orderKey: updatedWooOrder.orderKey,
       orderNumber: updatedWooOrder.orderNumber,
@@ -583,7 +624,7 @@ export async function POST(request: NextRequest) {
         },
         notes: razorpayOrder.notes,
       },
-    });
+    }));
   } catch (error) {
     return NextResponse.json(
       {

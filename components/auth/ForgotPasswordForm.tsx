@@ -1,12 +1,21 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 export default function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Prefill from ?email= (the "Set your password" link in the account email
+  // sent after a guest checkout). Read on mount to avoid a Suspense boundary
+  // for useSearchParams.
+  useEffect(() => {
+    const email = new URLSearchParams(window.location.search).get("email");
+    if (email && inputRef.current && !inputRef.current.value) inputRef.current.value = email;
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -63,6 +72,7 @@ export default function ForgotPasswordForm() {
             Email or Username
           </span>
           <input
+            ref={inputRef}
             name="username"
             type="text"
             autoComplete="username"

@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Gift, Lock, Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Gift, Lock, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
 import { useCart } from "@/components/cart/CartProvider";
 import { useCurrency } from "@/components/currency/CurrencyProvider";
@@ -231,40 +231,9 @@ export default function SamoraCartPageClient() {
           )}
 
           <div className="mt-5 rounded-[16px] border border-[#2b2420]/10 bg-[#fbf6ef] px-5 py-5">
-            {!isAuthenticated ? (
-              <>
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 rounded-full bg-[#f3ead9] p-2">
-                    <ShieldCheck className="h-5 w-5 text-[#2b2420]" strokeWidth={1.75} />
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-semibold text-[#2b2420]">
-                      Action required: sign in to checkout
-                    </p>
-                    <p className="mt-2 text-[13.5px] leading-[1.6] text-[#5c5344]">
-                      We require an account before placing an order so your purchase is
-                      automatically linked for tracking and support.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                  <Link
-                    href={`/signup?callbackUrl=${encodeURIComponent("/samora/cart")}`}
-                    className="inline-flex flex-1 items-center justify-center rounded-full bg-[#2b2420] px-4 py-3 text-[13.5px] font-semibold text-white transition-colors hover:bg-[#1c1712]"
-                  >
-                    Create account
-                  </Link>
-                  <Link
-                    href={`/login?callbackUrl=${encodeURIComponent("/samora/cart")}`}
-                    className="inline-flex flex-1 items-center justify-center rounded-full border border-[#2b2420]/15 bg-white px-4 py-3 text-[13.5px] font-semibold text-[#2b2420] transition-colors hover:bg-[#f3ead9]"
-                  >
-                    Log in
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <>
+            {/* Checkout no longer requires an account — guests can pay and an
+                account is created from their email (lib/checkout/guest-account.ts). */}
+            <>
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 rounded-full bg-[#f3ead9] p-2">
                     <Lock className="h-5 w-5 text-[#2b2420]" strokeWidth={1.75} />
@@ -296,8 +265,19 @@ export default function SamoraCartPageClient() {
                 <p className="mt-4 text-[13px] leading-[1.6] text-[#8a7c68]">
                   Payments are processed by Razorpay. We do not store card or UPI credentials.
                 </p>
-              </>
-            )}
+                {!isAuthenticated ? (
+                  <p className="mt-3 text-[13px] leading-[1.6] text-[#8a7c68]">
+                    Have an account?{" "}
+                    <Link
+                      href={`/login?callbackUrl=${encodeURIComponent("/samora/cart")}`}
+                      className="font-semibold text-[#2b2420] underline underline-offset-2"
+                    >
+                      Sign in
+                    </Link>{" "}
+                    for faster checkout, or continue as a guest.
+                  </p>
+                ) : null}
+            </>
           </div>
         </aside>
       </div>

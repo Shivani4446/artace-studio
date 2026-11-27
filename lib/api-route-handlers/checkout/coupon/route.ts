@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthSessionFromRequest } from "@/utils/auth";
 import {
   HAMPER_MIN_DISTINCT_ITEMS,
   isHamperCoupon,
@@ -116,13 +115,36 @@ const mapCoupon = (payload: WooCouponPayload) => {
   };
 };
 
+// Guest checkout means coupons can be checked without signing in, so a
+// per-IP limit replaces the old sign-in requirement as the guard against
+// guessing codes. In-memory per edge isolate — a speed bump, not a hard
+// limit; a Cloudflare rate-limiting rule on /api/checkout/coupon is the
+// stronger version.
+const COUPON_LOOKUP_LIMIT = 20;
+const COUPON_LOOKUP_WINDOW_MS = 10 * 60 * 1000;
+const couponLookups = new Map<string, { count: number; resetAt: number }>();
+
+const isCouponLookupAllowed = (ip: string) => {
+  const now = Date.now();
+  const entry = couponLookups.get(ip);
+  if (!entry || entry.resetAt <= now) {
+    if (couponLookups.size > 5000) couponLookups.clear();
+    couponLookups.set(ip, { count: 1, resetAt: now + COUPON_LOOKUP_WINDOW_MS });
+    return true;
+  }
+  entry.count += 1;
+  return entry.count <= COUPON_LOOKUP_LIMIT;
+};
+
 export async function GET(request: NextRequest) {
-  // Coupons are part of checkout; require an authenticated session to reduce coupon enumeration.
-  const session = await getAuthSessionFromRequest(request);
-  if (!session?.accessToken) {
+  const ip =
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    "unknown";
+  if (!isCouponLookupAllowed(ip)) {
     return NextResponse.json(
-      { ok: false, message: "Please sign in before applying coupons." },
-      { status: 401 }
+      { ok: false, message: "Too many coupon attempts. Please try again in a few minutes." },
+      { status: 429 }
     );
   }
 

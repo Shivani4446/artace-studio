@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Lock, ShieldCheck } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
+import GuestCheckoutNotice from "@/components/checkout/GuestCheckoutNotice";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
@@ -167,7 +168,7 @@ const getPayButtonLabel = (stage: CheckoutStage, isReady: boolean) => {
 
 export default function CheckoutPageClient() {
   const router = useRouter();
-  const { status: authStatus, session } = useAuthSession();
+  const { status: authStatus, session, refreshSession } = useAuthSession();
   const { items, itemCount, subtotal } = useCart();
   const [form, setForm] = useState<CheckoutFormState>(INITIAL_FORM);
   const [checkoutStage, setCheckoutStage] = useState<CheckoutStage>("idle");
@@ -200,12 +201,6 @@ export default function CheckoutPageClient() {
         .join("|"),
     [items]
   );
-
-  useEffect(() => {
-    if (authStatus === "unauthenticated") {
-      router.replace(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
-    }
-  }, [authStatus, router]);
 
   useEffect(() => {
     if (!hasCheckoutReadyItems || items.length === 0) return;
@@ -306,11 +301,6 @@ export default function CheckoutPageClient() {
     setCheckoutStage("creating");
 
     try {
-      if (authStatus !== "authenticated") {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
-        return;
-      }
-
       if (!isRazorpayReady || !window.Razorpay) {
         throw new Error("Razorpay checkout is still loading. Please try again.");
       }
@@ -345,12 +335,10 @@ export default function CheckoutPageClient() {
         }),
       });
 
-      const payload = (await response.json()) as RazorpayCheckoutPayload;
-
-      if (response.status === 401) {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
-        return;
-      }
+      const payload = (await response.json()) as RazorpayCheckoutPayload & { accountCreated?: boolean };
+      // Guest checkout created (and signed in) an account — pick up the new
+      // session so the header and account pages reflect it.
+      if (payload.accountCreated && authStatus !== "authenticated") void refreshSession();
 
       if (
         !response.ok ||
@@ -449,11 +437,6 @@ export default function CheckoutPageClient() {
     setCheckoutStage("creating");
 
     try {
-      if (authStatus !== "authenticated") {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
-        return;
-      }
-
       const lineItems = buildCheckoutLineItems();
       if (lineItems.length === 0) {
         throw new Error("No valid WooCommerce products found in your cart.");
@@ -484,12 +467,10 @@ export default function CheckoutPageClient() {
         }),
       });
 
-      const payload = (await response.json()) as RazorpayCheckoutPayload;
-
-      if (response.status === 401) {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/checkout")}`);
-        return;
-      }
+      const payload = (await response.json()) as RazorpayCheckoutPayload & { accountCreated?: boolean };
+      // Guest checkout created (and signed in) an account — pick up the new
+      // session so the header and account pages reflect it.
+      if (payload.accountCreated && authStatus !== "authenticated") void refreshSession();
 
       if (!response.ok || !payload.success || !payload.payu) {
         throw new Error(payload.error || "Unable to start your PayU payment.");
@@ -646,6 +627,7 @@ export default function CheckoutPageClient() {
               autoComplete="email"
               className="min-h-11 w-full rounded-[10px] border border-black/10 bg-[#fcfaf7] px-4 py-3 text-[15px] text-[#222] outline-none transition-colors focus:border-[#1f1f1f]/35"
             />
+            <GuestCheckoutNotice callbackPath="/checkout" />
             <input
               type="tel"
               placeholder="Phone"
@@ -794,7 +776,9 @@ export default function CheckoutPageClient() {
             ) : null}
           </div>
 
-          <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+          {authStatus === "authenticated" ? (
+            <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+          ) : null}
 
           <RedeemGiftCardBox
             subtotal={subtotal}
@@ -809,7 +793,6 @@ export default function CheckoutPageClient() {
               type="button"
               onClick={handleCheckout}
               disabled={
-                authStatus !== "authenticated" ||
                 checkoutStage !== "idle" ||
                 !hasCheckoutReadyItems ||
                 !isRazorpayReady ||
@@ -824,7 +807,6 @@ export default function CheckoutPageClient() {
               type="button"
               onClick={handlePayuCheckout}
               disabled={
-                authStatus !== "authenticated" ||
                 checkoutStage !== "idle" ||
                 !hasCheckoutReadyItems ||
                 isPayuRedirecting

@@ -9,6 +9,8 @@ import { CUSTOM_PORTRAIT_DEPOSIT_PRODUCT_ID } from "@/lib/custom-portraits/prici
 import { createGiftCard, redeemGiftCard } from "@/lib/gift-cards/ledger";
 import { sendGiftCardEmail } from "@/lib/gift-cards/email";
 import { GIFT_CARD_PRODUCT_ID } from "@/lib/gift-cards/constants";
+import { sendTransactionalEmail } from "@/lib/email/resend";
+import { buildCheckoutAccountEmail } from "@/lib/email/templates";
 
 /**
  * Marks a WooCommerce order paid and runs every gateway-agnostic
@@ -114,6 +116,28 @@ export const finalizeOrderAfterPayment = async (input: {
       await sendGiftCardEmail({ to: wooOrder.billingEmail, code, amount: Number(wooOrder.total) });
     } catch {
       // Never let gift-card generation/email failure affect the checkout response.
+    }
+  }
+
+  // Guest checkout created an account for this shopper (see
+  // lib/checkout/guest-account.ts): now that they have actually paid, send
+  // the "your account is ready, set a password" email. Sent here rather than
+  // at order creation so abandoned checkouts never email anyone.
+  const createdAccountAtCheckout =
+    wooOrder.metaData.find((item) => item.key === "_artace_auto_account")?.value === "yes";
+  if (createdAccountAtCheckout && wooOrder.billingEmail) {
+    try {
+      await sendTransactionalEmail({
+        to: wooOrder.billingEmail,
+        ...buildCheckoutAccountEmail({
+          firstName: wooOrder.billingFirstName,
+          email: wooOrder.billingEmail,
+          orderNumber: wooOrder.orderNumber,
+        }),
+      });
+    } catch (error) {
+      // Never let an email failure affect the checkout response.
+      console.error("[finalize-order] account email failed:", error);
     }
   }
 

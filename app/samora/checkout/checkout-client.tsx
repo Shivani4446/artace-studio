@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Gift, Lock, ShieldCheck } from "lucide-react";
 import { useAuthSession } from "@/components/auth/AuthSessionProvider";
+import GuestCheckoutNotice from "@/components/checkout/GuestCheckoutNotice";
 import { useCart } from "@/components/cart/CartProvider";
 import { writePendingCheckout } from "@/utils/checkout-client";
 import { trackBeginCheckout } from "@/utils/gtm";
@@ -141,7 +142,7 @@ const INPUT_CLASS =
 export default function SamoraCheckoutPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { status: authStatus, session } = useAuthSession();
+  const { status: authStatus, session, refreshSession } = useAuthSession();
   const { items, itemCount, subtotal, isGiftOrder, giftMessage } = useCart();
   const [form, setForm] = useState<CheckoutFormState>(INITIAL_FORM);
   const [checkoutStage, setCheckoutStage] = useState<CheckoutStage>("idle");
@@ -234,12 +235,6 @@ export default function SamoraCheckoutPageClient() {
   );
 
   useEffect(() => {
-    if (authStatus === "unauthenticated") {
-      router.replace(`/login?callbackUrl=${encodeURIComponent("/samora/checkout")}`);
-    }
-  }, [authStatus, router]);
-
-  useEffect(() => {
     if (!hasCheckoutReadyItems || items.length === 0) return;
     trackBeginCheckout(items, {
       value: subtotal,
@@ -289,11 +284,6 @@ export default function SamoraCheckoutPageClient() {
     setCheckoutStage("creating");
 
     try {
-      if (authStatus !== "authenticated") {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/samora/checkout")}`);
-        return;
-      }
-
       if (!isRazorpayReady || !window.Razorpay) {
         throw new Error("Razorpay checkout is still loading. Please try again.");
       }
@@ -358,12 +348,10 @@ export default function SamoraCheckoutPageClient() {
         }),
       });
 
-      const payload = (await response.json()) as RazorpayCheckoutPayload;
-
-      if (response.status === 401) {
-        router.push(`/login?callbackUrl=${encodeURIComponent("/samora/checkout")}`);
-        return;
-      }
+      const payload = (await response.json()) as RazorpayCheckoutPayload & { accountCreated?: boolean };
+      // Guest checkout created (and signed in) an account — pick up the new
+      // session so the header and account pages reflect it.
+      if (payload.accountCreated && authStatus !== "authenticated") void refreshSession();
 
       if (
         !response.ok ||
@@ -581,6 +569,7 @@ export default function SamoraCheckoutPageClient() {
               autoComplete="email"
               className={INPUT_CLASS}
             />
+            <GuestCheckoutNotice callbackPath="/samora/checkout" />
             <input
               type="tel"
               placeholder="Phone"
@@ -794,7 +783,9 @@ export default function SamoraCheckoutPageClient() {
             {couponError ? <p className="mt-3 text-[13.5px] text-[#a63b2d]">{couponError}</p> : null}
           </div>
 
-          <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+          {authStatus === "authenticated" ? (
+            <ApplyPointsBox subtotal={subtotal} onPointsChange={setPointsToRedeem} />
+          ) : null}
 
           <RedeemGiftCardBox
             subtotal={subtotal}
@@ -808,7 +799,6 @@ export default function SamoraCheckoutPageClient() {
             type="button"
             onClick={handleCheckout}
             disabled={
-              authStatus !== "authenticated" ||
               checkoutStage !== "idle" ||
               !hasCheckoutReadyItems ||
               !isRazorpayReady ||

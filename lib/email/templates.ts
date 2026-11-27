@@ -244,3 +244,43 @@ export const buildPromotionLeadNotificationEmail = ({
 
   return { subject: `New offer popup lead — ${email}`, html, text };
 };
+
+// Sent after the first paid order of a shopper whose account was created
+// automatically at checkout (guest checkout — see lib/checkout/guest-account.ts).
+export const buildCheckoutAccountEmail = ({
+  firstName,
+  email,
+  orderNumber,
+}: {
+  firstName: string;
+  email: string;
+  orderNumber: string;
+}): EmailContent => {
+  const name = firstName || "there";
+  const setPasswordUrl = buildSiteUrl(`/forgot-password?email=${encodeURIComponent(email)}`);
+  const ordersUrl = buildSiteUrl("/dashboard/orders");
+
+  const html = wrapEmailHtml(`
+    <h1 style="margin:0 0 16px 0; font-size:22px; color:#222327;">Your Artace Studio account is ready</h1>
+    <p style="margin:0 0 16px 0;">Hi ${escapeHtml(name)}, thank you for order #${escapeHtml(orderNumber)}! We've created an Artace Studio account for <strong>${escapeHtml(email)}</strong> so you can track this order, earn Artace Rewards points and check out faster next time.</p>
+    <p style="margin:0 0 24px 0;">Choose a password to sign in from any device:</p>
+    <p style="margin:0 0 24px 0;">
+      <a href="${setPasswordUrl}" style="display:inline-block; background-color:#1f3f63; color:#ffffff; text-decoration:none; padding:12px 24px; border-radius:8px; font-weight:bold;">Set your password</a>
+    </p>
+    <p style="margin:0 0 16px 0;">You can also <a href="${ordersUrl}" style="color:#1f3f63;">view your orders</a> once you're signed in.</p>
+    <p style="margin:0; color:#6b6962; font-size:13px;">Didn't place this order? Please contact us right away.</p>
+  `);
+
+  const text = [
+    `Hi ${name},`,
+    "",
+    `Thank you for order #${orderNumber}! We've created an Artace Studio account for ${email} so you can track this order, earn Artace Rewards points and check out faster next time.`,
+    "",
+    `Set your password: ${setPasswordUrl}`,
+    `View your orders: ${ordersUrl}`,
+    "",
+    "Didn't place this order? Please contact us right away.",
+  ].join("\n");
+
+  return { subject: "Your Artace Studio account is ready", html, text };
+};
