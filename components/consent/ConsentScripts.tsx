@@ -9,52 +9,54 @@ const GOOGLE_ADS_ID = "AW-11024941492";
 const META_PIXEL_ID = "2637055520014152";
 const AHREFS_KEY = "AHn7dT8Dlwwm42L41CA4Xg";
 
-// Loads tracking scripts only for the categories the visitor allowed. With
-// no consent (or "Necessary only") none of these are requested at all.
-// Google Consent Mode defaults are set earlier, in app/layout.tsx.
+// What loads for whom:
+// - GA4 + Google Ads (gtag.js): every visitor, under Google Consent Mode v2
+//   "advanced". Without consent the Consent Mode signals stay "denied", so
+//   Google sets no cookies and receives only anonymous, cookieless pings it
+//   uses for modelling. Defaults are set in app/layout.tsx before this runs.
+// - Ahrefs analytics: every visitor. The script uses no cookies or browser
+//   storage (checked: no document.cookie / localStorage / sessionStorage /
+//   indexedDB), so it needs no consent.
+// - Google Tag Manager: only with analytics or marketing consent, because a
+//   container can hold tags that ignore Consent Mode.
+// - Meta Pixel: only with marketing consent (cross-site ad cookies; Meta has
+//   no cookieless mode).
 export default function ConsentScripts({ consent }: { consent: ConsentState | null }) {
   const analytics = Boolean(consent?.analytics);
   const marketing = Boolean(consent?.marketing);
-  const anyGoogle = analytics || marketing;
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID;
 
   return (
     <>
-      {anyGoogle ? (
-        <>
-          {/* GA4 + Google Ads share one gtag.js loader; Consent Mode decides
-              what each may store. window.gtag is defined by the consent
-              default script in <head>. */}
-          <Script
-            id="gtag-js"
-            strategy="afterInteractive"
-            src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
-          />
-          <Script
-            id="gtag-config"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.gtag('js', new Date());
-                window.gtag('config', '${GA4_ID}');
-                window.gtag('config', '${GOOGLE_ADS_ID}');
-              `,
-            }}
-          />
-        </>
-      ) : null}
+      {/* GA4 + Google Ads share one gtag.js loader; Consent Mode decides what
+          each may store. window.gtag is defined by the consent default
+          script in <head>. */}
+      <Script
+        id="gtag-js"
+        strategy="afterInteractive"
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}
+      />
+      <Script
+        id="gtag-config"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.gtag('js', new Date());
+            window.gtag('config', '${GA4_ID}');
+            window.gtag('config', '${GOOGLE_ADS_ID}');
+          `,
+        }}
+      />
 
-      {anyGoogle && process.env.NODE_ENV === "production" && gtmId ? (
+      <Script
+        id="ahrefs-analytics"
+        src="https://analytics.ahrefs.com/analytics.js"
+        data-key={AHREFS_KEY}
+        strategy="lazyOnload"
+      />
+
+      {(analytics || marketing) && process.env.NODE_ENV === "production" && gtmId ? (
         <GoogleTagManager gtmId={gtmId} />
-      ) : null}
-
-      {analytics ? (
-        <Script
-          id="ahrefs-analytics"
-          src="https://analytics.ahrefs.com/analytics.js"
-          data-key={AHREFS_KEY}
-          strategy="lazyOnload"
-        />
       ) : null}
 
       {marketing ? (

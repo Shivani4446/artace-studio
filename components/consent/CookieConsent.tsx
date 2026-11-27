@@ -32,7 +32,7 @@ const CATEGORIES: {
   {
     key: "analytics",
     title: "Analytics",
-    body: "Help us understand how the site is used so we can improve it (Google Analytics, Ahrefs).",
+    body: "Let Google Analytics use cookies so we can understand return visits and improve the site.",
   },
   {
     key: "marketing",
@@ -143,8 +143,9 @@ export default function CookieConsent() {
               <div className="min-w-0">
                 <p className="font-inter text-[15px] font-semibold text-[#1f1f1f]">We value your privacy</p>
                 <p className="mt-1 font-inter text-[13.5px] leading-6 text-[#5f5a52]">
-                  We use necessary cookies to run the site. With your permission we&apos;d also use
-                  analytics and marketing cookies to improve it and measure our ads.{" "}
+                  We use necessary cookies to run the site, and anonymous, cookie-free statistics to
+                  see how it&apos;s used. With your permission we&apos;d also use analytics and
+                  marketing cookies to improve the site and measure our ads.{" "}
                   <Link href="/privacy-policy" className="font-medium text-[#1f1f1f] underline underline-offset-2">
                     Privacy policy
                   </Link>
@@ -206,6 +207,11 @@ export default function CookieConsent() {
             <p className="mt-2 font-inter text-[13.5px] leading-6 text-[#5f5a52]">
               Choose which cookies we can use. You can change this any time from &ldquo;Cookie
               settings&rdquo; in the footer.
+            </p>
+            <p className="mt-3 rounded-xl bg-[#f6f3ee] px-4 py-3 font-inter text-[12.5px] leading-5 text-[#5f5a52]">
+              Whatever you choose, we collect anonymous, cookie-free usage statistics (page views
+              and visit counts through Ahrefs and Google Analytics&apos; cookieless mode). They
+              don&apos;t store anything on your device or identify you.
             </p>
 
             <ul className="mt-5 divide-y divide-[#1f1f1f]/8 rounded-xl border border-[#1f1f1f]/10">

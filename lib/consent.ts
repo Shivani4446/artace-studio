@@ -4,7 +4,8 @@
 // Categories:
 //   necessary  always on: cart, sign-in, currency, wishlist, checkout,
 //              security, and this consent choice itself.
-//   analytics  Google Analytics 4, Ahrefs analytics.
+//   analytics  Google Analytics cookies (GA4 itself runs for everyone in
+//              Consent Mode "advanced"; Ahrefs is cookieless and always on).
 //   marketing  Google Ads, Meta (Facebook) Pixel, Google Tag Manager tags
 //              that use ad storage.
 //
