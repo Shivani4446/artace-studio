@@ -225,6 +225,7 @@ const WarliPage = async () => {
             <div className="absolute inset-0">
               <Image
                 src="/warli-painitng-hero.webp"
+                sizes="100vw"
                 alt="Warli painting hero image"
                 fill
                 priority

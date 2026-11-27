@@ -1,29 +1,57 @@
 import React from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
+import { preload } from "react-dom";
 import Link from "next/link";
 import { ArrowRight, ShoppingCart } from "lucide-react";
 import HeroPriceAnchor from "./HeroPriceAnchor";
 
+const HERO_ALT =
+  "Gallery wall of handcrafted canvas paintings featuring Ganesha, Buddha, Shiva, and Radha Krishna in a modern living room";
+// Below this width the portrait mobile crop is used (Tailwind md).
+const DESKTOP_MEDIA = "(min-width: 768px)";
+const MOBILE_MEDIA = "(max-width: 767px)";
+
 const HeroSection = () => {
+  // Art direction with one <picture>: each device downloads only its own
+  // hero (previously two priority <Image>s preloaded BOTH on every device,
+  // doubling the LCP download).
+  const common = { alt: HERO_ALT, fill: true, sizes: "100vw", quality: 70 } as const;
+  const { props: desktopProps } = getImageProps({ ...common, src: "/hero-section-bg.webp" });
+  const {
+    props: { srcSet: mobileSrcSet, ...imgProps },
+  } = getImageProps({ ...common, src: "/hero-section-mobile-bg.webp" });
+
+  // getImageProps doesn't preload; preload just the matching variant.
+  preload(desktopProps.src, {
+    as: "image",
+    imageSrcSet: desktopProps.srcSet,
+    imageSizes: "100vw",
+    media: DESKTOP_MEDIA,
+    fetchPriority: "high",
+  });
+  preload(imgProps.src, {
+    as: "image",
+    imageSrcSet: mobileSrcSet,
+    imageSizes: "100vw",
+    media: MOBILE_MEDIA,
+    fetchPriority: "high",
+  });
+
   return (
     <section className="relative isolate w-full overflow-hidden bg-black">
       <div className="relative h-[88vh] min-h-[560px] w-full bg-black md:h-[92vh] md:min-h-[620px]">
-        <Image
-          src="/hero-section-mobile-bg.webp"
-          alt="Gallery wall of handcrafted canvas paintings featuring Ganesha, Buddha, Shiva, and Radha Krishna in a modern living room"
-          fill
-          priority
-          sizes="100vw"
-          className="block object-cover object-center md:hidden"
-        />
-        <Image
-          src="/hero-section-bg.webp"
-          alt="Gallery wall of handcrafted canvas paintings featuring Ganesha, Buddha, Shiva, and Radha Krishna in a modern living room"
-          fill
-          priority
-          sizes="100vw"
-          className="hidden object-cover object-center md:block"
-        />
+        <picture>
+          <source media={DESKTOP_MEDIA} srcSet={desktopProps.srcSet} sizes="100vw" />
+          <source media={MOBILE_MEDIA} srcSet={mobileSrcSet} sizes="100vw" />
+          {/* eslint-disable-next-line jsx-a11y/alt-text -- alt is in imgProps */}
+          <img
+            {...imgProps}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="object-cover object-center"
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent md:hidden" />
 
         <div className="relative z-10 h-full w-full">

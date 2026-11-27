@@ -11,6 +11,7 @@ const SoulfulSpaces = () => {
       <div className="absolute inset-0 z-0 h-full w-full">
         <Image
           src="/about-us-bg.webp"
+          sizes="100vw"
           alt="Abstract dark water reflection with soulful light"
           fill
           className="object-cover object-center"

@@ -113,6 +113,7 @@ const CorporateBulkOrdersPage = () => {
       <section className="relative isolate overflow-hidden bg-black text-white">
         <Image
           src="/corporate-bulk-orders-bg.webp"
+          sizes="100vw"
           alt="Hand-painted canvas artwork backdrop"
           fill
           priority
@@ -191,6 +192,7 @@ const CorporateBulkOrdersPage = () => {
             <div className="relative h-64 overflow-hidden rounded-3xl sm:h-72 md:h-[420px]">
               <Image
                 src="/corporate-gifting-1.webp"
+                sizes="(min-width: 768px) 50vw, 100vw"
                 alt="Canvas artwork for corporate interiors"
                 fill
                 className="object-cover"
@@ -199,6 +201,7 @@ const CorporateBulkOrdersPage = () => {
             <div className="relative h-64 overflow-hidden rounded-3xl sm:h-72 md:mt-[120px] md:h-[420px]">
               <Image
                 src="/corporate-gifting-2.webp"
+                sizes="(min-width: 768px) 50vw, 100vw"
                 alt="Hand-painted floral canvas detail"
                 fill
                 className="object-cover"
@@ -264,6 +267,7 @@ const CorporateBulkOrdersPage = () => {
             <div className="relative h-52 sm:h-60 md:h-72">
               <Image
                 src="/calender.svg"
+                sizes="(min-width: 768px) 50vw, 100vw"
                 alt="Production schedule illustration"
                 fill
                 className="object-contain"

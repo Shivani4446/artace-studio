@@ -500,6 +500,7 @@ export default function RentalsPage() {
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[24px]">
                   <Image
                     src="/why-us-img-1.webp"
+                    sizes="(min-width: 1024px) 40vw, 100vw"
                     alt="Hotel lobby with art rental"
                     fill
                     className="object-cover"
@@ -627,6 +628,7 @@ export default function RentalsPage() {
           <div className="relative overflow-hidden rounded-[24px] bg-[#1a1a1a] px-8 py-12 md:px-16 md:py-20">
             <Image
               src="/landscape-collection-bg.webp"
+              sizes="(min-width: 1440px) 1440px, 100vw"
               alt="Art rental for commercial spaces"
               fill
               className="object-cover opacity-40"

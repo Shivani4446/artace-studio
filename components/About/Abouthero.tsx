@@ -9,6 +9,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 z-0">
         <Image
           src="/Artace-studio-artwork.png"
+          sizes="100vw"
           alt="Abstract dark nature background"
           fill
           priority

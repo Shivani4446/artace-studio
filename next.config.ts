@@ -87,6 +87,15 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Cloudflare Image Transformations instead of the /_next/image optimizer,
+    // which is a no-op on Cloudflare Pages — see lib/image-loader.ts.
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
+    // Fewer, well-spread widths: every distinct width of every image is a
+    // separate Cloudflare transformation (billed per unique variant past the
+    // free allowance), and these still cover phones through 1440p screens.
+    deviceSizes: [640, 828, 1080, 1440, 1920],
+    imageSizes: [64, 128, 256, 384],
     remotePatterns: [
       {
         protocol: "https",

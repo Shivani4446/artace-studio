@@ -643,7 +643,7 @@ const HeroArtworkComposition = ({
     return (
       <div className="mx-auto flex h-[220px] w-full max-w-[260px] items-center justify-center sm:h-[280px] sm:max-w-[320px] md:h-[320px] md:max-w-[360px]">
         <div className="relative h-[150px] w-[150px] sm:h-[190px] sm:w-[190px] md:h-[240px] md:w-[240px]">
-          <Image src={vectorSrc} alt={`${title} vector`} fill className="object-contain" />
+          <Image src={vectorSrc} alt={`${title} vector`} fill sizes="240px" className="object-contain" />
         </div>
       </div>
     );
@@ -670,7 +670,7 @@ const HeroArtworkComposition = ({
           }
         >
           <div className="relative h-full w-full">
-            <Image src={vectorSrc} alt={`${title} vector`} fill className="object-contain" />
+            <Image src={vectorSrc} alt={`${title} vector`} fill sizes="72px" className="object-contain" />
           </div>
         </div>
       ) : (
