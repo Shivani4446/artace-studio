@@ -67,10 +67,10 @@ export const homepageSchema = {
       },
       "sameAs": [
         "https://www.instagram.com/artace_studio",
-        "https://facebook.com/artacestudio",
+        "https://www.facebook.com/people/ArtAce-studio/100086995321825/",
         "https://x.com/ArtaceStudio",
         "https://in.pinterest.com/artacestudio/",
-        "https://www.linkedin.com/company/artace-studio/"
+        "https://www.linkedin.com/company/138584395/"
       ]
     },
     {

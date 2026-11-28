@@ -94,7 +94,7 @@ const socialLinks = [
   },
   {
     label: "Facebook",
-    href: "https://facebook.com/artacestudio",
+    href: "https://www.facebook.com/people/ArtAce-studio/100086995321825/",
     icon: "/facebook-3-2.svg",
     iconClassName: "h-6 w-6",
   },
@@ -110,7 +110,7 @@ const socialLinks = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/company/artace-studio/",
+    href: "https://www.linkedin.com/company/138584395/",
     icon: "/linkedin-icon-1.svg",
   },
 ];
