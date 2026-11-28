@@ -41,7 +41,7 @@ const SiteChrome = ({ children }: { children: ReactNode }) => {
       </a>
       <PromotionModal />
       <ProductImageProtection />
-      <div className="sticky top-0 z-[60]">
+      <div className="sticky top-0 z-[60]" data-site-header>
         <PromotionBar />
         <Navbar />
       </div>

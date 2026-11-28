@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { ArrowRight } from "lucide-react";
 import type { TocItem } from "@/utils/article";
 import ArticleTocHighlighter from "./ArticleTocHighlighter";
+import ExploreWithAi from "./ExploreWithAi";
 import AddToCartButton from "@/components/cart/AddToCartButton";
 import { decodeHtmlEntities } from "@/utils/text";
 import BlogContentWithProducts from "@/components/blog/BlogContentWithProducts";
@@ -36,6 +37,10 @@ type Props = {
   embeddedProductIds?: number[];
   embeddedProductSlugs?: string[];
   faqItems?: FaqItem[];
+  /** Canonical URL of the article; when set, shows "Explore this content with AI" chips. */
+  aiShareUrl?: string;
+  /** Plain-text title passed into the AI prompt. */
+  aiShareTitle?: string;
 };
 
 const DEFAULT_WOOCOMMERCE_SITE_URL = "https://api.artacestudio.com/";
@@ -335,6 +340,8 @@ const ArticleLayout = async ({
   embeddedProductIds,
   embeddedProductSlugs,
   faqItems,
+  aiShareUrl,
+  aiShareTitle,
 }: Props) => {
   // Only read the currency cookie / fetch rates when this article actually
   // embeds a product — cookies() is a Next.js Dynamic API, and calling it
@@ -431,17 +438,25 @@ const ArticleLayout = async ({
               )}
             </div>
           )}
+
+          {aiShareUrl && (
+            <ExploreWithAi
+              url={aiShareUrl}
+              title={aiShareTitle}
+              className="mt-8 border-t border-[#1f1f1f]/10 pt-6"
+            />
+          )}
         </header>
       </div>
 
       <div className="mt-16 md:mt-20 md:grid md:grid-cols-[248px_minmax(0,1fr)] md:gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-16">
         {toc.length > 0 ? (
-          <ArticleTocHighlighter toc={toc} />
+          <ArticleTocHighlighter toc={toc} contentId="article-body" />
         ) : (
           <div className="hidden md:block" />
         )}
 
-        <article className="max-w-[760px] first-h2-aligned">
+        <article id="article-body" className="max-w-[760px] first-h2-aligned">
           <BlogContentWithProducts
             contentHtml={contentHtml}
             products={embeddedProducts}

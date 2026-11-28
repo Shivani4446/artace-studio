@@ -179,6 +179,8 @@ const SingleBlogPage = async ({ params }: Props) => {
         embeddedProductIds={embeddedProductIds}
         embeddedProductSlugs={embeddedProductSlugs}
         faqItems={faqItems}
+        aiShareUrl={buildSiteUrl(`/blogs/${slug}`)}
+        aiShareTitle={stripHtmlAndDecode(post.title?.rendered ?? "") || undefined}
       />
     </main>
   );
