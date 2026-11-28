@@ -37,6 +37,10 @@ export type WordPressBlogPost = {
   author?: number;
   categories?: number[];
   tags?: number[];
+  /** Rank Math "Pillar Content" flag, exposed by a WordPress snippet. */
+  artace_pillar?: boolean;
+  /** Rank Math primary category term id (0 when unset), exposed by a WordPress snippet. */
+  artace_primary_category?: number;
   _embedded?: {
     author?: Array<Record<string, unknown>>;
     ["wp:featuredmedia"]?: WordPressEmbeddedMedia[];
@@ -62,6 +66,8 @@ export type WordPressNormalizedBlogPost = {
   tags: string[];
   publishedAt: string | null;
   modifiedAt: string | null;
+  isPillar: boolean;
+  primaryCategory: string | null;
 };
 
 type FetchOptions = {
@@ -217,6 +223,9 @@ export const normalizeWordPressBlogPosts = (
     const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
     const image = featuredMedia?.source_url || FALLBACK_BLOG_IMAGE;
     const imageAlt = stripHtmlAndDecode(featuredMedia?.alt_text || title || "Blog image");
+    const primaryCategoryTerm = post.artace_primary_category
+      ? categories.find((category) => category.id === post.artace_primary_category)
+      : undefined;
 
     return {
       id: post.id,
@@ -229,6 +238,10 @@ export const normalizeWordPressBlogPosts = (
       tags: resolveWordPressPostTags(post, tags),
       publishedAt: post.date || null,
       modifiedAt: post.modified || post.date || null,
+      isPillar: post.artace_pillar === true,
+      primaryCategory: primaryCategoryTerm
+        ? stripHtmlAndDecode(primaryCategoryTerm.name ?? "") || null
+        : null,
     };
   });
 
