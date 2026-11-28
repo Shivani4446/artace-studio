@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import ArticleLayout from "@/components/article/ArticleLayout";
 import {
   estimateReadTimeMinutes,
@@ -15,7 +16,6 @@ import { generateFaqSchema } from "@/lib/schema";
 import { buildSiteUrl } from "@/lib/site";
 import { fetchWithRetry } from "@/lib/http/fetch-with-retry";
 import {
-  fetchAllWordPressTags,
   getWordPressBlogSiteUrl,
   resolveWordPressPostTags,
   type WordPressBlogPost,
@@ -34,24 +34,26 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+// Returns null only when WordPress answers successfully with no matching post.
+// A rate limit (429), 5xx or network failure throws instead, so the page shows
+// the self-retrying error boundary (error.tsx) rather than a false 404 that
+// tells visitors and Google the article no longer exists.
 async function fetchPost(
   endpoint: string,
   cacheOptions: RequestInit
 ): Promise<WordPressBlogPost | null> {
-  try {
-    const res = await fetchWithRetry(endpoint, {
-      headers: WORDPRESS_HEADERS,
-      ...cacheOptions,
-    });
-    if (!res.ok) return null;
-    const data = (await res.json()) as WordPressBlogPost[];
-    return data[0] || null;
-  } catch {
-    return null;
+  const res = await fetchWithRetry(endpoint, {
+    headers: WORDPRESS_HEADERS,
+    ...cacheOptions,
+  });
+  if (!res.ok) {
+    throw new Error(`WordPress post lookup failed (${res.status}).`);
   }
+  const data = (await res.json()) as WordPressBlogPost[];
+  return (Array.isArray(data) && data[0]) || null;
 }
 
-async function getPost(slug: string): Promise<WordPressBlogPost | null> {
+const getPost = cache(async (slug: string): Promise<WordPressBlogPost | null> => {
   const siteUrl = getWordPressBlogSiteUrl();
   const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
   const endpoint = `${siteUrl}/wp-json/wp/v2/posts?slug=${encodeURIComponent(normalizedSlug)}&_embed`;
@@ -59,11 +61,11 @@ async function getPost(slug: string): Promise<WordPressBlogPost | null> {
   const cachedPost = await fetchPost(endpoint, { next: { revalidate: 120 } });
   if (cachedPost) return cachedPost;
 
-  // A cached miss can mean the post was only just published and the ISR cache
-  // (or WordPress-side edge cache) hasn't picked it up yet. Re-check live before
-  // giving up, so we don't lock in a false 404 for the revalidate window.
-  return fetchPost(endpoint, { cache: "no-store" });
-}
+  // A cached miss can mean the post was only just published and hasn't reached
+  // the cache yet. Re-check with a short cache (not no-store, so bots hitting
+  // dead URLs can't hammer WordPress) before returning a 404.
+  return fetchPost(endpoint, { next: { revalidate: 15 } });
+});
 
 async function getAuthor(authorId: number) {
   const siteUrl = getWordPressBlogSiteUrl();
@@ -83,7 +85,9 @@ async function getAuthor(authorId: number) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPost(slug);
+  // Metadata falls back to generic values if WordPress is unavailable; the
+  // page itself then shows the retry boundary.
+  const post = await getPost(slug).catch(() => null);
   const plainTitle = stripHtmlAndDecode(post?.title?.rendered ?? "");
   const plainDescription = stripHtmlAndDecode(post?.excerpt?.rendered ?? "");
 
@@ -141,9 +145,8 @@ const SingleBlogPage = async ({ params }: Props) => {
     author = await getAuthor(post.author);
   }
 
-  // Fetch all tags and extract tags for this post
-  const allTags = await fetchAllWordPressTags();
-  const resolvedTags = resolveWordPressPostTags(post, allTags);
+  // Tag names come from the embedded terms (_embed), so no extra request.
+  const resolvedTags = resolveWordPressPostTags(post, []);
 
   // Extract product IDs from WooCommerce blocks in the content
   const embeddedProductIds =

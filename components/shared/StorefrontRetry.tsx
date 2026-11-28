@@ -15,10 +15,12 @@ export default function StorefrontRetry({
   reset,
   backHref = "/shop",
   backLabel = "Browse the shop",
+  title = "This painting is taking a little longer to load",
 }: {
   reset: () => void;
   backHref?: string;
   backLabel?: string;
+  title?: string;
 }) {
   const [secondsLeft, setSecondsLeft] = useState(AUTO_RETRY_SECONDS);
   const [autoRetry, setAutoRetry] = useState(true);
@@ -75,7 +77,7 @@ export default function StorefrontRetry({
         One moment
       </p>
       <h1 className="mt-3 text-2xl font-semibold text-neutral-900 sm:text-3xl">
-        This painting is taking a little longer to load
+        {title}
       </h1>
       <p className="mt-4 text-sm leading-relaxed text-neutral-600 sm:text-base">
         Our gallery is busy right now.{" "}
