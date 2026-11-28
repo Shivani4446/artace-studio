@@ -27,6 +27,7 @@ import { useCart } from "@/components/cart/CartProvider";
 import { useWishlist } from "@/components/wishlist/WishlistProvider";
 import LogoutButton from "@/components/auth/LogoutButton";
 import CurrencyDropdown from "@/components/currency/CurrencyDropdown";
+import { useCurrency } from "@/components/currency/CurrencyProvider";
 import {
   collectionLinkItems,
   getCollectionHref,
@@ -284,6 +285,7 @@ const Navbar = () => {
   const { itemCount: wishlistCount } = useWishlist();
   const { items, itemCount, subtotal, incrementItem, decrementItem, removeItem } =
     useCart();
+  const currency = useCurrency();
   const isAuthenticated = authStatus === "authenticated";
   const accountHref = isAuthenticated ? "/dashboard" : "/login";
   const closeMobileMenu = () => {
@@ -1557,7 +1559,7 @@ const Navbar = () => {
             {subtotal > 0 && (
               <div className="mb-4 flex items-center justify-between text-sm text-[#444]">
                 <span>Subtotal</span>
-                <span className="font-semibold text-[#222]">${subtotal.toFixed(2)}</span>
+                <span className="font-semibold text-[#222]">{currency.formatPrice(subtotal)}</span>
               </div>
             )}
 
