@@ -242,7 +242,7 @@ const buildCollectionCopy = (
       advisoryBody:
         "Confused about what size will look best on your wall? Or want to change the background color of a painting you liked? Don't worry. Talk to our friendly team. We will help you pick or design the perfect Ganesha painting for your space, absolutely free of charge.",
       advisoryCta: "Chat With Us on WhatsApp",
-      advisoryHref: "https://wa.me/9657609102",
+      advisoryHref: "https://wa.me/919657609102",
       heroVectorSrc: "/ganesha-collection-vector.svg",
       heroBannerImage: "/ganesha-collection-bg.webp",
       heroVectorOnly: true,
@@ -594,7 +594,7 @@ const buildCollectionCopy = (
       advisoryBody:
         "Tell us about your room, its direction, and what you're hoping to invite in — peace, prosperity, devotion — and our team will help you shortlist the right piece or commission a custom one, free of charge.",
       advisoryCta: "Chat With Us on WhatsApp",
-      advisoryHref: "https://wa.me/9657609102",
+      advisoryHref: "https://wa.me/919657609102",
     };
   }
 

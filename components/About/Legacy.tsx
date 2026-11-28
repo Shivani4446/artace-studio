@@ -40,7 +40,7 @@ const LegacyOfQuality = () => {
 
             {/* Paragraph */}
             <p className="font-inter text-[15px] leading-7 text-[#555555] md:text-base md:leading-[1.8]">
-              For over 13 years, we&apos;ve maintained our position as a premier art studio by adhering to this one simple principle. This dedication has earned us the trust of art enthusiasts and collectors across the country, making us a respected name in premium canvas artistry.
+              Since 2010, we&apos;ve maintained our position as a premier art studio by adhering to this one simple principle. This dedication has earned us the trust of art enthusiasts and collectors across the country, making us a respected name in premium canvas artistry.
             </p>
           </div>
         </div>

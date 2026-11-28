@@ -49,7 +49,7 @@ const SiteChrome = ({ children }: { children: ReactNode }) => {
       <Footer />
       <ChatWidget />
       <Link
-        href="https://wa.me/9657609102"
+        href="https://wa.me/919657609102"
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Order on WhatsApp"

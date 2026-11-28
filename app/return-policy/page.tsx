@@ -25,19 +25,19 @@ const INTRO_HTML = `
 const RETURN_MARKDOWN = `
 ## Eligibility for Returns
 
-Returns are accepted for eligible artworks within **7 calendar days** of delivery. To be approved, the item must be:
+Returns are accepted for eligible artworks within **15 days** of delivery. Returns apply to default-size paintings without a frame that are delivered within India. To be approved, the item must be:
 
 - In original condition.
 - Unused and free from damage.
 - Packed in the original protective packaging.
 
-Custom, made-to-order, or personalized commissions are non-returnable unless there is a confirmed quality issue caused by us.
+Returns are not applicable for custom-size artworks, framed paintings, or international orders. Custom, made-to-order, or personalized commissions are non-returnable unless there is a confirmed quality issue caused by us.
 
 ## Damaged or Incorrect Deliveries
 
 If your order arrives damaged in transit or you receive the wrong artwork:
 
-1. Email us at [info@artacestudio.com](mailto:info@artacestudio.com) within 48 hours of delivery.
+1. Email us at [info@artacestudio.com](mailto:info@artacestudio.com) within 24 hours of delivery.
 2. Include your order number and clear photos of the package and item.
 3. Our team will assess the case and share the next steps within one business day.
 
@@ -83,7 +83,7 @@ export default function ReturnPolicyPage() {
         eyebrow="Our Philosophy: A Commitment to Creation"
         title="Return Policy"
         introHtml={INTRO_HTML}
-        lastUpdated="15 May 2025"
+        lastUpdated="28 November 2026"
         readTimeMinutes={4}
         toc={returnToc}
         contentHtml={returnHtml}

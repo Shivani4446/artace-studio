@@ -217,7 +217,7 @@ const ukFaqs: FAQItem[] = [
   {
     question: "Can I return a painting if it's not right for my space?",
     answer:
-      "Stock pieces can be returned within 7 days of delivery if unused and in original packaging — return shipping is the customer's responsibility. Custom commissions can't be returned, since they're made specifically for you, unless there's a confirmed quality issue on our side. Full details are on our Return Policy page.",
+      "Returns aren't available on international orders — our 15-day return window covers default-size, unframed paintings delivered within India. If your painting arrives damaged, contact us within 24 hours of delivery with photos and we'll make it right. Full details are on our Return Policy page.",
   },
   {
     question: "Are these real hand-painted originals, or prints?",

@@ -107,7 +107,7 @@ const SamoraFooter = () => {
               ))}
               <li>
                 <a
-                  href="https://wa.me/9657609102"
+                  href="https://wa.me/919657609102"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-[14.5px] text-[#3f382f] hover:text-[#c1683d]"

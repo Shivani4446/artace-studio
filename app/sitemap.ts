@@ -136,6 +136,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/artists`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
     { url: `${baseUrl}/about-us`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/contact-us`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${baseUrl}/llm-info`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
     { url: `${baseUrl}/privacy-policy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/terms-of-use`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },
     { url: `${baseUrl}/return-policy`, lastModified: now, changeFrequency: "monthly", priority: 0.3 },

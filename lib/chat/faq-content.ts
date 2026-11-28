@@ -29,7 +29,7 @@ export const FAQ_ENTRIES: FaqEntry[] = [
   {
     question: "What is the return window?",
     answer:
-      "Eligible artworks can be returned within 7 calendar days of delivery if unused and in original packaging. Custom commissions are non-returnable except for confirmed quality issues.",
+      "Default-size, unframed paintings delivered within India can be returned within 15 days of delivery if unused and in original packaging. Custom-size, framed and international orders, and custom commissions, are non-returnable except for confirmed quality issues. Report transit damage within 24 hours of delivery.",
   },
   {
     question: "How do I track or ask about an order?",

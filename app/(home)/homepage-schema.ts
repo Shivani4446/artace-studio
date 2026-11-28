@@ -27,7 +27,7 @@ export const homepageFaqs = [
   {
     question: "How long does delivery take?",
     answer:
-      "Ready-to-ship pieces are delivered within 5-7 days. Custom commissions follow our five-phase journey and are typically completed within 3-4 weeks, with milestone updates throughout.",
+      "Ready-to-ship pieces are delivered within 5-7 days. Custom commissions follow our five-phase journey and are typically completed within 4-5 days, with milestone updates throughout.",
   },
   {
     question: "Do you ship across India and internationally?",

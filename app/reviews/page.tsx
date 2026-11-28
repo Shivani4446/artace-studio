@@ -166,7 +166,7 @@ const FAQ_ITEMS: FAQItem[] = [
   {
     question: "Do you have a physical gallery location?",
     answer:
-      "We're an online-only studio — all orders ship directly from our studio and warehouse in India.",
+      "Yes — our studio is in Pune, Maharashtra, and you're welcome to visit. Call or WhatsApp +91 96576 09102 (9:00 AM to 9:00 PM) to plan your visit. All orders ship directly from our studio and warehouse in India.",
   },
 ];
 

@@ -20,7 +20,7 @@ import SamoraProductCard, { type SamoraProduct } from "@/components/samora/Samor
 import SamoraCorporateLeadForm from "@/components/samora/SamoraCorporateLeadForm";
 
 const WHATSAPP_HREF =
-  "https://wa.me/9657609102?text=" +
+  "https://wa.me/919657609102?text=" +
   encodeURIComponent("Hi Samora, I'd like to talk about corporate gifting.");
 
 const TRUST_HIGHLIGHTS = [

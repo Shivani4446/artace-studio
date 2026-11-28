@@ -50,7 +50,7 @@ const COMING_SOON_CATEGORIES = [
 ];
 
 const WHATSAPP_HREF =
-  "https://wa.me/9657609102?text=" +
+  "https://wa.me/919657609102?text=" +
   encodeURIComponent("Hi Samora, I'd like early access to the shop.");
 
 type WooStorePrices = {

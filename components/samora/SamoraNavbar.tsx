@@ -18,7 +18,7 @@ const NAV_LINKS = [
 ];
 
 const WHATSAPP_HREF =
-  "https://wa.me/9657609102?text=" +
+  "https://wa.me/919657609102?text=" +
   encodeURIComponent("Hi Samora, I'd like to know more about your handcrafted collection.");
 
 const SamoraNavbar = () => {

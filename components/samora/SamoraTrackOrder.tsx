@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight, ClipboardList, MessageCircle, PackageSearch } from "lucide-react";
 
 const WHATSAPP_HREF =
-  "https://wa.me/9657609102?text=" +
+  "https://wa.me/919657609102?text=" +
   encodeURIComponent("Hi Samora, I'd like an update on my order.");
 
 const STEPS = [

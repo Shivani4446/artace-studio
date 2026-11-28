@@ -9,9 +9,9 @@ export type PolicyKey = "returns" | "cancellation" | "privacy" | "terms";
 const POLICY_CONTENT: Record<PolicyKey, string> = {
   returns: `Return Policy — Artace Studio
 
-Returns are accepted for eligible artworks within 7 calendar days of delivery. To be approved, the item must be in original condition, unused and free from damage, and packed in the original protective packaging. Custom, made-to-order, or personalized commissions are non-returnable unless there is a confirmed quality issue caused by us.
+Returns are accepted within 15 days of delivery for default-size paintings without a frame that are delivered within India. To be approved, the item must be in original condition, unused and free from damage, and packed in the original protective packaging. Returns are not applicable for custom-size artworks, framed paintings, or international orders. Custom, made-to-order, or personalized commissions are non-returnable unless there is a confirmed quality issue caused by us.
 
-If an order arrives damaged or the wrong artwork is received, email info@artacestudio.com within 48 hours of delivery with the order number and photos; the team responds within one business day.
+If an order arrives damaged or the wrong artwork is received, email info@artacestudio.com within 24 hours of delivery with the order number and photos; the team responds within one business day.
 
 All returns require prior approval from support before shipping back. Approved refunds are issued to the original payment method within 5 to 7 business days after the returned item is received and inspected. Original shipping charges are non-refundable unless the return was caused by our error.`,
   cancellation: `Cancellation Policy — Artace Studio
